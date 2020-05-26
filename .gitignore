@@ -1,0 +1,8 @@
+*.o
+*.pyc
+*.tar.xz
+*.*~
+*AutoDict*
+*.pdf
+*.root
+*/commands/*.txt

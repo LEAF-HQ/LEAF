@@ -1,0 +1,24 @@
+set param_card  frblock  1  600
+set param_card  frblock  2  660
+set param_card  frblock  3  660
+set param_card  frblock  4  1400
+set param_card  frblock  5  1400
+set param_card  frblock  6  1.000000e-01
+set param_card  mass 9000005 600
+set param_card  mass 9000006 660
+set param_card  mass 9000007 660
+set param_card  mass 9000008 1400
+set param_card  mass 9000009 1400
+set param_card  frblock8 1 1  0
+set param_card  frblock8 2 2  0
+set param_card  frblock8 3 3  1.0
+set param_card  frblock9 1 1  0
+set param_card  frblock9 2 2  0
+set param_card  frblock9 3 3  0
+set run_card bwcutoff 10000.0
+set run_card lhaid 315200
+set run_card fixed_ren_scale T
+set run_card fixed_fac_scale T
+set run_card scale 1400
+set run_card dsqrt_q2fact1 1400
+set run_card dsqrt_q2fact2 1400
