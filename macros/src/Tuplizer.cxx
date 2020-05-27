@@ -1,23 +1,21 @@
 #include <TFile.h>
 #include <TTree.h>
-// #include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/FWLite/interface/Event.h"
+#include "DataFormats/RecoCandidate/interface/RecoCandidate.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/METReco/interface/GenMET.h"
+#include "FWCore/FWLite/interface/FWLiteEnabler.h"
 #include <iostream>
 #include "../include/Particle.h"
 #include <TSystem.h>
 
+using namespace std;
 
-void Tuplizer(){
+int main(){
 
-  gSystem->Load("libFWCoreFWLite.so");
-  FWLiteEnabler::enable();
-  gSystem->Load("libDataFormatsFWLite.so");
-  gSystem->Load("libDataFormatsPatCandidates.so");
-  gSystem->Load("AutoDict_Particle_cxx.so");
-  gSystem->Load("AutoDict_vector_Particle__cxx.so");
-
-  // TFile* infile = new TFile("/scratch/areimers/ForYogesh/ScalarLQ_Pair_M800_L1p0/GENSIM_1.root", "READ");
+  // FWLiteEnabler::enable();
   TFile* infile = TFile::Open("root://t3dcachedb03.psi.ch:1094//pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/GENSIM_1.root", "READ");
-  std::cout << "Success!" << std::endl;
 
 
 
@@ -29,7 +27,6 @@ void Tuplizer(){
 
   double ptmet;
   vector<Particle>* v_gps;
-  // vector<double> v_gps;
   Particle ptcl;
 
   TFile* outfile = new TFile("test_macro.root", "RECREATE");
@@ -49,10 +46,8 @@ void Tuplizer(){
     handle_gps.getByLabel(event, "genParticles");
     handle_met.getByLabel(event, "genMetTrue");
 
-    // vector<reco::GenMET>* met = handle_met.product();
     const std::vector<reco::GenMET, std::allocator<reco::GenMET>>* met = handle_met.product();
     const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* gps = handle_gps.product();
-    // v_gps = {};
     v_gps = new vector<Particle>;
     for(size_t i=0; i<gps->size(); i++){
       // int id = fabs(gps->at(i).pdgId());
@@ -89,7 +84,6 @@ void Tuplizer(){
     tree->Fill();
     idx ++;
 
-    // v_gps.clear();
     delete v_gps;
   }
 
