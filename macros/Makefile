@@ -19,27 +19,42 @@ INCLUDES    := $(wildcard $(INCDIR)/*.h)
 LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm)
 OBJECTS     := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
-SOURCESTUP  := $(wildcard $(SRCDIR)/*.cxx)
-OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
+SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
+OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
+
+# Tuplizer only needs a few sources, giving them by hand avoids compiling the entire folder
+SOURCESTUP  := $(SRCDIR)/useful_functions.cc
+OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
 all: Tuplizer main
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
-main: libClassDictionaries.so $(OBJECTS)
+main: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/main.o
 	@echo "--> Creating main"
-	@$(CC) $(OBJECTS) $(LFLAGS) -o $@ $(LIBSMAIN)
+	@$(CC) $(OBJECTS) $(OBJDIR)/main.o $(LFLAGS) -o $@ $(LIBSMAIN)
+
+Tuplizer: $(OBJDIR)/Tuplizer.o libClassDictionaries.so $(OBJECTSTUP)
+	@echo "--> Creating Tuplizer"
+	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $@ $(LIBSMAIN)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
-	@echo "--> Creating object $@ for main"
+	@echo "--> Creating object $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
 
-Tuplizer: libClassDictionaries.so $(OBJECTSTUP)
-	@echo "--> Creating Tuplizer"
-	@$(CC) $(OBJECTSTUP) $(LFLAGS) -o $@ $(LIBSMAIN)
+# $(OBJECTSEXE): $(OBJDIR)/%.o : $(SRCDIR)/%.cxx
+# 	@echo "--> Creating object $@"
+# 	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
 
-$(OBJECTSTUP): $(OBJDIR)/%.o : $(SRCDIR)/%.cxx
-	@echo "--> Creating object $@ for Tuplizer"
-	@$(CC) $(CFLAGS) $(LFLAGS) -c $< -o $@ $(LIBSMAIN)
+$(OBJDIR)/Tuplizer.o: $(SRCDIR)/Tuplizer.cxx
+	@echo "--> Creating object $@"
+	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
+
+$(OBJDIR)/main.o: $(SRCDIR)/main.cxx
+	@echo "--> Creating object $@"
+	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
+
+
+
 
 libClassDictionaries.so: $(LIBDIR)/ClassDictionaries.cxx
 	@echo "--> Creating shared library with class dictionaries."

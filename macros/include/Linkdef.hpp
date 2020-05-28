@@ -12,6 +12,8 @@
 #pragma link C++ class std::vector<Particle>+;
 #pragma link C++ class GenParticle+;
 #pragma link C++ class std::vector<GenParticle>+;
+#pragma link C++ class GenJet+;
+#pragma link C++ class std::vector<GenJet>+;
 #pragma link C++ class Met+;
 #pragma link C++ class std::vector<Met>+;
 

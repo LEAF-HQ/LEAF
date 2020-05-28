@@ -19,7 +19,6 @@ public:
   double eta() const {return m_eta;};
   double phi() const {return m_phi;};
   double m()   const {return m_m;};
-  int evtid()  const {return m_evtid;};
   TLorentzVector p4() const{
     TLorentzVector p;
     p.SetPtEtaPhiM(m_pt, m_eta, m_phi, m_m);
@@ -30,7 +29,6 @@ public:
   void set_eta(double x){m_eta = x;};
   void set_phi(double x){m_phi = x;};
   void set_m(double x)  {m_m = x;};
-  void set_evtid(int x)  {m_evtid = x;};
   void set_p4(TLorentzVector p){
     m_pt  = p.Pt();
     m_eta = p.Eta();
@@ -50,6 +48,5 @@ protected:
   double m_eta = 0.;
   double m_phi = 0.;
   double m_m = 0.;
-  int    m_evtid = -1;
 
 };

@@ -215,24 +215,24 @@ void GenlevelTool::LoopEvents(){
     event.stmet = *stmet;
 
     //fill jets
-    if(fill_jet_next && (event.id == first_jet_for_next.evtid())){
-      event.genjets->emplace_back(first_jet_for_next);
-    }
+    // if(fill_jet_next && (event.id == first_jet_for_next.evtid())){
+    //   event.genjets->emplace_back(first_jet_for_next);
+    // }
 
-    while (myReaderJet.Next()) {
-      GenJet j;
-      j.set_evtid(*id_jet);
-      j.set_p4(*ptjet, *etajet, *phijet, *mjet);
-      if(j.evtid() == event.id){
-        event.genjets->emplace_back(j);
-        fill_jet_next = false;
-      }
-      else{
-        first_jet_for_next = j;
-        fill_jet_next = true;
-        break;
-      }
-    }
+    // while (myReaderJet.Next()) {
+    //   GenJet j;
+    //   j.set_evtid(*id_jet);
+    //   j.set_p4(*ptjet, *etajet, *phijet, *mjet);
+    //   if(j.evtid() == event.id){
+    //     event.genjets->emplace_back(j);
+    //     fill_jet_next = false;
+    //   }
+    //   else{
+    //     first_jet_for_next = j;
+    //     fill_jet_next = true;
+    //     break;
+    //   }
+    // }
 
     // set eventweight --  generator weight * xsec / nevt --> normalization corresponds to L_int = 1/pb
     event.weight = *evweight;
