@@ -23,6 +23,7 @@ SOURCESTUP  := $(wildcard $(SRCDIR)/*.cxx)
 OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
 
 all: Tuplizer main
+	@echo "--> Successfully created all executables. Thanks Robin!"
 
 main: libClassDictionaries.so $(OBJECTS)
 	@echo "--> Creating main"
@@ -51,4 +52,4 @@ $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 
 clean:
 	@echo "--> cleaning folders $(OBJDIR)/ and $(LIBDIR)/"
-	@rm $(wildcard $(OBJDIR)/*.o) $(LIBOBJS)
+	@rm -f $(wildcard $(OBJDIR)/*.o) $(LIBOBJS)
