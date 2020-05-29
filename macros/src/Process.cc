@@ -25,20 +25,20 @@ using namespace std;
 
 void GenlevelTool::Process(Event & event){
   // cout << "+++ NEW EVENT" << endl;
-  // cout << "ngenjets as in GenJet vector: " << event.genjets->size() << endl;
+  // cout << "genmet: " << event.genmet->pt() << endl;
 
 
   histmap["input"]->fill(event);
-
-  cout << "n GenJets: " << event.genjets->size() << endl;
-  cleaner_genjet->process(event);
-  cout << "n genjets cleaned: " << event.genjets->size() << endl;
-  // histmap["cleaner"]->fill(event);
-
-
-  if(event.st < 100) return;
-
-  histmap["st"]->fill(event);
+  //
+  // cout << "n GenJets: " << event.genjets->size() << endl;
+  // cleaner_genjet->process(event);
+  // cout << "n genjets cleaned: " << event.genjets->size() << endl;
+  // // histmap["cleaner"]->fill(event);
+  //
+  //
+  // if(event.st < 100) return;
+  //
+  // histmap["st"]->fill(event);
 
 
 }

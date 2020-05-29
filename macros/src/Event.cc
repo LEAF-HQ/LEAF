@@ -1,7 +1,7 @@
-#include "../include/GenlevelTool.h"
-#include "../include/Event.h"
-#include "../include/cosmetics.h"
-#include "../include/constants.h"
+#include "include/GenlevelTool.h"
+#include "include/Event.h"
+#include "include/cosmetics.h"
+#include "include/constants.h"
 #include <TH1D.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>
@@ -20,11 +20,18 @@
 using namespace std;
 
 Event::Event(){
-  genjets = new vector<GenJet>;
-    genparticles = new vector<GenParticle>;
+
+  genmet                          = new Met;
+  genparticles_hard               = new vector<GenParticle>;
+  genparticles_final              = new vector<GenParticle>;
+  genparticles_prompttaudecayprod = new vector<GenParticle>;
+  genjets                         = new vector<GenJet>;
 }
 
 void Event::clear(){
+  delete genmet;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_prompttaudecayprod;
   delete genjets;
-  delete genparticles;
 }

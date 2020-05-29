@@ -27,7 +27,7 @@ SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
 OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
 
 # Tuplizer only needs a few sources, giving them by hand avoids compiling the entire folder
-SOURCESTUP  := $(SRCDIR)/useful_functions.cc
+SOURCESTUP  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/Event.cc 
 OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
 all: Tuplizer main

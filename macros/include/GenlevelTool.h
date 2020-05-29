@@ -29,7 +29,7 @@ public:
 
 
 private:
-  TString base_path_gensim, base_path_crosssections, base_path_analysisfiles, base_path_out;
+  TString base_path_gensimtuples, base_path_crosssections, base_path_analysisfiles, base_path_out;
   // TString base_path_plots;
   double MLQ, MX, MDM, lambda;
   bool debug;

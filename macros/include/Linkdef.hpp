@@ -16,6 +16,8 @@
 #pragma link C++ class std::vector<GenJet>+;
 #pragma link C++ class Met+;
 #pragma link C++ class std::vector<Met>+;
+#pragma link C++ class Event+;
+#pragma link C++ class std::vector<Event>+;
 
 
 

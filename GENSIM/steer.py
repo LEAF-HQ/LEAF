@@ -61,15 +61,17 @@ def main():
     ensureDirectory(workdir_slurm)
 
 
-    # steps until gridpacks are done
+    # Gridpack generation
     if make_cards: ProduceCards()
     if submit_gridpacks: SubmitGridpacks(submit=submit)
     if copy_gridpacks: CopyGridpacks(submit=submit)
     if clean_mg_area: CleanMGArea(submit=submit)
 
-    # steps after gridpacks until simple files
+    # GENSIM generation
     if gensim:   SubmitGensim(submit=submit)
     if resubmit: ResubmitGensim(submit=submit)
+
+    # Tuple generation
     if tuplize:  SubmitTuplize(submit=submit)
     if add:      SubmitAdd(submit=submit)
 
