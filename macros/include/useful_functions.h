@@ -9,6 +9,7 @@
 TString lambstr(double lambda);
 TString get_samplename(double mlq, double mx, double mdm, double lambda);
 std::vector<int> get_npids();
+bool path_exists(const TString &s);
 
 const std::string red("\x1b[0;31m");
 const std::string green("\x1b[0;32m");

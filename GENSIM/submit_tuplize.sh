@@ -20,7 +20,8 @@ mkdir -p $TMPDIR
 echo TMPDIR: $TMPDIR
 
 # actual job
-source /t3home/areimers/setup_slurm.sh
+# source /t3home/areimers/setup_slurm.sh
+source /t3home/areimers/setup.sh
 cd /work/areimers/LQDM/GENSIM
 export TASKID=$SLURM_ARRAY_TASK_ID
 echo $TASKID

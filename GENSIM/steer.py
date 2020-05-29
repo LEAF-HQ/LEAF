@@ -42,6 +42,7 @@ basefolder     = workarea + '/LQDM/GENSIM'
 gridpackfolder = basefolder + '/gridpacks'
 pset           = 'pset_GENSIM.py'
 pnfs_path      = '/pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM'
+tuple_path     = '/work/areimers/Tuples/LQDM/GENSIM'
 
 def main():
 
@@ -53,7 +54,7 @@ def main():
     gensim           = False
     resubmit         = False
     tuplize          = False
-    add              = False
+    add              = True
 
     submit           = False
 
@@ -201,9 +202,12 @@ def SubmitTuplize(submit):
             commandfilename = commandfilebase + jobname + '.txt'
             f = open(commandfilename, 'w')
             for i in range(maxindex):
+                # infilename = pnfs_path + '/' + jobname + '/GENSIM_%i.root' % (i+1)
+                # outfilename = 'simple_files/' + jobname + '_GENSIM_simple_%i.root' % (i+1)
+                # command = './convertGENSIM.py %s -o %s' % (infilename, outfilename)
                 infilename = pnfs_path + '/' + jobname + '/GENSIM_%i.root' % (i+1)
-                outfilename = 'simple_files/' + jobname + '_GENSIM_simple_%i.root' % (i+1)
-                command = './convertGENSIM.py %s -o %s' % (infilename, outfilename)
+                outfilename = tuple_path + '/' + jobname + '/Tuples_%i.root' % (i+1)
+                command = 'Tuplizer %s %s' % (infilename, outfilename)
                 f.write(command + '\n')
             f.close()
             command = 'sbatch -a 1-%s -J tuplize_%s -p quick -t 01:00:00 --cpus-per-task %i submit_tuplize.sh %s' % (str(maxindex), jobname, ncores, commandfilename)
@@ -211,15 +215,30 @@ def SubmitTuplize(submit):
             if submit: os.system(command)
 
 def SubmitAdd(submit):
-# Submit add jobs to the SLURM cluster
+    # Submit add jobs to the SLURM cluster
+    ncores = 1
+    commandfilebase = basefolder + '/commands/add_'
     for config in mass_configurations:
         for lamb in lambdas:
             mlq, mx, mdm = get_mlq_mx_mdm(config)
             jobname      = get_jobname(mlq, mx, mdm, lamb, tag)
-            command = 'sbatch -J add_%s -p quick --cpus-per-task 1 submit_add.sh %s' % (jobname, jobname)
+            infiles      = tuple_path + '/' + jobname + '/Tuples_*.root'
+            outfile      = tuple_path + '/' + jobname + '/Tuples.root'
+            commandfilename = commandfilebase + jobname + '.txt'
+            f = open(commandfilename, 'w')
+            command = 'hadd -f %s %s ; sleep 5 ; rm %s' % (outfile, infiles, infiles)
+            # command = 'sleep 5; rm %s' % (infiles)
+            f.write(command)
+            f.close()
+            # command = 'sbatch -J add_%s -p quick --cpus-per-task 1 submit_add.sh %s' % (jobname, jobname)
+            command = 'sbatch -J add_%s -p quick --cpus-per-task %i submit_add.sh %s' % (jobname, ncores, commandfilename)
             print command
             if submit: os.system(command)
             print green("Submitted job for adding tuplized samples: %s."%(jobname))
+
+
+
+
 
 
 

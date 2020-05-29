@@ -21,14 +21,18 @@ mkdir -p $TMPDIR
 echo TMPDIR: $TMPDIR
 
 # actual job
-source /t3home/areimers/setup_slurm.sh
-cd /work/areimers/LQDM/GENSIM/simple_files
-SAMPLE=$1
-echo SAMPLE: ${SAMPLE}
-TARGET=${SAMPLE}_GENSIM_simple.root
-SOURCE=${SAMPLE}_GENSIM_simple_*.root
-eval "hadd -f ${TARGET} ${SOURCE}"
-eval "rm ${SOURCE}"
+source /t3home/$USER/setup.sh
+cd /work/$USER/LQDM/GENSIM/simple_files
+# SAMPLE=$1
+# echo SAMPLE: ${SAMPLE}
+# TARGET=${SAMPLE}_GENSIM_simple.root
+# SOURCE=${SAMPLE}_GENSIM_simple_*.root
+# eval "hadd -f ${TARGET} ${SOURCE}"
+# eval "rm ${SOURCE}"
+CMDFILE=$1
+TASKCMD=$(cat $CMDFILE)
+echo $TASKCMD
+eval $TASKCMD
 
 # cleaning of temporal working dir when job was completed:
 rm -rf $TMPDIR

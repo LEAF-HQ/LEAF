@@ -3,16 +3,20 @@ CC = g++
 #This assumes the last element of CMSSW_FWLITE_INCLUDE_PATH is the path to the external boost include directory
 BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
 
-CFLAGS = -std=c++0x -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
+# CFLAGS = -std=c++0x -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
+CFLAGS = -std=c++17 -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
 CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH}
 LFLAGS = -Wall -I. -lm -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${MACROLIBPATH}
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
-LIBSMAIN = $(ROOTLIBS) -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lClassDictionaries
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lClassDictionaries
 
 INCDIR   = include
 SRCDIR   = src
 OBJDIR   = obj
 LIBDIR   = lib
+BINDIR   = bin
+
+BINARIES    := $(wildcard $(BINDIR)/*)
 
 SOURCES     := $(wildcard $(SRCDIR)/*.cc)
 INCLUDES    := $(wildcard $(INCDIR)/*.h)
@@ -31,11 +35,11 @@ all: Tuplizer main
 
 main: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/main.o
 	@echo "--> Creating main"
-	@$(CC) $(OBJECTS) $(OBJDIR)/main.o $(LFLAGS) -o $@ $(LIBSMAIN)
+	@$(CC) $(OBJECTS) $(OBJDIR)/main.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 Tuplizer: $(OBJDIR)/Tuplizer.o libClassDictionaries.so $(OBJECTSTUP)
 	@echo "--> Creating Tuplizer"
-	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $@ $(LIBSMAIN)
+	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"
@@ -66,5 +70,5 @@ $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 
 
 clean:
-	@echo "--> cleaning folders $(OBJDIR)/ and $(LIBDIR)/"
+	@echo "--> cleaning folders $(OBJDIR)/, $(LIBDIR)/, and $(BINDIR)/"
 	@rm -f $(wildcard $(OBJDIR)/*.o) $(LIBOBJS)

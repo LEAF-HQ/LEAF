@@ -47,6 +47,11 @@ vector<int> get_npids(){
   return npids;
 }
 
+bool path_exists(const TString &s){
+  struct stat buffer;
+  return (stat(s, &buffer) == 0);
+}
+
 /// distance in phi, with the convention -phi < deltaPhi <= phi
 // T and U have to have a 'phi()' method, e.g. Particle, LorentzVector, etc.
 template<typename T, typename U>

@@ -14,12 +14,14 @@
 #include "include/useful_functions.h"
 #include "include/constants.h"
 #include <TSystem.h>
+#include <sys/stat.h>
+#include <experimental/filesystem>
 
 using namespace std;
 
 // Example usage:
 //
-// ./Tuplize /pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/GENSIM_1.root /scratch/areimers/Tuples/LQDM/GENSIM/test.root
+// Tuplizer /pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/GENSIM_1.root /scratch/areimers/Tuples/LQDM/GENSIM/test.root
 
 
 int main(int argc, char* argv[]){
@@ -28,15 +30,29 @@ int main(int argc, char* argv[]){
   TString director = "root://t3dcachedb03.psi.ch:1094/";
   string inarg  = argv[1];
   string outarg = argv[2];
+  cout << green << "--> Tuplizing file: " << infilename << reset << endl;
 
   TString infilename = (TString)inarg;
   TString outfilename = (TString)outarg;
   if (inarg.rfind("/pnfs", 0) == 0) infilename = director+infilename;
 
+  TObjArray* outfolder_parts = outfilename.Tokenize("/");
+  TString outfolder = "/";
+  for(int i=0; i<outfolder_parts->GetEntries()-1; i++){
+    outfolder += (TString)outfolder_parts->At(i)->GetName();
+    if(i < outfolder_parts->GetEntries()-2) outfolder += "/";
+  }
 
-  // TString infilename = "/pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/GENSIM_1.root";
-  // TString outfilename = "/scratch/areimers/Tuples/LQDM/GENSIM/test.root";
-
+  experimental::filesystem::path of((string)outfolder);
+  if(!experimental::filesystem::exists(of)){
+    cout << green << "--> Outfolder: " << outfolder << " doesn't exist, creating it. " << reset << endl;
+    bool success = experimental::filesystem::create_directories(of);
+    if(!success){
+      cout << red << "Failed to create outfolder. Abort." << reset << endl;
+      return 1;
+    }
+  }
+  cout << green << "--> Output file will be: " << outfilename << reset << endl;
   TFile* infile = TFile::Open(infilename, "READ");
 
   const vector<int> npids = get_npids();
@@ -173,4 +189,5 @@ int main(int argc, char* argv[]){
 
   tree->Write();
   outfile->Close();
+  cout << green << "--> Successfully finished tuplization." << reset << endl;
 }
