@@ -27,7 +27,13 @@ using namespace std;
 // Tuplizer /pnfs/psi.ch/cms/trivcat/store/user/areimers/GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/GENSIM_1.root /scratch/areimers/Tuples/LQDM/GENSIM/test.root
 
 
+TLorentzVector p4sumvis(vector<GenParticle> particles);
+vector<reco::GenParticle> finalDaughters(reco::GenParticle particle, vector<reco::GenParticle> daus);
+
+
 int main(int argc, char* argv[]){
+
+  FWLiteEnabler::enable();
 
   if(argc != 3) throw runtime_error("Expected exactly two arguments. Usage: ./main <infilename> <outfilename>");
   TString director = "root://t3dcachedb03.psi.ch:1094/";
@@ -61,22 +67,17 @@ int main(int argc, char* argv[]){
   const vector<int> npids = get_npids();
   Event* event;
   double weight;
-  Met* genmet;
+  Met* genmet, *met_from_invis;
   vector<GenParticle>* gps_hard;
   vector<GenParticle>* gps_final;
-  vector<GenParticle>* gps_prompttaudecayprod;
+  // vector<GenParticle>* gps_finalstate_invisible;
+  vector<GenParticle>* gps_tauvis;
   vector<GenJet>*      genjets;
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
 
   tree->Branch("Event", &event);
-  // tree->Branch("weight", &weight);
-  // tree->Branch("GenMET", &genmet);
-  // TBranch* b_gps_hard  = tree->Branch("GenparticlesHard", &gps_hard);
-  // TBranch* b_gps_final = tree->Branch("GenparticlesFinal", &gps_final);
-  // TBranch* b_gps_prompttaudecayprod = tree->Branch("GenparticlesPromptTauDecayProd", &gps_prompttaudecayprod);
-  // TBranch* b_genjets   = tree->Branch("GenJets", &genjets);
 
   fwlite::Handle<std::vector<reco::GenParticle> > handle_gps;
   fwlite::Handle<vector<reco::GenMET> >           handle_met;
@@ -87,7 +88,8 @@ int main(int argc, char* argv[]){
   fwlite::Event ev(infile);
   int idx = 0;
   for( ev.toBegin(); ! ev.atEnd(); ++ev) {
-    if(((idx+1) % 1000 == 0) || idx == 0) cout << green << "    --> At event: " << idx+1 << reset << endl;
+    if(((idx+1) % 500 == 0) || idx == 0) cout << green << "    --> At event: " << idx+1 << reset << endl;
+    // cout << "=========== NEW EVENT" << endl;
     handle_gps    .getByLabel(ev, "genParticles");
     handle_met    .getByLabel(ev, "genMetTrue");
     handle_genjets.getByLabel(ev, "ak4GenJets");
@@ -97,30 +99,46 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>*           gjs = handle_genjets.product();
     const GenEventInfoProduct*                                               gif = handle_geninfo.product();
 
-    gps_final              = new vector<GenParticle>;
-    gps_prompttaudecayprod = new vector<GenParticle>;
     gps_hard               = new vector<GenParticle>;
+    gps_final              = new vector<GenParticle>;
+    // gps_finalstate_invisible         = new vector<GenParticle>;
+    gps_tauvis             = new vector<GenParticle>;
     genjets                = new vector<GenJet>;
     genmet                 = new Met;
+    met_from_invis         = new Met;
     event                  = new Event;
 
 
     // Do GenParticles
     // ===============
 
+    GenParticle p4suminvis;
     for(size_t i=0; i<gps->size(); i++){
-      int id = fabs(gps->at(i).pdgId());
+      int id = abs(gps->at(i).pdgId());
 
       // This selects all particles in their final form (i.e. after radiation, but before potential decay, to compare to particles from hard process)
-      bool isfinal = gps->at(i).isLastCopy();
+      bool isfinal      = gps->at(i).isLastCopy();
+      bool isfinalstate = gps->at(i).status() == 1;
 
       //This selects all final-state particles (i.e. no intermediate particles that decay further)
       bool ishard  = gps->at(i).isHardProcess();
-      bool isprompttaudecayprod = gps->at(i).statusFlags().isPromptTauDecayProduct() && gps->at(i).status() == 1;
       bool keepfinal = false;
+      bool finalstate_invis = false;
       if(isfinal){
         //keep, if final particle is b, t, tau, or nutau
+        for(size_t j=0; j<npids.size(); j++){
+          if(id == npids[j]) keepfinal = true;
+        }
         if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
+      }
+
+      // find all (hopefully) invisible particles in final state
+      if(isfinalstate){
+        for(size_t j=0; j<dmids.size(); j++){
+          if(id == dmids[j]) finalstate_invis = true;
+        }
+        if(id == 12 || id == 14 || id == 16) finalstate_invis = true;
+        // finalstate_invis = true;
       }
 
       // this will be written out if we keep this particle
@@ -130,15 +148,39 @@ int main(int argc, char* argv[]){
       p.set_phi(gps->at(i).phi());
       p.set_m(gps->at(i).mass());
       p.set_pdgid(gps->at(i).pdgId());
+      p.set_ndaughters(gps->at(i).numberOfDaughters());
 
       if(keepfinal){
         gps_final->emplace_back(p);
+        // save visible daughters of final taus (not only from hard-process-taus)
+        if(id == 15){
+          vector<reco::GenParticle> dummydaus = {};
+          vector<reco::GenParticle> taudaus = finalDaughters(gps->at(i), dummydaus);
+          vector<GenParticle> tds = {};
+          for(size_t j=0; j<taudaus.size(); j++){
+            GenParticle thisp;
+            thisp.set_p4(taudaus[j].pt(), taudaus[j].eta(), taudaus[j].phi(), taudaus[j].mass());
+            thisp.set_pdgid(taudaus[j].pdgId());
+            thisp.set_ndaughters(taudaus[j].numberOfDaughters());
+            tds.emplace_back(thisp);
+          }
+          TLorentzVector p4vis = p4sumvis(tds);
+
+          GenParticle taudaughters_visible;
+          taudaughters_visible.set_p4(p4vis);
+          taudaughters_visible.set_pdgid(gps->at(i).pdgId());
+          taudaughters_visible.set_ndaughters((int)tds.size());
+          gps_tauvis->emplace_back(taudaughters_visible);
+        }
       }
       if(ishard){
         gps_hard->emplace_back(p);
       }
-      if(isprompttaudecayprod){
-        gps_prompttaudecayprod->emplace_back(p);
+      if(finalstate_invis){
+        // gps_finalstate_invisible->emplace_back(p);
+        TLorentzVector p4current = p4suminvis.p4();
+        p4current += p.p4();
+        p4suminvis.set_p4(p4current);
       }
     }
 
@@ -147,12 +189,11 @@ int main(int argc, char* argv[]){
     // ==========
 
     for(size_t i=0; i<gjs->size(); i++){
-
       GenJet gj;
       gj.set_p4(gjs->at(i).pt(), gjs->at(i).eta(), gjs->at(i).phi(), gjs->at(i).mass());
-      gj.set_n_constituents(gjs->at(i).getGenConstituents().size());
 
       // remove NP particles that have been clustered into a jet from the jet. Only happens for DM.
+      int n_const_removed = 0;
       for(size_t j=0; j<gjs->at(i).getGenConstituents().size(); j++){
         int id = abs(gjs->at(i).getGenConstituents().at(j)->pdgId());
         for(size_t k=0; k<npids.size(); k++){
@@ -164,15 +205,16 @@ int main(int argc, char* argv[]){
 
             //Remove np 4-momentum
             gj.set_p4(gj.p4() - np.p4());
+            n_const_removed++;
           }
         }
       }
+      gj.set_n_constituents(gjs->at(i).getGenConstituents().size() - n_const_removed);
 
       // save only genjets with at least 5GeV and |eta| < 5
       if(gj.pt() < 5 || fabs(gj.eta()) > 5.) continue;
       genjets->emplace_back(gj);
     }
-
 
     // Do GenMET
     // =========
@@ -180,20 +222,22 @@ int main(int argc, char* argv[]){
     genmet->set_pt(gm->at(0).pt());
     genmet->set_phi(gm->at(0).phi());
 
+    met_from_invis->set_pt(p4suminvis.pt());
+    met_from_invis->set_phi(p4suminvis.phi());
+
 
     // Do weight
     // =========
     weight = gif->weight();
 
 
-    // b_gps_final             ->SetAddress(&gps_final);
-    // b_gps_hard              ->SetAddress(&gps_hard);
-    // b_gps_prompttaudecayprod->SetAddress(&gps_prompttaudecayprod);
-    // b_genjets               ->SetAddress(&genjets);
+
     event->genmet = genmet;
+    event->met_from_invis = met_from_invis;
     event->genparticles_hard = gps_hard;
     event->genparticles_final = gps_final;
-    event->genparticles_prompttaudecayprod = gps_prompttaudecayprod;
+    // event->genparticles_finalstate_invisible = gps_finalstate_invisible;
+    event->genparticles_visibletaus = gps_tauvis;
     event->genjets = genjets;
     event->weight = weight;
     tree->Fill();
@@ -201,8 +245,9 @@ int main(int argc, char* argv[]){
 
     delete gps_final;
     delete gps_hard;
-    delete gps_prompttaudecayprod;
+    delete gps_tauvis;
     delete genmet;
+    delete met_from_invis;
     delete genjets;
   }
 
@@ -210,4 +255,37 @@ int main(int argc, char* argv[]){
   tree->Write();
   outfile->Close();
   cout << green << "--> Successfully finished tuplization." << reset << endl;
+}
+
+
+
+
+
+
+
+TLorentzVector p4sumvis(vector<GenParticle> particles){
+  TLorentzVector result;
+  for(size_t i=0; i<particles.size(); i++){
+    int id = abs(particles.at(i).pdgid());
+    if(id != 12 && id != 14 && id != 16) result += particles.at(i).p4();
+  }
+  return result;
+}
+
+vector<reco::GenParticle> finalDaughters(const reco::GenParticle particle, vector<reco::GenParticle> daus){
+  //   //Fills daughters with all the daughters of particle recursively.
+  vector<reco::GenParticle> daughters = daus;
+  if(particle.numberOfDaughters()==0) daughters.emplace_back(particle);
+  else{
+    bool foundDaughter = false;
+    for(size_t i=0; i<particle.numberOfDaughters(); i++){
+      const reco::GenParticle* dau = ((reco::GenParticle*)(particle.daughter(i)));
+      if(dau->status()>=1){
+        daughters = finalDaughters( *dau, daughters );
+        foundDaughter = true;
+      }
+    }
+    if(!foundDaughter) daughters.emplace_back(particle);
+  }
+  return daughters;
 }

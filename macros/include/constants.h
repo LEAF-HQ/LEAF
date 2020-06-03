@@ -34,7 +34,7 @@ const std::vector<massconfig> mass_configurations = {
 };
 // const std::vector<massconfig> mass_configurations = {
 //   //MLQ, MX , MDM following the ordering in massconfig.h
-//   {600,  220, 200}
+//   {1400, 660, 600}
 // };
 
 const std::vector<double> lambdas = {1.0};

@@ -4,6 +4,7 @@
 #include "Event.h"
 
 typedef std::function<bool (const GenJet &, const Event &)> GenJetId;
+typedef std::function<bool (const GenParticle &, const Event &)> GenParticleId;
 
 
 class PtEtaId{

@@ -18,11 +18,14 @@ public:
   ~GenParticle() = default;
 
   int pdgid() const {return m_pdgid;};
+  int ndaughters() const {return m_ndaughters;};
 
   void set_pdgid(int x) {m_pdgid = x;};
+  void set_ndaughters(int x) {m_ndaughters = x;};
 
 
 protected:
   int m_pdgid = -1;
+  int m_ndaughters = -1;
 
 };

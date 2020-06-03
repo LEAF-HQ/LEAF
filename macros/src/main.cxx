@@ -1,8 +1,8 @@
 #include <cmath>
 #include <iostream>
-#include "../include/GenlevelTool.h"
-#include "../include/PlottingTool.h"
-#include "../include/constants.h"
+#include "include/GenlevelTool.h"
+#include "include/PlottingTool.h"
+#include "include/constants.h"
 #include <TString.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
@@ -33,15 +33,17 @@ int main(){
       // ========================
       GenlevelTool GenTool(MLQ, MX, MDM, lambda, debug);
       // looping over events
-      GenTool.LoopEvents();
+      // GenTool.LoopEvents();
     }
   }
 
   PlottingTool Plotter;
   // Plotter.PlotGenlevel(false, true, false);
   // Plotter.PlotGenlevel(true, true, false);
-  // Plotter.PlotGenlevel(false, true, true);
-  // Plotter.PlotGenlevel(true, true, true);
+  // Plotter.PlotGenlevel(false, false, false);   // lin Y
+  // Plotter.PlotGenlevel(true, false, false);    // lin Y
+  Plotter.PlotGenlevel(false, true, true);        // SinglePDF
+  Plotter.PlotGenlevel(true, true, true);         // SinglePDF
 
 
 

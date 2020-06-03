@@ -24,5 +24,11 @@ double deltaPhi(const T & p1, const U & p2);
 template<typename T, typename U>
 double deltaEta(const T & p1, const U & p2);
 
-template<typename T, typename U>
-double deltaR(const T & p1, const U & p2);
+// template<typename T, typename U>
+// double deltaR(const T & p1, const U & p2);
+double deltaR(const Particle & p1, const Particle & p2);
+
+template<typename P>
+inline void sort_by_pt(std::vector<P> & particles){
+    std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
+}

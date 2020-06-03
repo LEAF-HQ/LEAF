@@ -4,11 +4,11 @@ CC = g++
 BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
 
 # CFLAGS = -std=c++0x -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
-CFLAGS = -std=c++17 -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
 CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH}
-LFLAGS = -Wall -I. -lm -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${MACROLIBPATH}
+LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${MACROLIBPATH}
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lClassDictionaries
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lClassDictionaries
 
 INCDIR   = include
 SRCDIR   = src
@@ -27,7 +27,7 @@ SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
 OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
 
 # Tuplizer only needs a few sources, giving them by hand avoids compiling the entire folder
-SOURCESTUP  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/Event.cc 
+SOURCESTUP  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/Event.cc
 OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
 all: Tuplizer main
@@ -37,7 +37,7 @@ main: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/main.o
 	@echo "--> Creating main"
 	@$(CC) $(OBJECTS) $(OBJDIR)/main.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
-Tuplizer: $(OBJDIR)/Tuplizer.o libClassDictionaries.so $(OBJECTSTUP)
+Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
 	@echo "--> Creating Tuplizer"
 	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 

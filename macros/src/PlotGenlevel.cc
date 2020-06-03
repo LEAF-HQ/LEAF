@@ -93,7 +93,6 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
   //set up canvas
   TCanvas* c = new TCanvas("c", "c", 400, 400);
   TPad* pad = SetupPad();
-  if(logy) pad->SetLogy(true);
   pad->Draw();
   pad->cd();
 
@@ -113,12 +112,13 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
     for(size_t j=0; j<infiles.size(); j++){
       TH1F* hist = ((TH1F*)infiles[j]->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
-      maximum = max(maximum, hist->GetMaximum());
+      maximum = max(max(maximum, hist->GetMaximum()), 1E-4);
       hists.emplace_back(hist);
     }
 
     double minimum = 0.;
-    if(logy) minimum = 5E-8;
+    if(normalize) minimum = 5E-5;
+    else if(logy) minimum = 5E-10;
     double maxscale = 1.5;
     if(logy) maxscale = 100;
     for(size_t j=0; j<hists.size(); j++){
@@ -132,6 +132,7 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
       leg->AddEntry(hist, labels[j], "l");
     }
     leg->Draw();
+    if(logy) pad->SetLogy(true);
 
     if(singlePDF){
       TString outfilename = outfolder + "SinglePDF/" + foldername + "_" + histname + ".pdf";

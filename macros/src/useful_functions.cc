@@ -1,6 +1,7 @@
 #include "include/GenlevelTool.h"
 #include "include/cosmetics.h"
 #include "include/constants.h"
+#include "include/useful_functions.h"
 #include <TH1D.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>
@@ -71,8 +72,9 @@ double deltaEta(const T & p1, const U & p2){
 
 /// distance in R
 // T and U have to have a 'eta()' and 'phi()' method, e.g. Particle etc.
-template<typename T, typename U>
-double deltaR(const T & p1, const U & p2){
+// template<typename T, typename U>
+// double deltaR(const T & p1, const U & p2){
+double deltaR(const Particle & p1, const Particle & p2){
   double de = deltaEta(p1, p2);
   double dp = deltaPhi(p1, p2);
   return sqrt(de * de + dp * dp);

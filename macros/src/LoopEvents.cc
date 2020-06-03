@@ -35,12 +35,7 @@ void GenlevelTool::LoopEvents(){
 
   // Set up variables used in 'AnalysisTree', read from Tuples
   // ========================================================
-
-  TTreeReaderValue<Met> genmet(myReaderEvent, "GenMET");
-  TTreeReaderValue<vector<GenParticle>> gps_hard(myReaderEvent, "GenparticlesHard");
-  TTreeReaderValue<vector<GenParticle>> gps_final(myReaderEvent, "GenparticlesFinal");
-  TTreeReaderValue<vector<GenParticle>> gps_prompttaudecayprod(myReaderEvent, "GenparticlesPromptTauDecayProd");
-  TTreeReaderValue<vector<GenJet>>      genjets(myReaderEvent, "GenJets");
+  TTreeReaderValue<Event> ev(myReaderEvent, "Event");
 
 
   // Get cross section TGraph from file
@@ -62,20 +57,12 @@ void GenlevelTool::LoopEvents(){
     if(debug && (idx%10000==0)) cout << green << "    --> Processing event no. (" << idx << " / " << nevt << ")" << reset << endl;
     idx++;
 
-    Event event;
-    event.genmet = &*genmet;
-    event.genparticles_hard = &*gps_hard;
-    event.genparticles_final = &*gps_final;
-    event.genparticles_prompttaudecayprod = &*gps_prompttaudecayprod;
-    event.genjets = &*genjets;
-
-    // set eventweight --  generator weight * xsec / nevt --> normalization corresponds to L_int = 1/pb
-    // event.weight = *evweight;
+    Event event = *ev;
     event.weight *= xsec / double(nevt);
 
     // call event loop, main part of this function!
     Process(event);
-    // event.clear();
+    event.clear();
   }
 
 
@@ -88,7 +75,7 @@ void GenlevelTool::LoopEvents(){
   TString outfilename = outfolder + "LQDM_" + get_samplename(MLQ, MX, MDM, lambda) + ".root";
   unique_ptr<TFile> outfile;
   outfile.reset(new TFile(outfilename, "RECREATE"));
-  for(const auto & x : histmap) x.second->save(outfile.get());
+  for(const string & x : histfolders) histmap[x]->save(outfile.get());
   outfile->Close();
   cout << green << "--> Wrote histograms to file: " << outfilename << reset << endl;
 }

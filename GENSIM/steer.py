@@ -54,7 +54,7 @@ def main():
     gensim           = False
     resubmit         = False
     tuplize          = False
-    add              = True
+    add              = False
 
     submit           = False
 

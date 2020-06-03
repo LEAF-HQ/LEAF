@@ -38,6 +38,6 @@ protected:
   TString dir;
   map<TString, shared_ptr<TH1>> hists;
 
-  shared_ptr<TH1F> nlq, nx, ndm, njets, nb, nbcut, nbcut50, ntau, ntaucut, ntaucut50, ntaucut_vis, ntaucut50_vis, mlq1, mlq2, mx, mdm1, mdm2, ptlq1, ptlq2, ptx, ptdm1, ptdm2, etalq1, etalq2, etax, etadm1, etadm2, philq1, philq2, phix, phidm1, phidm2, ptjet1, ptjet2, ptjet3, ptb1, ptb2, pttau1, pttau2, pttauvis1, pttauvis2, etajet1, etajet2, etajet3, etab1, etab2, etatau1, etatau2, etatauvis1, etatauvis2, phijet1, phijet2, phijet3, phib1, phib2, phitau1, phitau2, phitauvis1, phitauvis2, mjet1, mjet2, mjet3, mb1, mb2, mtau1, mtau2, mtauvis1, mtauvis2, ptmet, phimet, st, stmet;
+  shared_ptr<TH1F> hnlq, hnx, hndm, hnjets, hnbhard, hntauhard, hntauvis, hmlq1, hmlq2, hmx, hmdm1, hmdm2, hptlq1, hptlq2, hptx, hptdm1, hptdm2, hetalq1, hetalq2, hetax, hetadm1, hetadm2, hphilq1, hphilq2, hphix, hphidm1, hphidm2, hptjet1, hptjet2, hptjet3, hptbhard1, hptbhard2, hpttauhard1, hpttauhard2, hpttauvis1, hpttauvis2, hetajet1, hetajet2, hetajet3, hetabhard1, hetabhard2, hetatauhard1, hetatauhard2, hetatauvis1, hetatauvis2, hphijet1, hphijet2, hphijet3, hphibhard1, hphibhard2, hphitauhard1, hphitauhard2, hphitauvis1, hphitauvis2, hmjet1, hmjet2, hmjet3, hmbhard1, hmbhard2, hmtauhard1, hmtauhard2, hmtauvis1, hmtauvis2, hdrminj1tauvis, hdrminj2tauvis, hptmet, hphimet, hptmetfrominvis, hphimetfrominvis, hst, hstmet, hstmetfrominvis, hmj1tauvis1, hsumweights;
 
 };
