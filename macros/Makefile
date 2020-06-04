@@ -3,12 +3,13 @@ CC = g++
 #This assumes the last element of CMSSW_FWLITE_INCLUDE_PATH is the path to the external boost include directory
 BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
 
-# CFLAGS = -std=c++0x -Wall -lMinuit -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
 CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
 CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH}
 LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${MACROLIBPATH}
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lClassDictionaries
+CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries
+LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
 
 INCDIR   = include
 SRCDIR   = src
@@ -30,30 +31,30 @@ OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
 SOURCESTUP  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/Event.cc
 OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
-all: Tuplizer main
+# Plotter also only needs a few sources, giving them by hand avoids compiling the entire folder
+SOURCESPLOT  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/PlottingTool.cc $(SRCDIR)/cosmetics.cc $(SRCDIR)/PlotGenlevel.cc
+OBJECTSPLOT  := $(SOURCESPLOT:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
+
+all: Tuplizer Plotter Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
-main: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/main.o
-	@echo "--> Creating main"
-	@$(CC) $(OBJECTS) $(OBJDIR)/main.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
+	@echo "--> Creating Analyzer"
+	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
 	@echo "--> Creating Tuplizer"
 	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
+Plotter: $(OBJECTSPLOT) $(OBJDIR)/Plotter.o
+	@echo "--> Creating Plotter"
+	@$(CC) $(OBJECTSPLOT) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSPLOT)
+
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
 
-# $(OBJECTSEXE): $(OBJDIR)/%.o : $(SRCDIR)/%.cxx
-# 	@echo "--> Creating object $@"
-# 	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
-
-$(OBJDIR)/Tuplizer.o: $(SRCDIR)/Tuplizer.cxx
-	@echo "--> Creating object $@"
-	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
-
-$(OBJDIR)/main.o: $(SRCDIR)/main.cxx
+$(OBJECTSEXE): $(OBJDIR)/%.o : $(SRCDIR)/%.cxx
 	@echo "--> Creating object $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(LIBSMAIN)
 
@@ -71,4 +72,4 @@ $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 
 clean:
 	@echo "--> cleaning folders $(OBJDIR)/, $(LIBDIR)/, and $(BINDIR)/"
-	@rm -f $(wildcard $(OBJDIR)/*.o) $(LIBOBJS)
+	@rm -f $(wildcard $(OBJDIR)/*.o) $(LIBOBJS) $(BINARIES)

@@ -6,8 +6,8 @@
 #include <TFile.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
-#include "../include/Event.h"
-#include "../include/GenHists.h"
+#include "include/Event.h"
+#include "include/GenHists.h"
 
 class PlottingTool {
 

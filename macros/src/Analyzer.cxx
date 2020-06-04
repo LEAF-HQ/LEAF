@@ -36,18 +36,4 @@ int main(){
       // GenTool.LoopEvents();
     }
   }
-
-  PlottingTool Plotter;
-  // Plotter.PlotGenlevel(false, true, false);
-  // Plotter.PlotGenlevel(true, true, false);
-  // Plotter.PlotGenlevel(false, false, false);   // lin Y
-  // Plotter.PlotGenlevel(true, false, false);    // lin Y
-  Plotter.PlotGenlevel(false, true, true);        // SinglePDF
-  Plotter.PlotGenlevel(true, true, true);         // SinglePDF
-
-
-
-
-  // Done
-  cout << "Finished main(). cya." << endl;
 }
