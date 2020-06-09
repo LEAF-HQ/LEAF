@@ -42,6 +42,7 @@ namespace std {} using namespace std;
 #include "include/Particle.h"
 #include "include/constants.h"
 #include "include/classes.h"
+#include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -49,9 +50,11 @@ namespace std {} using namespace std;
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
-#include "include/cosmetics.h"
+#include "include/pugiconfig.h"
 #include "include/PlottingTool.h"
+#include "include/cosmetics.h"
 #include "include/GenlevelTool.h"
+#include "include/pugixml.h"
 #include "include/useful_functions.h"
 
 // Header files passed via #pragma extra_include
@@ -709,6 +712,7 @@ namespace {
 "include/Particle.h",
 "include/constants.h",
 "include/classes.h",
+"include/Config.h",
 "include/GenHists.h",
 "include/Met.h",
 "include/GenJet.h",
@@ -716,9 +720,11 @@ namespace {
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
-"include/cosmetics.h",
+"include/pugiconfig.h",
 "include/PlottingTool.h",
+"include/cosmetics.h",
 "include/GenlevelTool.h",
+"include/pugixml.h",
 "include/useful_functions.h",
 0
     };
@@ -754,6 +760,7 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 #include "include/Particle.h"
 #include "include/constants.h"
 #include "include/classes.h"
+#include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -761,9 +768,11 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
-#include "include/cosmetics.h"
+#include "include/pugiconfig.h"
 #include "include/PlottingTool.h"
+#include "include/cosmetics.h"
 #include "include/GenlevelTool.h"
+#include "include/pugixml.h"
 #include "include/useful_functions.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H

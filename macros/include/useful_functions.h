@@ -4,6 +4,7 @@
 #include <TH1F.h>
 #include <vector>
 #include "include/constants.h"
+#include <libxml/xmlreader.h>
 
 // using namespace std;
 TString lambstr(double lambda);
@@ -32,3 +33,18 @@ template<typename P>
 inline void sort_by_pt(std::vector<P> & particles){
     std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
 }
+
+void validateConfigFile(const char *filename);
+xmlNode* findNodeByName(xmlNode* rootnode, TString name);
+
+float getDatasetLumi(xmlNode* node);
+TString getDatasetName(xmlNode* node);
+TString getDatasetType(xmlNode* node);
+TString getDatasetFilename(xmlNode* node);
+
+TString getJobOutputpath(xmlNode* node);
+TString getJobPostfix(xmlNode* node);
+float getJobTargetlumi(xmlNode* node);
+
+std::string getVariableName(xmlNode* node);
+std::string getVariableValue(xmlNode* node);

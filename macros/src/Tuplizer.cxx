@@ -70,7 +70,6 @@ int main(int argc, char* argv[]){
   Met* genmet, *met_from_invis;
   vector<GenParticle>* gps_hard;
   vector<GenParticle>* gps_final;
-  // vector<GenParticle>* gps_finalstate_invisible;
   vector<GenParticle>* gps_tauvis;
   vector<GenJet>*      genjets;
 
@@ -101,7 +100,6 @@ int main(int argc, char* argv[]){
 
     gps_hard               = new vector<GenParticle>;
     gps_final              = new vector<GenParticle>;
-    // gps_finalstate_invisible         = new vector<GenParticle>;
     gps_tauvis             = new vector<GenParticle>;
     genjets                = new vector<GenJet>;
     genmet                 = new Met;

@@ -62,18 +62,18 @@ def main():
 
 
     # Gridpack generation
-    if make_cards: ProduceCards()
+    if make_cards:       ProduceCards()
     if submit_gridpacks: SubmitGridpacks(submit=submit)
-    if copy_gridpacks: CopyGridpacks(submit=submit)
-    if clean_mg_area: CleanMGArea(submit=submit)
+    if copy_gridpacks:   CopyGridpacks(submit=submit)
+    if clean_mg_area:    CleanMGArea(submit=submit)
 
     # GENSIM generation
-    if gensim:   SubmitGensim(submit=submit)
-    if resubmit: ResubmitGensim(submit=submit)
+    if gensim:           SubmitGensim(submit=submit)
+    if resubmit:         ResubmitGensim(submit=submit)
 
     # Tuple generation
-    if tuplize:  SubmitTuplize(submit=submit)
-    if add:      SubmitAdd(submit=submit)
+    if tuplize:          SubmitTuplize(submit=submit)
+    if add:              SubmitAdd(submit=submit)
 
     # continue the analysis with "macros" to plot simple files
 

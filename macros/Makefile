@@ -2,13 +2,15 @@ CC = g++
 
 #This assumes the last element of CMSSW_FWLITE_INCLUDE_PATH is the path to the external boost include directory
 BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
+LIBINCLUDES := $(subst :, -L,$(MACROLIBPATH))
 
-CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH}
-CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH}
-LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${MACROLIBPATH}
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${MACROPATH} `xml2-config --cflags`
+CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH} `xml2-config --cflags`
+# `xml2-config --cflags`
+LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} `xml2-config --libs`
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
 CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2 #-lPugiXML
 LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
 
 INCDIR   = include
@@ -21,7 +23,7 @@ BINARIES    := $(wildcard $(BINDIR)/*)
 
 SOURCES     := $(wildcard $(SRCDIR)/*.cc)
 INCLUDES    := $(wildcard $(INCDIR)/*.h)
-LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm)
+LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm $(LIBDIR)/*.cxx_tmp*)
 OBJECTS     := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
 SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)

@@ -17,6 +17,7 @@
 #include <TTreeReaderValue.h>
 #include <iostream>
 #include <sys/stat.h>
+#include <libxml/xmlreader.h>
 
 using namespace std;
 
@@ -78,4 +79,119 @@ double deltaR(const Particle & p1, const Particle & p2){
   double de = deltaEta(p1, p2);
   double dp = deltaPhi(p1, p2);
   return sqrt(de * de + dp * dp);
+}
+
+
+void validateConfigFile(const char *filename){
+  xmlTextReaderPtr reader;
+  int ret;
+
+  /* default DTD attributes */  /* substitute entities */  /* validate with the DTD */
+  reader = xmlReaderForFile(filename, NULL, XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
+  if (reader != NULL) {
+    ret = xmlTextReaderRead(reader);
+    while (ret == 1) {
+      // processNode(reader);
+      ret = xmlTextReaderRead(reader);
+    }
+    /*
+    * Once the document has been fully parsed check the validation results
+    */
+    if (xmlTextReaderIsValid(reader) != 1) {
+      fprintf(stderr, "Document %s does not validate\n", filename);
+    }
+    xmlFreeTextReader(reader);
+    if (ret != 0) {
+      fprintf(stderr, "%s : failed to parse\n", filename);
+    }
+  } else {
+    fprintf(stderr, "Unable to open %s\n", filename);
+  }
+}
+
+xmlNode* findNodeByName(xmlNode* rootnode, TString name){
+  string s_nn = (string)name;
+  const xmlChar* nodename = (xmlChar*)(s_nn.c_str());
+
+  xmlNode* node = rootnode;
+  if(node == NULL){
+    cout << red << "Document is empty!" << reset << endl;
+    return NULL;
+  }
+  while(node != NULL){
+
+    if(node->type != XML_ELEMENT_NODE){
+      node = node->next;
+      continue;
+    }
+
+    if(!xmlStrcmp(node->name, nodename)){
+      return node;
+    }
+    else if(node->children != NULL){
+      // node = node->children;
+      xmlNode* intNode =  findNodeByName(node->children, name);
+      if(intNode != NULL){
+        return intNode;
+      }
+    }
+    node = node->next;
+  }
+  return NULL;
+}
+
+float getDatasetLumi(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Lumi");
+  string s_lumi = (const char*)prop;
+  float lumi = stod(s_lumi);
+  return lumi;
+}
+
+TString getDatasetName(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Name");
+  TString name = (const char*)prop;
+  return name;
+}
+
+TString getDatasetType(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Type");
+  TString type = (const char*)prop;
+  return type;
+}
+
+TString getDatasetFilename(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"File");
+  TString file = (const char*)prop;
+  return file;
+}
+
+TString getJobOutputpath(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"OutputDirectory");
+  TString path = (const char*)prop;
+  return path;
+}
+
+TString getJobPostfix(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Postfix");
+  TString pf = (const char*)prop;
+  return pf;
+}
+
+float getJobTargetlumi(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"TargetLumi");
+  string s_lumi = (const char*)prop;
+  float lumi = stod(s_lumi);
+  return lumi;
+}
+
+string getVariableName(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Name");
+  string name = (const char*)prop;
+  return name;
+}
+
+string getVariableValue(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Value");
+  string value = (const char*)prop;
+  return value;
 }

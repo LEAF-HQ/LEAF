@@ -2,20 +2,18 @@
 #include <TFile.h>
 #include <iostream>
 
-#include "../include/GenlevelTool.h"
-#include "../include/useful_functions.h"
+#include "include/GenlevelTool.h"
+#include "include/useful_functions.h"
+#include <sys/stat.h>
 
 using namespace std;
 
-GenlevelTool::GenlevelTool(double MLQ_, double MX_, double MDM_, double lambda_, bool debug_) : MLQ(MLQ_), MX(MX_), MDM(MDM_), lambda(lambda_), debug(debug_){
+GenlevelTool::GenlevelTool(const Config & cfg){
 
-  base_path_gensimtuples  = "/work/areimers/Tuples/LQDM/GENSIM/";
-  base_path_analysisfiles = "/work/areimers/LQDM/GENSIM/analysisfiles/";
   base_path_crosssections = "/work/areimers/LQDM/GENSIM/crosssections/";
-  base_path_out           = "/work/areimers/LQDM/GENSIM/";
 
-  TString simple_file_name = base_path_gensimtuples + "LQDM_" + get_samplename(MLQ, MX, MDM, lambda) + "/Tuples.root";
-  simple_file.reset(new TFile(simple_file_name, "READ"));
+  TString infilename = cfg.dataset_filename();
+  simple_file.reset(new TFile(infilename, "READ"));
 
 
   SetupModules();
@@ -39,11 +37,32 @@ void GenlevelTool::SetupModules(){
 // Define all histogram-sets that are later filled in GenlevelTool::Process
 void GenlevelTool::SetupHistograms(){
 
-  histfolders = {"input", "cleaner", "objectselection", "stmet"};
 
+  histfolders = {"input", "cleaner", "objectselection", "stmet"};
   for(const string & s : histfolders){
     string histname = "gen_" + s;
     histmap[s].reset(new GenHists(histname));
   }
+
+}
+
+// Write all output to the outputfile
+void GenlevelTool::WriteOutput(const Config & cfg){
+
+
+// Store filled histograms
+// =======================
+
+// make sure outdir exists
+TString outfolder = cfg.output_directory();
+mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+
+// create file and store things
+TString outfilename = outfolder + cfg.dataset_type() + "__" + cfg.dataset_name() + ".root";
+unique_ptr<TFile> outfile;
+outfile.reset(new TFile(outfilename, "RECREATE"));
+for(const string & x : histfolders) histmap[x]->save(outfile.get());
+outfile->Close();
+cout << green << "--> Wrote histograms to file: " << outfilename << reset << endl;
 
 }
