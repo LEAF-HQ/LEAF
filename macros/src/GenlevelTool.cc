@@ -10,8 +10,6 @@ using namespace std;
 
 GenlevelTool::GenlevelTool(const Config & cfg){
 
-  base_path_crosssections = "/work/areimers/LQDM/GENSIM/crosssections/";
-
   TString infilename = cfg.dataset_filename();
   simple_file.reset(new TFile(infilename, "READ"));
 
