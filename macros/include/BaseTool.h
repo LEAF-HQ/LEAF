@@ -21,6 +21,7 @@ public:
   // Base functions
   void LoopEvents(const Config & cfg);
   void WriteOutput(const Config & cfg);
+  void ProcessDataset(const Config & cfg);
 
   // This is called for each event, do the analysis here. In this base class, this is only some default behavior
   virtual bool Process(Event & event){return true;};

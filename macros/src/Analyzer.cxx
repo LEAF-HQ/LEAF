@@ -26,15 +26,7 @@ int main(int argc, char* argv[]){
   while(cfg.idx() < cfg.n_datasets()){
 
     GenlevelTool GenTool(cfg);
-
-
-
-
-
-
-    GenTool.LoopEvents(cfg);
-    GenTool.WriteOutput(cfg);
-
+    GenTool.ProcessDataset(cfg);
 
 
     cfg.increment_idx();

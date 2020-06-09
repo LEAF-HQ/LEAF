@@ -60,3 +60,9 @@ void BaseTool::WriteOutput(const Config & cfg){
   cout << green << "--> Wrote histograms to file: " << outfilename << reset << endl;
 
 }
+
+// sumary of necessary functions
+void BaseTool::ProcessDataset(const Config & cfg){
+  LoopEvents(cfg);
+  WriteOutput(cfg);
+}

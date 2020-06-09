@@ -12,6 +12,8 @@
 #include "include/Config.h"
 #include "include/BaseTool.h"
 
+using namespace std;
+
 class GenlevelTool : public BaseTool {
 
 public:
@@ -31,11 +33,5 @@ private:
   unique_ptr<GenJetCleaner>       cleaner_genjet;
   unique_ptr<GenVisTauCleaner>    cleaner_genvistau;
   unique_ptr<GenJetVisTauCleaner> cleaner_genjetvistau;
-
-
-
-
-
-
 
 };
