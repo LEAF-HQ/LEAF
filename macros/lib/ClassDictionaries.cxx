@@ -50,11 +50,10 @@ namespace std {} using namespace std;
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
-#include "include/pugiconfig.h"
-#include "include/PlottingTool.h"
 #include "include/cosmetics.h"
+#include "include/PlottingTool.h"
+#include "include/BaseTool.h"
 #include "include/GenlevelTool.h"
-#include "include/pugixml.h"
 #include "include/useful_functions.h"
 
 // Header files passed via #pragma extra_include
@@ -720,11 +719,10 @@ namespace {
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
-"include/pugiconfig.h",
-"include/PlottingTool.h",
 "include/cosmetics.h",
+"include/PlottingTool.h",
+"include/BaseTool.h",
 "include/GenlevelTool.h",
-"include/pugixml.h",
 "include/useful_functions.h",
 0
     };
@@ -768,11 +766,10 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
-#include "include/pugiconfig.h"
-#include "include/PlottingTool.h"
 #include "include/cosmetics.h"
+#include "include/PlottingTool.h"
+#include "include/BaseTool.h"
 #include "include/GenlevelTool.h"
-#include "include/pugixml.h"
 #include "include/useful_functions.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H

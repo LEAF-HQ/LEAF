@@ -314,5 +314,8 @@ void GenHists::save(TFile* outfile){
   outfile->cd();
   outfile->mkdir(dir);
   outfile->cd(dir);
-  for(const auto & m : hists) m.second->Write();
+
+  for(const auto & m : hists){
+    m.second->Write();
+  }
 }

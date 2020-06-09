@@ -10,7 +10,7 @@ CFLAGSDICT = -std=c++17 -fPIC -Wall -I${MACROPATH} `xml2-config --cflags`
 LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} `xml2-config --libs`
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
 CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2 #-lPugiXML
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2
 LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
 
 INCDIR   = include

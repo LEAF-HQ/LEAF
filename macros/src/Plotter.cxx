@@ -12,12 +12,12 @@ int main(){
   cout << "Hello from the Plotter." << endl;
 
   PlottingTool Plotter;
-  // Plotter.PlotGenlevel(false, true, false);
-  // Plotter.PlotGenlevel(true, true, false);
+  Plotter.PlotGenlevel(false, true, false);
+  // Plotter.PlotGenlevel(true, true, false);     // normalized
   // Plotter.PlotGenlevel(false, false, false);   // lin Y
-  // Plotter.PlotGenlevel(true, false, false);    // lin Y
-  Plotter.PlotGenlevel(false, true, true);        // SinglePDF
-  Plotter.PlotGenlevel(true, true, true);         // SinglePDF
+  // Plotter.PlotGenlevel(true, false, false);    // lin Y normalized
+  // Plotter.PlotGenlevel(false, true, true);        // SinglePDF
+  // Plotter.PlotGenlevel(true, true, true);         // SinglePDF normalized
 
 
 

@@ -10,34 +10,18 @@
 #include "include/GenHists.h"
 #include "include/CleaningModules.h"
 #include "include/Config.h"
+#include "include/BaseTool.h"
 
-class GenlevelTool {
+class GenlevelTool : public BaseTool {
 
 public:
   // Constructors, destructor
   GenlevelTool(const Config & cfg);
   ~GenlevelTool() = default;
-
-  // Base functions
-  void SetupModules();
-  void SetupHistograms();
-  void LoopEvents();
-  void LoopEvents(const Config & cfg);
-  void WriteOutput(const Config & cfg);
-
-  // This is called for each event, do the analysis here
-  bool Process(Event & event);
+  virtual bool Process(Event & event) override;
 
 
 private:
-
-  // For internal use, do not touch
-  std::unique_ptr<TFile> simple_file;
-  int nevt;
-  Event event;
-  vector<string> histfolders;
-  map<TString, unique_ptr<GenHists>> histmap;
-
 
   // Modules used in the analysis
   GenJetId      genjet_id;
