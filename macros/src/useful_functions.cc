@@ -1,4 +1,3 @@
-#include "include/GenlevelTool.h"
 #include "include/cosmetics.h"
 #include "include/constants.h"
 #include "include/useful_functions.h"
@@ -86,6 +85,7 @@ void validateConfigFile(const char *filename){
   xmlTextReaderPtr reader;
   int ret;
 
+
   /* default DTD attributes */  /* substitute entities */  /* validate with the DTD */
   reader = xmlReaderForFile(filename, NULL, XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
   if (reader != NULL) {
@@ -99,6 +99,7 @@ void validateConfigFile(const char *filename){
     */
     if (xmlTextReaderIsValid(reader) != 1) {
       fprintf(stderr, "Document %s does not validate\n", filename);
+      throw runtime_error("Couldn't validate config file. Abort.");
     }
     xmlFreeTextReader(reader);
     if (ret != 0) {
@@ -182,6 +183,12 @@ float getJobTargetlumi(xmlNode* node){
   string s_lumi = (const char*)prop;
   float lumi = stod(s_lumi);
   return lumi;
+}
+
+string getJobAnalysisTool(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"AnalysisTool");
+  string at = (const char*)prop;
+  return at;
 }
 
 string getVariableName(xmlNode* node){

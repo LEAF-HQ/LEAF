@@ -5,6 +5,7 @@
 #include <map>
 #include <TTreeReader.h>
 #include <TROOT.h>
+#include "include/Event.h"
 
 using namespace std;
 

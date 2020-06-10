@@ -26,11 +26,11 @@
 ]>
 
 
-<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;">
+<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="GenlevelTool">
     <InputDatasets>
         <Dataset Name="LQDM_MLQ600_MX220_MDM200_L1p0"  Lumi="1.74317e+06" Type="MC" File="&LQDM_MLQ600_MX220_MDM200_L1p0;" />
-        <Dataset Name="LQDM_MLQ700_MX275_MDM250_L1p0"  Lumi="4.64684e+06" Type="MC" File="&LQDM_MLQ700_MX275_MDM250_L1p0;" />
-        <Dataset Name="LQDM_MLQ800_MX330_MDM300_L1p0"  Lumi="1.1194e+07"  Type="MC" File="&LQDM_MLQ800_MX330_MDM300_L1p0;" />
+        <!-- <Dataset Name="LQDM_MLQ700_MX275_MDM250_L1p0"  Lumi="4.64684e+06" Type="MC" File="&LQDM_MLQ700_MX275_MDM250_L1p0;" />
+        <Dataset Name="LQDM_MLQ800_MX330_MDM300_L1p0"  Lumi="1.11940e+07" Type="MC" File="&LQDM_MLQ800_MX330_MDM300_L1p0;" />
         <Dataset Name="LQDM_MLQ900_MX385_MDM350_L1p0"  Lumi="2.52313e+07" Type="MC" File="&LQDM_MLQ900_MX385_MDM350_L1p0;" />
         <Dataset Name="LQDM_MLQ1000_MX440_MDM400_L1p0" Lumi="5.42495e+07" Type="MC" File="&LQDM_MLQ1000_MX440_MDM400_L1p0;"/>
         <Dataset Name="LQDM_MLQ1100_MX495_MDM450_L1p0" Lumi="1.10947e+08" Type="MC" File="&LQDM_MLQ1100_MX495_MDM450_L1p0;"/>
@@ -42,8 +42,9 @@
         <Dataset Name="LQDM_MLQ1700_MX825_MDM750_L1p0" Lumi="5.10812e+09" Type="MC" File="&LQDM_MLQ1700_MX825_MDM750_L1p0;"/>
         <Dataset Name="LQDM_MLQ1800_MX880_MDM800_L1p0" Lumi="9.23077e+09" Type="MC" File="&LQDM_MLQ1800_MX880_MDM800_L1p0;"/>
         <Dataset Name="LQDM_MLQ1900_MX935_MDM850_L1p0" Lumi="1.64024e+10" Type="MC" File="&LQDM_MLQ1900_MX935_MDM850_L1p0;"/>
-        <Dataset Name="LQDM_MLQ2000_MX990_MDM900_L1p0" Lumi="2.91545e+10" Type="MC" File="&LQDM_MLQ2000_MX990_MDM900_L1p0;"/>
+        <Dataset Name="LQDM_MLQ2000_MX990_MDM900_L1p0" Lumi="2.91545e+10" Type="MC" File="&LQDM_MLQ2000_MX990_MDM900_L1p0;"/> -->
     </InputDatasets>
+
     <AdditionalVariables>
         <Variable Name="test" Value="testvalue"/>
     </AdditionalVariables>

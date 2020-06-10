@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!ELEMENT Configuration (InputDatasets|AdditionalVariables)+>
+<!ELEMENT Configuration (InputDatasets,AdditionalVariables)>
 <!ATTLIST Configuration
     TargetLumi           CDATA            #REQUIRED
-    OutputDirectory      CDATA            "./"
+    OutputDirectory      CDATA            #REQUIRED
     PostFix              CDATA            ""
+    AnalysisTool         CDATA            #REQUIRED
 >
 
 <!ELEMENT InputDatasets (Dataset+)>
@@ -14,6 +15,12 @@
     Lumi        CDATA       #REQUIRED
     Type        CDATA       #REQUIRED
     File        CDATA       #REQUIRED
+>
+
+
+<!ELEMENT AnalysisTool EMPTY>
+<!ATTLIST AnalysisTool
+    Name        CDATA       #REQUIRED
 >
 
 <!ELEMENT AdditionalVariables (Variable*)>

@@ -1,6 +1,5 @@
 #include <cmath>
 #include <iostream>
-#include "include/GenlevelTool.h"
 #include "include/PlottingTool.h"
 #include "include/constants.h"
 #include "include/Config.h"
@@ -16,19 +15,9 @@ int main(int argc, char* argv[]){
 
   // Greet
   cout << "Hello from main()." << endl;
-
-
   if(argc != 2) cout << red << "Analyzer requires exactly one argument. Usage: 'Analyzer <CONFIGFILE>.xml'" << reset << endl;
   TString configfilename = (TString)argv[1];
 
   Config cfg(configfilename);
-
-  while(cfg.idx() < cfg.n_datasets()){
-
-    GenlevelTool GenTool(cfg);
-    GenTool.ProcessDataset(cfg);
-
-
-    cfg.increment_idx();
-  }
+  cfg.process_datasets();
 }

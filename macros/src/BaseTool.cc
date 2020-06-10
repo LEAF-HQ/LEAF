@@ -5,6 +5,7 @@
 #include "include/BaseTool.h"
 #include "include/useful_functions.h"
 #include <sys/stat.h>
+#include "include/Registry.h"
 
 using namespace std;
 

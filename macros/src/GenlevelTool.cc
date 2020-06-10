@@ -2,12 +2,35 @@
 #include <TFile.h>
 #include <iostream>
 
-#include "include/GenlevelTool.h"
 #include "include/BaseTool.h"
 #include "include/useful_functions.h"
 #include <sys/stat.h>
+#include "include/Registry.h"
 
 using namespace std;
+
+class GenlevelTool : public BaseTool {
+
+public:
+  // Constructors, destructor
+  GenlevelTool(const Config & cfg);
+  ~GenlevelTool() = default;
+  virtual bool Process(Event & event) override;
+
+
+private:
+
+  // Modules used in the analysis
+  GenJetId      genjet_id;
+  GenParticleId genvistau_id;
+  double        mindr_genjet_tauvis;
+
+  unique_ptr<GenJetCleaner>       cleaner_genjet;
+  unique_ptr<GenVisTauCleaner>    cleaner_genvistau;
+  unique_ptr<GenJetVisTauCleaner> cleaner_genjetvistau;
+
+};
+
 
 GenlevelTool::GenlevelTool(const Config & cfg) : BaseTool(cfg){
 
@@ -72,3 +95,8 @@ bool GenlevelTool::Process(Event & event){
 
   return true;
 }
+
+
+
+
+REGISTER_TOOL(GenlevelTool)

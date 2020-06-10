@@ -10,6 +10,7 @@
 #include "include/GenHists.h"
 #include "include/CleaningModules.h"
 #include "include/Config.h"
+#include "include/Registry.h"
 
 class BaseTool {
 
@@ -34,11 +35,9 @@ protected:
   Event event;
   vector<TString> histfolders;
   map<TString, unique_ptr<GenHists>> histmap;
-
-
-
-
-
-
-
 };
+
+
+typedef Registry<BaseTool, Config> ToolRegistry;
+// mark as unused otherwise generates warnings
+#define REGISTER_TOOL(T) namespace { __attribute__ ((unused)) int dummy##T = ::ToolRegistry::register_<T>(#T); }

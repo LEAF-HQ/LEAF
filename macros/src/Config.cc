@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "include/Config.h"
+#include "include/BaseTool.h"
 #include "include/useful_functions.h"
 
 #include <libxml/parser.h>
@@ -12,7 +13,7 @@
 using namespace std;
 
 Config::Config(TString configfilename){
-
+  if(m_is_init) throw runtime_error("Config object already initialized. Abort.");
 
   validateConfigFile(configfilename);
   xmlDoc *doc = xmlReadFile(configfilename, NULL, 0);
@@ -24,6 +25,7 @@ Config::Config(TString configfilename){
   m_output_directory = getJobOutputpath(root_element);
   m_postfix = getJobPostfix(root_element);
   m_target_lumi = getJobTargetlumi(root_element);
+  m_analysis_tool = getJobAnalysisTool(root_element);
 
 
   // Loop through InputDatasets and extract their information
@@ -61,4 +63,23 @@ Config::Config(TString configfilename){
 
   xmlFreeDoc(doc);
   xmlCleanupParser();
+  m_is_init = true;
+}
+
+// #define MyAnalysisModule(name) name m(cfg);
+
+void Config::process_datasets(){
+  if(!m_is_init) throw runtime_error("Trying to process the datasets with an uninitialized Config instance. Abort.");
+
+  while(idx() < n_datasets()){
+
+    // string name_of_module = "GenlevelTool";
+    string toolname = analysis_tool();
+    unique_ptr<BaseTool> analysis = ToolRegistry::build(toolname, *this);
+
+    // GenlevelTool GenTool(*this);
+    analysis->ProcessDataset(*this);
+
+    increment_idx();
+  }
 }

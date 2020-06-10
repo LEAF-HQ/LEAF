@@ -5,6 +5,7 @@
 #include <vector>
 #include "include/constants.h"
 #include <libxml/xmlreader.h>
+#include "include/Particle.h"
 
 // using namespace std;
 TString lambstr(double lambda);
@@ -44,7 +45,8 @@ TString getDatasetFilename(xmlNode* node);
 
 TString getJobOutputpath(xmlNode* node);
 TString getJobPostfix(xmlNode* node);
-float getJobTargetlumi(xmlNode* node);
+float   getJobTargetlumi(xmlNode* node);
+string  getJobAnalysisTool(xmlNode* node);
 
 std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);
