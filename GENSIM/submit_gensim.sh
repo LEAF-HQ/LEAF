@@ -26,7 +26,6 @@ DBG=2
 SEOUTFILES="*GENSIM*.root"
 BASEDIR="/work/areimers/LQDM/GENSIM"
 CMSSWDIR="/work/areimers/CMSSW_10_2_10"
-# XROOTD="root://t3dcachedb.psi.ch:1094"
 XROOTD="root://t3dcachedb03.psi.ch"
 GFAL="gsiftp://t3se01.psi.ch"
 SE_HOME="/pnfs/psi.ch/cms/trivcat/store/user/$USER"
