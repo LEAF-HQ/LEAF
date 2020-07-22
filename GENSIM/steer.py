@@ -39,18 +39,22 @@ cmssw_tag_gp   = 'CMSSW_10_6_0'
 cmssw_tag_sim  = 'CMSSW_10_6_12'
 cmssw_tag_hlt  = 'CMSSW_9_4_14_UL_patch1'
 workarea       = '/work/areimers'
+campaign       = 'UL17'
 workdir_slurm  = workarea + '/workdir_slurm'
 mgfolder       = workarea + '/' + cmssw_tag_sim + '/src/genproductions/bin/MadGraph5_aMCatNLO'
-basefolder     = workarea + '/LQDM/GENSIM'
-gridpackfolder = basefolder + '/gridpacks'
-cardfolder     = basefolder + '/cards/LQDM'
-psetfolder     = basefolder + '/PSets/UL17'
+basefolder     = workarea + '/LQDM'
+macrofolder    = basefolder + '/macros'
+gensimfolder   = basefolder + '/GENSIM'
+gridpackfolder = gensimfolder + '/gridpacks'
+cardfolder     = gensimfolder + '/cards/LQDM'
+psetfolder     = gensimfolder + '/PSets/' + campaign
 T2_director      = 'gsiftp://storage01.lcg.cscs.ch/'
 T2_director_root = 'root://storage01.lcg.cscs.ch/'
+T3_director      = 'root://t3dcachedb03.psi.ch/'
 T2_path          = '/pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers'
 T3_path          = '/pnfs/psi.ch/cms/trivcat/store/user/areimers'
 gensim_path_tag  = 'GENSIM/LQDM'
-tuple_path       = '/work/areimers/Tuples/LQDM/GENSIM'
+tuple_path       = '/work/areimers/Tuples/' + campaign + '/GENSIM/LQDM'
 
 configs = {
     'GENSIM': {
@@ -104,6 +108,14 @@ configs = {
         'infilepathtag':   'MINIAOD/LQDM',
         'infilenamebase':  'MINIAOD',
         'pathtag':         'NANOAOD/LQDM'
+    },
+    'Tuples_GENSIM': {
+        'jobnametag':      'tuples_gensim',
+        'cmsswtag':        cmssw_tag_sim,
+        'outfilenamebase': 'Tuples_GENSIM',
+        'infilepathtag':   'GENSIM/LQDM',
+        'infilenamebase':  'GENSIM',
+        'pathtag':         'Tuples_GENSIM/LQDM'
     }
 
 }
@@ -119,7 +131,7 @@ def main():
     resub_gensim     = False
 
     dr               = False
-    resub_dr         = True
+    resub_dr         = False
 
     hlt              = False
     resub_hlt        = False
@@ -137,7 +149,7 @@ def main():
     resub_nanoaod    = False
     delete_miniaod   = False
 
-    tuplize_gen      = False
+    tuplize_gen      = True
     add              = False
 
     submit           = True
@@ -249,12 +261,14 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
         raise ValueError('Value \'%s\' is invalide for variable \'mode\'.' % mode)
 
     ncores  = 8
-    queue   = 'quick'
-    runtime = '01:00:00'
+    if generation_step is 'NANOAOD' or generation_step is 'MINIAOD':
+        ncores = int(ncores / 2)
+    queue   = 'quick'       # quick -- wn
+    runtime = '01:00:00' # 01:00:00 -- 10:00:00
 
     commandfilebase = ''
-    if mode is 'new':        commandfilebase = basefolder + '/commands/%s_' % (configs[generation_step]['jobnametag'])
-    elif mode is 'resubmit': commandfilebase = basefolder + '/commands/resubmit_%s_' % (configs[generation_step]['jobnametag'])
+    if mode is 'new':        commandfilebase = gensimfolder + '/commands/%s_' % (configs[generation_step]['jobnametag'])
+    elif mode is 'resubmit': commandfilebase = gensimfolder + '/commands/resubmit_%s_' % (configs[generation_step]['jobnametag'])
 
     # Create command file for array of jobs
     for config in mass_configurations:
@@ -285,7 +299,7 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
             slurmjobname = ''
             if mode is 'new':        slurmjobname = '%s' % (configs[generation_step]['jobnametag'])
             elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (configs[generation_step]['jobnametag'])
-            command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, basefolder, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
+            command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, gensimfolder, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
             if njobs > 0:
                 if submit:
                     os.system(command)
@@ -295,7 +309,10 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
                     print yellow("Would submit an array of %i jobs"%(njobs))
 
             else:
-                print green('No jobs to submit.')
+                if mode is 'resubmit':
+                    print green('No jobs to resubmit.')
+                else:
+                    print green('No jobs to submit.')
 
 
 def RemoveSamples(submit, generation_step):
@@ -323,46 +340,66 @@ def RemoveSamples(submit, generation_step):
 def SubmitTuplize(submit):
     # Submit tuplize jobs to the SLURM cluster
     ncores = 1
-    commandfilebase = basefolder + '/commands/tuplize_'
+    queue   = 'quick'       # quick -- wn
+    runtime = '00:05:00' # 01:00:00 -- 10:00:00
+    commandfilebase = gensimfolder + '/commands/tuplize_'
 
     # Create command file for array of jobs
     for config in mass_configurations:
         for lamb in lambdas:
             mlq, mx, mdm = get_mlq_mx_mdm(config)
             jobname      = get_jobname(mlq, mx, mdm, lamb, tag)
+            outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
             commandfilename = commandfilebase + jobname + '.txt'
             f = open(commandfilename, 'w')
+            njobs = 0
             for i in range(maxindex):
-                infilename = T3_path + '/' + gensim_path_tag + '/' + jobname + '/GENSIM_%i.root' % (i+1)
-                outfilename = tuple_path + '/' + jobname + '/Tuples_%i.root' % (i+1)
+                # infilename = T3_path + '/' + gensim_path_tag + '/' + jobname + '/GENSIM_%i.root' % (i+1)
+                infilename = T2_director_root + T2_path + '/' + configs['Tuples_GENSIM']['infilepathtag'] + '/' + jobname + '/' + configs['Tuples_GENSIM']['infilenamebase'] + '_' + str(i+1) + '.root'
+                outfilename = configs['Tuples_GENSIM']['outfilenamebase'] + '_%i.root' % (i+1)
                 command = 'Tuplizer %s %s' % (infilename, outfilename)
                 f.write(command + '\n')
+                njobs += 1
             f.close()
-            command = 'sbatch -a 1-%s -J tuplize_%s -p quick -t 01:00:00 --cpus-per-task %i submit_tuplize.sh %s' % (str(maxindex), jobname, ncores, commandfilename)
-            print command
-            if submit: os.system(command)
+
+            command = 'sbatch -a 1-%s -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_gensim.sh %s %s %s %s %s' % (str(maxindex), configs['Tuples_GENSIM']['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs['Tuples_GENSIM']['cmsswtag'], basefolder, outfoldername, commandfilename)
+            if submit:
+                os.system(command)
+                print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
+            else:
+                print command
+                print yellow("Would submit an array of %i jobs for name %s"%(njobs, jobname))
 
 def SubmitAdd(submit):
     # Submit add jobs to the SLURM cluster
     ncores = 1
-    commandfilebase = basefolder + '/commands/add_'
+    queue   = 'quick'       # quick -- wn
+    runtime = '00:05:00' # 01:00:00 -- 10:00:00
+
+    commandfilebase = gensimfolder + '/commands/add_'
     for config in mass_configurations:
         for lamb in lambdas:
             mlq, mx, mdm = get_mlq_mx_mdm(config)
             jobname      = get_jobname(mlq, mx, mdm, lamb, tag)
-            infiles      = tuple_path + '/' + jobname + '/Tuples_*.root'
-            outfile      = tuple_path + '/' + jobname + '/Tuples.root'
+            infoldername= T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
+            infilestring = ''
+            for i in range(maxindex):
+                fn = infoldername +  '/' + configs['Tuples_GENSIM']['outfilenamebase'] + '_%i.root' % (i+1)
+                infilestring = infilestring + ' ' + fn
+            outfilename = configs['Tuples_GENSIM']['outfilenamebase'] + '.root'
+            outfoldername = infoldername
             commandfilename = commandfilebase + jobname + '.txt'
             f = open(commandfilename, 'w')
-            command = 'hadd -f %s %s ; sleep 5 ; rm %s' % (outfile, infiles, infiles)
-            # command = 'sleep 5; rm %s' % (infiles)
+            command = 'hadd -f %s %s ; sleep 5 ; ' % (outfilename, infilestring)
             f.write(command)
             f.close()
-            # command = 'sbatch -J add_%s -p quick --cpus-per-task 1 submit_add.sh %s' % (jobname, jobname)
-            command = 'sbatch -J add_%s -p quick --cpus-per-task %i submit_add.sh %s' % (jobname, ncores, commandfilename)
-            print command
-            if submit: os.system(command)
-            print green("Submitted job for adding tuplized samples: %s."%(jobname))
+            command = 'sbatch -J add_%s -p %s -t %s --cpus-per-task %i submit_add.sh %s %s' % (configs['Tuples_GENSIM']['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs['Tuples_GENSIM']['cmsswtag'], basefolder, outfoldername, commandfilename)
+            if submit:
+                os.system(command)
+                print green("Submitted job for adding tuplized samples: %s."%(jobname))
+            else:
+                print command
+                print yellow("Would submit job for adding tuplized samples: %s."%(jobname))
 
 
 
@@ -463,7 +500,7 @@ def findMissingFilesT2(filepath, filename_base, maxindex):
     for idx in range(maxindex):
         filename = filename_base + '_' + str(idx+1) + '.root'
         # print 'didn\'t find file %s, going to try to open it' % (filename)
-        result = subprocess.Popen(['/bin/bash', '%s/check_T2_file.sh' % (basefolder), filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.Popen(['/bin/bash', '%s/check_T2_file.sh' % (gensimfolder), filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, error = result.communicate()
         returncode = result.returncode
         if returncode > 0: # opening failed

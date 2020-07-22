@@ -22,8 +22,11 @@ int main(){
 
 
 
-  // Done
-  cout << "Finished Plotter. cya." << endl;
+
+
+
+
+
 
 
 }

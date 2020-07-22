@@ -79,6 +79,7 @@ void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, 
   for(size_t i=0; i<infiles.size(); i++){
     delete infiles[i];
   }
+  cout << green << "--> Wrote plots to folder: " << outfolder << reset << endl;
 }
 
 // Function to plot plots in a single folder
@@ -134,14 +135,15 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
     leg->Draw();
     if(logy) pad->SetLogy(true);
 
+    TString outfilename = "";
     if(singlePDF){
-      TString outfilename = outfolder + "SinglePDF/" + foldername + "_" + histname + ".pdf";
+      outfilename = outfolder + "SinglePDF/" + foldername + "_" + histname + ".pdf";
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       c->Print(outfilename);
     }
     else{
-      TString outfilename = outfolder + foldername + ".pdf";
+      outfilename = outfolder + foldername + ".pdf";
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       if(i==0)                     outfilename += "(";

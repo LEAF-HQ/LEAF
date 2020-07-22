@@ -727,7 +727,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/cvmfs/cms.cern.ch/slc7_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include",
+"/cvmfs/cms.cern.ch/slc7_amd64_gcc700/lcg/root/6.14.09-pafccj4/include",
 "/work/areimers/LQDM/macros/",
 0
     };
@@ -786,7 +786,7 @@ nullptr};
     if (!isInitialized) {
       TROOT::RegisterModule("ClassDictionaries",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_ClassDictionaries_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_ClassDictionaries_Impl, {}, classesHeaders, /*has no C++ module*/false);
       isInitialized = true;
     }
   }

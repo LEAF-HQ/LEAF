@@ -42,25 +42,25 @@ int main(int argc, char* argv[]){
 
   TString infilename = (TString)inarg;
   TString outfilename = (TString)outarg;
-  if (inarg.rfind("/pnfs", 0) == 0) infilename = director+infilename;
+  // if (inarg.rfind("/pnfs", 0) == 0) infilename = director+infilename;
   cout << green << "--> Tuplizing file: " << infilename << reset << endl;
 
-  TObjArray* outfolder_parts = outfilename.Tokenize("/");
-  TString outfolder = "/";
-  for(int i=0; i<outfolder_parts->GetEntries()-1; i++){
-    outfolder += (TString)outfolder_parts->At(i)->GetName();
-    if(i < outfolder_parts->GetEntries()-2) outfolder += "/";
-  }
-
-  experimental::filesystem::path of((string)outfolder);
-  if(!experimental::filesystem::exists(of)){
-    cout << green << "--> Outfolder: " << outfolder << " doesn't exist, creating it. " << reset << endl;
-    bool success = experimental::filesystem::create_directories(of);
-    if(!success){
-      cout << red << "Failed to create outfolder. Abort." << reset << endl;
-      return 1;
-    }
-  }
+  // TObjArray* outfolder_parts = outfilename.Tokenize("/");
+  // TString outfolder = "/";
+  // for(int i=0; i<outfolder_parts->GetEntries()-1; i++){
+  //   outfolder += (TString)outfolder_parts->At(i)->GetName();
+  //   if(i < outfolder_parts->GetEntries()-2) outfolder += "/";
+  // }
+  //
+  // experimental::filesystem::path of((string)outfolder);
+  // if(!experimental::filesystem::exists(of)){
+  //   cout << green << "--> Outfolder: " << outfolder << " doesn't exist, creating it. " << reset << endl;
+  //   bool success = experimental::filesystem::create_directories(of);
+  //   if(!success){
+  //     cout << red << "Failed to create outfolder. Abort." << reset << endl;
+  //     return 1;
+  //   }
+  // }
   cout << green << "--> Output file will be: " << outfilename << reset << endl;
   TFile* infile = TFile::Open(infilename, "READ");
 

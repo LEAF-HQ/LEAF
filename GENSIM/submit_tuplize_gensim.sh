@@ -14,31 +14,40 @@ echo SLURM_JOB_ID: $SLURM_JOB_ID
 echo HOSTNAME: $HOSTNAME
 pwd
 
-JOBLIST=$1
-TARGETFOLDERNAME=$2
+ARCHTAG=$1
+CMSSWDIR=$2
+BASEFOLDER=$3
+TARGETFOLDERNAME=$4
+JOBLIST=$5
 
 
 # each worker node has local /scratch space to be used during job run
-export TMPDIR=/scratch/$USER/test_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/scratch/$USER/tuplize_gensim_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}
 mkdir -p $TMPDIR
 echo TMPDIR: $TMPDIR
-cd $TMPDIR
 
-# create sample-specific folder and all missing parent folders
-echo "creating folder: $TARGETFOLDERNAME"
-MKDIRCOMMAND='LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p $TARGETFOLDERNAME; sleep 10s;'
-eval "$MKDIRCOMMAND"
+# set up environment
+eval "export SCRAM_ARCH=$ARCHTAG"
+eval "source $VO_CMS_SW_DIR/cmsset_default.sh"
+eval "cd $CMSSWDIR/src"
+eval `scramv1 runtime -sh`
+eval "cd $BASEFOLDER"
+eval "source setup.sh"
 
 # actual job
-source /t3home/areimers/setup.sh
-# cd /work/areimers/LQDM/GENSIM
+cd $TMPDIR
 export TASKID=$SLURM_ARRAY_TASK_ID
 echo $TASKID
 TASKCMD=$(cat $JOBLIST | sed "${TASKID}q;d")
 echo $TASKCMD
 eval $TASKCMD
 
-# copy the file from /scratch to storage element
+# create sample-specific folder and all missing parent folders
+echo "creating folder: $TARGETFOLDERNAME"
+MKDIRCOMMAND='LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p $TARGETFOLDERNAME; sleep 10s;'
+eval "$MKDIRCOMMAND"
+
+# copy the file from /scratch to T2
 FILENAME=$(ls *.root)
 echo "copying file $FILENAME"
 eval "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f file:////$PWD/$FILENAME $TARGETFOLDERNAME"

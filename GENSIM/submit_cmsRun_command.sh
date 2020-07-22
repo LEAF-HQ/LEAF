@@ -17,15 +17,16 @@ echo HOSTNAME:            $HOSTNAME
 
 #Pick up arguments
 CODEFOLDER=$1       # ......./LQDM/GENSIM
-CMSSWDIR=$2         # Location of CMSSW for this production
-TARGETFOLDERNAME=$3 # Basefolder to store files to. Still need to create sample-specific subfolder (LQM1400_DM1323232321_X93281)
-JOBLIST=$4         # List of cmsRun commands
+ARCHTAG=$2
+CMSSWDIR=$3         # Location of CMSSW for this production
+TARGETFOLDERNAME=$4 # Basefolder to store files to. Still need to create sample-specific subfolder (LQM1400_DM1323232321_X93281)
+JOBLIST=$5          # List of cmsRun commands
 
 
 #Set up CMSSW and PYTHONPATH
 eval "source $VO_CMS_SW_DIR/cmsset_default.sh"
 # eval "export SCRAM_ARCH=slc6_amd64_gcc700"
-eval "export SCRAM_ARCH=slc7_amd64_gcc700"
+eval "export SCRAM_ARCH=$ARCHTAG"
 eval "cd $CMSSWDIR/src"
 eval `scramv1 runtime -sh`
 
@@ -43,7 +44,9 @@ cd $TMPDIR
 # the joblist contains a list of 'cmsRun pSet.py ......' commands
 TASKCMD=$(cat $JOBLIST | sed "${SLURM_ARRAY_TASK_ID}q;d")
 echo $TASKCMD
-eval $TASKCMD
+TASK_FAILED=0
+eval $TASKCMD || { echo "cmsRun failed. Going to delete rootfile(s)." ; rm -rf $(ls *.root) ; }
+
 
 # Delete the "_LHE.root" file and move the output to the T2 (the only file with *.root left :) )
 eval "ls"
@@ -55,7 +58,7 @@ echo "creating folder: $TARGETFOLDERNAME"
 MKDIRCOMMAND='LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p $TARGETFOLDERNAME; sleep 10s;'
 eval "$MKDIRCOMMAND"
 
-# copy the file from .scratch to T2
+# copy the file from /scratch to T2
 echo "copying file $FILENAME"
 # eval "cp $FILENAME /work/areimers/LQDM/GENSIM/"
 eval "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f file:////$PWD/$FILENAME $TARGETFOLDERNAME"

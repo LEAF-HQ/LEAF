@@ -1,4 +1,4 @@
-# This script must be sourced before working in this folder.
+# This script must be sourced from this exact folder before working in this folder.
 
 
 # Append path to our own libraries to LD_LIBRARY_PATH, such that our programs can use them!
