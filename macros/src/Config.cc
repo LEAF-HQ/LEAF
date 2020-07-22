@@ -66,7 +66,6 @@ Config::Config(TString configfilename){
   m_is_init = true;
 }
 
-// #define MyAnalysisModule(name) name m(cfg);
 
 void Config::process_datasets(){
   if(!m_is_init) throw runtime_error("Trying to process the datasets with an uninitialized Config instance. Abort.");

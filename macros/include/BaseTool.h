@@ -4,6 +4,7 @@
 #include <iostream>
 #include <TString.h>
 #include <TFile.h>
+#include <TChain.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include "include/Event.h"
@@ -30,9 +31,11 @@ public:
 
 protected:
   // For internal use, do not touch
-  std::unique_ptr<TFile> simple_file;
+  // std::unique_ptr<TFile> infiles;
+  // unique_ptr<TChain> event_chain;
+  unique_ptr<TChain> event_chain;
   int nevt;
-  Event event;
+  // Event event;
   vector<TString> histfolders;
   map<TString, unique_ptr<GenHists>> histmap;
 };

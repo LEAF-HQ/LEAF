@@ -88,6 +88,8 @@ bool GenlevelTool::Process(Event & event){
   for(int i=0; i<njetsmax; i++) st += event.genjets->at(i).pt();
   for(int i=0; i<ntauvismax; i++) st += event.genparticles_visibletaus->at(i).pt();
   stmet += st;
+  // cout << "stmet: " << stmet << endl;
+  // event.weight *= 2;
   if(stmet < 600) return false;
   histmap["stmet"]->fill(event);
 

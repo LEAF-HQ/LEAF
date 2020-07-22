@@ -149,10 +149,10 @@ def main():
     resub_nanoaod    = False
     delete_miniaod   = False
 
-    tuplize_gen      = True
+    tuplize_gen      = False
     add              = False
 
-    submit           = True
+    submit           = False
 
     ensureDirectory(workdir_slurm)
 

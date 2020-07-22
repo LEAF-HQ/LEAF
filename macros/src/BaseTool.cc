@@ -1,5 +1,6 @@
 #include <TString.h>
 #include <TFile.h>
+#include <TChain.h>
 #include <iostream>
 
 #include "include/BaseTool.h"
@@ -10,37 +11,44 @@
 using namespace std;
 
 BaseTool::BaseTool(const Config & cfg){
-  TString infilename = cfg.dataset_filename();
-  simple_file.reset(new TFile(infilename, "READ"));
+
+  // Chain all samples of the same dataset into a TChain
+  event_chain.reset(new TChain("AnalysisTree"));
+  event_chain->Add(cfg.dataset_filename());
+
+  cout << "added file: " << cfg.dataset_filename() << endl;
+  nevt = event_chain->GetEntries();
 }
 
 
 void BaseTool::LoopEvents(const Config & cfg){
 
-  // Get the input tree
+  // Print current number of dataset
   cout << endl << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
-  TTreeReader myReaderEvent("AnalysisTree", simple_file.get());
-  int nevt = myReaderEvent.GetEntries(true);
 
-  // Set up variables used in 'AnalysisTree', read from Tuples
-  TTreeReaderValue<Event> ev(myReaderEvent, "Event");
+  // Initialize event for later looping through chain
+  Event* event = 0;
+  event_chain->SetBranchAddress("Event", &event);
 
-  // Event loop
-  int idx = 0;
-  while (myReaderEvent.Next()) {
-    if(idx%10000==0){
-      cout << green << "    --> Processing event no. (" << idx << " / " << nevt << ")" << reset << endl;
+  // Loop through chain
+  for(int i=0; i<event_chain->GetEntries(); ++i) {
+    if(i%1000==0){
+      cout << green << "    --> Processing event no. (" << i << " / " << nevt << ")" << reset << endl;
     }
-    idx++;
-    Event event = *ev;
+
+    // read the data for i-th event
+    event_chain->GetEntry(i);
 
     // weight must be: target_lumi / dataset_lumi
-    event.weight *= cfg.target_lumi() / cfg.dataset_lumi();
+    event->weight *= cfg.target_lumi() / cfg.dataset_lumi();
 
-    // call event loop, main part of this function!
-    Process(event);
-    event.clear();
+    // call Process() for each event, main part of this function!
+    Process(*event);
+    event->clear();
+
   }
+
+
 }
 
 // Write all output to the outputfile
