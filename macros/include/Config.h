@@ -11,8 +11,10 @@
 #include "include/CleaningModules.h"
 
 struct dataset{
-  TString name, type, filename;
-  float lumi;
+  TString name                = "";
+  TString type                = "";
+  vector<TString> infilenames = {};
+  float lumi                  = -1.;
 };
 
 
@@ -38,7 +40,7 @@ public:
   const string  analysis_tool() const {return m_analysis_tool;};
   const TString dataset_name() const {return m_datasets[m_idx].name;};
   const TString dataset_type() const {return m_datasets[m_idx].type;};
-  const TString dataset_filename() const {return m_datasets[m_idx].filename;};
+  const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
   const float   dataset_lumi() const {return m_datasets[m_idx].lumi;};
   const size_t  n_datasets()  const {return m_datasets.size();};
   const size_t  idx()         const {return m_idx;};

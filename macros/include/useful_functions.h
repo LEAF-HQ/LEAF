@@ -41,7 +41,9 @@ xmlNode* findNodeByName(xmlNode* rootnode, TString name);
 float getDatasetLumi(xmlNode* node);
 TString getDatasetName(xmlNode* node);
 TString getDatasetType(xmlNode* node);
-TString getDatasetFilename(xmlNode* node);
+// TString getDatasetFilename(xmlNode* node);
+TString getInputFileFileName(xmlNode* node);
+
 
 TString getJobOutputpath(xmlNode* node);
 TString getJobPostfix(xmlNode* node);

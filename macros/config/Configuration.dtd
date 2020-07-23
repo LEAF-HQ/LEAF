@@ -9,12 +9,16 @@
 
 <!ELEMENT InputDatasets (Dataset+)>
 
-<!ELEMENT Dataset EMPTY>
+<!ELEMENT Dataset (InputFile+)>
 <!ATTLIST Dataset
     Name        CDATA       #REQUIRED
     Lumi        CDATA       #REQUIRED
     Type        CDATA       #REQUIRED
-    File        CDATA       #REQUIRED
+>
+
+<!ELEMENT InputFile EMPTY>
+<!ATTLIST InputFile
+    FileName    CDATA       #REQUIRED
 >
 
 

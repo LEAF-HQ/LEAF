@@ -31,11 +31,8 @@ public:
 
 protected:
   // For internal use, do not touch
-  // std::unique_ptr<TFile> infiles;
-  // unique_ptr<TChain> event_chain;
   unique_ptr<TChain> event_chain;
   int nevt;
-  // Event event;
   vector<TString> histfolders;
   map<TString, unique_ptr<GenHists>> histmap;
 };

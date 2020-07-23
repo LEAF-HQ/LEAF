@@ -16,7 +16,7 @@ Config::Config(TString configfilename){
   if(m_is_init) throw runtime_error("Config object already initialized. Abort.");
 
   validateConfigFile(configfilename);
-  xmlDoc *doc = xmlReadFile(configfilename, NULL, 0);
+  xmlDoc *doc = xmlReadFile(configfilename, NULL, XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
   xmlNode *root_element = xmlDocGetRootElement(doc);
 
   // Read general job information
@@ -32,13 +32,22 @@ Config::Config(TString configfilename){
   // ========================================================
 
   xmlNode *inputdatasets = findNodeByName(root_element, "InputDatasets");
+
   for (xmlNode* current_node = inputdatasets->children; current_node; current_node = current_node->next){
     if(current_node->type == XML_ELEMENT_NODE){
       dataset ds;
       ds.name     = getDatasetName(current_node);
       ds.type     = getDatasetType(current_node);
       ds.lumi     = getDatasetLumi(current_node);
-      ds.filename = getDatasetFilename(current_node);
+      // ds.filename = getDatasetFilename(current_node);
+
+      // loop over infiles of this dataset
+      for (xmlNode* current_inputfile = current_node->children; current_inputfile; current_inputfile = current_inputfile->next){
+        if(current_inputfile->type == XML_ELEMENT_NODE){
+          // cout << "current nodename: " << current_inputfile->name << endl;
+          ds.infilenames.emplace_back(getInputFileFileName(current_inputfile));
+        }
+      }
       m_datasets.emplace_back(ds);
     }
   }

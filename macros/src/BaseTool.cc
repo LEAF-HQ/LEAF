@@ -14,9 +14,10 @@ BaseTool::BaseTool(const Config & cfg){
 
   // Chain all samples of the same dataset into a TChain
   event_chain.reset(new TChain("AnalysisTree"));
-  event_chain->Add(cfg.dataset_filename());
+  for(size_t i=0; i<cfg.dataset_infilenames().size(); i++){
+    event_chain->Add(cfg.dataset_infilenames().at(i));
+  }
 
-  cout << "added file: " << cfg.dataset_filename() << endl;
   nevt = event_chain->GetEntries();
 }
 

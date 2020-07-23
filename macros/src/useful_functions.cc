@@ -91,7 +91,6 @@ void validateConfigFile(const char *filename){
   if (reader != NULL) {
     ret = xmlTextReaderRead(reader);
     while (ret == 1) {
-      // processNode(reader);
       ret = xmlTextReaderRead(reader);
     }
     /*
@@ -103,11 +102,14 @@ void validateConfigFile(const char *filename){
     }
     xmlFreeTextReader(reader);
     if (ret != 0) {
-      fprintf(stderr, "%s : failed to parse\n", filename);
+      throw runtime_error("failed to parse. Abort.");
     }
-  } else {
-    fprintf(stderr, "Unable to open %s\n", filename);
   }
+  else {
+    throw runtime_error("Unable to open xml file. Abort.");
+    return;
+  }
+  cout << green << "--> XML file validated." << reset << endl;
 }
 
 xmlNode* findNodeByName(xmlNode* rootnode, TString name){
@@ -160,8 +162,14 @@ TString getDatasetType(xmlNode* node){
   return type;
 }
 
-TString getDatasetFilename(xmlNode* node){
-  xmlChar* prop = xmlGetProp(node, (xmlChar*)"File");
+// TString getDatasetFilename(xmlNode* node){
+//   xmlChar* prop = xmlGetProp(node, (xmlChar*)"File");
+//   TString file = (const char*)prop;
+//   return file;
+// }
+
+TString getInputFileFileName(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"FileName");
   TString file = (const char*)prop;
   return file;
 }
