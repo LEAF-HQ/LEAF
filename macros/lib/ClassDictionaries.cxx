@@ -46,13 +46,13 @@ namespace std {} using namespace std;
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/cosmetics.h"
 #include "include/BaseTool.h"
+#include "include/constants.h"
 #include "include/PlottingTool.h"
 #include "include/useful_functions.h"
 
@@ -715,13 +715,13 @@ namespace {
 "include/GenHists.h",
 "include/Met.h",
 "include/GenJet.h",
-"include/constants.h",
 "include/CleaningModules.h",
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
 "include/cosmetics.h",
 "include/BaseTool.h",
+"include/constants.h",
 "include/PlottingTool.h",
 "include/useful_functions.h",
 0
@@ -762,13 +762,13 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/cosmetics.h"
 #include "include/BaseTool.h"
+#include "include/constants.h"
 #include "include/PlottingTool.h"
 #include "include/useful_functions.h"
 

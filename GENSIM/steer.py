@@ -165,7 +165,7 @@ def main():
     tuplize_gen      = True
     add              = False
 
-    submit           = True
+    submit           = False
 
     ensureDirectory(workdir_slurm)
 

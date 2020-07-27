@@ -37,7 +37,7 @@ OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 SOURCESPLOT  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/PlottingTool.cc $(SRCDIR)/cosmetics.cc $(SRCDIR)/PlotGenlevel.cc
 OBJECTSPLOT  := $(SOURCESPLOT:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
-all: Tuplizer Plotter Analyzer
+all: Tuplizer Tuplizer_NANOAOD Plotter Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
@@ -47,6 +47,10 @@ Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
 Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
 	@echo "--> Creating Tuplizer"
 	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o
+	@echo "--> Creating Tuplizer_NANOAOD"
+	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 Plotter: $(OBJECTSPLOT) $(OBJDIR)/Plotter.o
 	@echo "--> Creating Plotter"
