@@ -109,6 +109,15 @@ configs = {
         'infilenamebase':  'MINIAOD',
         'pathtag':         'NANOAOD/LQDM'
     },
+    'FLAT': {
+        'pset':            psetfolder+'/pset_08_flat.py',
+        'cmsswtag':        cmssw_tag_sim,
+        'jobnametag':      'flat',
+        'outfilenamebase': 'FLAT',
+        'infilepathtag':   'NANOAOD/LQDM',
+        'infilenamebase':  'NANOAOD',
+        'pathtag':         'FLAT/LQDM'
+    },
     'Tuples_GENSIM': {
         'jobnametag':      'tuples_gensim',
         'cmsswtag':        cmssw_tag_sim,
@@ -149,10 +158,14 @@ def main():
     resub_nanoaod    = False
     delete_miniaod   = False
 
-    tuplize_gen      = False
+    flat             = False
+    resub_flat       = False
+    delete_nanoaod   = False
+
+    tuplize_gen      = True
     add              = False
 
-    submit           = False
+    submit           = True
 
     ensureDirectory(workdir_slurm)
 
@@ -180,6 +193,9 @@ def main():
     if nanoaod:          SubmitGenerationStep(submit=submit, generation_step='NANOAOD', mode='new')
     if resub_nanoaod:    SubmitGenerationStep(submit=submit, generation_step='NANOAOD', mode='resubmit')
     if delete_miniaod:   RemoveSamples(submit=submit, generation_step='MINIAOD')
+    if flat:             SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='new')
+    if resub_flat:       SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='resubmit')
+    if delete_nanoaod:   RemoveSamples(submit=submit, generation_step='NANOAOD')
 
     # Tuple generation
     if tuplize_gen:      SubmitTuplize(submit=submit)
@@ -263,6 +279,8 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
     ncores  = 8
     if generation_step is 'NANOAOD' or generation_step is 'MINIAOD':
         ncores = int(ncores / 2)
+    elif generation_step is 'FLAT':
+        ncores = int(ncores / 4)
     queue   = 'quick'       # quick -- wn
     runtime = '01:00:00' # 01:00:00 -- 10:00:00
 
@@ -299,7 +317,7 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
             slurmjobname = ''
             if mode is 'new':        slurmjobname = '%s' % (configs[generation_step]['jobnametag'])
             elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (configs[generation_step]['jobnametag'])
-            command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, gensimfolder, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
+            command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, gensimfolder, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
             if njobs > 0:
                 if submit:
                     os.system(command)

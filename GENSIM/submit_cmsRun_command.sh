@@ -6,6 +6,7 @@
 #SBATCH --chdir /work/areimers/workdir_slurm
 #SBATCH -e %x-%A-%a.err
 #SBATCH -o %x-%A-%a.out
+#SBATCH --export NONE
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user arne.reimers@physik.uzh.ch
 
@@ -31,7 +32,7 @@ eval "cd $CMSSWDIR/src"
 eval `scramv1 runtime -sh`
 
 # to include python modules in basefolder and PSet folder
-export PYTHONPATH=$CODEFOLDER:$PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:$CODEFOLDER
 # export PYTHONPATH=$CODEFOLDER/PSets:$PYTHONPATH
 echo $PYTHONPATH
 
@@ -40,6 +41,10 @@ export TMPDIR=/scratch/$USER/tmpdir_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}
 echo TMPDIR: $TMPDIR
 mkdir -p $TMPDIR
 cd $TMPDIR
+
+echo $LD_LIBRARY_PATH
+echo $PATH
+echo $PYTHONPATH
 
 # the joblist contains a list of 'cmsRun pSet.py ......' commands
 TASKCMD=$(cat $JOBLIST | sed "${SLURM_ARRAY_TASK_ID}q;d")
