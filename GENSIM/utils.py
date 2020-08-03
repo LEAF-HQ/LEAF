@@ -3,6 +3,7 @@ import os, sys
 from fnmatch import fnmatch
 import subprocess
 import time
+from preferred_configurations import *
 
 def ensureDirectory(dirname):
     """Make directory if it does not exist."""
@@ -37,17 +38,18 @@ def bold(string):
 
 
 
-def get_samplename(mlq, mx, mdm, lamb, tag):
-    return 'MLQ%i_MX%i_MDM%i_L%s%s' % (mlq, mx, mdm, get_lambdastring(lamb), format_tag(tag))
+def get_samplename(mlq, mps, mc1, lamb, tag):
+    return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mc1, get_lambdastring(lamb), format_tag(tag))
 
-def get_jobname(mlq, mx, mdm, lamb, tag):
-    return 'LQDM_' + get_samplename(mlq, mx, mdm, lamb, tag)
+def get_jobname(processname, mlq, mps, mc1, lamb, tag):
+    return processname + '_' + get_samplename(mlq, mps, mc1, lamb, tag)
 
 def get_lambdastring(lamb):
     return ('%1.1f' % (lamb)).replace('.', 'p')
 
-def get_mlq_mx_mdm(config):
-    return (config['mlq'], config['mx'], config['mdm'])
+def get_mlq_mps_mc1(config):
+    # return (config['mlq'], config['mps'], config['mc1'])
+    return (config['mlq'], preferred_configurations[config['mlq']][config['mc1']][0], config['mc1'])
 
 def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''

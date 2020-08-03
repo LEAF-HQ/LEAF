@@ -6,6 +6,7 @@
 #SBATCH -o %x-%A.out
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user arne.reimers@physik.uzh.ch
+#SBATCH --export NONE
 
 ulimit -a
 
