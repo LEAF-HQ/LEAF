@@ -112,8 +112,8 @@ void GenHists::fill(const Event & event){
 
   size_t nlq, ndm, nx, nbhard, ntauhard;
   nlq = ndm = nx = nbhard = ntauhard = 0;
-  for(size_t i=0; i<event.genparticles_hard->size(); i++){
-    GenParticle gp = event.genparticles_hard->at(i);
+  for(size_t i=0; i<event.gencontent->genparticles_hard->size(); i++){
+    GenParticle gp = event.gencontent->genparticles_hard->at(i);
     int id = abs(gp.pdgid());
 
     // hard LQs
@@ -209,9 +209,9 @@ void GenHists::fill(const Event & event){
   // Loop through visible tau decay products
   // =======================================
 
-  size_t ntauvis = event.genparticles_visibletaus->size();
+  size_t ntauvis = event.gencontent->genparticles_visibletaus->size();
   for(size_t i=0; i<ntauvis; i++){
-    GenParticle gp = event.genparticles_visibletaus->at(i);
+    GenParticle gp = event.gencontent->genparticles_visibletaus->at(i);
 
     // visible taus
     if(i==0){
@@ -232,9 +232,9 @@ void GenHists::fill(const Event & event){
   // Loop through genjets
   // ====================
 
-  size_t njets = event.genjets->size();
+  size_t njets = event.gencontent->genjets->size();
   for(size_t i=0; i<njets; i++){
-    GenJet j = event.genjets->at(i);
+    GenJet j = event.gencontent->genjets->at(i);
 
     // hard LQs
     if(i==0){
@@ -261,14 +261,14 @@ void GenHists::fill(const Event & event){
   // dR between jets and closest visible taus
   double dR1min = 999.;
   double dR2min = 999.;
-  for(size_t i=0; i<event.genparticles_visibletaus->size(); i++){
-    GenParticle gt = event.genparticles_visibletaus->at(i);
+  for(size_t i=0; i<event.gencontent->genparticles_visibletaus->size(); i++){
+    GenParticle gt = event.gencontent->genparticles_visibletaus->at(i);
     if(njets >= 1){
-      GenJet j1 = event.genjets->at(0);
+      GenJet j1 = event.gencontent->genjets->at(0);
       dR1min = min(deltaR(j1, gt), dR1min);
     }
     if(njets >= 2){
-      GenJet j2 = event.genjets->at(1);
+      GenJet j2 = event.gencontent->genjets->at(1);
       dR2min = min(deltaR(j2, gt), dR2min);
     }
   }
@@ -280,19 +280,19 @@ void GenHists::fill(const Event & event){
   // =====================
 
   // MET
-  hptmet->Fill(event.genmet->pt(), weight);
-  hphimet->Fill(event.genmet->phi(), weight);
-  hptmetfrominvis->Fill(event.met_from_invis->pt(), weight);
-  hphimetfrominvis->Fill(event.met_from_invis->phi(), weight);
+  hptmet->Fill(event.gencontent->genmet->pt(), weight);
+  hphimet->Fill(event.gencontent->genmet->phi(), weight);
+  hptmetfrominvis->Fill(event.gencontent->met_from_invis->pt(), weight);
+  hphimetfrominvis->Fill(event.gencontent->met_from_invis->phi(), weight);
 
   // calculate ST
   double st = 0;
-  double stmet = event.genmet->pt();
-  double stmetfrominvis = event.met_from_invis->pt();
-  int njetsmax = min((size_t)2, event.genjets->size());
-  int ntauvismax = min((size_t)2, event.genparticles_visibletaus->size());
-  for(int i=0; i<njetsmax; i++) st += event.genjets->at(i).pt();
-  for(int i=0; i<ntauvismax; i++) st += event.genparticles_visibletaus->at(i).pt();
+  double stmet = event.gencontent->genmet->pt();
+  double stmetfrominvis = event.gencontent->met_from_invis->pt();
+  int njetsmax = min((size_t)2, event.gencontent->genjets->size());
+  int ntauvismax = min((size_t)2, event.gencontent->genparticles_visibletaus->size());
+  for(int i=0; i<njetsmax; i++) st += event.gencontent->genjets->at(i).pt();
+  for(int i=0; i<ntauvismax; i++) st += event.gencontent->genparticles_visibletaus->at(i).pt();
   stmet += st;
   stmetfrominvis += st;
 
@@ -301,7 +301,7 @@ void GenHists::fill(const Event & event){
   hstmetfrominvis->Fill(stmetfrominvis, weight);
 
   double mj1tauvis1 = 0.;
-  if(njets > 0 && ntauvis > 0) mj1tauvis1 = (event.genjets->at(0).p4() + event.genparticles_visibletaus->at(0).p4()).M();
+  if(njets > 0 && ntauvis > 0) mj1tauvis1 = (event.gencontent->genjets->at(0).p4() + event.gencontent->genparticles_visibletaus->at(0).p4()).M();
   hmj1tauvis1->Fill(mj1tauvis1, weight);
 
 

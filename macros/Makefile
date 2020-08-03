@@ -44,17 +44,29 @@ Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
 	@echo "--> Creating Analyzer"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
-Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
+Tuplizer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer.o
 	@echo "--> Creating Tuplizer"
-	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+	@$(CC) $(OBJECTS) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
-Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o
+Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.o
 	@echo "--> Creating Tuplizer_NANOAOD"
-	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+	@$(CC) $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
-Plotter: $(OBJECTSPLOT) $(OBJDIR)/Plotter.o
+Plotter: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Plotter.o
 	@echo "--> Creating Plotter"
-	@$(CC) $(OBJECTSPLOT) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSPLOT)
+	@$(CC) $(OBJECTS) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+#Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
+#	@echo "--> Creating Tuplizer"
+#	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+# Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o
+# 	@echo "--> Creating Tuplizer_NANOAOD"
+# 	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+# Plotter: $(OBJECTSPLOT) $(OBJDIR)/Plotter.o
+# 	@echo "--> Creating Plotter"
+# 	@$(CC) $(OBJECTSPLOT) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSPLOT)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"

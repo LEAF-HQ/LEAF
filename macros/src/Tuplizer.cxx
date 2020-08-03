@@ -42,31 +42,14 @@ int main(int argc, char* argv[]){
 
   TString infilename = (TString)inarg;
   TString outfilename = (TString)outarg;
-  // if (inarg.rfind("/pnfs", 0) == 0) infilename = director+infilename;
   cout << green << "--> Tuplizing file: " << infilename << reset << endl;
-
-  // TObjArray* outfolder_parts = outfilename.Tokenize("/");
-  // TString outfolder = "/";
-  // for(int i=0; i<outfolder_parts->GetEntries()-1; i++){
-  //   outfolder += (TString)outfolder_parts->At(i)->GetName();
-  //   if(i < outfolder_parts->GetEntries()-2) outfolder += "/";
-  // }
-  //
-  // experimental::filesystem::path of((string)outfolder);
-  // if(!experimental::filesystem::exists(of)){
-  //   cout << green << "--> Outfolder: " << outfolder << " doesn't exist, creating it. " << reset << endl;
-  //   bool success = experimental::filesystem::create_directories(of);
-  //   if(!success){
-  //     cout << red << "Failed to create outfolder. Abort." << reset << endl;
-  //     return 1;
-  //   }
-  // }
   cout << green << "--> Output file will be: " << outfilename << reset << endl;
   TFile* infile = TFile::Open(infilename, "READ");
 
   const vector<int> npids = get_npids();
   Event* event;
   double weight;
+  GenContent* gencontent;
   Met* genmet, *met_from_invis;
   vector<GenParticle>* gps_hard;
   vector<GenParticle>* gps_final;
@@ -104,6 +87,7 @@ int main(int argc, char* argv[]){
     genjets                = new vector<GenJet>;
     genmet                 = new Met;
     met_from_invis         = new Met;
+    gencontent             = new GenContent;
     event                  = new Event;
 
 
@@ -230,23 +214,31 @@ int main(int argc, char* argv[]){
 
 
 
-    event->genmet = genmet;
-    event->met_from_invis = met_from_invis;
-    event->genparticles_hard = gps_hard;
-    event->genparticles_final = gps_final;
-    // event->genparticles_finalstate_invisible = gps_finalstate_invisible;
-    event->genparticles_visibletaus = gps_tauvis;
-    event->genjets = genjets;
+    // event->genmet = genmet;
+    // event->met_from_invis = met_from_invis;
+    // event->genparticles_hard = gps_hard;
+    // event->genparticles_final = gps_final;
+    // event->genparticles_visibletaus = gps_tauvis;
+    // event->genjets = genjets;
+    // event->weight = weight;
+    gencontent->genmet = genmet;
+    gencontent->met_from_invis = met_from_invis;
+    gencontent->genparticles_hard = gps_hard;
+    gencontent->genparticles_final = gps_final;
+    gencontent->genparticles_visibletaus = gps_tauvis;
+    gencontent->genjets = genjets;
+    event->gencontent = gencontent;
     event->weight = weight;
     tree->Fill();
     idx ++;
 
-    delete gps_final;
-    delete gps_hard;
-    delete gps_tauvis;
-    delete genmet;
-    delete met_from_invis;
-    delete genjets;
+    // delete gps_final;
+    // delete gps_hard;
+    // delete gps_tauvis;
+    // delete genmet;
+    // delete met_from_invis;
+    // delete genjets;
+    delete gencontent;
   }
 
 

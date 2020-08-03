@@ -39,20 +39,20 @@ namespace std {} using namespace std;
 // Header files passed as explicit arguments
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
+#include "include/GenContent.h"
 #include "include/Particle.h"
 #include "include/Registry.h"
-#include "include/classes.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
+#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/cosmetics.h"
 #include "include/BaseTool.h"
-#include "include/constants.h"
 #include "include/PlottingTool.h"
 #include "include/useful_functions.h"
 
@@ -239,6 +239,51 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
+   static TClass *GenContent_Dictionary();
+   static void GenContent_TClassManip(TClass*);
+   static void *new_GenContent(void *p = 0);
+   static void *newArray_GenContent(Long_t size, void *p);
+   static void delete_GenContent(void *p);
+   static void deleteArray_GenContent(void *p);
+   static void destruct_GenContent(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::GenContent*)
+   {
+      ::GenContent *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::GenContent));
+      static ::ROOT::TGenericClassInfo 
+         instance("GenContent", "include/GenContent.h", 15,
+                  typeid(::GenContent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &GenContent_Dictionary, isa_proxy, 4,
+                  sizeof(::GenContent) );
+      instance.SetNew(&new_GenContent);
+      instance.SetNewArray(&newArray_GenContent);
+      instance.SetDelete(&delete_GenContent);
+      instance.SetDeleteArray(&deleteArray_GenContent);
+      instance.SetDestructor(&destruct_GenContent);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::GenContent*)
+   {
+      return GenerateInitInstanceLocal((::GenContent*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::GenContent*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *GenContent_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::GenContent*)0x0)->GetClass();
+      GenContent_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void GenContent_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
    static TClass *Event_Dictionary();
    static void Event_TClassManip(TClass*);
    static void *new_Event(void *p = 0);
@@ -366,6 +411,27 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class ::GenJet
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_GenContent(void *p) {
+      return  p ? new(p) ::GenContent : new ::GenContent;
+   }
+   static void *newArray_GenContent(Long_t nElements, void *p) {
+      return p ? new(p) ::GenContent[nElements] : new ::GenContent[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_GenContent(void *p) {
+      delete ((::GenContent*)p);
+   }
+   static void deleteArray_GenContent(void *p) {
+      delete [] ((::GenContent*)p);
+   }
+   static void destruct_GenContent(void *p) {
+      typedef ::GenContent current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::GenContent
 
 namespace ROOT {
    // Wrappers around operator new
@@ -641,6 +707,69 @@ namespace ROOT {
 } // end of namespace ROOT for class vector<GenJet>
 
 namespace ROOT {
+   static TClass *vectorlEGenContentgR_Dictionary();
+   static void vectorlEGenContentgR_TClassManip(TClass*);
+   static void *new_vectorlEGenContentgR(void *p = 0);
+   static void *newArray_vectorlEGenContentgR(Long_t size, void *p);
+   static void delete_vectorlEGenContentgR(void *p);
+   static void deleteArray_vectorlEGenContentgR(void *p);
+   static void destruct_vectorlEGenContentgR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<GenContent>*)
+   {
+      vector<GenContent> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<GenContent>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<GenContent>", -2, "vector", 216,
+                  typeid(vector<GenContent>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEGenContentgR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<GenContent>) );
+      instance.SetNew(&new_vectorlEGenContentgR);
+      instance.SetNewArray(&newArray_vectorlEGenContentgR);
+      instance.SetDelete(&delete_vectorlEGenContentgR);
+      instance.SetDeleteArray(&deleteArray_vectorlEGenContentgR);
+      instance.SetDestructor(&destruct_vectorlEGenContentgR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<GenContent> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<GenContent>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEGenContentgR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<GenContent>*)0x0)->GetClass();
+      vectorlEGenContentgR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEGenContentgR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEGenContentgR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<GenContent> : new vector<GenContent>;
+   }
+   static void *newArray_vectorlEGenContentgR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<GenContent>[nElements] : new vector<GenContent>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEGenContentgR(void *p) {
+      delete ((vector<GenContent>*)p);
+   }
+   static void deleteArray_vectorlEGenContentgR(void *p) {
+      delete [] ((vector<GenContent>*)p);
+   }
+   static void destruct_vectorlEGenContentgR(void *p) {
+      typedef vector<GenContent> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<GenContent>
+
+namespace ROOT {
    static TClass *vectorlEEventgR_Dictionary();
    static void vectorlEEventgR_TClassManip(TClass*);
    static void *new_vectorlEEventgR(void *p = 0);
@@ -708,20 +837,20 @@ namespace {
     static const char* headers[] = {
 "include/ObjectIdUtils.h",
 "include/massconfig.h",
+"include/GenContent.h",
 "include/Particle.h",
 "include/Registry.h",
-"include/classes.h",
 "include/Config.h",
 "include/GenHists.h",
 "include/Met.h",
 "include/GenJet.h",
+"include/constants.h",
 "include/CleaningModules.h",
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
 "include/cosmetics.h",
 "include/BaseTool.h",
-"include/constants.h",
 "include/PlottingTool.h",
 "include/useful_functions.h",
 0
@@ -740,10 +869,11 @@ extern int __Cling_Autoloading_Map;
 class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenParticle;
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
-class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenJet;
+class __attribute__((annotate("$clingAutoload$include/GenContent.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenContent;
 class __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Event;
 class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Met;
-class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Particle;
+class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenJet;
+class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "ClassDictionaries dictionary payload"
@@ -755,20 +885,20 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 #define _BACKWARD_BACKWARD_WARNING_H
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
+#include "include/GenContent.h"
 #include "include/Particle.h"
 #include "include/Registry.h"
-#include "include/classes.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
+#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/cosmetics.h"
 #include "include/BaseTool.h"
-#include "include/constants.h"
 #include "include/PlottingTool.h"
 #include "include/useful_functions.h"
 
@@ -776,6 +906,7 @@ class __attribute__((annotate("$clingAutoload$include/Particle.h")))  __attribut
 )DICTPAYLOAD";
     static const char* classesHeaders[]={
 "Event", payloadCode, "@",
+"GenContent", payloadCode, "@",
 "GenJet", payloadCode, "@",
 "GenParticle", payloadCode, "@",
 "Met", payloadCode, "@",

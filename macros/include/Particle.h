@@ -44,9 +44,9 @@ public:
 
 
 protected:
-  double m_pt = 0.;
-  double m_eta = 0.;
-  double m_phi = 0.;
-  double m_m = 0.;
+  double m_pt = -1.;
+  double m_eta = -1.;
+  double m_phi = -1.;
+  double m_m = -1.;
 
 };

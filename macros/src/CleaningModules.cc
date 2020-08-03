@@ -6,7 +6,7 @@ using namespace std;
 
 GenJetCleaner::GenJetCleaner(const GenJetId & id_): id(id_) {}
 bool GenJetCleaner::process(Event & event){
-  clean_collection(event.genjets, event, id);
+  clean_collection(event.gencontent->genjets, event, id);
   return true;
 }
 
@@ -15,11 +15,11 @@ bool GenJetVisTauCleaner::process(Event & event){
 
   // throw away jets, that are closer than mindR to any visible tau
   vector<GenJet> cleaned_jets;
-  for(size_t i=0; i<event.genjets->size(); i++){
-    GenJet gj = event.genjets->at(i);
+  for(size_t i=0; i<event.gencontent->genjets->size(); i++){
+    GenJet gj = event.gencontent->genjets->at(i);
     bool keep = true;
-    for(size_t j=0; j<event.genparticles_visibletaus->size(); j++){
-      GenParticle gt = event.genparticles_visibletaus->at(j);
+    for(size_t j=0; j<event.gencontent->genparticles_visibletaus->size(); j++){
+      GenParticle gt = event.gencontent->genparticles_visibletaus->at(j);
       if(deltaR(gj, gt) < mindr){
         keep = false;
         break;
@@ -27,12 +27,12 @@ bool GenJetVisTauCleaner::process(Event & event){
     }
     if(keep) cleaned_jets.emplace_back(gj);
   }
-  swap(cleaned_jets, *event.genjets);
+  swap(cleaned_jets, *event.gencontent->genjets);
   return true;
 }
 
 GenVisTauCleaner::GenVisTauCleaner(const GenParticleId & id_): id(id_) {}
 bool GenVisTauCleaner::process(Event & event){
-  clean_collection(event.genparticles_visibletaus, event, id);
+  clean_collection(event.gencontent->genparticles_visibletaus, event, id);
   return true;
 }
