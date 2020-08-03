@@ -1,0 +1,24 @@
+set param_card  mass 9000005 1900
+set param_card  mass 9000006 1344
+set param_card  mass 9000007 427
+set param_card  mass 9000008 523
+set param_card  mass 9000009 475
+set param_card  nplqcoup 1 1.0
+set param_card  nplqcoup 2 0
+set param_card  nplqcoup 3 0
+set param_card  nplqcoup 4 0
+set param_card  nplqcoup 5 0
+set param_card  npzpcoup 1 1.0
+set param_card  DECAY 9000005 auto
+set param_card  DECAY 9000006 auto
+set param_card  DECAY 9000007 auto
+set param_card  DECAY 9000008 auto
+set param_card  DECAY 9000009 auto
+set run_card bwcutoff 15.0
+set run_card pdlabel lhapdf
+set run_card lhaid 315200
+set run_card fixed_ren_scale T
+set run_card fixed_fac_scale T
+set run_card scale 475
+set run_card dsqrt_q2fact1 475
+set run_card dsqrt_q2fact2 475
