@@ -49,8 +49,8 @@ int main(int argc, char* argv[]){
   const vector<int> npids = get_npids();
   Event* event;
   double weight;
-  GenContent* gencontent;
-  Met* genmet, *met_from_invis;
+  Met* genmet;
+  Met* genmet_invis;
   vector<GenParticle>* gps_hard;
   vector<GenParticle>* gps_final;
   vector<GenParticle>* gps_tauvis;
@@ -81,14 +81,13 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>*           gjs = handle_genjets.product();
     const GenEventInfoProduct*                                               gif = handle_geninfo.product();
 
-    gps_hard               = new vector<GenParticle>;
-    gps_final              = new vector<GenParticle>;
-    gps_tauvis             = new vector<GenParticle>;
-    genjets                = new vector<GenJet>;
-    genmet                 = new Met;
-    met_from_invis         = new Met;
-    gencontent             = new GenContent;
-    event                  = new Event;
+    gps_hard     = new vector<GenParticle>;
+    gps_final    = new vector<GenParticle>;
+    gps_tauvis   = new vector<GenParticle>;
+    genjets      = new vector<GenJet>;
+    genmet       = new Met;
+    genmet_invis = new Met;
+    event        = new Event;
 
 
     // Do GenParticles
@@ -120,7 +119,6 @@ int main(int argc, char* argv[]){
           if(id == dmids[j]) finalstate_invis = true;
         }
         if(id == 12 || id == 14 || id == 16) finalstate_invis = true;
-        // finalstate_invis = true;
       }
 
       // this will be written out if we keep this particle
@@ -204,8 +202,8 @@ int main(int argc, char* argv[]){
     genmet->set_pt(gm->at(0).pt());
     genmet->set_phi(gm->at(0).phi());
 
-    met_from_invis->set_pt(p4suminvis.pt());
-    met_from_invis->set_phi(p4suminvis.phi());
+    genmet_invis->set_pt(p4suminvis.pt());
+    genmet_invis->set_phi(p4suminvis.phi());
 
 
     // Do weight
@@ -215,30 +213,28 @@ int main(int argc, char* argv[]){
 
 
     // event->genmet = genmet;
-    // event->met_from_invis = met_from_invis;
+    // event->genmet_invis = genmet_invis;
     // event->genparticles_hard = gps_hard;
     // event->genparticles_final = gps_final;
     // event->genparticles_visibletaus = gps_tauvis;
     // event->genjets = genjets;
     // event->weight = weight;
-    gencontent->genmet = genmet;
-    gencontent->met_from_invis = met_from_invis;
-    gencontent->genparticles_hard = gps_hard;
-    gencontent->genparticles_final = gps_final;
-    gencontent->genparticles_visibletaus = gps_tauvis;
-    gencontent->genjets = genjets;
-    event->gencontent = gencontent;
+    event->genmet = genmet;
+    event->genmet_invis = genmet_invis;
+    event->genparticles_hard = gps_hard;
+    event->genparticles_final = gps_final;
+    event->genparticles_visibletaus = gps_tauvis;
+    event->genjets = genjets;
     event->weight = weight;
     tree->Fill();
     idx ++;
 
-    // delete gps_final;
-    // delete gps_hard;
-    // delete gps_tauvis;
-    // delete genmet;
-    // delete met_from_invis;
-    // delete genjets;
-    delete gencontent;
+    delete gps_final;
+    delete gps_hard;
+    delete gps_tauvis;
+    delete genmet;
+    delete genmet_invis;
+    delete genjets;
   }
 
 

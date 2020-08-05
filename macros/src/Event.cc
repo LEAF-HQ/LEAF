@@ -1,5 +1,4 @@
 #include "include/Event.h"
-#include "include/GenContent.h"
 #include "include/cosmetics.h"
 #include "include/constants.h"
 #include <TH1D.h>
@@ -21,35 +20,32 @@ using namespace std;
 
 Event::Event(){
 
-  // genmet                          = new Met;
-  // met_from_invis                  = new Met;
-  // genparticles_hard               = new vector<GenParticle>;
-  // genparticles_final              = new vector<GenParticle>;
-  // genparticles_visibletaus        = new vector<GenParticle>;
-  // genjets                         = new vector<GenJet>;
-  gencontent  = new GenContent;
-  weight      = -1.;
-  // clear();
+  genmet                   = new Met;
+  genmet_invis             = new Met;
+  genparticles_hard        = new vector<GenParticle>;
+  genparticles_final       = new vector<GenParticle>;
+  genparticles_visibletaus = new vector<GenParticle>;
+  genjets                  = new vector<GenJet>;
+  weight                   = 1.;
+  clear();
 }
 
 Event::~Event(){
   cout << "deleting event" << endl;
-  // delete genmet;
-  // delete met_from_invis;
-  // delete genparticles_hard;
-  // delete genparticles_final;
-  // delete genparticles_visibletaus;
-  // delete genjets;
-  // delete gencontent;
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
 }
 
 void Event::clear(){
-  // genmet = 0;
-  // met_from_invis = 0;
-  // genparticles_hard = 0;
-  // genparticles_final = 0;
-  // genparticles_visibletaus = 0;
-  // genjets = 0;
-  gencontent = 0;
+  genmet = 0;
+  genmet_invis = 0;
+  genparticles_hard = 0;
+  genparticles_final = 0;
+  genparticles_visibletaus = 0;
+  genjets = 0;
   weight  = 1.;
 }

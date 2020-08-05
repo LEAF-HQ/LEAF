@@ -5,8 +5,10 @@
 #include <map>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
-// #include "classes.h"
-#include "include/GenContent.h"
+
+#include "include/Met.h"
+#include "include/GenParticle.h"
+#include "include/GenJet.h"
 
 using namespace std;
 
@@ -21,8 +23,13 @@ public:
   ~Event();
 
   void clear();
-  
-  GenContent* gencontent;
+
+  Met* genmet;
+  Met* genmet_invis;
+  vector<GenParticle>* genparticles_hard;
+  vector<GenParticle>* genparticles_final;
+  vector<GenParticle>* genparticles_visibletaus;
+  vector<GenJet>* genjets;
   double weight;
 
 };
