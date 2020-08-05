@@ -19,7 +19,6 @@
 using namespace std;
 
 Event::Event(){
-
   genmet                   = new Met;
   genmet_invis             = new Met;
   genparticles_hard        = new vector<GenParticle>;
@@ -27,11 +26,9 @@ Event::Event(){
   genparticles_visibletaus = new vector<GenParticle>;
   genjets                  = new vector<GenJet>;
   weight                   = 1.;
-  clear();
 }
 
 Event::~Event(){
-  cout << "deleting event" << endl;
   delete genmet;
   delete genmet_invis;
   delete genparticles_hard;
@@ -41,6 +38,12 @@ Event::~Event(){
 }
 
 void Event::clear(){
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
   genmet = 0;
   genmet_invis = 0;
   genparticles_hard = 0;
@@ -48,4 +51,20 @@ void Event::clear(){
   genparticles_visibletaus = 0;
   genjets = 0;
   weight  = 1.;
+}
+
+void Event::reset(){
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
+  genmet                   = new Met;
+  genmet_invis             = new Met;
+  genparticles_hard        = new vector<GenParticle>;
+  genparticles_final       = new vector<GenParticle>;
+  genparticles_visibletaus = new vector<GenParticle>;
+  genjets                  = new vector<GenJet>;
+  weight                   = 1.;
 }

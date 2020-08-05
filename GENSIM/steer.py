@@ -32,7 +32,19 @@ mass_configurations = [
     {'mlq': 1900, 'mch': 427},
     {'mlq': 1900, 'mch': 794},
 ]
+
+# exclude combinations of process -- mass_config for processes without phase space
+excluded_configurations = {
+    'LQLQToPsiChi': [
+        {'mlq': 1000, 'mch': 912}
+    ],
+    'LQLQToBTauPsiChi': [
+        {'mlq': 1000, 'mch': 912}
+    ]
+}
+
 processes = ['LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsiToLQChi']
+
 lambdas = [1.0]
 tag = ''                # tags are auto-formatted to '_XXXX'
 maxindex        = 100   # Number of samples per configuration
@@ -140,11 +152,11 @@ configs = {
 def main():
 
     make_cards       = False
-    submit_gridpacks = True
-    copy_gridpacks   = False
+    submit_gridpacks = False
+    move_gridpacks   = False
     clean_mg_area    = False
 
-    gensim           = False
+    gensim           = True
     resub_gensim     = False
 
     dr               = False
@@ -181,7 +193,7 @@ def main():
     # Gridpack generation
     if make_cards:       ProduceCards()
     if submit_gridpacks: SubmitGridpacks(submit=submit)
-    if copy_gridpacks:   CopyGridpacks(submit=submit)
+    if move_gridpacks:   MoveGridpacks(submit=submit)
     if clean_mg_area:    CleanMGArea(submit=submit)
 
     # GENSIM generation
@@ -215,14 +227,16 @@ def main():
 
 
 
-
-
 # ----------
 # Make cards
 # ----------
 def ProduceCards():
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
+
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 make_card(card_template_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb)
@@ -232,6 +246,10 @@ def SubmitGridpacks(submit):
     # Submit gridpacks based on cards created above
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
+
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -245,11 +263,14 @@ def SubmitGridpacks(submit):
 
 
 
-def CopyGridpacks(submit):
-    # Copy gridpacks to new dir
+def MoveGridpacks(submit):
+    # Move gridpacks to new dir
     commands = []
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -259,9 +280,13 @@ def CopyGridpacks(submit):
                 targetfile = gridpackfolder + '/' + gpname
                 command = 'mv %s %s' % (sourcefile, targetfile)
                 commands.append(command)
-                print command
-    if submit: execute_commands_parallel(commands=commands, ncores=15)
-    print green('\ndone moving gridpacks')
+                if submit:
+                    print green('moving gridpack \'%s\'' % (gpname))
+                else:
+                    print yellow('would move gridpack \'%s\'' % (gpname))
+    if submit:
+        execute_commands_parallel(commands=commands, ncores=15)
+        print green('\ndone moving gridpacks')
 
 
 
@@ -270,14 +295,21 @@ def CleanMGArea(submit):
     commands = []
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 command = 'rm -rf ' + mgfolder + '/' + jobname + '*'
                 commands.append(command)
-                print command
-    if submit: execute_commands_parallel(commands=commands, ncores=15)
-    print green('\ndone cleaning up MG area')
+                if submit:
+                    print green('removing MG files \'%s*\'' % (jobname))
+                else:
+                    print yellow('would remove MG files \'%s*\'' % (jobname))
+    if submit:
+        execute_commands_parallel(commands=commands, ncores=15)
+        print green('\ndone cleaning up MG area')
 
 
 
@@ -302,6 +334,9 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
     # Create command file for array of jobs
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -352,6 +387,9 @@ def RemoveSamples(submit, generation_step):
     commands = []
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -378,6 +416,9 @@ def SubmitTuplize(submit):
     # Create command file for array of jobs
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -411,6 +452,9 @@ def SubmitAdd(submit):
     commandfilebase = gensimfolder + '/commands/add_'
     for processname in processes:
         for config in mass_configurations:
+            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+                print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
@@ -486,6 +530,7 @@ def make_card(card_template_folder, processname, mlq, mps, mch, lamb=1.0, bwcuto
         replace_placeholders(card, replacement_dict)
     print green('--> Done making one set of cards.\n')
 
+
 def replace_placeholders(card, replacement_dict, identifier = '$'):
     fin = open(card,'r')
     lines = fin.readlines()
@@ -510,14 +555,6 @@ def replace_placeholders(card, replacement_dict, identifier = '$'):
         fout.write(l)
     fout.close()
     print green('--> Successfully created card %s' % (card))
-
-
-
-
-
-
-
-
 
 
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):

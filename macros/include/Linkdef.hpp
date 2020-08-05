@@ -18,8 +18,6 @@
 #pragma link C++ class std::vector<Met>+;
 #pragma link C++ class Event+;
 #pragma link C++ class std::vector<Event>+;
-#pragma link C++ class GenContent+;
-#pragma link C++ class std::vector<GenContent>+;
 
 
 

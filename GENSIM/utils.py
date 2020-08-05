@@ -51,6 +51,17 @@ def get_mlq_mps_mch(config):
     # return (config['mlq'], config['mps'], config['mch'])
     return (config['mlq'], preferred_configurations[config['mlq']][config['mch']][0], config['mch'])
 
+def is_config_excluded(excluded_configurations, config, processname):
+    if not processname in excluded_configurations.keys(): # no config of this proc is excluded
+        return False
+
+    if config in excluded_configurations[processname]:
+        return True
+    else:
+        return False
+
+
+
 def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''
     return formatted

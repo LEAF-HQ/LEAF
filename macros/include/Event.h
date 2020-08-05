@@ -18,11 +18,12 @@ class Event {
 public:
   // Constructors, destructor
   Event();
-  Event(const Event &) = default;
-  Event & operator = (const Event &) = default;
+  // Event(const Event &) = default;
+  // Event & operator = (const Event &) = default;
   ~Event();
 
   void clear();
+  void reset();
 
   Met* genmet;
   Met* genmet_invis;

@@ -47,14 +47,15 @@ int main(int argc, char* argv[]){
   TFile* infile = TFile::Open(infilename, "READ");
 
   const vector<int> npids = get_npids();
-  Event* event;
-  double weight;
-  Met* genmet;
-  Met* genmet_invis;
-  vector<GenParticle>* gps_hard;
-  vector<GenParticle>* gps_final;
-  vector<GenParticle>* gps_tauvis;
-  vector<GenJet>*      genjets;
+  // Event* event;
+  // double weight;
+  // Met* genmet;
+  // Met* genmet_invis;
+  // vector<GenParticle>* gps_hard;
+  // vector<GenParticle>* gps_final;
+  // vector<GenParticle>* gps_tauvis;
+  // vector<GenJet>*      genjets;
+  Event event;
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
@@ -81,13 +82,13 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>*           gjs = handle_genjets.product();
     const GenEventInfoProduct*                                               gif = handle_geninfo.product();
 
-    gps_hard     = new vector<GenParticle>;
-    gps_final    = new vector<GenParticle>;
-    gps_tauvis   = new vector<GenParticle>;
-    genjets      = new vector<GenJet>;
-    genmet       = new Met;
-    genmet_invis = new Met;
-    event        = new Event;
+    // gps_hard     = new vector<GenParticle>;
+    // gps_final    = new vector<GenParticle>;
+    // gps_tauvis   = new vector<GenParticle>;
+    // genjets      = new vector<GenJet>;
+    // genmet       = new Met;
+    // genmet_invis = new Met;
+    // event        = new Event;
 
 
     // Do GenParticles
@@ -131,7 +132,7 @@ int main(int argc, char* argv[]){
       p.set_ndaughters(gps->at(i).numberOfDaughters());
 
       if(keepfinal){
-        gps_final->emplace_back(p);
+        event.genparticles_final->emplace_back(p);
         // save visible daughters of final taus (not only from hard-process-taus)
         if(id == 15){
           vector<reco::GenParticle> dummydaus = {};
@@ -150,11 +151,11 @@ int main(int argc, char* argv[]){
           taudaughters_visible.set_p4(p4vis);
           taudaughters_visible.set_pdgid(gps->at(i).pdgId());
           taudaughters_visible.set_ndaughters((int)tds.size());
-          gps_tauvis->emplace_back(taudaughters_visible);
+          event.genparticles_visibletaus->emplace_back(taudaughters_visible);
         }
       }
       if(ishard){
-        gps_hard->emplace_back(p);
+        event.genparticles_hard->emplace_back(p);
       }
       if(finalstate_invis){
         // gps_finalstate_invisible->emplace_back(p);
@@ -193,22 +194,22 @@ int main(int argc, char* argv[]){
 
       // save only genjets with at least 5GeV and |eta| < 5
       if(gj.pt() < 5 || fabs(gj.eta()) > 5.) continue;
-      genjets->emplace_back(gj);
+      event.genjets->emplace_back(gj);
     }
 
     // Do GenMET
     // =========
 
-    genmet->set_pt(gm->at(0).pt());
-    genmet->set_phi(gm->at(0).phi());
+    event.genmet->set_pt(gm->at(0).pt());
+    event.genmet->set_phi(gm->at(0).phi());
 
-    genmet_invis->set_pt(p4suminvis.pt());
-    genmet_invis->set_phi(p4suminvis.phi());
+    event.genmet_invis->set_pt(p4suminvis.pt());
+    event.genmet_invis->set_phi(p4suminvis.phi());
 
 
     // Do weight
     // =========
-    weight = gif->weight();
+    event.weight = gif->weight();
 
 
 
@@ -219,25 +220,26 @@ int main(int argc, char* argv[]){
     // event->genparticles_visibletaus = gps_tauvis;
     // event->genjets = genjets;
     // event->weight = weight;
-    event->genmet = genmet;
-    event->genmet_invis = genmet_invis;
-    event->genparticles_hard = gps_hard;
-    event->genparticles_final = gps_final;
-    event->genparticles_visibletaus = gps_tauvis;
-    event->genjets = genjets;
-    event->weight = weight;
+    // event->genmet = genmet;
+    // event->genmet_invis = genmet_invis;
+    // event->genparticles_hard = gps_hard;
+    // event->genparticles_final = gps_final;
+    // event->genparticles_visibletaus = gps_tauvis;
+    // event->genjets = genjets;
+    // event->weight = weight;
     tree->Fill();
+    event.reset();
     idx ++;
 
-    delete gps_final;
-    delete gps_hard;
-    delete gps_tauvis;
-    delete genmet;
-    delete genmet_invis;
-    delete genjets;
+    // delete gps_final;
+    // delete gps_hard;
+    // delete gps_tauvis;
+    // delete genmet;
+    // delete genmet_invis;
+    // delete genjets;
   }
 
-
+  event.clear();
   tree->Write();
   outfile->Close();
   cout << green << "--> Successfully finished tuplization." << reset << endl;

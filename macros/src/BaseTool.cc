@@ -48,7 +48,7 @@ void BaseTool::LoopEvents(const Config & cfg){
     event->clear();
 
   }
-
+  delete event;
 
 }
 

@@ -34,77 +34,32 @@ int main(int argc, char* argv[]){
   TFile* infile = TFile::Open(infilename, "READ");
 
   // const vector<int> npids = get_npids();
-  Event* event;
-  Met* met;
-  Met* genmet_invis;
-  double weight;
-  vector<GenParticle>* gps_hard;
-  vector<GenParticle>* gps_final;
-  vector<GenParticle>* gps_tauvis;
-  vector<GenJet>*      genjets;
+  Event event;
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
   tree->Branch("Event", &event);
 
   TTreeReader reader("Events", infile);
-  TTreeReaderValue<float> met_pt(reader, "MET_pt");
-  TTreeReaderValue<float> met_phi(reader, "MET_phi");
-  TTreeReaderValue<float> genWeight(reader, "genWeight");
+  TTreeReaderValue<float> genmet_pt (reader, "GenMET_pt");
+  TTreeReaderValue<float> genmet_phi(reader, "GenMET_phi");
+  TTreeReaderValue<float> genWeight (reader, "genWeight");
 
   int idx = 0;
   while (reader.Next()) {
     if(((idx+1) % 500 == 0) || idx == 0) cout << green << "    --> At event: " << idx+1 << reset << endl;
-    cout << "new event " << endl;
+    
+    event.genmet->set_pt(*genmet_pt);
+    event.genmet->set_phi(*genmet_phi);
+    event.weight = *genWeight;
 
-    // GenParticle gp_dummy;
-    gps_hard     = new vector<GenParticle>;
-    gps_final    = new vector<GenParticle>;
-    gps_tauvis   = new vector<GenParticle>;
-    genjets      = new vector<GenJet>;
-    met          = new Met;
-    genmet_invis = new Met;
-    event        = new Event;
-    weight       = 1.;
-    cout << "after 'new'" << endl;
-
-    // gps_hard->emplace_back(gp_dummy);
-    // gps_hard->emplace_back(gp_dummy);
-    met->set_pt(*met_pt);
-    met->set_phi(*met_phi);
-    // genmet_invis->set_pt(*met_pt);
-    // genmet_invis->set_phi(*met_phi);
-    // weight = *genWeight;
-    // met.set_pt(*met_pt);
-    // cout << "after setting met pt " << endl;
-    // met.set_phi(*met_phi);
-    // genmet_invis.set_pt(*met_pt);
-    // genmet_invis.set_phi(*met_phi);
-    // weight = *genWeight;
-    // cout << "after setting members" << endl;
-    //
-    event->genmet = met;
-    event->genmet_invis = genmet_invis;
-    event->genparticles_hard = gps_hard;
-    event->genparticles_final = gps_final;
-    event->genparticles_visibletaus = gps_tauvis;
-    event->genjets = genjets;
-    event->weight = weight;
     tree->Fill();
-    idx ++;
-    // delete gps_final;
-    // delete gps_hard;
-    // delete gps_tauvis;
-    // delete met;
-    // delete genmet_invis;
-    // delete genjets;
-    event->clear();
-    cout << "Done with one event" << endl;
+    event.reset();
+    idx++;
   }
 
-
+  event.clear();
   tree->Write();
   outfile->Close();
-  delete event;
   cout << green << "--> Successfully finished tuplization." << reset << endl;
 }
