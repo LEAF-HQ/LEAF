@@ -49,6 +49,7 @@ int main(int argc, char* argv[]){
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
 
   tree->Branch("Event", &event);
+  // tree->Branch("Event", &gencontent);
 
 
   TTreeReader reader("Events", infile);
@@ -70,13 +71,13 @@ int main(int argc, char* argv[]){
     // vector<GenJet>      genjets;
 
 
-    GenParticle gp_dummy;
-    // gps_hard               = new vector<GenParticle>(0);
-    // gps_final              = new vector<GenParticle>;
-    // gps_tauvis             = new vector<GenParticle>;
-    // genjets                = new vector<GenJet>;
+    // GenParticle gp_dummy;
+    gps_hard               = new vector<GenParticle>;
+    gps_final              = new vector<GenParticle>;
+    gps_tauvis             = new vector<GenParticle>;
+    genjets                = new vector<GenJet>;
     met                    = new Met;
-    // met_from_invis         = new Met;
+    met_from_invis         = new Met;
     gencontent             = new GenContent;
     event                  = new Event;
     weight                 = 1.;
@@ -88,7 +89,7 @@ int main(int argc, char* argv[]){
     met->set_phi(*met_phi);
     // met_from_invis->set_pt(*met_pt);
     // met_from_invis->set_phi(*met_phi);
-    weight = *genWeight;
+    // weight = *genWeight;
     // met.set_pt(*met_pt);
     // cout << "after setting met pt " << endl;
     // met.set_phi(*met_phi);
@@ -104,11 +105,11 @@ int main(int argc, char* argv[]){
     // // gencontent->genparticles_visibletaus = gps_tauvis;
     // // gencontent->genjets = genjets;
     gencontent->genmet = met;
-    // gencontent->met_from_invis = met_from_invis;
-    // gencontent->genparticles_hard = gps_hard;
-    // gencontent->genparticles_final = gps_final;
-    // gencontent->genparticles_visibletaus = gps_tauvis;
-    // gencontent->genjets = genjets;
+    gencontent->met_from_invis = met_from_invis;
+    gencontent->genparticles_hard = gps_hard;
+    gencontent->genparticles_final = gps_final;
+    gencontent->genparticles_visibletaus = gps_tauvis;
+    gencontent->genjets = genjets;
     // cout << "after setting gencontent" << endl;
     //
     event->gencontent = gencontent;
@@ -124,7 +125,7 @@ int main(int argc, char* argv[]){
     // delete met;
     // delete met_from_invis;
     // delete genjets;
-    delete gencontent;
+    // delete gencontent;
     cout << "Done with one event" << endl;
   }
 

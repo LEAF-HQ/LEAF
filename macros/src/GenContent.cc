@@ -22,30 +22,30 @@ GenContent::GenContent(){
 
   genmet                          = new Met;
   met_from_invis                  = new Met;
-  genparticles_hard               = new vector<GenParticle>(0);
+  // genparticles_hard               = new vector<GenParticle>(0);
   // genparticles_final              = new vector<GenParticle>;
   // genparticles_visibletaus        = new vector<GenParticle>;
   // genjets                         = new vector<GenJet>;
   clear();
 }
-
-GenContent::~GenContent(){
-  cout << "deleting GenContent" << endl;
-  delete genmet;
-  delete met_from_invis;
-  delete genparticles_hard;
+GenContent::~GenContent() = default;
+// GenContent::~GenContent(){
+  // cout << "deleting GenContent" << endl;
+  // delete genmet;
+  // delete met_from_invis;
+  // delete genparticles_hard;
   // delete genparticles_final;
   // delete genparticles_visibletaus;
   // delete genjets;
-  cout << "done deleting GenContent" << endl;
-}
+  // cout << "done deleting GenContent" << endl;
+// }
 
 void GenContent::clear(){
   cout << "clearing" << endl;
   // genmet = 0;
   // met_from_invis = 0;
   genparticles_hard = 0;
-  // genparticles_final = 0;
-  // genparticles_visibletaus = 0;
-  // genjets = 0;
+  genparticles_final = 0;
+  genparticles_visibletaus = 0;
+  genjets = 0;
 }

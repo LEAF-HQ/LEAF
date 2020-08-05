@@ -38,18 +38,18 @@ def bold(string):
 
 
 
-def get_samplename(mlq, mps, mc1, lamb, tag):
-    return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mc1, get_lambdastring(lamb), format_tag(tag))
+def get_samplename(mlq, mps, mch, lamb, tag):
+    return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
 
-def get_jobname(processname, mlq, mps, mc1, lamb, tag):
-    return processname + '_' + get_samplename(mlq, mps, mc1, lamb, tag)
+def get_jobname(processname, mlq, mps, mch, lamb, tag):
+    return processname + '_' + get_samplename(mlq, mps, mch, lamb, tag)
 
 def get_lambdastring(lamb):
     return ('%1.1f' % (lamb)).replace('.', 'p')
 
-def get_mlq_mps_mc1(config):
-    # return (config['mlq'], config['mps'], config['mc1'])
-    return (config['mlq'], preferred_configurations[config['mlq']][config['mc1']][0], config['mc1'])
+def get_mlq_mps_mch(config):
+    # return (config['mlq'], config['mps'], config['mch'])
+    return (config['mlq'], preferred_configurations[config['mlq']][config['mch']][0], config['mch'])
 
 def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''

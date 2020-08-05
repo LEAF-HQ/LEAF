@@ -26,9 +26,9 @@ public:
   Met* genmet;
   Met* met_from_invis;
   vector<GenParticle>* genparticles_hard;
-  // vector<GenParticle>* genparticles_final;
-  // vector<GenParticle>* genparticles_visibletaus;
-  // vector<GenJet>*      genjets;
+  vector<GenParticle>* genparticles_final;
+  vector<GenParticle>* genparticles_visibletaus;
+  vector<GenJet>*      genjets;
 
 
 };

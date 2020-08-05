@@ -869,10 +869,10 @@ extern int __Cling_Autoloading_Map;
 class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenParticle;
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
+class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenJet;
 class __attribute__((annotate("$clingAutoload$include/GenContent.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenContent;
 class __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Event;
 class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Met;
-class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenJet;
 class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(

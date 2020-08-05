@@ -28,8 +28,8 @@ Event::Event(){
   // genparticles_visibletaus        = new vector<GenParticle>;
   // genjets                         = new vector<GenJet>;
   gencontent  = new GenContent;
-  weight      = 1.;
-  clear();
+  weight      = -1.;
+  // clear();
 }
 
 Event::~Event(){
@@ -40,7 +40,7 @@ Event::~Event(){
   // delete genparticles_final;
   // delete genparticles_visibletaus;
   // delete genjets;
-  delete gencontent;
+  // delete gencontent;
 }
 
 void Event::clear(){

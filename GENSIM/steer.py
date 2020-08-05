@@ -11,68 +11,44 @@ from preferred_configurations import *
 # General settings
 # ----------------
 
-mass_configurations = {
-    'LQLQ': [ # MPS will automatically be taken from 'preferred_configurations'
-    {'mlq': 1000, 'mc1': 427},
-    {'mlq': 1000, 'mc1': 912},
-    {'mlq': 1900, 'mc1': 427},
-    {'mlq': 1900, 'mc1': 794},
-    ], # end of LQLQ
-    'PSPS': [ # MPS will automatically be taken from 'preferred_configurations'
-    {'mlq': 1000, 'mc1': 427},
-    {'mlq': 1000, 'mc1': 912},
-    {'mlq': 1900, 'mc1': 427},
-    {'mlq': 1900, 'mc1': 794},
-    ], # end of PSPS
-    # The LQLQ configurations below are inspired by the previous CMS paper and more or less meaningless
-    # 'LQLQ': [
-    # {'mlq': 600,  'mps': 220, 'mc1': 200},
-    # {'mlq': 700,  'mps': 275, 'mc1': 250},
-    # {'mlq': 800,  'mps': 330, 'mc1': 300},
-    # {'mlq': 900,  'mps': 385, 'mc1': 350},
-    # {'mlq': 1000, 'mps': 440, 'mc1': 400},
-    # {'mlq': 1100, 'mps': 495, 'mc1': 450},
-    # {'mlq': 1200, 'mps': 550, 'mc1': 500},
-    # {'mlq': 1300, 'mps': 605, 'mc1': 550},
-    # {'mlq': 1400, 'mps': 660, 'mc1': 600},
-    # {'mlq': 1500, 'mps': 715, 'mc1': 650},
-    # {'mlq': 1600, 'mps': 770, 'mc1': 700},
-    # {'mlq': 1700, 'mps': 825, 'mc1': 750},
-    # {'mlq': 1800, 'mps': 880, 'mc1': 800},
-    # {'mlq': 1900, 'mps': 935, 'mc1': 850},
-    # {'mlq': 2000, 'mps': 990, 'mc1': 900}
-    # ], # end of LQLQ
-    # 'PsiPsi': [
-    # {'mlq': 600,  'mps': 220, 'mc1': 200},
-    # {'mlq': 700,  'mps': 275, 'mc1': 250},
-    # {'mlq': 800,  'mps': 330, 'mc1': 300},
-    # {'mlq': 900,  'mps': 385, 'mc1': 350},
-    # {'mlq': 1000, 'mps': 440, 'mc1': 400},
-    # {'mlq': 1100, 'mps': 495, 'mc1': 450},
-    # {'mlq': 1200, 'mps': 550, 'mc1': 500},
-    # {'mlq': 1300, 'mps': 605, 'mc1': 550},
-    # {'mlq': 1400, 'mps': 660, 'mc1': 600},
-    # {'mlq': 1500, 'mps': 715, 'mc1': 650},
-    # {'mlq': 1600, 'mps': 770, 'mc1': 700},
-    # {'mlq': 1700, 'mps': 825, 'mc1': 750},
-    # {'mlq': 1800, 'mps': 880, 'mc1': 800},
-    # {'mlq': 1900, 'mps': 935, 'mc1': 850},
-    # {'mlq': 2000, 'mps': 990, 'mc1': 900}
-    # ] # end of PsiPsi
-}
+# mass_configurations = {
+#     'LQLQ': [ # MPS will automatically be taken from 'preferred_configurations'
+#     {'mlq': 1000, 'mch': 427},
+#     {'mlq': 1000, 'mch': 912},
+#     {'mlq': 1900, 'mch': 427},
+#     {'mlq': 1900, 'mch': 794},
+#     ], # end of LQLQ
+#     'PSPS': [ # MPS will automatically be taken from 'preferred_configurations'
+#     {'mlq': 1000, 'mch': 427},
+#     {'mlq': 1000, 'mch': 912},
+#     {'mlq': 1900, 'mch': 427},
+#     {'mlq': 1900, 'mch': 794},
+#     ], # end of PSPS
+# }
+mass_configurations = [
+    # MPS will automatically be taken from 'preferred_configurations'
+    {'mlq': 1000, 'mch': 427},
+    {'mlq': 1000, 'mch': 912},
+    {'mlq': 1900, 'mch': 427},
+    {'mlq': 1900, 'mch': 794},
+]
+processes = ['LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsiToLQChi']
 lambdas = [1.0]
 tag = ''                # tags are auto-formatted to '_XXXX'
 maxindex        = 100   # Number of samples per configuration
 nevents         = 1000  # Events per sample
 
 
+username       = 'areimers'
 arch_tag       = 'slc7_amd64_gcc700'
 # cmssw_tag_gp   = 'CMSSW_9_3_16'
 cmssw_tag_gp   = 'CMSSW_10_6_0'
 cmssw_tag_sim  = 'CMSSW_10_6_12'
 cmssw_tag_hlt  = 'CMSSW_9_4_14_UL_patch1'
-workarea       = '/work/areimers'
 campaign       = 'UL17'
+
+
+workarea       = '/work/'+ username
 workdir_slurm  = workarea + '/workdir_slurm'
 mgfolder       = workarea + '/' + cmssw_tag_sim + '/src/genproductions/bin/MadGraph5_aMCatNLO'
 basefolder     = workarea + '/LQDM'
@@ -84,10 +60,9 @@ psetfolder     = gensimfolder + '/PSets/' + campaign
 T2_director      = 'gsiftp://storage01.lcg.cscs.ch/'
 T2_director_root = 'root://storage01.lcg.cscs.ch/'
 T3_director      = 'root://t3dcachedb03.psi.ch/'
-T2_path          = '/pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers'
-T3_path          = '/pnfs/psi.ch/cms/trivcat/store/user/areimers'
-gensim_path_tag  = 'GENSIM/LQDM'
-tuple_path       = '/work/areimers/Tuples/' + campaign + '/GENSIM/LQDM'
+T2_path          = '/pnfs/lcg.cscs.ch/cms/trivcat/store/user/'+ username
+T3_path          = '/pnfs/psi.ch/cms/trivcat/store/user/'+ username
+tuple_path       = workarea + '/Tuples/' + campaign + '/GENSIM/LQDM'
 
 configs = {
     'GENSIM': {
@@ -165,11 +140,11 @@ configs = {
 def main():
 
     make_cards       = False
-    submit_gridpacks = False
+    submit_gridpacks = True
     copy_gridpacks   = False
     clean_mg_area    = False
 
-    gensim           = True
+    gensim           = False
     resub_gensim     = False
 
     dr               = False
@@ -246,22 +221,21 @@ def main():
 # Make cards
 # ----------
 def ProduceCards():
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                make_card(card_template_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                make_card(card_template_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb)
     print green('Done producing cards from templates')
 
 def SubmitGridpacks(submit):
     # Submit gridpacks based on cards created above
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
 
-                # command = 'sbatch -J gridpacks_%s submit_gridpacks.sh %s %s ../../../../../LQDM/GENSIM/cards/LQDM local' % (jobname, mgfolder, jobname)
                 command = 'sbatch -J gridpacks_%s -p wn -t 05:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, mgfolder, jobname, cardfolder)
                 print command
                 if submit: os.system(command)
@@ -274,11 +248,11 @@ def SubmitGridpacks(submit):
 def CopyGridpacks(submit):
     # Copy gridpacks to new dir
     commands = []
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
 
                 gpname = jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
                 sourcefile = mgfolder + '/' + gpname
@@ -294,11 +268,11 @@ def CopyGridpacks(submit):
 def CleanMGArea(submit):
     # Clean MG area from workdirs of gridpack generation
     commands = []
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 command = 'rm -rf ' + mgfolder + '/' + jobname + '*'
                 commands.append(command)
                 print command
@@ -326,11 +300,11 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
     elif mode is 'resubmit': commandfilebase = gensimfolder + '/commands/resubmit_%s_' % (configs[generation_step]['jobnametag'])
 
     # Create command file for array of jobs
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
                 indices = -1
@@ -376,11 +350,11 @@ def RemoveSamples(submit, generation_step):
 
     # Loop through samples to find all that should be deleted
     commands = []
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 samplepath   = T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname
                 command  = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
 
@@ -402,11 +376,11 @@ def SubmitTuplize(submit):
     commandfilebase = gensimfolder + '/commands/tuplize_'
 
     # Create command file for array of jobs
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
@@ -435,11 +409,11 @@ def SubmitAdd(submit):
     runtime = '00:05:00' # 01:00:00 -- 10:00:00
 
     commandfilebase = gensimfolder + '/commands/add_'
-    for processname in mass_configurations.keys():
-        for config in mass_configurations[processname]:
+    for processname in processes:
+        for config in mass_configurations:
             for lamb in lambdas:
-                mlq, mps, mc1 = get_mlq_mps_mc1(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+                mlq, mps, mch = get_mlq_mps_mch(config)
+                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 infoldername= T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
                 infilestring = ''
                 for i in range(maxindex):
@@ -471,14 +445,14 @@ def SubmitAdd(submit):
 
 
 
-def make_card(card_template_folder, processname, mlq, mps, mc1, lamb=1.0, bwcutoff=15., lhapdfid=315200):
+def make_card(card_template_folder, processname, mlq, mps, mch, lamb=1.0, bwcutoff=15., lhapdfid=315200):
     #PDF CMS standard (Paolo):
     # 2016 LO:       263000
     # 2016 NLO:      260000
     # 2017 CP5:      303600
     # 2018 CP5:      303600 (same as 2017)
     # 2017/18 CP2:   315200 for 2017/8
-    samplename = get_samplename(mlq=mlq, mps=mps, mc1=mc1, lamb=lamb, tag=tag)
+    samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
     cardbasename = processname + '_template'
     cardtypes = ['proc_card.dat', 'run_card.dat', 'extramodels.dat', 'customizecards.dat']
     cards = [card_template_folder + '/' + cardbasename + '_' + c for c in cardtypes]
@@ -498,8 +472,8 @@ def make_card(card_template_folder, processname, mlq, mps, mc1, lamb=1.0, bwcuto
     replacement_dict = {
         'MLQ':      mlq,
         'MPS':      mps,
-        'MC1':      mc1,
-        'MC2':      int(round(2*mps - mc1)), # delta_c2 = 2 * delta_ps => mc2 = 2mps - mc1 --> As done in paper, but value of mc2 doesn't matter for anomalies or relic abundance. Maybe increase to suppress this channel
+        'MCH':      mch,
+        'MC2':      int(round(2*mps - mch)), # delta_c2 = 2 * delta_ps => mc2 = 2mps - mch --> As done in paper, but value of mc2 doesn't matter for anomalies or relic abundance. Maybe increase to suppress this channel
         'MZP':      int(round(mlq/math.sqrt(2))), # as done in the paper, but doesn't really affect anomalies or relic abundance
         'LAMBDA':   lamb,
         'BWCUTOFF': bwcutoff,
