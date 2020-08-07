@@ -156,7 +156,7 @@ def main():
     move_gridpacks   = False
     clean_mg_area    = False
 
-    gensim           = True
+    gensim           = False
     resub_gensim     = False
 
     dr               = False
@@ -182,7 +182,7 @@ def main():
     resub_flat       = False
     delete_nanoaod   = False
 
-    tuplize_gen      = False
+    tuplize_gen      = True
     add              = False
 
     submit           = True

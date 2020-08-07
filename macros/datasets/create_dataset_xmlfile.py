@@ -7,21 +7,21 @@ from utils import green, yellow
 
 def main():
     datasets = {
-    'MC_LQDM_MLQ1000_MX440_MDM400_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1000_MX440_MDM400_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1100_MX495_MDM450_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1100_MX495_MDM450_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1200_MX550_MDM500_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1200_MX550_MDM500_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1300_MX605_MDM550_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1300_MX605_MDM550_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1400_MX660_MDM600_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1400_MX660_MDM600_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1500_MX715_MDM650_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1500_MX715_MDM650_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1600_MX770_MDM700_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1600_MX770_MDM700_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1700_MX825_MDM750_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1700_MX825_MDM750_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1800_MX880_MDM800_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1800_MX880_MDM800_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ1900_MX935_MDM850_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ1900_MX935_MDM850_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ2000_MX990_MDM900_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ2000_MX990_MDM900_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ600_MX220_MDM200_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ600_MX220_MDM200_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ700_MX275_MDM250_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ700_MX275_MDM250_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ800_MX330_MDM300_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ800_MX330_MDM300_L1p0/Tuples_GENSIM_*.root',
-    'MC_LQDM_MLQ900_MX385_MDM350_L1p0.xml': '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQDM_MLQ900_MX385_MDM350_L1p0/Tuples_GENSIM_*.root'
+
+    'LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTau_MLQ1900_MPS1064_MC1794_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTau_MLQ1900_MPS1064_MC1794_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTauPsiChi_MLQ1000_MPS574_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTauPsiChi_MLQ1000_MPS574_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToPsiChi_MLQ1900_MPS1064_MC1794_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToPsiChi_MLQ1900_MPS1064_MC1794_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTauPsiChi_MLQ1900_MPS1064_MC1794_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTauPsiChi_MLQ1900_MPS1064_MC1794_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToPsiChi_MLQ1000_MPS574_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToPsiChi_MLQ1000_MPS574_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'LQLQToBTau_MLQ1000_MPS983_MC1912_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/LQLQToBTau_MLQ1000_MPS983_MC1912_L1p0/Tuples_GENSIM_*.root',
+    'PsiPsiToLQChi_MLQ1000_MPS574_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/PsiPsiToLQChi_MLQ1000_MPS574_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0/Tuples_GENSIM_*.root',
+    'PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0/Tuples_GENSIM_*.root',
+    'PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0.xml' : '/pnfs/psi.ch/cms/trivcat/store/user/areimers/UL17/Tuples_GENSIM/LQDM/PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0/Tuples_GENSIM_*.root'
     }
 
     for outfilename in datasets.keys():
@@ -36,7 +36,6 @@ def create_single_xmlfile(inputfilepattern, outputfilename):
     l.sort()
     nevents = 0
     for filename in l:
-        # out.write('<InputFile FileName="%s"/>\n' % filename)
         f = ROOT.TFile(filename)
         if f.Get('AnalysisTree').GetEntriesFast() > 0:
             out.write('<InputFile FileName="%s"/>\n' % filename)

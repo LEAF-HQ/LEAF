@@ -17,8 +17,17 @@ BaseTool::BaseTool(const Config & cfg){
   for(size_t i=0; i<cfg.dataset_infilenames().size(); i++){
     event_chain->Add(cfg.dataset_infilenames().at(i));
   }
-
   nevt = event_chain->GetEntries();
+
+  // make sure outdir exists
+  TString outfolder = cfg.output_directory();
+  mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+
+  // create output file and Tree(s)
+  TString outfilename = outfolder + "/" + cfg.dataset_type() + "__" + cfg.dataset_name() + ".root";
+  outfile.reset(new TFile(outfilename, "RECREATE"));
+
+  outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
 }
 
 
@@ -28,8 +37,9 @@ void BaseTool::LoopEvents(const Config & cfg){
   cout << endl << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
 
   // Initialize event for later looping through chain
-  Event* event = 0;
+  Event *event = new Event();
   event_chain->SetBranchAddress("Event", &event);
+  outputtree->Branch("Event", &event);
 
   // Loop through chain
   for(int i=0; i<event_chain->GetEntries(); ++i) {
@@ -44,31 +54,29 @@ void BaseTool::LoopEvents(const Config & cfg){
     event->weight *= cfg.target_lumi() / cfg.dataset_lumi();
 
     // call Process() for each event, main part of this function!
-    Process(*event);
-    event->clear();
+    bool keep_event = Process(*event);
+    if(keep_event) outputtree->Fill();
+    event->reset();
+
 
   }
+  event->clear();
   delete event;
+
 
 }
 
 // Write all output to the outputfile
 void BaseTool::WriteOutput(const Config & cfg){
 
-  // make sure outdir exists
-  TString outfolder = cfg.output_directory();
-  mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-
-  // create file and store histograms
-  TString outfilename = outfolder + "/" + cfg.dataset_type() + "__" + cfg.dataset_name() + ".root";
-  shared_ptr<TFile> outfile;
-  outfile.reset(new TFile(outfilename, "RECREATE"));
+  // store histograms and tree(s) to output file
   for(const TString & x : histfolders){
     histmap[x]->save(outfile.get());
   }
-  outfile->Close();
-  cout << green << "--> Wrote histograms to file: " << outfilename << reset << endl;
 
+  outputtree->Write();
+  outfile->Close();
+  cout << green << "--> Wrote histograms to file: " << outfile->GetName() << reset << endl;
 }
 
 // sumary of necessary functions

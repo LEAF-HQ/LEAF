@@ -35,6 +35,8 @@ protected:
   int nevt;
   vector<TString> histfolders;
   map<TString, unique_ptr<GenHists>> histmap;
+  TTree* outputtree;
+  shared_ptr<TFile> outfile;
 };
 
 
