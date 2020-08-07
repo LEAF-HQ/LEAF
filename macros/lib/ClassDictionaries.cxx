@@ -37,6 +37,7 @@
 namespace std {} using namespace std;
 
 // Header files passed as explicit arguments
+#include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
 #include "include/Particle.h"
@@ -705,6 +706,7 @@ namespace ROOT {
 namespace {
   void TriggerDictionaryInitialization_ClassDictionaries_Impl() {
     static const char* headers[] = {
+"include/GenEvent.h",
 "include/ObjectIdUtils.h",
 "include/massconfig.h",
 "include/Particle.h",
@@ -735,13 +737,13 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenParticle;
+class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenParticle;
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
-class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenJet;
-class __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Event;
-class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Met;
-class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Particle;
+class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenJet;
+class __attribute__((annotate("$clingAutoload$include/Event.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Event;
+class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Met;
+class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "ClassDictionaries dictionary payload"
@@ -751,6 +753,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
+#include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
 #include "include/Particle.h"

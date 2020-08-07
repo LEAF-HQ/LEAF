@@ -21,9 +21,9 @@ public:
   ~BaseTool() = default;
 
   // Base functions
-  void LoopEvents(const Config & cfg);
+  void LoopEvents(const Config & cfg, Event* event);
   void WriteOutput(const Config & cfg);
-  void ProcessDataset(const Config & cfg);
+  virtual void ProcessDataset(const Config & cfg);
 
   // This is called for each event, do the analysis here. In this base class, this is only some default behavior
   virtual bool Process(Event & event){return true;};
@@ -37,6 +37,7 @@ protected:
   map<TString, unique_ptr<GenHists>> histmap;
   TTree* outputtree;
   shared_ptr<TFile> outfile;
+  Event* default_event;
 };
 
 

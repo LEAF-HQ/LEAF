@@ -28,16 +28,17 @@ BaseTool::BaseTool(const Config & cfg){
   outfile.reset(new TFile(outfilename, "RECREATE"));
 
   outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
+  default_event = new Event();
 }
 
 
-void BaseTool::LoopEvents(const Config & cfg){
+void BaseTool::LoopEvents(const Config & cfg, Event* event){
 
   // Print current number of dataset
   cout << endl << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
 
   // Initialize event for later looping through chain
-  Event *event = new Event();
+  // Event *event = new Event();
   event_chain->SetBranchAddress("Event", &event);
   outputtree->Branch("Event", &event);
 
@@ -57,13 +58,10 @@ void BaseTool::LoopEvents(const Config & cfg){
     bool keep_event = Process(*event);
     if(keep_event) outputtree->Fill();
     event->reset();
-
-
   }
+
   event->clear();
   delete event;
-
-
 }
 
 // Write all output to the outputfile
@@ -81,6 +79,6 @@ void BaseTool::WriteOutput(const Config & cfg){
 
 // sumary of necessary functions
 void BaseTool::ProcessDataset(const Config & cfg){
-  LoopEvents(cfg);
+  LoopEvents(cfg, default_event);
   WriteOutput(cfg);
 }
