@@ -1,11 +1,13 @@
 #include <TString.h>
 #include <TFile.h>
+#include <TChain.h>
 #include <iostream>
 
 #include "include/BaseTool.h"
 #include "include/useful_functions.h"
 #include <sys/stat.h>
 #include "include/Registry.h"
+#include "include/GenEvent.h"
 
 using namespace std;
 
@@ -15,7 +17,13 @@ public:
   // Constructors, destructor
   GenlevelTool(const Config & cfg);
   ~GenlevelTool() = default;
-  virtual bool Process(Event & event) override;
+  // void LoopEvents(const Config & cfg, GenEvent* event);
+  void ProcessDataset(const Config & cfg) override {LoopEvents<GenlevelTool, GenEvent>(cfg, m_event, *this);};
+  // void GenlevelTool::ProcessDataset(const Config & cfg){
+  //   LoopEvents<GenlevelTool, GenEvent>(cfg, m_event, *this);
+  // }
+
+  bool Process(GenEvent & event);
 
 
 private:
@@ -29,10 +37,51 @@ private:
   unique_ptr<GenVisTauCleaner>    cleaner_genvistau;
   unique_ptr<GenJetVisTauCleaner> cleaner_genjetvistau;
 
+  GenEvent* m_event;
 };
 
 
+// void GenlevelTool::LoopEvents(const Config & cfg, GenEvent* event){
+//
+//   // Print current number of dataset
+//   cout << endl << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
+//
+//   // Initialize event for later looping through chain
+//   cfg.event_chain->SetBranchAddress("Event", &event);
+//   cfg.outputtree->Branch("Event", &event);
+//
+//   // Loop through chain
+//   for(int i=0; i<cfg.event_chain->GetEntries(); ++i) {
+//     if(i%1000==0){
+//       cout << green << "    --> Processing event no. (" << i << " / " << cfg.nevt << ")" << reset << endl;
+//     }
+//
+//     // read the data for i-th event
+//     cfg.event_chain->GetEntry(i);
+//
+//     // weight must be: target_lumi / dataset_lumi
+//     event->weight *= cfg.target_lumi() / cfg.dataset_lumi();
+//
+//     // call Process() for each event, main part of this function.
+//     bool keep_event = Process(*event);
+//     if(keep_event) cfg.outputtree->Fill();
+//     event->reset();
+//   }
+//
+//   event->clear();
+//   delete event;
+// }
+
+
+
+
+
+
 GenlevelTool::GenlevelTool(const Config & cfg) : BaseTool(cfg){
+  cout << "Hello from GenlevelTool" << endl;
+
+  m_event = new GenEvent();
+  m_event->reset();
 
   genjet_id           = PtEtaId(30, 2.5);
   genvistau_id        = PtEtaId(30, 2.5);
@@ -54,8 +103,12 @@ GenlevelTool::GenlevelTool(const Config & cfg) : BaseTool(cfg){
 
 
 
-bool GenlevelTool::Process(Event & event){
+// bool GenlevelTool::Process(Event & event){
+bool GenlevelTool::Process(GenEvent & event){
   // cout << "+++ NEW EVENT" << endl;
+  // cout << "njets: " << event.genjets->size() << endl;
+  // cout << "test: " << event.test << endl;
+  n++;
 
   // order all objecs in pT
   sort_by_pt<GenParticle>(*event.genparticles_hard);

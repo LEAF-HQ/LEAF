@@ -1,6 +1,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <iostream>
+#include <sys/stat.h>
 
 #include "include/Config.h"
 #include "include/BaseTool.h"
@@ -81,12 +82,36 @@ void Config::process_datasets(){
 
   while(idx() < n_datasets()){
 
+    // Chain all samples of the same dataset into a TChain
+    event_chain.reset(new TChain("AnalysisTree"));
+    for(size_t i=0; i<dataset_infilenames().size(); i++){
+      event_chain->Add(dataset_infilenames().at(i));
+    }
+    nevt = event_chain->GetEntries();
+
+
+    // make sure outdir exists
+    TString outfolder = output_directory();
+    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+
+    // create output file and Tree(s)
+    TString outfilename = outfolder + "/" + dataset_type() + "__" + dataset_name() + ".root";
+    outfile.reset(new TFile(outfilename, "RECREATE"));
+
+    outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
+
+
     // string name_of_module = "GenlevelTool";
     string toolname = analysis_tool();
     unique_ptr<BaseTool> analysis = ToolRegistry::build(toolname, *this);
 
     // GenlevelTool GenTool(*this);
     analysis->ProcessDataset(*this);
+    analysis->WriteHistograms(*this);
+
+    outputtree->Write();
+    outfile->Close();
+    cout << green << "--> Wrote histograms to file: " << outfile->GetName() << reset << endl;
 
     increment_idx();
   }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <TString.h>
 #include <TFile.h>
+#include <TChain.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include "include/Event.h"
@@ -47,6 +48,12 @@ public:
 
   void process_datasets();
 
+
+
+  shared_ptr<TChain> event_chain;
+  int nevt;
+  TTree* outputtree;
+  shared_ptr<TFile> outfile;
 
 private:
   TString m_output_directory, m_postfix;
