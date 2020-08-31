@@ -7,6 +7,7 @@
 #include <TTreeReaderValue.h>
 
 #include "include/Event.h"
+#include "include/Jet.h"
 
 using namespace std;
 
@@ -22,4 +23,5 @@ public:
   void reset();
 
   Met* met;
+  vector<Jet>* jets;
 };

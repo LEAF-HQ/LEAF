@@ -11,6 +11,7 @@
 #include "include/Particle.h"
 #include "include/GenParticle.h"
 #include "include/GenJet.h"
+#include "include/Jet.h"
 #include "include/useful_functions.h"
 #include "include/constants.h"
 
@@ -70,6 +71,31 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> met_pt (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
 
+  TTreeReaderValue<unsigned int> jet_n(reader, "nJet");
+  TTreeReaderArray<float> jet_area(reader, "Jet_area");
+  TTreeReaderArray<float> jet_score_CSVv2(reader, "Jet_btagCSVV2");
+  TTreeReaderArray<float> jet_score_DeepB(reader, "Jet_btagDeepB");
+  TTreeReaderArray<float> jet_score_qgl(reader, "Jet_qgl");
+  TTreeReaderArray<float> jet_ch_em_efrac(reader, "Jet_chEmEF");
+  TTreeReaderArray<float> jet_ch_had_efrac(reader, "Jet_chHEF");
+  TTreeReaderArray<float> jet_ne_em_efrac(reader, "Jet_neEmEF");
+  TTreeReaderArray<float> jet_ne_had_efrac(reader, "Jet_neHEF");
+  TTreeReaderArray<float> jet_mu_efrac(reader, "Jet_muEF");
+  TTreeReaderArray<int>   jet_jet_id(reader, "Jet_jetId");
+  TTreeReaderArray<int>   jet_pu_id(reader, "Jet_puId");
+  TTreeReaderArray<float> jet_raw_factor(reader, "Jet_rawFactor");
+  TTreeReaderArray<float> jet_muon_sub_raw_factor(reader, "Jet_muonSubtrFactor");
+  TTreeReaderArray<int>   jet_parton_flavor(reader, "Jet_partonFlavour");
+  TTreeReaderArray<int>   jet_hadron_flavor(reader, "Jet_hadronFlavour");
+  TTreeReaderArray<int>   jet_n_constituents(reader, "Jet_nConstituents");
+  TTreeReaderArray<int>   jet_n_muons(reader, "Jet_nMuons");
+  TTreeReaderArray<int>   jet_n_electrons(reader, "Jet_nElectrons");
+  TTreeReaderArray<float> jet_pt(reader, "Jet_pt");
+  TTreeReaderArray<float> jet_eta(reader, "Jet_eta");
+  TTreeReaderArray<float> jet_phi(reader, "Jet_phi");
+  TTreeReaderArray<float> jet_mass(reader, "Jet_mass");
+
+
   int idx = 0;
   while (reader.Next()) {
     // cout << "+++++++++++++ NEW EVENT" << endl;
@@ -119,14 +145,9 @@ int main(int argc, char* argv[]){
     for(size_t i=0; i<*genparticle_n; i++){
       int id = fabs(genparticle_pdgId[i]);
       int status_flag = genparticle_statusFlags[i];
-      // cout << "int status flag: " << status_flag << endl;
-      // cout << "bin status flag: " << std::bitset<32>(status_flag).to_string() << endl;
-      // cout << "bin (128):       " << std::bitset<32>(128).to_string() << endl;
       bool is_hard = ((flag_ishard&status_flag) == flag_ishard);
       bool is_final = ((flag_isfinal&status_flag) == flag_isfinal);
       bool keepfinal = false;
-      // bool is_finalstate = (genparticle_status[i] == 1);
-      // bool is_fromhardtau = ((flag_isfromhardtau&status_flag) == flag_isfromhardtau);
       GenParticle gp;
       gp.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
       gp.set_pdgid(genparticle_pdgId[i]);
@@ -140,7 +161,6 @@ int main(int argc, char* argv[]){
       }
       if(keepfinal){
         event.genparticles_final->emplace_back(gp);
-        // if(gp.eta() > 10) cout << "Final particle, id: " << id << ", eta: " << gp.eta() << ", pt: " << gp.pt() << endl;
       }
       if(is_hard){
         event.genparticles_hard->emplace_back(gp);
@@ -148,12 +168,11 @@ int main(int argc, char* argv[]){
 
       // find the visible parts of the taus from the hard process
       if (id == 15 && is_final){
-        // cout << "found tau with index " << i << endl;
         TLorentzVector p4_vis;
         for(size_t j=0; j<*genparticle_n; j++){
           if(fabs(genparticle_pdgId[j]) == 12 || fabs(genparticle_pdgId[j]) == 14 || fabs(genparticle_pdgId[j]) == 16) continue;
           int thisstatusflag = genparticle_statusFlags[j];
-          // if(is_fromhardtau && is_finalstate){
+          //                  is_fromhardtau                             &&        is_finalstate
           if(((flag_isfromhardtau&thisstatusflag) == flag_isfromhardtau) && (genparticle_status[j] == 1)){
 
             // check if this stable particle comes from this tau or another one. Go backwards in the chain.
@@ -161,15 +180,11 @@ int main(int argc, char* argv[]){
             while(fabs(genparticle_pdgId[checkidx]) != 15){
               checkidx = genparticle_idxmother[checkidx];
             }
-            // cout << "Genparticle " << j << " belongs to tau with index " << checkidx << endl;
-            // in this case, particle j indeed comes from this tau.
+            // if arriving here, particle j indeed comes from this tau.
             if(checkidx == i){
-              // cout << "genparticle " << j << " (id = " << fabs(genparticle_pdgId[j]) << ") belongs to this tau!" << endl;
               TLorentzVector v;
               v.SetPtEtaPhiM(genparticle_pt[j], genparticle_eta[j], genparticle_phi[j], genparticle_mass[j]);
-              // cout << "with pt: " << v.Pt() << endl;
               p4_vis += v;
-              // cout << "new visible pt: " << p4_vis.Pt() << endl;
             }
 
           }
@@ -190,6 +205,35 @@ int main(int argc, char* argv[]){
     // ======
     event.met->set_pt(*met_pt);
     event.met->set_phi(*met_phi);
+
+    // Do Jets
+    // =======
+    for(size_t i=0; i<*jet_n; i++){
+      Jet j;
+      j.set_area(jet_area[i]);
+      j.set_score_CSVv2(jet_score_CSVv2[i]);
+      j.set_score_DeepB(jet_score_DeepB[i]);
+      j.set_score_qgl(jet_score_qgl[i]);
+      j.set_ch_em_efrac(jet_ch_em_efrac[i]);
+      j.set_ch_had_efrac(jet_ch_had_efrac[i]);
+      j.set_ne_em_efrac(jet_ne_em_efrac[i]);
+      j.set_ne_had_efrac(jet_ne_had_efrac[i]);
+      j.set_mu_efrac(jet_mu_efrac[i]);
+      j.set_jet_id(jet_jet_id[i]);
+      j.set_pu_id(jet_pu_id[i]);
+      j.set_raw_factor(jet_raw_factor[i]);
+      j.set_muon_sub_raw_factor(jet_muon_sub_raw_factor[i]);
+      j.set_parton_flavor(jet_parton_flavor[i]);
+      j.set_hadron_flavor(jet_hadron_flavor[i]);
+      j.set_n_constituents(jet_n_constituents[i]);
+      j.set_n_muons(jet_n_muons[i]);
+      j.set_n_electrons(jet_n_electrons[i]);
+      j.set_pt(jet_pt[i]);
+      j.set_eta(jet_eta[i]);
+      j.set_phi(jet_phi[i]);
+      j.set_m(jet_mass[i]);      
+      event.jets->emplace_back(j);
+    }
 
     tree->Fill();
     event.reset();

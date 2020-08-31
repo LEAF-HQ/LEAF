@@ -21,20 +21,26 @@ using namespace std;
 
 RecoEvent::RecoEvent(){
   met = new Met;
+  jets = new vector<Jet>;
 }
 
 RecoEvent::~RecoEvent(){
-delete met;
+  delete met;
+  delete jets;
 }
 
 void RecoEvent::clear(){
   Event::clear();
   delete met;
+  delete jets;
   met = 0;
+  jets = 0;
 }
 
 void RecoEvent::reset(){
   Event::reset();
   delete met;
+  delete jets;
   met = new Met;
+  jets = new vector<Jet>;
 }

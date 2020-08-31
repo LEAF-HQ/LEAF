@@ -10,10 +10,12 @@ class Particle {
 
 public:
   // Constructors, destructor
-  Particle() = default;
-  Particle(const Particle &) = default;
-  Particle & operator = (const Particle &) = default;
-  ~Particle() = default;
+  Particle(){
+    m_pt = -1.;
+    m_eta = -1.;
+    m_phi = -1.;
+    m_m = -1.;
+  }
 
   double pt()  const {return m_pt;};
   double eta() const {return m_eta;};
@@ -44,9 +46,9 @@ public:
 
 
 protected:
-  double m_pt = -1.;
-  double m_eta = -1.;
-  double m_phi = -1.;
-  double m_m = -1.;
+  double m_pt;
+  double m_eta;
+  double m_phi;
+  double m_m;
 
 };

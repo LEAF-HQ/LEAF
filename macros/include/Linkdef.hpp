@@ -10,6 +10,8 @@
 
 #pragma link C++ class Particle+;
 #pragma link C++ class std::vector<Particle>+;
+#pragma link C++ class FlavorParticle+;
+#pragma link C++ class std::vector<FlavorParticle>+;
 #pragma link C++ class GenParticle+;
 #pragma link C++ class std::vector<GenParticle>+;
 #pragma link C++ class GenJet+;
@@ -22,6 +24,8 @@
 #pragma link C++ class std::vector<GenEvent>+;
 #pragma link C++ class RecoEvent+;
 #pragma link C++ class std::vector<RecoEvent>+;
+#pragma link C++ class Jet+;
+#pragma link C++ class std::vector<Jet>+;
 
 
 
