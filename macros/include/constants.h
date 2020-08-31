@@ -7,9 +7,12 @@
 // using namespace std;
 
 
-const std::vector<int> lqids = {9000008, 9000009};
-const std::vector<int> xids  = {9000006, 9000007};
-const std::vector<int> dmids = {9000005};
+// const std::vector<int> lqids = {9000008, 9000009};
+const std::vector<int> lqids = {9000005};
+// const std::vector<int> psiids  = {9000006, 9000007};
+const std::vector<int> psiids  = {9000009};
+// const std::vector<int> dmids = {9000005};
+const std::vector<int> chiids = {9000007};
 
 const double  intlumi      = 35920.;
 const TString tag          = "";
