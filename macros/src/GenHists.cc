@@ -19,35 +19,39 @@
 
 using namespace std;
 
-GenHists::GenHists(TString dir_) : dir(dir_){
+GenHists::GenHists(TString dir_) : BaseHists(dir_){
 
   hnlq = book<TH1F>("nlq", ";N_{LQ}; Events / bin", 6, -0.5, 5.5);
-  hnx = book<TH1F>("nx", ";N_{X}; Events / bin", 6, -0.5, 5.5);
-  hndm = book<TH1F>("ndm", ";N_{DM}; Events / bin", 6, -0.5, 5.5);
+  hnpsi = book<TH1F>("npsi", ";N_{#psi}; Events / bin", 6, -0.5, 5.5);
+  hnchi = book<TH1F>("nchi", ";N_{#chi}; Events / bin", 6, -0.5, 5.5);
   hnjets = book<TH1F>("njets", ";N_{jets}; Events / bin", 11, -0.5, 10.5);
   hnbhard = book<TH1F>("nbhard", ";N_{hard b}; Events / bin", 6, -0.5, 5.5);
   hntauhard = book<TH1F>("ntauhard", ";N_{hard #tau}; Events / bin", 6, -0.5, 5.5);
   hntauvis = book<TH1F>("ntauvis", ";N_{vis. #tau}; Events / bin", 6, -0.5, 5.5);
   hmlq1 = book<TH1F>("mlq1", ";M_{LQ 1} [GeV]; Events / bin", 300, 0, 3000);
   hmlq2 = book<TH1F>("mlq2", ";M_{LQ 2} [GeV]; Events / bin", 300, 0, 3000);
-  hmx = book<TH1F>("mx", ";M_{X} [GeV]; Events / bin", 300, 0, 3000);
-  hmdm1 = book<TH1F>("mdm1", ";M_{DM 1} [GeV]; Events / bin", 300, 0, 3000);
-  hmdm2 = book<TH1F>("mdm2", ";M_{DM 2} [GeV]; Events / bin", 300, 0, 3000);
+  hmpsi1 = book<TH1F>("mpsi1", ";M_{#psi 1} [GeV]; Events / bin", 300, 0, 3000);
+  hmpsi2 = book<TH1F>("mpsi2", ";M_{#psi 2} [GeV]; Events / bin", 300, 0, 3000);
+  hmchi1 = book<TH1F>("mchi1", ";M_{#chi 1} [GeV]; Events / bin", 300, 0, 3000);
+  hmchi2 = book<TH1F>("mchi2", ";M_{#chi 2} [GeV]; Events / bin", 300, 0, 3000);
   hptlq1 = book<TH1F>("ptlq1", ";p_{T}^{LQ 1} [GeV]; Events / bin", 300, 0, 3000);
   hptlq2 = book<TH1F>("ptlq2", ";p_{T}^{LQ 2} [GeV]; Events / bin", 300, 0, 3000);
-  hptx = book<TH1F>("ptx", ";p_{T}^{X} [GeV]; Events / bin", 300, 0, 3000);
-  hptdm1 = book<TH1F>("ptdm1", ";p_{T}^{DM 1} [GeV]; Events / bin", 300, 0, 3000);
-  hptdm2 = book<TH1F>("ptdm2", ";p_{T}^{DM 2} [GeV]; Events / bin", 300, 0, 3000);
+  hptpsi1 = book<TH1F>("ptpsi1", ";p_{T}^{#psi 1} [GeV]; Events / bin", 300, 0, 3000);
+  hptpsi2 = book<TH1F>("ptpsi2", ";p_{T}^{#psi 2} [GeV]; Events / bin", 300, 0, 3000);
+  hptchi1 = book<TH1F>("ptchi1", ";p_{T}^{#chi 1} [GeV]; Events / bin", 300, 0, 3000);
+  hptchi2 = book<TH1F>("ptchi2", ";p_{T}^{#chi 2} [GeV]; Events / bin", 300, 0, 3000);
   hetalq1 = book<TH1F>("etalq1", ";#eta_{LQ 1}; Events / bin", 60, -3.5, 3.5);
   hetalq2 = book<TH1F>("etalq2", ";#eta_{LQ 2}; Events / bin", 60, -3.5, 3.5);
-  hetax = book<TH1F>("etax", ";#eta_{X}; Events / bin", 60, -3.5, 3.5);
-  hetadm1 = book<TH1F>("etadm1", ";#eta_{DM 1}; Events / bin", 60, -3.5, 3.5);
-  hetadm2 = book<TH1F>("etadm2", ";#eta_{DM 2}; Events / bin", 60, -3.5, 3.5);
+  hetapsi1 = book<TH1F>("etapsi1", ";#eta_{#psi 1}; Events / bin", 60, -3.5, 3.5);
+  hetapsi2 = book<TH1F>("etapsi2", ";#eta_{#psi 2}; Events / bin", 60, -3.5, 3.5);
+  hetachi1 = book<TH1F>("etachi1", ";#eta_{#chi 1}; Events / bin", 60, -3.5, 3.5);
+  hetachi2 = book<TH1F>("etachi2", ";#eta_{#chi 2}; Events / bin", 60, -3.5, 3.5);
   hphilq1 = book<TH1F>("philq1", ";#phi_{LQ 1}; Events / bin", 60, -3.5, 3.5);
   hphilq2 = book<TH1F>("philq2", ";#phi_{LQ 2}; Events / bin", 60, -3.5, 3.5);
-  hphix = book<TH1F>("phix", ";#phi_{X}; Events / bin", 60, -3.5, 3.5);
-  hphidm1 = book<TH1F>("phidm1", ";#phi_{DM 1}; Events / bin", 60, -3.5, 3.5);
-  hphidm2 = book<TH1F>("phidm2", ";#phi_{DM 2}; Events / bin", 60, -3.5, 3.5);
+  hphipsi1 = book<TH1F>("phipsi1", ";#phi_{#psi 1}; Events / bin", 60, -3.5, 3.5);
+  hphipsi2 = book<TH1F>("phipsi2", ";#phi_{#psi 2}; Events / bin", 60, -3.5, 3.5);
+  hphichi1 = book<TH1F>("phichi1", ";#phi_{#chi 1}; Events / bin", 60, -3.5, 3.5);
+  hphichi2 = book<TH1F>("phichi2", ";#phi_{#chi 2}; Events / bin", 60, -3.5, 3.5);
 
   hptjet1 = book<TH1F>("ptjet1", ";p_{T}^{jet 1} [GeV]; Events / bin", 300, 0, 3000);
   hptjet2 = book<TH1F>("ptjet2", ";p_{T}^{jet 2} [GeV]; Events / bin", 300, 0, 3000);
@@ -103,15 +107,15 @@ GenHists::GenHists(TString dir_) : dir(dir_){
 
 }
 
-void GenHists::fill(const Event & event){
+void GenHists::fill(const GenEvent & event){
   double weight = event.weight;
 
 
   // loop through hard particles
   // ===========================
 
-  size_t nlq, ndm, nx, nbhard, ntauhard;
-  nlq = ndm = nx = nbhard = ntauhard = 0;
+  size_t nlq, nchi, npsi, nbhard, ntauhard;
+  nlq = nchi = npsi = nbhard = ntauhard = 0;
   for(size_t i=0; i<event.genparticles_hard->size(); i++){
     GenParticle gp = event.genparticles_hard->at(i);
     int id = abs(gp.pdgid());
@@ -135,33 +139,41 @@ void GenHists::fill(const Event & event){
       }
     }
 
-    // hard DM
-    for(size_t j=0; j<dmids.size(); j++){
-      if(id == dmids[j]){
-        if(ndm==0){
-          hptdm1 ->Fill(gp.pt(), weight);
-          hetadm1->Fill(gp.eta(), weight);
-          hphidm1->Fill(gp.phi(), weight);
-          hmdm1  ->Fill(gp.m(), weight);
+    // hard #chi
+    for(size_t j=0; j<chiids.size(); j++){
+      if(id == chiids[j]){
+        if(nchi==0){
+          hptchi1 ->Fill(gp.pt(), weight);
+          hetachi1->Fill(gp.eta(), weight);
+          hphichi1->Fill(gp.phi(), weight);
+          hmchi1  ->Fill(gp.m(), weight);
         }
-        else if(ndm==1){
-          hptdm2 ->Fill(gp.pt(), weight);
-          hetadm2->Fill(gp.eta(), weight);
-          hphidm2->Fill(gp.phi(), weight);
-          hmdm2  ->Fill(gp.m(), weight);
+        else if(nchi==1){
+          hptchi2 ->Fill(gp.pt(), weight);
+          hetachi2->Fill(gp.eta(), weight);
+          hphichi2->Fill(gp.phi(), weight);
+          hmchi2  ->Fill(gp.m(), weight);
         }
-        ndm++;
+        nchi++;
       }
     }
 
-    //hard X
-    for(size_t j=0; j<xids.size(); j++){
-      if(id == xids[j]){
-        hptx ->Fill(gp.pt(), weight);
-        hetax->Fill(gp.eta(), weight);
-        hphix->Fill(gp.phi(), weight);
-        hmx  ->Fill(gp.m(), weight);
-        nx++;
+    //hard #psi
+    for(size_t j=0; j<psiids.size(); j++){
+      if(id == psiids[j]){
+        if(npsi == 0){
+          hptpsi1 ->Fill(gp.pt(), weight);
+          hetapsi1->Fill(gp.eta(), weight);
+          hphipsi1->Fill(gp.phi(), weight);
+          hmpsi1  ->Fill(gp.m(), weight);
+        }
+        else if(npsi == 1){
+          hptpsi2 ->Fill(gp.pt(), weight);
+          hetapsi2->Fill(gp.eta(), weight);
+          hphipsi2->Fill(gp.phi(), weight);
+          hmpsi2  ->Fill(gp.m(), weight);
+        }
+        npsi++;
       }
     }
 
@@ -201,8 +213,8 @@ void GenHists::fill(const Event & event){
   } // end loop through hard particles
 
   hnlq->Fill(nlq, weight);
-  hndm->Fill(ndm, weight);
-  hnx->Fill(nx, weight);
+  hnchi->Fill(nchi, weight);
+  hnpsi->Fill(npsi, weight);
   hnbhard->Fill(nbhard, weight);
   hntauhard->Fill(ntauhard, weight);
 
@@ -306,16 +318,4 @@ void GenHists::fill(const Event & event){
 
 
   hsumweights->Fill(1, weight);
-}
-
-
-
-void GenHists::save(TFile* outfile){
-  outfile->cd();
-  outfile->mkdir(dir);
-  outfile->cd(dir);
-
-  for(const auto & m : hists){
-    m.second->Write();
-  }
 }

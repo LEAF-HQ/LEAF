@@ -11,63 +11,11 @@
 using namespace std;
 
 BaseTool::BaseTool(const Config & cfg){
-
-  // // Chain all samples of the same dataset into a TChain
-  // event_chain.reset(new TChain("AnalysisTree"));
-  // for(size_t i=0; i<cfg.dataset_infilenames().size(); i++){
-  //   event_chain->Add(cfg.dataset_infilenames().at(i));
-  // }
-  // nevt = event_chain->GetEntries();
-  //
-  // // make sure outdir exists
-  // TString outfolder = cfg.output_directory();
-  // mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-  //
-  // // create output file and Tree(s)
-  // TString outfilename = outfolder + "/" + cfg.dataset_type() + "__" + cfg.dataset_name() + ".root";
-  // outfile.reset(new TFile(outfilename, "RECREATE"));
-  //
-  // outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
-  default_event = new Event();
+  event = new Event();
 }
-
-
-// void BaseTool::LoopEvents(const Config & cfg, Event* event){
-//
-//   // Print current number of dataset
-//   cout << endl << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
-//
-//   // Initialize event for later looping through chain
-//   // Event *event = new Event();
-//   cfg.event_chain->SetBranchAddress("Event", &event);
-//   cfg.outputtree->Branch("Event", &event);
-//
-//   // Loop through chain
-//   for(int i=0; i<cfg.event_chain->GetEntries(); ++i) {
-//     if(i%1000==0){
-//       cout << green << "    --> Processing event no. (" << i << " / " << cfg.nevt << ")" << reset << endl;
-//     }
-//
-//     // read the data for i-th event
-//     cfg.event_chain->GetEntry(i);
-//
-//     // weight must be: target_lumi / dataset_lumi
-//     event->weight *= cfg.target_lumi() / cfg.dataset_lumi();
-//
-//     // call Process() for each event, main part of this function!
-//     bool keep_event = Process(*event);
-//     if(keep_event) cfg.outputtree->Fill();
-//     event->reset();
-//   }
-//
-//   event->clear();
-//   delete event;
-// }
 
 // Write all output to the outputfile
 void BaseTool::WriteHistograms(const Config & cfg){
-
-  cout << "After loop, n: " << n << endl;
 
   // store histograms and tree(s) to output file
   for(const TString & x : histfolders){

@@ -43,8 +43,8 @@ TString get_samplename(double mlq, double mx, double mdm, double lambda){
 
 vector<int> get_npids(){
   vector<int> npids = lqids;
-  npids.insert(npids.end(), xids.begin(), xids.end());
-  npids.insert(npids.end(), dmids.begin(), dmids.end());
+  npids.insert(npids.end(), psiids.begin(), psiids.end());
+  npids.insert(npids.end(), chiids.begin(), chiids.end());
   return npids;
 }
 

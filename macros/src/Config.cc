@@ -40,12 +40,10 @@ Config::Config(TString configfilename){
       ds.name     = getDatasetName(current_node);
       ds.type     = getDatasetType(current_node);
       ds.lumi     = getDatasetLumi(current_node);
-      // ds.filename = getDatasetFilename(current_node);
 
       // loop over infiles of this dataset
       for (xmlNode* current_inputfile = current_node->children; current_inputfile; current_inputfile = current_inputfile->next){
         if(current_inputfile->type == XML_ELEMENT_NODE){
-          // cout << "current nodename: " << current_inputfile->name << endl;
           ds.infilenames.emplace_back(getInputFileFileName(current_inputfile));
         }
       }
@@ -80,38 +78,40 @@ Config::Config(TString configfilename){
 void Config::process_datasets(){
   if(!m_is_init) throw runtime_error("Trying to process the datasets with an uninitialized Config instance. Abort.");
 
+  // loop through samples
   while(idx() < n_datasets()){
 
     // Chain all samples of the same dataset into a TChain
     event_chain.reset(new TChain("AnalysisTree"));
+    cout << green << "--> Loading " << dataset_infilenames().size() << " input files for samle " << dataset_name() << "." << reset << endl;
     for(size_t i=0; i<dataset_infilenames().size(); i++){
       event_chain->Add(dataset_infilenames().at(i));
     }
     nevt = event_chain->GetEntries();
+    cout << green << "--> Loaded " << dataset_infilenames().size() << " files containing " << nevt << " events." << reset << endl;
+
+    // create output tree
+    outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
+
+    // create instance of AnalysisTool and process this sample
+    string toolname = analysis_tool();
+    unique_ptr<BaseTool> analysis = ToolRegistry::build(toolname, *this);
+    analysis->ProcessDataset(*this);
 
 
     // make sure outdir exists
     TString outfolder = output_directory();
     mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 
-    // create output file and Tree(s)
+    // create output file
     TString outfilename = outfolder + "/" + dataset_type() + "__" + dataset_name() + ".root";
     outfile.reset(new TFile(outfilename, "RECREATE"));
 
-    outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
-
-
-    // string name_of_module = "GenlevelTool";
-    string toolname = analysis_tool();
-    unique_ptr<BaseTool> analysis = ToolRegistry::build(toolname, *this);
-
-    // GenlevelTool GenTool(*this);
-    analysis->ProcessDataset(*this);
+    // write output histograms and trees
     analysis->WriteHistograms(*this);
-
     outputtree->Write();
     outfile->Close();
-    cout << green << "--> Wrote histograms to file: " << outfile->GetName() << reset << endl;
+    cout << green << "--> Wrote histograms and tree to file: " << outfile->GetName() << reset << endl << endl;
 
     increment_idx();
   }

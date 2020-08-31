@@ -47,14 +47,6 @@ int main(int argc, char* argv[]){
   TFile* infile = TFile::Open(infilename, "READ");
 
   const vector<int> npids = get_npids();
-  // Event* event;
-  // double weight;
-  // Met* genmet;
-  // Met* genmet_invis;
-  // vector<GenParticle>* gps_hard;
-  // vector<GenParticle>* gps_final;
-  // vector<GenParticle>* gps_tauvis;
-  // vector<GenJet>*      genjets;
   Event event;
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
@@ -82,14 +74,6 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>*           gjs = handle_genjets.product();
     const GenEventInfoProduct*                                               gif = handle_geninfo.product();
 
-    // gps_hard     = new vector<GenParticle>;
-    // gps_final    = new vector<GenParticle>;
-    // gps_tauvis   = new vector<GenParticle>;
-    // genjets      = new vector<GenJet>;
-    // genmet       = new Met;
-    // genmet_invis = new Met;
-    // event        = new Event;
-
 
     // Do GenParticles
     // ===============
@@ -116,8 +100,8 @@ int main(int argc, char* argv[]){
 
       // find all (hopefully) invisible particles in final state
       if(isfinalstate){
-        for(size_t j=0; j<dmids.size(); j++){
-          if(id == dmids[j]) finalstate_invis = true;
+        for(size_t j=0; j<chiids.size(); j++){
+          if(id == chiids[j]) finalstate_invis = true;
         }
         if(id == 12 || id == 14 || id == 16) finalstate_invis = true;
       }
@@ -210,33 +194,9 @@ int main(int argc, char* argv[]){
     // Do weight
     // =========
     event.weight = gif->weight();
-
-
-
-    // event->genmet = genmet;
-    // event->genmet_invis = genmet_invis;
-    // event->genparticles_hard = gps_hard;
-    // event->genparticles_final = gps_final;
-    // event->genparticles_visibletaus = gps_tauvis;
-    // event->genjets = genjets;
-    // event->weight = weight;
-    // event->genmet = genmet;
-    // event->genmet_invis = genmet_invis;
-    // event->genparticles_hard = gps_hard;
-    // event->genparticles_final = gps_final;
-    // event->genparticles_visibletaus = gps_tauvis;
-    // event->genjets = genjets;
-    // event->weight = weight;
     tree->Fill();
     event.reset();
     idx ++;
-
-    // delete gps_final;
-    // delete gps_hard;
-    // delete gps_tauvis;
-    // delete genmet;
-    // delete genmet_invis;
-    // delete genjets;
   }
 
   event.clear();

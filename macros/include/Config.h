@@ -43,8 +43,8 @@ public:
   const TString dataset_type() const {return m_datasets[m_idx].type;};
   const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
   const float   dataset_lumi() const {return m_datasets[m_idx].lumi;};
-  const size_t  n_datasets()  const {return m_datasets.size();};
-  const size_t  idx()         const {return m_idx;};
+  const size_t  n_datasets()   const {return m_datasets.size();};
+  const size_t  idx()          const {return m_idx;};
 
   void process_datasets();
 
@@ -61,7 +61,7 @@ private:
   float m_target_lumi;
   std::unordered_map<std::string, std::string> m_additionalvariables;
   std::vector<dataset> m_datasets = {};
-  size_t m_idx=0;
+  size_t m_idx = 0;
   bool m_is_init = false;
 
 };
