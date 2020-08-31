@@ -22,6 +22,6 @@ public:
   void set_n_constituents(int x){m_n_constituents = x;};
 
 protected:
-  int m_n_constituents;
+  int m_n_constituents = -1;
 
 };

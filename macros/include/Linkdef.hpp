@@ -20,6 +20,8 @@
 #pragma link C++ class std::vector<Event>+;
 #pragma link C++ class GenEvent+;
 #pragma link C++ class std::vector<GenEvent>+;
+#pragma link C++ class RecoEvent+;
+#pragma link C++ class std::vector<RecoEvent>+;
 
 
 

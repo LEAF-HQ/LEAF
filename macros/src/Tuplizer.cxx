@@ -84,9 +84,10 @@ int main(int argc, char* argv[]){
 
       // This selects all particles in their final form (i.e. after radiation, but before potential decay, to compare to particles from hard process)
       bool isfinal      = gps->at(i).isLastCopy();
-      bool isfinalstate = gps->at(i).status() == 1;
 
       //This selects all final-state particles (i.e. no intermediate particles that decay further)
+      bool isfinalstate = gps->at(i).status() == 1;
+      
       bool ishard  = gps->at(i).isHardProcess();
       bool keepfinal = false;
       bool finalstate_invis = false;
