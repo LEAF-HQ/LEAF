@@ -119,9 +119,9 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
 
     double minimum = 0.;
     if(normalize) minimum = 5E-5;
-    else if(logy) minimum = 5E-10;
+    else if(logy) minimum = 5E-6;
     double maxscale = 1.5;
-    if(logy) maxscale = 100;
+    if(logy) maxscale = 1000;
     for(size_t j=0; j<hists.size(); j++){
       TH1F* hist = hists[j];
       do_cosmetics(hist, minimum, maximum*maxscale, linecolors[j], linestyles[j]);

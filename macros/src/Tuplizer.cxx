@@ -87,7 +87,7 @@ int main(int argc, char* argv[]){
 
       //This selects all final-state particles (i.e. no intermediate particles that decay further)
       bool isfinalstate = gps->at(i).status() == 1;
-      
+
       bool ishard  = gps->at(i).isHardProcess();
       bool keepfinal = false;
       bool finalstate_invis = false;
@@ -143,13 +143,12 @@ int main(int argc, char* argv[]){
         event.genparticles_hard->emplace_back(p);
       }
       if(finalstate_invis){
-        // gps_finalstate_invisible->emplace_back(p);
         TLorentzVector p4current = p4suminvis.p4();
         p4current += p.p4();
         p4suminvis.set_p4(p4current);
+          // cout << "adding this particle of ID " << id << " with pT " << p.pt() << " to MET. Now: " << p4suminvis.pt() << endl;
       }
     }
-
 
     // Do GenJets
     // ==========
@@ -157,7 +156,7 @@ int main(int argc, char* argv[]){
     for(size_t i=0; i<gjs->size(); i++){
       GenJet gj;
       gj.set_p4(gjs->at(i).pt(), gjs->at(i).eta(), gjs->at(i).phi(), gjs->at(i).mass());
-
+      // cout << "genjet pt: " << gj.pt() << endl;
       // remove NP particles that have been clustered into a jet from the jet. Only happens for DM.
       int n_const_removed = 0;
       for(size_t j=0; j<gjs->at(i).getGenConstituents().size(); j++){
@@ -170,8 +169,11 @@ int main(int argc, char* argv[]){
             np.set_p4(gjs->at(i).getGenConstituents().at(j)->pt(), gjs->at(i).getGenConstituents().at(j)->eta(), gjs->at(i).getGenConstituents().at(j)->phi(), gjs->at(i).getGenConstituents().at(j)->mass());
 
             //Remove np 4-momentum
+            // cout << "jet pt before: " << gj.pt() << endl;
             gj.set_p4(gj.p4() - np.p4());
             n_const_removed++;
+            // cout << "Removed particle with ID " << id << " and pt " << np.pt() << " from a genJet." << endl;
+            // cout << "jet pt after:  " << gj.pt() << endl;
           }
         }
       }
@@ -180,6 +182,7 @@ int main(int argc, char* argv[]){
       // save only genjets with at least 5GeV and |eta| < 5
       if(gj.pt() < 5 || fabs(gj.eta()) > 5.) continue;
       event.genjets->emplace_back(gj);
+      // cout << "added genjet with pt: " << gj.pt() << endl;
     }
 
     // Do GenMET
@@ -187,9 +190,11 @@ int main(int argc, char* argv[]){
 
     event.genmet->set_pt(gm->at(0).pt());
     event.genmet->set_phi(gm->at(0).phi());
+    // cout << "GenMET: " << gm->at(0).pt() << endl;
 
     event.genmet_invis->set_pt(p4suminvis.pt());
     event.genmet_invis->set_phi(p4suminvis.phi());
+    // cout << "sum invis: " << p4suminvis.pt() << endl;
 
 
     // Do weight

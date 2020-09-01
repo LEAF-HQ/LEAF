@@ -93,6 +93,11 @@ GenHists::GenHists(TString dir_) : BaseHists(dir_){
   hdrminj1tauvis = book<TH1F>("drj1tauvis", ";#Delta R(jet 1, closest vis. #tau); Events / bin", 50, 0, 5);
   hdrminj2tauvis = book<TH1F>("drj2tauvis", ";#Delta R(jet 2, closest vis. #tau); Events / bin", 50, 0, 5);
 
+  hdrj1b1 = book<TH1F>("drj1b1", ";#Delta R(jet 1, b 1); Events / bin", 50, 0, 5);
+  hdrj1b2 = book<TH1F>("drj1b2", ";#Delta R(jet 1, b 2); Events / bin", 50, 0, 5);
+  hdrj2b1 = book<TH1F>("drj2b1", ";#Delta R(jet 2, b 1); Events / bin", 50, 0, 5);
+  hdrj2b2 = book<TH1F>("drj2b2", ";#Delta R(jet 2, b 2); Events / bin", 50, 0, 5);
+
   hptmet = book<TH1F>("ptmet", ";E_{T}^{miss} (GenMET) [GeV]; Events / bin", 300, 0, 3000);
   hphimet = book<TH1F>("phimet", ";#phi(E_{T}^{miss} (GenMET)); Events / bin", 60, -3.5, 3.5);
   hptmetfrominvis = book<TH1F>("ptmetfrominvis", ";E_{T}^{miss} (from invis.) [GeV]; Events / bin", 300, 0, 3000);
@@ -184,12 +189,20 @@ void GenHists::fill(const GenEvent & event){
         hetabhard1->Fill(gp.eta(), weight);
         hphibhard1->Fill(gp.phi(), weight);
         hmbhard1  ->Fill(gp.m(), weight);
+
+        // dR between jet and b quarks
+        if(event.genjets->size() > 0) hdrj1b1->Fill(deltaR(event.genjets->at(0), gp), weight);
+        if(event.genjets->size() > 1) hdrj2b1->Fill(deltaR(event.genjets->at(1), gp), weight);
       }
       else if(nbhard == 1){
         hptbhard2 ->Fill(gp.pt(), weight);
         hetabhard2->Fill(gp.eta(), weight);
         hphibhard2->Fill(gp.phi(), weight);
         hmbhard2  ->Fill(gp.m(), weight);
+
+        // dR between jet and b quarks
+        if(event.genjets->size() > 0) hdrj1b2->Fill(deltaR(event.genjets->at(0), gp), weight);
+        if(event.genjets->size() > 1) hdrj2b2->Fill(deltaR(event.genjets->at(1), gp), weight);
       }
       nbhard++;
     }
@@ -248,7 +261,6 @@ void GenHists::fill(const GenEvent & event){
   for(size_t i=0; i<njets; i++){
     GenJet j = event.genjets->at(i);
 
-    // hard LQs
     if(i==0){
       hptjet1 ->Fill(j.pt(), weight);
       hetajet1->Fill(j.eta(), weight);
@@ -286,6 +298,8 @@ void GenHists::fill(const GenEvent & event){
   }
   hdrminj1tauvis->Fill(dR1min, weight);
   hdrminj2tauvis->Fill(dR2min, weight);
+
+
 
 
   // Event-based variables

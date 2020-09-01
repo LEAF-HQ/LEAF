@@ -83,7 +83,7 @@ void Config::process_datasets(){
 
     // Chain all samples of the same dataset into a TChain
     event_chain.reset(new TChain("AnalysisTree"));
-    cout << green << "--> Loading " << dataset_infilenames().size() << " input files for samle " << dataset_name() << "." << reset << endl;
+    cout << green << "--> Loading " << dataset_infilenames().size() << " input files for sample " << dataset_name() << "." << reset << endl;
     for(size_t i=0; i<dataset_infilenames().size(); i++){
       event_chain->Add(dataset_infilenames().at(i));
     }
