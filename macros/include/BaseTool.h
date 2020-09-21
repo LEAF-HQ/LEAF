@@ -12,6 +12,7 @@
 #include "include/CleaningModules.h"
 #include "include/Config.h"
 #include "include/Registry.h"
+#include "include/Jet.h"
 
 class BaseTool {
 
@@ -33,7 +34,7 @@ public:
 protected:
   // For internal use, do not touch
   vector<TString> histfolders;
-  map<TString, unique_ptr<GenHists>> histmap;
+  map<TString, unique_ptr<BaseHists>> histmap;
   Event* event;
 };
 
@@ -49,6 +50,10 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cfg.event_chain->SetBranchAddress("Event", &event);
   cfg.outputtree->Branch("Event", &event);
 
+  // E outevent;
+  // // outevent.reset();
+  // cfg.outputtree->Branch("Event", &outevent);
+
   // Loop through chain
   for(int i=0; i<cfg.event_chain->GetEntries(); ++i) {
     if(i%1000==0){
@@ -63,6 +68,9 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
     // call Process() for each event, main part of this function!
     bool keep_event = tool.Process();
+    // cout << "keep event? " << keep_event << endl;
+
+    // outevent = *event;
     if(keep_event) cfg.outputtree->Fill();
     event->reset();
   }

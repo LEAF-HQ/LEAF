@@ -84,6 +84,7 @@ libClassDictionaries.so: $(LIBDIR)/ClassDictionaries.cxx
 	@$(CC) $(CFLAGSDICT) -shared -o $(LIBDIR)/$@ $(ROOTLIBS) $^
 
 $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
+#$(LIBDIR)/ClassDictionaries.cxx: include/allclasses.hpp include/Linkdef.hpp
 	@echo "--> Creating class dictionaries."
 	@rootcling -f $@ -c -p $^
 

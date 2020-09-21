@@ -90,6 +90,15 @@ void Config::process_datasets(){
     nevt = event_chain->GetEntries();
     cout << green << "--> Loaded " << dataset_infilenames().size() << " files containing " << nevt << " events." << reset << endl;
 
+
+    // make sure outdir exists
+    TString outfolder = output_directory();
+    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+
+    // create output file
+    TString outfilename = outfolder + "/" + dataset_type() + "__" + dataset_name() + "_tmp.root";
+    outfile.reset(new TFile(outfilename, "RECREATE"));
+
     // create output tree
     outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
 
@@ -98,20 +107,19 @@ void Config::process_datasets(){
     unique_ptr<BaseTool> analysis = ToolRegistry::build(toolname, *this);
     analysis->ProcessDataset(*this);
 
-
-    // make sure outdir exists
-    TString outfolder = output_directory();
-    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-
-    // create output file
-    TString outfilename = outfolder + "/" + dataset_type() + "__" + dataset_name() + ".root";
-    outfile.reset(new TFile(outfilename, "RECREATE"));
-
     // write output histograms and trees
+    outfile->cd();
     analysis->WriteHistograms(*this);
-    outputtree->Write();
+    outputtree->Write("", TObject::kOverwrite);
     outfile->Close();
-    cout << green << "--> Wrote histograms and tree to file: " << outfile->GetName() << reset << endl << endl;
+
+    //rename tmp file
+    TString outfilename_final = outfilename;
+    outfilename_final.ReplaceAll("_tmp.root", ".root");
+
+    string command = "mv " + (string)outfilename + " " + (string)outfilename_final;
+    system(command.c_str());
+    cout << green << "--> Wrote histograms and tree to file: " << outfilename_final << reset << endl << endl;
 
     increment_idx();
   }

@@ -1,5 +1,4 @@
 #include "include/RecoEvent.h"
-#include "include/Event.h"
 #include "include/cosmetics.h"
 #include "include/constants.h"
 #include <TH1D.h>
@@ -22,25 +21,37 @@ using namespace std;
 RecoEvent::RecoEvent(){
   met = new Met;
   jets = new vector<Jet>;
+  taus = new vector<Tau>;
+  muons = new vector<Muon>;
 }
 
 RecoEvent::~RecoEvent(){
   delete met;
   delete jets;
+  delete taus;
+  delete muons;
 }
 
 void RecoEvent::clear(){
   Event::clear();
   delete met;
   delete jets;
+  delete taus;
+  delete muons;
   met = 0;
   jets = 0;
+  taus = 0;
+  muons = 0;
 }
 
 void RecoEvent::reset(){
   Event::reset();
   delete met;
   delete jets;
+  delete taus;
+  delete muons;
   met = new Met;
   jets = new vector<Jet>;
+  taus = new vector<Tau>;
+  muons = new vector<Muon>;
 }

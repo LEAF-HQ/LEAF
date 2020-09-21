@@ -33,4 +33,5 @@ void BaseHists::save(TFile* outfile){
   for(const auto & m : hists){
     m.second->Write();
   }
+  outfile->cd();
 }

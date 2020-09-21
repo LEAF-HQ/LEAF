@@ -8,6 +8,8 @@
 
 #include "include/Event.h"
 #include "include/Jet.h"
+#include "include/Tau.h"
+#include "include/Muon.h"
 
 using namespace std;
 
@@ -24,4 +26,6 @@ public:
 
   Met* met;
   vector<Jet>* jets;
+  vector<Tau>* taus;
+  vector<Muon>* muons;
 };

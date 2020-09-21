@@ -9,23 +9,27 @@
 
 
 #pragma link C++ class Particle+;
-#pragma link C++ class std::vector<Particle>+;
 #pragma link C++ class FlavorParticle+;
-#pragma link C++ class std::vector<FlavorParticle>+;
 #pragma link C++ class GenParticle+;
-#pragma link C++ class std::vector<GenParticle>+;
 #pragma link C++ class GenJet+;
-#pragma link C++ class std::vector<GenJet>+;
 #pragma link C++ class Met+;
-#pragma link C++ class std::vector<Met>+;
-#pragma link C++ class Event+;
-#pragma link C++ class std::vector<Event>+;
-#pragma link C++ class GenEvent+;
-#pragma link C++ class std::vector<GenEvent>+;
-#pragma link C++ class RecoEvent+;
-#pragma link C++ class std::vector<RecoEvent>+;
 #pragma link C++ class Jet+;
+#pragma link C++ class Tau+;
+#pragma link C++ class Muon+;
+#pragma link C++ class Event+;
+#pragma link C++ class GenEvent+;
+#pragma link C++ class RecoEvent+;
+#pragma link C++ class std::vector<Particle>+;
+#pragma link C++ class std::vector<FlavorParticle>+;
+#pragma link C++ class std::vector<GenParticle>+;
+#pragma link C++ class std::vector<GenJet>+;
+#pragma link C++ class std::vector<Met>+;
 #pragma link C++ class std::vector<Jet>+;
+#pragma link C++ class std::vector<Tau>+;
+#pragma link C++ class std::vector<Muon>+;
+#pragma link C++ class std::vector<Event>+;
+#pragma link C++ class std::vector<GenEvent>+;
+#pragma link C++ class std::vector<RecoEvent>+;
 
 
 

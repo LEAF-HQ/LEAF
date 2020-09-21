@@ -27,6 +27,7 @@ public:
     gROOT->cd(dir);
     shared_ptr<TH1F> h;
     h.reset(new T(name, std::forward<TARGS>(args)...));
+    // h->SetDirectory(0);
     h->SetName(name);
     h->Sumw2();
     hists[name] = h;
@@ -36,7 +37,7 @@ public:
 
 
 protected:
-  TString dir;
   map<TString, shared_ptr<TH1>> hists;
+  TString dir;
 
 };

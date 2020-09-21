@@ -3,6 +3,7 @@
 #include <TString.h>
 #include "massconfig.h"
 #include <vector>
+#include "include/Jet.h"
 
 // using namespace std;
 
@@ -41,5 +42,4 @@ const std::vector<massconfig> mass_configurations = {
 // };
 
 const std::vector<double> lambdas = {1.0};
-
 // #endif

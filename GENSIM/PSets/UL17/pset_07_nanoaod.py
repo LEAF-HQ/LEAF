@@ -2,7 +2,7 @@
 # using:
 # Revision: 1.19
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v
-# with command line options: step1 --filein MYINFILE.root --fileout file:B2G-RunIISummer19UL17NanoAOD-00011.root --mc --eventcontent NANOEDMAODSIM --datatier NANOAODSIM --conditions 106X_mc2017_realistic_v7 --step NANO --nThreads 8 --era Run2_2017 --python_filename B2G-RunIISummer19UL17NanoAOD-00011_1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 10000
+# with command line options: step1 --filein MYINFILE.root --fileout file:B2G-RunIISummer19UL17NanoAOD-00011.root --mc --eventcontent NANOAODSIM --datatier NANOAODSIM --conditions 106X_mc2017_realistic_v7 --step NANO --nThreads 8 --era Run2_2017 --python_filename B2G-RunIISummer19UL17NanoAOD-00011_1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 10000
 import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Era_Run2_2017_cff import Run2_2017
 from FWCore.ParameterSet.VarParsing import VarParsing
@@ -77,7 +77,7 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Output definition
 
-process.NANOEDMAODSIMoutput = cms.OutputModule("PoolOutputModule",
+process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
     compressionAlgorithm = cms.untracked.string('LZMA'),
     compressionLevel = cms.untracked.int32(9),
     dataset = cms.untracked.PSet(
@@ -97,10 +97,10 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mc2017_realistic_v7', '')
 # Path and EndPath definitions
 process.nanoAOD_step = cms.Path(process.nanoSequenceMC)
 process.endjob_step = cms.EndPath(process.endOfProcess)
-process.NANOEDMAODSIMoutput_step = cms.EndPath(process.NANOEDMAODSIMoutput)
+process.NANOAODSIMoutput_step = cms.EndPath(process.NANOAODSIMoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.nanoAOD_step,process.endjob_step,process.NANOEDMAODSIMoutput_step)
+process.schedule = cms.Schedule(process.nanoAOD_step,process.endjob_step,process.NANOAODSIMoutput_step)
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 

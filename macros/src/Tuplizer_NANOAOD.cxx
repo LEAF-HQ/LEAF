@@ -71,6 +71,7 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> met_pt (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
 
+  // AK4 CHS jets
   TTreeReaderValue<unsigned int> jet_n(reader, "nJet");
   TTreeReaderArray<float> jet_area(reader, "Jet_area");
   TTreeReaderArray<float> jet_score_CSVv2(reader, "Jet_btagCSVV2");
@@ -94,6 +95,72 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<float> jet_eta(reader, "Jet_eta");
   TTreeReaderArray<float> jet_phi(reader, "Jet_phi");
   TTreeReaderArray<float> jet_mass(reader, "Jet_mass");
+
+  // Taus
+  TTreeReaderValue<unsigned int> tau_n(reader, "nTau");
+  TTreeReaderArray<int> tau_charge(reader, "Tau_charge");
+  TTreeReaderArray<int> tau_decay_mode(reader, "Tau_decayMode");
+  TTreeReaderArray<unsigned char> tau_gen_part_flav(reader, "Tau_genPartFlav");
+  TTreeReaderArray<unsigned char> tau_id_deeptau_vse(reader, "Tau_idDeepTau2017v2p1VSe");
+  TTreeReaderArray<unsigned char> tau_id_deeptau_vsmu(reader, "Tau_idDeepTau2017v2p1VSmu");
+  TTreeReaderArray<unsigned char> tau_id_deeptau_vsjet(reader, "Tau_idDeepTau2017v2p1VSjet");
+  TTreeReaderArray<float> tau_charged_iso(reader, "Tau_chargedIso");
+  TTreeReaderArray<float> tau_neutral_iso(reader, "Tau_neutralIso");
+  TTreeReaderArray<float> tau_dxy(reader, "Tau_dxy");
+  TTreeReaderArray<float> tau_dz(reader, "Tau_dz");
+  TTreeReaderArray<float> tau_pu_corr(reader, "Tau_puCorr");
+  TTreeReaderArray<float> tau_score_deeptau_vse(reader, "Tau_rawDeepTau2017v2p1VSe");
+  TTreeReaderArray<float> tau_score_deeptau_vsmu(reader, "Tau_rawDeepTau2017v2p1VSmu");
+  TTreeReaderArray<float> tau_score_deeptau_vsjet(reader, "Tau_rawDeepTau2017v2p1VSjet");
+  TTreeReaderArray<float> tau_comb_iso(reader, "Tau_rawIso");
+  TTreeReaderArray<float> tau_comb_iso_dr03(reader, "Tau_rawIsodR03");
+  TTreeReaderArray<float> tau_pt(reader, "Tau_pt");
+  TTreeReaderArray<float> tau_eta(reader, "Tau_eta");
+  TTreeReaderArray<float> tau_phi(reader, "Tau_phi");
+  TTreeReaderArray<float> tau_mass(reader, "Tau_mass");
+
+  // Muons
+  TTreeReaderValue<unsigned int> muon_n(reader, "nMuon");
+  TTreeReaderArray<bool>  muon_is_global(reader, "Muon_isGlobal");
+  TTreeReaderArray<bool>  muon_is_pf(reader, "Muon_isPFcand");
+  TTreeReaderArray<bool>  muon_is_tracker(reader, "Muon_isTracker");
+  TTreeReaderArray<int>   muon_charge(reader, "Muon_charge");
+  TTreeReaderArray<int>   muon_pdgid(reader, "Muon_pdgId");
+  TTreeReaderArray<float> muon_dxy(reader, "Muon_dxy");
+  TTreeReaderArray<float> muon_dz(reader, "Muon_dz");
+  TTreeReaderArray<float> muon_iso_mini(reader, "Muon_miniPFRelIso_all");
+  TTreeReaderArray<float> muon_iso_mini_charged(reader, "Muon_miniPFRelIso_chg");
+  TTreeReaderArray<float> muon_iso_rel_04(reader, "Muon_pfRelIso04_all");
+  TTreeReaderArray<float> muon_iso_rel_03(reader, "Muon_pfRelIso03_all");
+  TTreeReaderArray<float> muon_iso_rel_03_charged(reader, "Muon_pfRelIso03_chg");
+  TTreeReaderArray<float> muon_pt_err(reader, "Muon_ptErr");
+  TTreeReaderArray<float> muon_iso_tk(reader, "Muon_tkRelIso");
+  TTreeReaderArray<float> muon_pt_rel_tunep(reader, "Muon_tunepRelPt");
+  TTreeReaderArray<float> muon_pt(reader,   "Muon_pt");
+  TTreeReaderArray<float> muon_eta(reader,  "Muon_eta");
+  TTreeReaderArray<float> muon_phi(reader,  "Muon_phi");
+  TTreeReaderArray<float> muon_mass(reader, "Muon_mass");
+
+  // get all muon IDs for "uint64_t m_selector_bits"
+  TTreeReaderArray<unsigned char> muon_high_pt_id(reader, "Muon_highPtId");
+  TTreeReaderArray<unsigned char> muon_mva_id(reader, "Muon_mvaId");
+  TTreeReaderArray<bool> muon_loose_id(reader, "Muon_looseId");
+  TTreeReaderArray<bool> muon_medium_id(reader, "Muon_mediumId");
+  TTreeReaderArray<bool> muon_medium_prompt_id(reader, "Muon_mediumPromptId");
+  TTreeReaderArray<bool> muon_tight_id(reader, "Muon_tightId");
+  TTreeReaderArray<bool> muon_trigger_id_loose(reader, "Muon_triggerIdLoose");
+  TTreeReaderArray<bool> muon_soft_id(reader, "Muon_softId");
+  TTreeReaderArray<bool> muon_soft_mva_id(reader, "Muon_softMvaId");
+  TTreeReaderArray<unsigned char> muon_mini_iso(reader, "Muon_miniIsoId");
+  TTreeReaderArray<unsigned char> muon_multi_iso(reader, "Muon_multiIsoId");
+  TTreeReaderArray<unsigned char> muon_pf_iso(reader, "Muon_pfIsoId");
+  TTreeReaderArray<unsigned char> muon_puppi_iso(reader, "Muon_puppiIsoId");
+  TTreeReaderArray<unsigned char> muon_tk_iso(reader, "Muon_tkIsoId");
+
+  // for gen_part_flav
+  TTreeReaderArray<unsigned char> muon_gen_part_flav(reader, "Muon_genPartFlav");
+
+
 
 
   int idx = 0;
@@ -231,8 +298,101 @@ int main(int argc, char* argv[]){
       j.set_pt(jet_pt[i]);
       j.set_eta(jet_eta[i]);
       j.set_phi(jet_phi[i]);
-      j.set_m(jet_mass[i]);      
+      j.set_m(jet_mass[i]);
       event.jets->emplace_back(j);
+    }
+
+    // Do Taus
+    // =======
+    for(size_t i=0; i<*tau_n; i++){
+      Tau t;
+
+      t.set_charge(tau_charge[i]);
+      t.set_decay_mode(tau_decay_mode[i]);
+      t.set_gen_part_flav(tau_gen_part_flav[i]);
+      t.set_id_deeptau_vse(tau_id_deeptau_vse[i]);
+      t.set_id_deeptau_vsmu(tau_id_deeptau_vsmu[i]);
+      t.set_id_deeptau_vsjet(tau_id_deeptau_vsjet[i]);
+      t.set_charged_iso(tau_charged_iso[i]);
+      t.set_neutral_iso(tau_neutral_iso[i]);
+      t.set_dxy(tau_dxy[i]);
+      t.set_dz(tau_dz[i]);
+      t.set_pu_corr(tau_pu_corr[i]);
+      t.set_score_deeptau_vse(tau_score_deeptau_vse[i]);
+      t.set_score_deeptau_vsmu(tau_score_deeptau_vsmu[i]);
+      t.set_score_deeptau_vsjet(tau_score_deeptau_vsjet[i]);
+      t.set_comb_iso(tau_comb_iso[i]);
+      t.set_comb_iso_dr03(tau_comb_iso_dr03[i]);
+      t.set_pt(tau_pt[i]);
+      t.set_eta(tau_eta[i]);
+      t.set_phi(tau_phi[i]);
+      t.set_m(tau_mass[i]);
+      event.taus->emplace_back(t);
+    }
+
+    // Do Muons
+    // =======
+    for(size_t i=0; i<*muon_n; i++){
+      Muon m;
+
+      m.set_is_global(muon_is_global[i]);
+      m.set_is_pf(muon_is_pf[i]);
+      m.set_is_tracker(muon_is_tracker[i]);
+      m.set_charge(muon_charge[i]);
+      m.set_pdgid(muon_pdgid[i]);
+      m.set_dxy(muon_dxy[i]);
+      m.set_dz(muon_dz[i]);
+      m.set_iso_mini(muon_iso_mini[i]);
+      m.set_iso_mini_charged(muon_iso_mini_charged[i]);
+      m.set_iso_rel_04(muon_iso_rel_04[i]);
+      m.set_iso_rel_03(muon_iso_rel_03[i]);
+      m.set_iso_rel_03_charged(muon_iso_rel_03_charged[i]);
+      m.set_pt_err(muon_pt_err[i]);
+      m.set_iso_tk(muon_iso_tk[i]);
+      m.set_pt_rel_tunep(muon_pt_rel_tunep[i]);
+      m.set_pt(muon_pt[i]);
+      m.set_eta(muon_eta[i]);
+      m.set_phi(muon_phi[i]);
+      m.set_m(muon_mass[i]);
+
+      //set ID bits
+      m.set_selector(Muon::IDCutBasedGlobalHighPt, (muon_high_pt_id[i] == 2));
+      m.set_selector(Muon::IDCutBasedTrackerHighPt, (muon_high_pt_id[i] == 1));
+      m.set_selector(Muon::IDMvaSoft, (muon_soft_mva_id[i]));
+      m.set_selector(Muon::IDMvaLoose, (muon_mva_id[i] == 1));
+      m.set_selector(Muon::IDMvaMedium, (muon_mva_id[i] == 2));
+      m.set_selector(Muon::IDMvaTight, (muon_mva_id[i] == 3));
+      m.set_selector(Muon::IDMvaVTight, (muon_mva_id[i] == 4));
+      m.set_selector(Muon::IDMvaVVTight, (muon_mva_id[i] == 5));
+      m.set_selector(Muon::IDCutBasedSoft, (muon_soft_id[i]));
+      m.set_selector(Muon::IDCutBasedLoose, (muon_loose_id[i]));
+      m.set_selector(Muon::IDCutBasedMedium, (muon_medium_id[i]));
+      m.set_selector(Muon::IDCutBasedMediumPrompt, (muon_medium_prompt_id[i]));
+      m.set_selector(Muon::IDCutBasedTight, (muon_tight_id[i]));
+      m.set_selector(Muon::IDTriggerLoose, (muon_trigger_id_loose[i]));
+
+      m.set_selector(Muon::IsoMultiLoose, (muon_multi_iso[i] == 1));
+      m.set_selector(Muon::IsoMultiMedium, (muon_multi_iso[i] == 2));
+      m.set_selector(Muon::IsoPFVLoose, (muon_pf_iso[i] == 1));
+      m.set_selector(Muon::IsoPFLoose, (muon_pf_iso[i] == 2));
+      m.set_selector(Muon::IsoPFMedium, (muon_pf_iso[i] == 3));
+      m.set_selector(Muon::IsoPFTight, (muon_pf_iso[i] == 4));
+      m.set_selector(Muon::IsoPFVTight, (muon_pf_iso[i] == 5));
+      m.set_selector(Muon::IsoPFVVTight, (muon_pf_iso[i] == 6));
+      m.set_selector(Muon::IsoTkLoose, (muon_tk_iso[i] == 1));
+      m.set_selector(Muon::IsoTkTight, (muon_tk_iso[i] == 2));
+      m.set_selector(Muon::IsoPuppiLoose, (muon_puppi_iso[i] == 1));
+      m.set_selector(Muon::IsoPuppiMedium, (muon_puppi_iso[i] == 2));
+      m.set_selector(Muon::IsoPuppiTight, (muon_puppi_iso[i] == 3));
+      m.set_selector(Muon::IsoMiniLoose, (muon_mini_iso[i] == 1));
+      m.set_selector(Muon::IsoMiniMedium, (muon_mini_iso[i] == 2));
+      m.set_selector(Muon::IsoMiniTight, (muon_mini_iso[i] == 3));
+      m.set_selector(Muon::IsoMiniVTight, (muon_mini_iso[i] == 4));
+
+      //gen_part_flav
+      m.set_gen_part_flav((Muon::GenPartFlav)muon_gen_part_flav[i]);
+
+      event.muons->emplace_back(m);
     }
 
     tree->Fill();

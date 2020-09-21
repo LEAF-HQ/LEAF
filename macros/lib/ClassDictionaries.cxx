@@ -40,20 +40,28 @@ namespace std {} using namespace std;
 #include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
+#include "include/Jet.h"
 #include "include/Particle.h"
 #include "include/Registry.h"
+#include "include/BaseHists.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
+#include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/constants.h"
+#include "include/Tau.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
+#include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
-#include "include/BaseTool.h"
 #include "include/PlottingTool.h"
+#include "include/PreselectionHists.h"
+#include "include/BaseTool.h"
+#include "include/RecoEvent.h"
+#include "include/constants.h"
+#include "include/Muon.h"
 #include "include/useful_functions.h"
 
 // Header files passed via #pragma extra_include
@@ -144,6 +152,51 @@ namespace ROOT {
    }
 
    static void Particle_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *FlavorParticle_Dictionary();
+   static void FlavorParticle_TClassManip(TClass*);
+   static void *new_FlavorParticle(void *p = 0);
+   static void *newArray_FlavorParticle(Long_t size, void *p);
+   static void delete_FlavorParticle(void *p);
+   static void deleteArray_FlavorParticle(void *p);
+   static void destruct_FlavorParticle(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FlavorParticle*)
+   {
+      ::FlavorParticle *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::FlavorParticle));
+      static ::ROOT::TGenericClassInfo 
+         instance("FlavorParticle", "include/FlavorParticle.h", 11,
+                  typeid(::FlavorParticle), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &FlavorParticle_Dictionary, isa_proxy, 4,
+                  sizeof(::FlavorParticle) );
+      instance.SetNew(&new_FlavorParticle);
+      instance.SetNewArray(&newArray_FlavorParticle);
+      instance.SetDelete(&delete_FlavorParticle);
+      instance.SetDeleteArray(&deleteArray_FlavorParticle);
+      instance.SetDestructor(&destruct_FlavorParticle);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FlavorParticle*)
+   {
+      return GenerateInitInstanceLocal((::FlavorParticle*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FlavorParticle*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *FlavorParticle_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::FlavorParticle*)0x0)->GetClass();
+      FlavorParticle_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void FlavorParticle_TClassManip(TClass* ){
    }
 
 } // end of namespace ROOT
@@ -284,6 +337,231 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
+   static TClass *GenEvent_Dictionary();
+   static void GenEvent_TClassManip(TClass*);
+   static void *new_GenEvent(void *p = 0);
+   static void *newArray_GenEvent(Long_t size, void *p);
+   static void delete_GenEvent(void *p);
+   static void deleteArray_GenEvent(void *p);
+   static void destruct_GenEvent(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::GenEvent*)
+   {
+      ::GenEvent *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::GenEvent));
+      static ::ROOT::TGenericClassInfo 
+         instance("GenEvent", "include/GenEvent.h", 17,
+                  typeid(::GenEvent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &GenEvent_Dictionary, isa_proxy, 4,
+                  sizeof(::GenEvent) );
+      instance.SetNew(&new_GenEvent);
+      instance.SetNewArray(&newArray_GenEvent);
+      instance.SetDelete(&delete_GenEvent);
+      instance.SetDeleteArray(&deleteArray_GenEvent);
+      instance.SetDestructor(&destruct_GenEvent);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::GenEvent*)
+   {
+      return GenerateInitInstanceLocal((::GenEvent*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::GenEvent*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *GenEvent_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::GenEvent*)0x0)->GetClass();
+      GenEvent_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void GenEvent_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *Jet_Dictionary();
+   static void Jet_TClassManip(TClass*);
+   static void *new_Jet(void *p = 0);
+   static void *newArray_Jet(Long_t size, void *p);
+   static void delete_Jet(void *p);
+   static void deleteArray_Jet(void *p);
+   static void destruct_Jet(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Jet*)
+   {
+      ::Jet *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Jet));
+      static ::ROOT::TGenericClassInfo 
+         instance("Jet", "include/Jet.h", 11,
+                  typeid(::Jet), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &Jet_Dictionary, isa_proxy, 4,
+                  sizeof(::Jet) );
+      instance.SetNew(&new_Jet);
+      instance.SetNewArray(&newArray_Jet);
+      instance.SetDelete(&delete_Jet);
+      instance.SetDeleteArray(&deleteArray_Jet);
+      instance.SetDestructor(&destruct_Jet);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::Jet*)
+   {
+      return GenerateInitInstanceLocal((::Jet*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Jet*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *Jet_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Jet*)0x0)->GetClass();
+      Jet_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void Jet_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *Muon_Dictionary();
+   static void Muon_TClassManip(TClass*);
+   static void *new_Muon(void *p = 0);
+   static void *newArray_Muon(Long_t size, void *p);
+   static void delete_Muon(void *p);
+   static void deleteArray_Muon(void *p);
+   static void destruct_Muon(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Muon*)
+   {
+      ::Muon *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Muon));
+      static ::ROOT::TGenericClassInfo 
+         instance("Muon", "include/Muon.h", 11,
+                  typeid(::Muon), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &Muon_Dictionary, isa_proxy, 4,
+                  sizeof(::Muon) );
+      instance.SetNew(&new_Muon);
+      instance.SetNewArray(&newArray_Muon);
+      instance.SetDelete(&delete_Muon);
+      instance.SetDeleteArray(&deleteArray_Muon);
+      instance.SetDestructor(&destruct_Muon);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::Muon*)
+   {
+      return GenerateInitInstanceLocal((::Muon*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Muon*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *Muon_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Muon*)0x0)->GetClass();
+      Muon_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void Muon_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *Tau_Dictionary();
+   static void Tau_TClassManip(TClass*);
+   static void *new_Tau(void *p = 0);
+   static void *newArray_Tau(Long_t size, void *p);
+   static void delete_Tau(void *p);
+   static void deleteArray_Tau(void *p);
+   static void destruct_Tau(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Tau*)
+   {
+      ::Tau *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Tau));
+      static ::ROOT::TGenericClassInfo 
+         instance("Tau", "include/Tau.h", 11,
+                  typeid(::Tau), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &Tau_Dictionary, isa_proxy, 4,
+                  sizeof(::Tau) );
+      instance.SetNew(&new_Tau);
+      instance.SetNewArray(&newArray_Tau);
+      instance.SetDelete(&delete_Tau);
+      instance.SetDeleteArray(&deleteArray_Tau);
+      instance.SetDestructor(&destruct_Tau);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::Tau*)
+   {
+      return GenerateInitInstanceLocal((::Tau*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Tau*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *Tau_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Tau*)0x0)->GetClass();
+      Tau_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void Tau_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *RecoEvent_Dictionary();
+   static void RecoEvent_TClassManip(TClass*);
+   static void *new_RecoEvent(void *p = 0);
+   static void *newArray_RecoEvent(Long_t size, void *p);
+   static void delete_RecoEvent(void *p);
+   static void deleteArray_RecoEvent(void *p);
+   static void destruct_RecoEvent(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::RecoEvent*)
+   {
+      ::RecoEvent *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::RecoEvent));
+      static ::ROOT::TGenericClassInfo 
+         instance("RecoEvent", "include/RecoEvent.h", 17,
+                  typeid(::RecoEvent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &RecoEvent_Dictionary, isa_proxy, 4,
+                  sizeof(::RecoEvent) );
+      instance.SetNew(&new_RecoEvent);
+      instance.SetNewArray(&newArray_RecoEvent);
+      instance.SetDelete(&delete_RecoEvent);
+      instance.SetDeleteArray(&deleteArray_RecoEvent);
+      instance.SetDestructor(&destruct_RecoEvent);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::RecoEvent*)
+   {
+      return GenerateInitInstanceLocal((::RecoEvent*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::RecoEvent*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *RecoEvent_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::RecoEvent*)0x0)->GetClass();
+      RecoEvent_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void RecoEvent_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
    // Wrappers around operator new
    static void *new_Met(void *p) {
       return  p ? new(p) ::Met : new ::Met;
@@ -324,6 +602,27 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class ::Particle
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FlavorParticle(void *p) {
+      return  p ? new(p) ::FlavorParticle : new ::FlavorParticle;
+   }
+   static void *newArray_FlavorParticle(Long_t nElements, void *p) {
+      return p ? new(p) ::FlavorParticle[nElements] : new ::FlavorParticle[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FlavorParticle(void *p) {
+      delete ((::FlavorParticle*)p);
+   }
+   static void deleteArray_FlavorParticle(void *p) {
+      delete [] ((::FlavorParticle*)p);
+   }
+   static void destruct_FlavorParticle(void *p) {
+      typedef ::FlavorParticle current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FlavorParticle
 
 namespace ROOT {
    // Wrappers around operator new
@@ -389,6 +688,237 @@ namespace ROOT {
 } // end of namespace ROOT for class ::Event
 
 namespace ROOT {
+   // Wrappers around operator new
+   static void *new_GenEvent(void *p) {
+      return  p ? new(p) ::GenEvent : new ::GenEvent;
+   }
+   static void *newArray_GenEvent(Long_t nElements, void *p) {
+      return p ? new(p) ::GenEvent[nElements] : new ::GenEvent[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_GenEvent(void *p) {
+      delete ((::GenEvent*)p);
+   }
+   static void deleteArray_GenEvent(void *p) {
+      delete [] ((::GenEvent*)p);
+   }
+   static void destruct_GenEvent(void *p) {
+      typedef ::GenEvent current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::GenEvent
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_Jet(void *p) {
+      return  p ? new(p) ::Jet : new ::Jet;
+   }
+   static void *newArray_Jet(Long_t nElements, void *p) {
+      return p ? new(p) ::Jet[nElements] : new ::Jet[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_Jet(void *p) {
+      delete ((::Jet*)p);
+   }
+   static void deleteArray_Jet(void *p) {
+      delete [] ((::Jet*)p);
+   }
+   static void destruct_Jet(void *p) {
+      typedef ::Jet current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::Jet
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_Muon(void *p) {
+      return  p ? new(p) ::Muon : new ::Muon;
+   }
+   static void *newArray_Muon(Long_t nElements, void *p) {
+      return p ? new(p) ::Muon[nElements] : new ::Muon[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_Muon(void *p) {
+      delete ((::Muon*)p);
+   }
+   static void deleteArray_Muon(void *p) {
+      delete [] ((::Muon*)p);
+   }
+   static void destruct_Muon(void *p) {
+      typedef ::Muon current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::Muon
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_Tau(void *p) {
+      return  p ? new(p) ::Tau : new ::Tau;
+   }
+   static void *newArray_Tau(Long_t nElements, void *p) {
+      return p ? new(p) ::Tau[nElements] : new ::Tau[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_Tau(void *p) {
+      delete ((::Tau*)p);
+   }
+   static void deleteArray_Tau(void *p) {
+      delete [] ((::Tau*)p);
+   }
+   static void destruct_Tau(void *p) {
+      typedef ::Tau current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::Tau
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_RecoEvent(void *p) {
+      return  p ? new(p) ::RecoEvent : new ::RecoEvent;
+   }
+   static void *newArray_RecoEvent(Long_t nElements, void *p) {
+      return p ? new(p) ::RecoEvent[nElements] : new ::RecoEvent[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_RecoEvent(void *p) {
+      delete ((::RecoEvent*)p);
+   }
+   static void deleteArray_RecoEvent(void *p) {
+      delete [] ((::RecoEvent*)p);
+   }
+   static void destruct_RecoEvent(void *p) {
+      typedef ::RecoEvent current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::RecoEvent
+
+namespace ROOT {
+   static TClass *vectorlETaugR_Dictionary();
+   static void vectorlETaugR_TClassManip(TClass*);
+   static void *new_vectorlETaugR(void *p = 0);
+   static void *newArray_vectorlETaugR(Long_t size, void *p);
+   static void delete_vectorlETaugR(void *p);
+   static void deleteArray_vectorlETaugR(void *p);
+   static void destruct_vectorlETaugR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<Tau>*)
+   {
+      vector<Tau> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Tau>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<Tau>", -2, "vector", 216,
+                  typeid(vector<Tau>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlETaugR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<Tau>) );
+      instance.SetNew(&new_vectorlETaugR);
+      instance.SetNewArray(&newArray_vectorlETaugR);
+      instance.SetDelete(&delete_vectorlETaugR);
+      instance.SetDeleteArray(&deleteArray_vectorlETaugR);
+      instance.SetDestructor(&destruct_vectorlETaugR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<Tau> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<Tau>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlETaugR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<Tau>*)0x0)->GetClass();
+      vectorlETaugR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlETaugR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlETaugR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Tau> : new vector<Tau>;
+   }
+   static void *newArray_vectorlETaugR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Tau>[nElements] : new vector<Tau>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlETaugR(void *p) {
+      delete ((vector<Tau>*)p);
+   }
+   static void deleteArray_vectorlETaugR(void *p) {
+      delete [] ((vector<Tau>*)p);
+   }
+   static void destruct_vectorlETaugR(void *p) {
+      typedef vector<Tau> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<Tau>
+
+namespace ROOT {
+   static TClass *vectorlERecoEventgR_Dictionary();
+   static void vectorlERecoEventgR_TClassManip(TClass*);
+   static void *new_vectorlERecoEventgR(void *p = 0);
+   static void *newArray_vectorlERecoEventgR(Long_t size, void *p);
+   static void delete_vectorlERecoEventgR(void *p);
+   static void deleteArray_vectorlERecoEventgR(void *p);
+   static void destruct_vectorlERecoEventgR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<RecoEvent>*)
+   {
+      vector<RecoEvent> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<RecoEvent>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<RecoEvent>", -2, "vector", 216,
+                  typeid(vector<RecoEvent>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlERecoEventgR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<RecoEvent>) );
+      instance.SetNew(&new_vectorlERecoEventgR);
+      instance.SetNewArray(&newArray_vectorlERecoEventgR);
+      instance.SetDelete(&delete_vectorlERecoEventgR);
+      instance.SetDeleteArray(&deleteArray_vectorlERecoEventgR);
+      instance.SetDestructor(&destruct_vectorlERecoEventgR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<RecoEvent> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<RecoEvent>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlERecoEventgR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<RecoEvent>*)0x0)->GetClass();
+      vectorlERecoEventgR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlERecoEventgR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlERecoEventgR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<RecoEvent> : new vector<RecoEvent>;
+   }
+   static void *newArray_vectorlERecoEventgR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<RecoEvent>[nElements] : new vector<RecoEvent>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlERecoEventgR(void *p) {
+      delete ((vector<RecoEvent>*)p);
+   }
+   static void deleteArray_vectorlERecoEventgR(void *p) {
+      delete [] ((vector<RecoEvent>*)p);
+   }
+   static void destruct_vectorlERecoEventgR(void *p) {
+      typedef vector<RecoEvent> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<RecoEvent>
+
+namespace ROOT {
    static TClass *vectorlEParticlegR_Dictionary();
    static void vectorlEParticlegR_TClassManip(TClass*);
    static void *new_vectorlEParticlegR(void *p = 0);
@@ -452,6 +982,69 @@ namespace ROOT {
 } // end of namespace ROOT for class vector<Particle>
 
 namespace ROOT {
+   static TClass *vectorlEMuongR_Dictionary();
+   static void vectorlEMuongR_TClassManip(TClass*);
+   static void *new_vectorlEMuongR(void *p = 0);
+   static void *newArray_vectorlEMuongR(Long_t size, void *p);
+   static void delete_vectorlEMuongR(void *p);
+   static void deleteArray_vectorlEMuongR(void *p);
+   static void destruct_vectorlEMuongR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<Muon>*)
+   {
+      vector<Muon> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Muon>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<Muon>", -2, "vector", 216,
+                  typeid(vector<Muon>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEMuongR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<Muon>) );
+      instance.SetNew(&new_vectorlEMuongR);
+      instance.SetNewArray(&newArray_vectorlEMuongR);
+      instance.SetDelete(&delete_vectorlEMuongR);
+      instance.SetDeleteArray(&deleteArray_vectorlEMuongR);
+      instance.SetDestructor(&destruct_vectorlEMuongR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<Muon> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<Muon>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEMuongR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<Muon>*)0x0)->GetClass();
+      vectorlEMuongR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEMuongR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEMuongR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Muon> : new vector<Muon>;
+   }
+   static void *newArray_vectorlEMuongR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Muon>[nElements] : new vector<Muon>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEMuongR(void *p) {
+      delete ((vector<Muon>*)p);
+   }
+   static void deleteArray_vectorlEMuongR(void *p) {
+      delete [] ((vector<Muon>*)p);
+   }
+   static void destruct_vectorlEMuongR(void *p) {
+      typedef vector<Muon> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<Muon>
+
+namespace ROOT {
    static TClass *vectorlEMetgR_Dictionary();
    static void vectorlEMetgR_TClassManip(TClass*);
    static void *new_vectorlEMetgR(void *p = 0);
@@ -513,6 +1106,69 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class vector<Met>
+
+namespace ROOT {
+   static TClass *vectorlEJetgR_Dictionary();
+   static void vectorlEJetgR_TClassManip(TClass*);
+   static void *new_vectorlEJetgR(void *p = 0);
+   static void *newArray_vectorlEJetgR(Long_t size, void *p);
+   static void delete_vectorlEJetgR(void *p);
+   static void deleteArray_vectorlEJetgR(void *p);
+   static void destruct_vectorlEJetgR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<Jet>*)
+   {
+      vector<Jet> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Jet>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<Jet>", -2, "vector", 216,
+                  typeid(vector<Jet>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEJetgR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<Jet>) );
+      instance.SetNew(&new_vectorlEJetgR);
+      instance.SetNewArray(&newArray_vectorlEJetgR);
+      instance.SetDelete(&delete_vectorlEJetgR);
+      instance.SetDeleteArray(&deleteArray_vectorlEJetgR);
+      instance.SetDestructor(&destruct_vectorlEJetgR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<Jet> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<Jet>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEJetgR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<Jet>*)0x0)->GetClass();
+      vectorlEJetgR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEJetgR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEJetgR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Jet> : new vector<Jet>;
+   }
+   static void *newArray_vectorlEJetgR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Jet>[nElements] : new vector<Jet>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEJetgR(void *p) {
+      delete ((vector<Jet>*)p);
+   }
+   static void deleteArray_vectorlEJetgR(void *p) {
+      delete [] ((vector<Jet>*)p);
+   }
+   static void destruct_vectorlEJetgR(void *p) {
+      typedef vector<Jet> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<Jet>
 
 namespace ROOT {
    static TClass *vectorlEGenParticlegR_Dictionary();
@@ -641,6 +1297,132 @@ namespace ROOT {
 } // end of namespace ROOT for class vector<GenJet>
 
 namespace ROOT {
+   static TClass *vectorlEGenEventgR_Dictionary();
+   static void vectorlEGenEventgR_TClassManip(TClass*);
+   static void *new_vectorlEGenEventgR(void *p = 0);
+   static void *newArray_vectorlEGenEventgR(Long_t size, void *p);
+   static void delete_vectorlEGenEventgR(void *p);
+   static void deleteArray_vectorlEGenEventgR(void *p);
+   static void destruct_vectorlEGenEventgR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<GenEvent>*)
+   {
+      vector<GenEvent> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<GenEvent>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<GenEvent>", -2, "vector", 216,
+                  typeid(vector<GenEvent>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEGenEventgR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<GenEvent>) );
+      instance.SetNew(&new_vectorlEGenEventgR);
+      instance.SetNewArray(&newArray_vectorlEGenEventgR);
+      instance.SetDelete(&delete_vectorlEGenEventgR);
+      instance.SetDeleteArray(&deleteArray_vectorlEGenEventgR);
+      instance.SetDestructor(&destruct_vectorlEGenEventgR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<GenEvent> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<GenEvent>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEGenEventgR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<GenEvent>*)0x0)->GetClass();
+      vectorlEGenEventgR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEGenEventgR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEGenEventgR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<GenEvent> : new vector<GenEvent>;
+   }
+   static void *newArray_vectorlEGenEventgR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<GenEvent>[nElements] : new vector<GenEvent>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEGenEventgR(void *p) {
+      delete ((vector<GenEvent>*)p);
+   }
+   static void deleteArray_vectorlEGenEventgR(void *p) {
+      delete [] ((vector<GenEvent>*)p);
+   }
+   static void destruct_vectorlEGenEventgR(void *p) {
+      typedef vector<GenEvent> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<GenEvent>
+
+namespace ROOT {
+   static TClass *vectorlEFlavorParticlegR_Dictionary();
+   static void vectorlEFlavorParticlegR_TClassManip(TClass*);
+   static void *new_vectorlEFlavorParticlegR(void *p = 0);
+   static void *newArray_vectorlEFlavorParticlegR(Long_t size, void *p);
+   static void delete_vectorlEFlavorParticlegR(void *p);
+   static void deleteArray_vectorlEFlavorParticlegR(void *p);
+   static void destruct_vectorlEFlavorParticlegR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<FlavorParticle>*)
+   {
+      vector<FlavorParticle> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<FlavorParticle>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<FlavorParticle>", -2, "vector", 216,
+                  typeid(vector<FlavorParticle>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEFlavorParticlegR_Dictionary, isa_proxy, 4,
+                  sizeof(vector<FlavorParticle>) );
+      instance.SetNew(&new_vectorlEFlavorParticlegR);
+      instance.SetNewArray(&newArray_vectorlEFlavorParticlegR);
+      instance.SetDelete(&delete_vectorlEFlavorParticlegR);
+      instance.SetDeleteArray(&deleteArray_vectorlEFlavorParticlegR);
+      instance.SetDestructor(&destruct_vectorlEFlavorParticlegR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<FlavorParticle> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<FlavorParticle>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEFlavorParticlegR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<FlavorParticle>*)0x0)->GetClass();
+      vectorlEFlavorParticlegR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEFlavorParticlegR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEFlavorParticlegR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<FlavorParticle> : new vector<FlavorParticle>;
+   }
+   static void *newArray_vectorlEFlavorParticlegR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<FlavorParticle>[nElements] : new vector<FlavorParticle>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEFlavorParticlegR(void *p) {
+      delete ((vector<FlavorParticle>*)p);
+   }
+   static void deleteArray_vectorlEFlavorParticlegR(void *p) {
+      delete [] ((vector<FlavorParticle>*)p);
+   }
+   static void destruct_vectorlEFlavorParticlegR(void *p) {
+      typedef vector<FlavorParticle> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<FlavorParticle>
+
+namespace ROOT {
    static TClass *vectorlEEventgR_Dictionary();
    static void vectorlEEventgR_TClassManip(TClass*);
    static void *new_vectorlEEventgR(void *p = 0);
@@ -709,20 +1491,28 @@ namespace {
 "include/GenEvent.h",
 "include/ObjectIdUtils.h",
 "include/massconfig.h",
+"include/Jet.h",
 "include/Particle.h",
 "include/Registry.h",
+"include/BaseHists.h",
 "include/Config.h",
 "include/GenHists.h",
+"include/dummy.h",
 "include/Met.h",
 "include/GenJet.h",
-"include/constants.h",
+"include/Tau.h",
 "include/CleaningModules.h",
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
+"include/FlavorParticle.h",
 "include/cosmetics.h",
-"include/BaseTool.h",
 "include/PlottingTool.h",
+"include/PreselectionHists.h",
+"include/BaseTool.h",
+"include/RecoEvent.h",
+"include/constants.h",
+"include/Muon.h",
 "include/useful_functions.h",
 0
     };
@@ -741,8 +1531,14 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
 class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenJet;
+class __attribute__((annotate("$clingAutoload$include/Jet.h")))  Jet;
+class __attribute__((annotate("$clingAutoload$include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/dummy.h")))  Tau;
+class __attribute__((annotate("$clingAutoload$include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/dummy.h")))  Muon;
+class __attribute__((annotate("$clingAutoload$include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/PreselectionHists.h")))  RecoEvent;
+class __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenEvent;
 class __attribute__((annotate("$clingAutoload$include/Event.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Event;
 class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Met;
+class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  FlavorParticle;
 class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
@@ -756,30 +1552,44 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
 #include "include/massconfig.h"
+#include "include/Jet.h"
 #include "include/Particle.h"
 #include "include/Registry.h"
+#include "include/BaseHists.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
+#include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/constants.h"
+#include "include/Tau.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
+#include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
-#include "include/BaseTool.h"
 #include "include/PlottingTool.h"
+#include "include/PreselectionHists.h"
+#include "include/BaseTool.h"
+#include "include/RecoEvent.h"
+#include "include/constants.h"
+#include "include/Muon.h"
 #include "include/useful_functions.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";
     static const char* classesHeaders[]={
 "Event", payloadCode, "@",
+"FlavorParticle", payloadCode, "@",
+"GenEvent", payloadCode, "@",
 "GenJet", payloadCode, "@",
 "GenParticle", payloadCode, "@",
+"Jet", payloadCode, "@",
 "Met", payloadCode, "@",
+"Muon", payloadCode, "@",
 "Particle", payloadCode, "@",
+"RecoEvent", payloadCode, "@",
+"Tau", payloadCode, "@",
 nullptr};
 
     static bool isInitialized = false;

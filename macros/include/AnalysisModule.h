@@ -1,4 +1,5 @@
 #pragma once
+#include "include/Event.h"
 
 class AnalysisModule {
 public:

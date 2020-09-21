@@ -129,22 +129,32 @@ configs = {
         'infilenamebase':  'MINIAOD',
         'pathtag':         'NANOAOD/LQDM'
     },
-    'FLAT': {
-        'pset':            psetfolder+'/pset_08_flat.py',
-        'cmsswtag':        cmssw_tag_sim,
-        'jobnametag':      'flat',
-        'outfilenamebase': 'FLAT',
-        'infilepathtag':   'NANOAOD/LQDM',
-        'infilenamebase':  'NANOAOD',
-        'pathtag':         'FLAT/LQDM'
-    },
+    # 'FLAT': {
+    #     'pset':            psetfolder+'/pset_08_flat.py',
+    #     'cmsswtag':        cmssw_tag_sim,
+    #     'jobnametag':      'flat',
+    #     'outfilenamebase': 'FLAT',
+    #     'infilepathtag':   'NANOAOD/LQDM',
+    #     'infilenamebase':  'NANOAOD',
+    #     'pathtag':         'FLAT/LQDM'
+    # },
     'Tuples_GENSIM': {
         'jobnametag':      'tuples_gensim',
         'cmsswtag':        cmssw_tag_sim,
         'outfilenamebase': 'Tuples_GENSIM',
         'infilepathtag':   'GENSIM/LQDM',
         'infilenamebase':  'GENSIM',
-        'pathtag':         'Tuples_GENSIM/LQDM'
+        'pathtag':         'Tuples_GENSIM/LQDM',
+        'tuplizer':        'Tuplizer'
+    },
+    'Tuples_NANOAOD': {
+        'jobnametag':      'tuples_nanoaod',
+        'cmsswtag':        cmssw_tag_sim,
+        'outfilenamebase': 'Tuples_NANOAOD',
+        'infilepathtag':   'FLAT/LQDM',
+        'infilenamebase':  'FLAT',
+        'pathtag':         'Tuples_NANOAOD/LQDM',
+        'tuplizer':        'Tuplizer_NANOAOD'
     }
 
 }
@@ -178,12 +188,14 @@ def main():
     resub_nanoaod    = False
     delete_miniaod   = False
 
-    flat             = False
-    resub_flat       = False
-    delete_nanoaod   = False
+    # flat             = False
+    # resub_flat       = False
+    # delete_nanoaod   = False
 
-    tuplize_gen      = True
-    add              = False
+    tuplize_gen      = False
+    add_gen          = False
+
+    tuplize_nano     = True
 
     submit           = True
 
@@ -213,13 +225,15 @@ def main():
     if nanoaod:          SubmitGenerationStep(submit=submit, generation_step='NANOAOD', mode='new')
     if resub_nanoaod:    SubmitGenerationStep(submit=submit, generation_step='NANOAOD', mode='resubmit')
     if delete_miniaod:   RemoveSamples(submit=submit, generation_step='MINIAOD')
-    if flat:             SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='new')
-    if resub_flat:       SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='resubmit')
-    if delete_nanoaod:   RemoveSamples(submit=submit, generation_step='NANOAOD')
+    # if flat:             SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='new')
+    # if resub_flat:       SubmitGenerationStep(submit=submit, generation_step='FLAT', mode='resubmit')
+    # if delete_nanoaod:   RemoveSamples(submit=submit, generation_step='NANOAOD')
 
     # Tuple generation
-    if tuplize_gen:      SubmitTuplize(submit=submit)
-    if add:              SubmitAdd(submit=submit)
+    if tuplize_gen:      SubmitTuplize(submit=submit, generation_step='Tuples_GENSIM')
+    if add_gen:          SubmitAdd(submit=submit, generation_step='Tuples_GENSIM')
+
+    if tuplize_nano:     SubmitTuplize(submit=submit, generation_step='Tuples_NANOAOD')
 
     # continue the analysis with "macros" to plot simple files
 
@@ -324,8 +338,12 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
         ncores = int(ncores / 2)
     elif generation_step is 'FLAT':
         ncores = int(ncores / 4)
-    queue   = 'wn'       # quick -- wn
-    runtime = '05:00:00' # 01:00:00 -- 10:00:00
+    runtime_hrs = 10
+    if generation_step is 'NANOAOD' or generation_step is 'FLAT':
+        runtime_hrs = min(int(float(runtime_hrs)/10.), 1)
+    runtime = '%i:00:00' % (runtime_hrs)
+    #runtime = '10:00:00' # 01:00:00 -- 10:00:00
+    queue   = 'wn' if runtime_hrs > 1 else 'quick'      # quick -- wn
 
     commandfilebase = ''
     if mode is 'new':        commandfilebase = gensimfolder + '/commands/%s_' % (configs[generation_step]['jobnametag'])
@@ -339,7 +357,7 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+                jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
                 indices = -1
@@ -406,12 +424,12 @@ def RemoveSamples(submit, generation_step):
 
 
 
-def SubmitTuplize(submit):
+def SubmitTuplize(submit, generation_step):
     # Submit tuplize jobs to the SLURM cluster
     ncores = 1
     queue   = 'quick'       # quick -- wn
     runtime = '00:05:00' # 01:00:00 -- 10:00:00
-    commandfilebase = gensimfolder + '/commands/tuplize_'
+    commandfilebase = gensimfolder + '/commands/tuplize_%s' % (configs[generation_step]['jobnametag'])
 
     # Create command file for array of jobs
     for processname in processes:
@@ -421,21 +439,21 @@ def SubmitTuplize(submit):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
+                jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+                outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
                 njobs = 0
                 for i in range(maxindex):
                     # infilename = T3_path + '/' + gensim_path_tag + '/' + jobname + '/GENSIM_%i.root' % (i+1)
-                    infilename = T2_director_root + T2_path + '/' + configs['Tuples_GENSIM']['infilepathtag'] + '/' + jobname + '/' + configs['Tuples_GENSIM']['infilenamebase'] + '_' + str(i+1) + '.root'
-                    outfilename = configs['Tuples_GENSIM']['outfilenamebase'] + '_%i.root' % (i+1)
-                    command = 'Tuplizer %s %s' % (infilename, outfilename)
+                    infilename = T2_director_root + T2_path + '/' + configs[generation_step]['infilepathtag'] + '/' + jobname + '/' + configs[generation_step]['infilenamebase'] + '_' + str(i+1) + '.root'
+                    outfilename = configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
+                    command = '%s %s %s' % (configs[generation_step]['tuplizer'], infilename, outfilename)
                     f.write(command + '\n')
                     njobs += 1
                 f.close()
 
-                command = 'sbatch -a 1-%s -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_gensim.sh %s %s %s %s %s' % (str(maxindex), configs['Tuples_GENSIM']['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs['Tuples_GENSIM']['cmsswtag'], basefolder, outfoldername, commandfilename)
+                command = 'sbatch -a 1-%s -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize.sh %s %s %s %s %s %s' % (str(maxindex), configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename, configs[generation_step]['jobnametag'])
                 if submit:
                     os.system(command)
                     print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
@@ -443,7 +461,7 @@ def SubmitTuplize(submit):
                     print command
                     print yellow("Would submit an array of %i jobs for name %s"%(njobs, jobname))
 
-def SubmitAdd(submit):
+def SubmitAdd(submit, generation_step):
     # Submit add jobs to the SLURM cluster
     ncores = 1
     queue   = 'quick'       # quick -- wn
@@ -458,19 +476,19 @@ def SubmitAdd(submit):
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                infoldername= T3_director + T3_path + '/' + campaign + '/' + configs['Tuples_GENSIM']['pathtag'] + '/' + jobname
+                infoldername= T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
                 infilestring = ''
                 for i in range(maxindex):
-                    fn = infoldername +  '/' + configs['Tuples_GENSIM']['outfilenamebase'] + '_%i.root' % (i+1)
+                    fn = infoldername +  '/' + configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
                     infilestring = infilestring + ' ' + fn
-                outfilename = configs['Tuples_GENSIM']['outfilenamebase'] + '.root'
+                outfilename = configs[generation_step]['outfilenamebase'] + '.root'
                 outfoldername = infoldername
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
                 command = 'hadd -f %s %s ; sleep 5 ; ' % (outfilename, infilestring)
                 f.write(command)
                 f.close()
-                command = 'sbatch -J add_%s -p %s -t %s --cpus-per-task %i submit_add.sh %s %s' % (configs['Tuples_GENSIM']['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs['Tuples_GENSIM']['cmsswtag'], basefolder, outfoldername, commandfilename)
+                command = 'sbatch -J add_%s -p %s -t %s --cpus-per-task %i submit_add.sh %s %s' % (configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename)
                 if submit:
                     os.system(command)
                     print green("Submitted job for adding tuplized samples: %s."%(jobname))
