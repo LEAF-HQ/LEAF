@@ -46,6 +46,7 @@ namespace std {} using namespace std;
 #include "include/BaseHists.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
+#include "include/Electron.h"
 #include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -56,12 +57,16 @@ namespace std {} using namespace std;
 #include "include/GenParticle.h"
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
+#include "include/ElectronHists.h"
 #include "include/PlottingTool.h"
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
+#include "include/MuonHists.h"
+#include "include/JetHists.h"
 #include "include/RecoEvent.h"
 #include "include/constants.h"
 #include "include/Muon.h"
+#include "include/TauHists.h"
 #include "include/useful_functions.h"
 
 // Header files passed via #pragma extra_include
@@ -427,51 +432,6 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
-   static TClass *Muon_Dictionary();
-   static void Muon_TClassManip(TClass*);
-   static void *new_Muon(void *p = 0);
-   static void *newArray_Muon(Long_t size, void *p);
-   static void delete_Muon(void *p);
-   static void deleteArray_Muon(void *p);
-   static void destruct_Muon(void *p);
-
-   // Function generating the singleton type initializer
-   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Muon*)
-   {
-      ::Muon *ptr = 0;
-      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Muon));
-      static ::ROOT::TGenericClassInfo 
-         instance("Muon", "include/Muon.h", 11,
-                  typeid(::Muon), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &Muon_Dictionary, isa_proxy, 4,
-                  sizeof(::Muon) );
-      instance.SetNew(&new_Muon);
-      instance.SetNewArray(&newArray_Muon);
-      instance.SetDelete(&delete_Muon);
-      instance.SetDeleteArray(&deleteArray_Muon);
-      instance.SetDestructor(&destruct_Muon);
-      return &instance;
-   }
-   TGenericClassInfo *GenerateInitInstance(const ::Muon*)
-   {
-      return GenerateInitInstanceLocal((::Muon*)0);
-   }
-   // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Muon*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
-
-   // Dictionary for non-ClassDef classes
-   static TClass *Muon_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Muon*)0x0)->GetClass();
-      Muon_TClassManip(theClass);
-   return theClass;
-   }
-
-   static void Muon_TClassManip(TClass* ){
-   }
-
-} // end of namespace ROOT
-
-namespace ROOT {
    static TClass *Tau_Dictionary();
    static void Tau_TClassManip(TClass*);
    static void *new_Tau(void *p = 0);
@@ -517,6 +477,51 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
+   static TClass *Muon_Dictionary();
+   static void Muon_TClassManip(TClass*);
+   static void *new_Muon(void *p = 0);
+   static void *newArray_Muon(Long_t size, void *p);
+   static void delete_Muon(void *p);
+   static void deleteArray_Muon(void *p);
+   static void destruct_Muon(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Muon*)
+   {
+      ::Muon *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Muon));
+      static ::ROOT::TGenericClassInfo 
+         instance("Muon", "include/Muon.h", 11,
+                  typeid(::Muon), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &Muon_Dictionary, isa_proxy, 4,
+                  sizeof(::Muon) );
+      instance.SetNew(&new_Muon);
+      instance.SetNewArray(&newArray_Muon);
+      instance.SetDelete(&delete_Muon);
+      instance.SetDeleteArray(&deleteArray_Muon);
+      instance.SetDestructor(&destruct_Muon);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::Muon*)
+   {
+      return GenerateInitInstanceLocal((::Muon*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Muon*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *Muon_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Muon*)0x0)->GetClass();
+      Muon_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void Muon_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
    static TClass *RecoEvent_Dictionary();
    static void RecoEvent_TClassManip(TClass*);
    static void *new_RecoEvent(void *p = 0);
@@ -531,7 +536,7 @@ namespace ROOT {
       ::RecoEvent *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::RecoEvent));
       static ::ROOT::TGenericClassInfo 
-         instance("RecoEvent", "include/RecoEvent.h", 17,
+         instance("RecoEvent", "include/RecoEvent.h", 18,
                   typeid(::RecoEvent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &RecoEvent_Dictionary, isa_proxy, 4,
                   sizeof(::RecoEvent) );
@@ -731,27 +736,6 @@ namespace ROOT {
 
 namespace ROOT {
    // Wrappers around operator new
-   static void *new_Muon(void *p) {
-      return  p ? new(p) ::Muon : new ::Muon;
-   }
-   static void *newArray_Muon(Long_t nElements, void *p) {
-      return p ? new(p) ::Muon[nElements] : new ::Muon[nElements];
-   }
-   // Wrapper around operator delete
-   static void delete_Muon(void *p) {
-      delete ((::Muon*)p);
-   }
-   static void deleteArray_Muon(void *p) {
-      delete [] ((::Muon*)p);
-   }
-   static void destruct_Muon(void *p) {
-      typedef ::Muon current_t;
-      ((current_t*)p)->~current_t();
-   }
-} // end of namespace ROOT for class ::Muon
-
-namespace ROOT {
-   // Wrappers around operator new
    static void *new_Tau(void *p) {
       return  p ? new(p) ::Tau : new ::Tau;
    }
@@ -770,6 +754,27 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class ::Tau
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_Muon(void *p) {
+      return  p ? new(p) ::Muon : new ::Muon;
+   }
+   static void *newArray_Muon(Long_t nElements, void *p) {
+      return p ? new(p) ::Muon[nElements] : new ::Muon[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_Muon(void *p) {
+      delete ((::Muon*)p);
+   }
+   static void deleteArray_Muon(void *p) {
+      delete [] ((::Muon*)p);
+   }
+   static void destruct_Muon(void *p) {
+      typedef ::Muon current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::Muon
 
 namespace ROOT {
    // Wrappers around operator new
@@ -1485,6 +1490,69 @@ namespace ROOT {
    }
 } // end of namespace ROOT for class vector<Event>
 
+namespace ROOT {
+   static TClass *vectorlEElectrongR_Dictionary();
+   static void vectorlEElectrongR_TClassManip(TClass*);
+   static void *new_vectorlEElectrongR(void *p = 0);
+   static void *newArray_vectorlEElectrongR(Long_t size, void *p);
+   static void delete_vectorlEElectrongR(void *p);
+   static void deleteArray_vectorlEElectrongR(void *p);
+   static void destruct_vectorlEElectrongR(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<Electron>*)
+   {
+      vector<Electron> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Electron>));
+      static ::ROOT::TGenericClassInfo 
+         instance("vector<Electron>", -2, "vector", 216,
+                  typeid(vector<Electron>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEElectrongR_Dictionary, isa_proxy, 0,
+                  sizeof(vector<Electron>) );
+      instance.SetNew(&new_vectorlEElectrongR);
+      instance.SetNewArray(&newArray_vectorlEElectrongR);
+      instance.SetDelete(&delete_vectorlEElectrongR);
+      instance.SetDeleteArray(&deleteArray_vectorlEElectrongR);
+      instance.SetDestructor(&destruct_vectorlEElectrongR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<Electron> >()));
+      return &instance;
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<Electron>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *vectorlEElectrongR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<Electron>*)0x0)->GetClass();
+      vectorlEElectrongR_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void vectorlEElectrongR_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_vectorlEElectrongR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Electron> : new vector<Electron>;
+   }
+   static void *newArray_vectorlEElectrongR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<Electron>[nElements] : new vector<Electron>[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_vectorlEElectrongR(void *p) {
+      delete ((vector<Electron>*)p);
+   }
+   static void deleteArray_vectorlEElectrongR(void *p) {
+      delete [] ((vector<Electron>*)p);
+   }
+   static void destruct_vectorlEElectrongR(void *p) {
+      typedef vector<Electron> current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class vector<Electron>
+
 namespace {
   void TriggerDictionaryInitialization_ClassDictionaries_Impl() {
     static const char* headers[] = {
@@ -1497,6 +1565,7 @@ namespace {
 "include/BaseHists.h",
 "include/Config.h",
 "include/GenHists.h",
+"include/Electron.h",
 "include/dummy.h",
 "include/Met.h",
 "include/GenJet.h",
@@ -1507,12 +1576,16 @@ namespace {
 "include/GenParticle.h",
 "include/FlavorParticle.h",
 "include/cosmetics.h",
+"include/ElectronHists.h",
 "include/PlottingTool.h",
 "include/PreselectionHists.h",
 "include/BaseTool.h",
+"include/MuonHists.h",
+"include/JetHists.h",
 "include/RecoEvent.h",
 "include/constants.h",
 "include/Muon.h",
+"include/TauHists.h",
 "include/useful_functions.h",
 0
     };
@@ -1531,10 +1604,10 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
 class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenJet;
-class __attribute__((annotate("$clingAutoload$include/Jet.h")))  Jet;
-class __attribute__((annotate("$clingAutoload$include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/dummy.h")))  Tau;
-class __attribute__((annotate("$clingAutoload$include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/dummy.h")))  Muon;
-class __attribute__((annotate("$clingAutoload$include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/PreselectionHists.h")))  RecoEvent;
+class __attribute__((annotate("$clingAutoload$include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Jet;
+class __attribute__((annotate("$clingAutoload$include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Tau;
+class __attribute__((annotate("$clingAutoload$include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Muon;
+class __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  RecoEvent;
 class __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenEvent;
 class __attribute__((annotate("$clingAutoload$include/Event.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Event;
 class __attribute__((annotate("$clingAutoload$include/Met.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Met;
@@ -1558,6 +1631,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/BaseHists.h"
 #include "include/Config.h"
 #include "include/GenHists.h"
+#include "include/Electron.h"
 #include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -1568,12 +1642,16 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/GenParticle.h"
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
+#include "include/ElectronHists.h"
 #include "include/PlottingTool.h"
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
+#include "include/MuonHists.h"
+#include "include/JetHists.h"
 #include "include/RecoEvent.h"
 #include "include/constants.h"
 #include "include/Muon.h"
+#include "include/TauHists.h"
 #include "include/useful_functions.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H

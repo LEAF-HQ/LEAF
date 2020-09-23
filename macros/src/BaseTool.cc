@@ -19,6 +19,6 @@ void BaseTool::WriteHistograms(const Config & cfg){
 
   // store histograms and tree(s) to output file
   for(const TString & x : histfolders){
-    histmap[x]->save(cfg.outfile.get());
+    HistFolder(x)->save(cfg.outfile.get());
   }
 }

@@ -21,6 +21,11 @@ public:
   double eta() const {return m_eta;};
   double phi() const {return m_phi;};
   double m()   const {return m_m;};
+  double e()   const {
+    TLorentzVector p;
+    p.SetPtEtaPhiM(m_pt, m_eta, m_phi, m_m);
+    return p.Energy();
+  }
   TLorentzVector p4() const{
     TLorentzVector p;
     p.SetPtEtaPhiM(m_pt, m_eta, m_phi, m_m);

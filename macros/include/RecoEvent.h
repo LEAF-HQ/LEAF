@@ -10,6 +10,7 @@
 #include "include/Jet.h"
 #include "include/Tau.h"
 #include "include/Muon.h"
+#include "include/Electron.h"
 
 using namespace std;
 
@@ -28,4 +29,5 @@ public:
   vector<Jet>* jets;
   vector<Tau>* taus;
   vector<Muon>* muons;
+  vector<Electron>* electrons;
 };

@@ -15,7 +15,7 @@ struct dataset{
   TString name                = "";
   TString type                = "";
   vector<TString> infilenames = {};
-  float lumi                  = -1.;
+  double lumi                  = -1.;
 };
 
 
@@ -37,12 +37,12 @@ public:
   const string  get(const string s) {return m_additionalvariables[s];};
   const TString output_directory() const {return m_output_directory;};
   const TString postfix() const {return m_postfix;};
-  const float   target_lumi() const {return m_target_lumi;};
+  const double  target_lumi() const {return m_target_lumi;};
   const string  analysis_tool() const {return m_analysis_tool;};
   const TString dataset_name() const {return m_datasets[m_idx].name;};
   const TString dataset_type() const {return m_datasets[m_idx].type;};
   const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
-  const float   dataset_lumi() const {return m_datasets[m_idx].lumi;};
+  const double  dataset_lumi() const {return m_datasets[m_idx].lumi;};
   const size_t  n_datasets()   const {return m_datasets.size();};
   const size_t  idx()          const {return m_idx;};
 
@@ -58,7 +58,7 @@ public:
 private:
   TString m_output_directory, m_postfix;
   string m_analysis_tool;
-  float m_target_lumi;
+  double m_target_lumi;
   std::unordered_map<std::string, std::string> m_additionalvariables;
   std::vector<dataset> m_datasets = {};
   size_t m_idx = 0;

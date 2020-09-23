@@ -1,4 +1,3 @@
-#include "include/Event.h"
 #include "include/CleaningModules.h"
 #include "include/useful_functions.h"
 
@@ -7,6 +6,30 @@ using namespace std;
 GenJetCleaner::GenJetCleaner(const GenJetId & id_): id(id_) {}
 bool GenJetCleaner::process(Event & event){
   clean_collection(event.genjets, event, id);
+  return true;
+}
+
+JetCleaner::JetCleaner(const JetId & id_): id(id_) {}
+bool JetCleaner::process(RecoEvent & event){
+  clean_collection(event.jets, event, id);
+  return true;
+}
+
+MuonCleaner::MuonCleaner(const MuonId & id_): id(id_) {}
+bool MuonCleaner::process(RecoEvent & event){
+  clean_collection(event.muons, event, id);
+  return true;
+}
+
+ElectronCleaner::ElectronCleaner(const ElectronId & id_): id(id_) {}
+bool ElectronCleaner::process(RecoEvent & event){
+  clean_collection(event.electrons, event, id);
+  return true;
+}
+
+TauCleaner::TauCleaner(const TauId & id_): id(id_) {}
+bool TauCleaner::process(RecoEvent & event){
+  clean_collection(event.taus, event, id);
   return true;
 }
 

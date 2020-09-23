@@ -33,10 +33,38 @@ public:
 
 protected:
   // For internal use, do not touch
+  template<typename F> void book_HistFolder(const TString&, F*);
+  template<typename F=BaseHists> F* HistFolder(const TString&);
   vector<TString> histfolders;
   map<TString, unique_ptr<BaseHists>> histmap;
   Event* event;
 };
+
+
+
+template<typename F>
+void BaseTool::book_HistFolder(const TString& dirname, F* f_ptr){
+
+  if(histmap.find(dirname) != histmap.end()) throw std::runtime_error("BaseTool::book_HistFolder -- already existing dirname: "+dirname);
+  else {
+    histmap[dirname].reset(f_ptr);
+    histfolders.emplace_back(dirname);
+  }
+  return;
+}
+
+template<typename F>
+F* BaseTool::HistFolder(const TString& dirname){
+
+  F* f(0);
+
+  if(histmap.find(dirname) != histmap.end()) f = static_cast<F*>(histmap[dirname].get());
+  else throw std::runtime_error("BaseTool::HistFolder -- folder dirname not found: "+dirname);
+
+  if(!f) throw std::runtime_error("BaseTool::HistFolder -- null pointer to folder: "+dirname);
+
+  return f;
+}
 
 
 
@@ -64,7 +92,7 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
     cfg.event_chain->GetEntry(i);
 
     // weight must be: target_lumi / dataset_lumi
-    event->weight *= cfg.target_lumi() / cfg.dataset_lumi();
+    event->weight *= (double)cfg.target_lumi() / (double)cfg.dataset_lumi();
 
     // call Process() for each event, main part of this function!
     bool keep_event = tool.Process();

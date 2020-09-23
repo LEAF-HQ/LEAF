@@ -140,7 +140,6 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<float> muon_eta(reader,  "Muon_eta");
   TTreeReaderArray<float> muon_phi(reader,  "Muon_phi");
   TTreeReaderArray<float> muon_mass(reader, "Muon_mass");
-
   // get all muon IDs for "uint64_t m_selector_bits"
   TTreeReaderArray<unsigned char> muon_high_pt_id(reader, "Muon_highPtId");
   TTreeReaderArray<unsigned char> muon_mva_id(reader, "Muon_mvaId");
@@ -156,9 +155,34 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<unsigned char> muon_pf_iso(reader, "Muon_pfIsoId");
   TTreeReaderArray<unsigned char> muon_puppi_iso(reader, "Muon_puppiIsoId");
   TTreeReaderArray<unsigned char> muon_tk_iso(reader, "Muon_tkIsoId");
-
   // for gen_part_flav
   TTreeReaderArray<unsigned char> muon_gen_part_flav(reader, "Muon_genPartFlav");
+
+  // Electrons
+  TTreeReaderValue<unsigned int> electron_n(reader, "nElectron");
+  TTreeReaderArray<int> electron_charge(reader, "Electron_charge");
+  TTreeReaderArray<int> electron_id_bitmap(reader, "Electron_vidNestedWPBitmap");
+  TTreeReaderArray<unsigned char> electron_lost_hits(reader, "Electron_lostHits");
+  TTreeReaderArray<bool> electron_conv_veto(reader, "Electron_convVeto");
+  TTreeReaderArray<bool> electron_is_pf(reader, "Electron_isPFcand");
+  TTreeReaderArray<float> electron_delta_eta_sc(reader, "Electron_deltaEtaSC");
+  TTreeReaderArray<float> electron_dxy(reader, "Electron_dxy");
+  TTreeReaderArray<float> electron_dz(reader, "Electron_dz");
+  TTreeReaderArray<float> electron_einv_minus_pinv(reader, "Electron_eInvMinusPInv");
+  TTreeReaderArray<float> electron_h_over_e(reader, "Electron_hoe");
+  TTreeReaderArray<float> electron_ip_3d(reader, "Electron_ip3d");
+  TTreeReaderArray<float> electron_iso_rel_03(reader, "Electron_pfRelIso03_all");
+  TTreeReaderArray<float> electron_iso_rel_03_charged(reader, "Electron_pfRelIso03_all");
+  TTreeReaderArray<float> electron_sigma_ietaieta(reader, "Electron_sieie");
+  // uint64_t m_selector_bits
+  TTreeReaderArray<int> electron_cut_based_id(reader, "Electron_cutBased");
+  TTreeReaderArray<bool> electron_heep_id(reader, "Electron_cutBased_HEEP");
+  TTreeReaderArray<bool> electron_mva_id_iso_loose(reader, "Electron_mvaFall17V2Iso_WPL");
+  TTreeReaderArray<bool> electron_mva_id_iso_90(reader, "Electron_mvaFall17V2Iso_WP90");
+  TTreeReaderArray<bool> electron_mva_id_iso_80(reader, "Electron_mvaFall17V2Iso_WP80");
+  TTreeReaderArray<bool> electron_mva_id_noniso_loose(reader, "Electron_mvaFall17V2noIso_WPL");
+  TTreeReaderArray<bool> electron_mva_id_noniso_90(reader, "Electron_mvaFall17V2noIso_WP90");
+  TTreeReaderArray<bool> electron_mva_id_noniso_80(reader, "Electron_mvaFall17V2noIso_WP80");
 
 
 
@@ -394,6 +418,46 @@ int main(int argc, char* argv[]){
 
       event.muons->emplace_back(m);
     }
+
+
+    // Do Electrons
+    // ============
+    for(size_t i=0; i<*electron_n; i++){
+      Electron e;
+
+      e.set_charge(electron_charge[i]);
+      e.set_id_bitmap(electron_id_bitmap[i]);
+      e.set_lost_hits(electron_lost_hits[i]);
+      e.set_conv_veto(electron_conv_veto[i]);
+      e.set_is_pf(electron_is_pf[i]);
+      e.set_delta_eta_sc(electron_delta_eta_sc[i]);
+      e.set_dxy(electron_dxy[i]);
+      e.set_dz(electron_dz[i]);
+      e.set_einv_minus_pinv(electron_einv_minus_pinv[i]);
+      e.set_h_over_e(electron_h_over_e[i]);
+      e.set_ip_3d(electron_ip_3d[i]);
+      e.set_iso_rel_03(electron_iso_rel_03[i]);
+      e.set_iso_rel_03_charged(electron_iso_rel_03_charged[i]);
+      e.set_sigma_ietaieta(electron_sigma_ietaieta[i]);
+
+      // set ID bits
+      e.set_selector(Electron::IDCutBasedVeto, (electron_cut_based_id[i] == 1));
+      e.set_selector(Electron::IDCutBasedLoose, (electron_cut_based_id[i] == 2));
+      e.set_selector(Electron::IDCutBasedMedium, (electron_cut_based_id[i] == 3));
+      e.set_selector(Electron::IDCutBasedTight, (electron_cut_based_id[i] == 4));
+      e.set_selector(Electron::IDCutBasedHEEP, electron_heep_id[i]);
+      e.set_selector(Electron::IDMVAIsoLoose, electron_mva_id_iso_loose[i]);
+      e.set_selector(Electron::IDMVAIsoEff90, electron_mva_id_iso_90[i]);
+      e.set_selector(Electron::IDMVAIsoEff80, electron_mva_id_iso_80[i]);
+      e.set_selector(Electron::IDMVANonIsoLoose, electron_mva_id_noniso_loose[i]);
+      e.set_selector(Electron::IDMVANonIsoEff90, electron_mva_id_noniso_90[i]);
+      e.set_selector(Electron::IDMVANonIsoEff80, electron_mva_id_noniso_80[i]);
+
+
+      event.electrons->emplace_back(e);
+    }
+
+
 
     tree->Fill();
     event.reset();

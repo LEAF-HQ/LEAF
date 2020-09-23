@@ -21,8 +21,8 @@ using namespace std;
 
 PreselectionHists::PreselectionHists(TString dir_) : BaseHists(dir_){
 
-  hnjets = book<TH1F>("njets", ";N_{jets}; Events / bin", 11, -0.5, 10.5);
-  hsumweights = book<TH1F>("sumweights", ";bincontent = sum of event weights; Events / bin", 1, 0.5, 1.5);
+  hnjets = book<TH1D>("njets", ";N_{jets}; Events / bin", 11, -0.5, 10.5);
+  hsumweights = book<TH1D>("sumweights", ";;Sum of event weights", 1, 0.5, 1.5);
 
 }
 
@@ -31,6 +31,5 @@ void PreselectionHists::fill(const RecoEvent & event){
 
 
   hnjets->Fill(event.jets->size(), weight);
-  cout << "Filled hnjets with value " << event.jets->size() << endl;
   hsumweights->Fill(1, weight);
 }

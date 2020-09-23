@@ -23,6 +23,7 @@ RecoEvent::RecoEvent(){
   jets = new vector<Jet>;
   taus = new vector<Tau>;
   muons = new vector<Muon>;
+  electrons = new vector<Electron>;
 }
 
 RecoEvent::~RecoEvent(){
@@ -30,6 +31,7 @@ RecoEvent::~RecoEvent(){
   delete jets;
   delete taus;
   delete muons;
+  delete electrons;
 }
 
 void RecoEvent::clear(){
@@ -38,10 +40,12 @@ void RecoEvent::clear(){
   delete jets;
   delete taus;
   delete muons;
+  delete electrons;
   met = 0;
   jets = 0;
   taus = 0;
   muons = 0;
+  electrons = 0;
 }
 
 void RecoEvent::reset(){
@@ -50,8 +54,10 @@ void RecoEvent::reset(){
   delete jets;
   delete taus;
   delete muons;
+  delete electrons;
   met = new Met;
   jets = new vector<Jet>;
   taus = new vector<Tau>;
   muons = new vector<Muon>;
+  electrons = new vector<Electron>;
 }

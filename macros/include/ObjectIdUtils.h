@@ -1,10 +1,14 @@
 #pragma once
 
 #include <functional>
-#include "Event.h"
+#include "RecoEvent.h"
 
 typedef std::function<bool (const GenJet &, const Event &)> GenJetId;
 typedef std::function<bool (const GenParticle &, const Event &)> GenParticleId;
+typedef std::function<bool (const Jet &, const Event &)> JetId;
+typedef std::function<bool (const Muon &, const Event &)> MuonId;
+typedef std::function<bool (const Electron &, const Event &)> ElectronId;
+typedef std::function<bool (const Tau &, const Event &)> TauId;
 
 
 class PtEtaId{

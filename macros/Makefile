@@ -29,14 +29,6 @@ OBJECTS     := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
 OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
 
-# Tuplizer only needs a few sources, giving them by hand avoids compiling the entire folder
-SOURCESTUP  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/Event.cc
-OBJECTSTUP  := $(SOURCESTUP:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
-
-# Plotter also only needs a few sources, giving them by hand avoids compiling the entire folder
-SOURCESPLOT  := $(SRCDIR)/useful_functions.cc $(SRCDIR)/PlottingTool.cc $(SRCDIR)/cosmetics.cc $(SRCDIR)/PlotGenlevel.cc
-OBJECTSPLOT  := $(SOURCESPLOT:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
-
 all: Tuplizer Tuplizer_NANOAOD Plotter Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
@@ -55,18 +47,6 @@ Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.
 Plotter: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Plotter.o
 	@echo "--> Creating Plotter"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
-
-#Tuplizer: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o
-#	@echo "--> Creating Tuplizer"
-#	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
-
-# Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o
-# 	@echo "--> Creating Tuplizer_NANOAOD"
-# 	@$(CC) $(OBJECTSTUP) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
-
-# Plotter: $(OBJECTSPLOT) $(OBJDIR)/Plotter.o
-# 	@echo "--> Creating Plotter"
-# 	@$(CC) $(OBJECTSPLOT) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSPLOT)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"

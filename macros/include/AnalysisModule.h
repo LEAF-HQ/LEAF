@@ -1,9 +1,16 @@
 #pragma once
-#include "include/Event.h"
+#include "include/RecoEvent.h"
 
-class AnalysisModule {
+class GenAnalysisModule {
 public:
 
     virtual bool process(Event & event) = 0;
-    virtual ~AnalysisModule() = default;
+    virtual ~GenAnalysisModule() = default;
+};
+
+class RecoAnalysisModule {
+public:
+
+    virtual bool process(RecoEvent & event) = 0;
+    virtual ~RecoAnalysisModule() = default;
 };

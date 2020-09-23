@@ -28,7 +28,7 @@ void do_cosmetics(TH1F* hist, double minimum, double maximum, int linecolor, int
 
 
 
-void PlottingTool::PlotGenlevel(bool normalize, bool logy, bool singlePDF){
+void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
   cout << endl << endl << green << "--> Now plotting with settings:" << reset << endl;
   cout << green << "    normalize : " << normalize << reset << endl;
   cout << green << "    logy :      " << logy << reset << endl;
@@ -134,6 +134,9 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
     }
     leg->Draw();
     if(logy) pad->SetLogy(true);
+
+    // make sure outfolder exists
+    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 
     TString outfilename = "";
     if(singlePDF){

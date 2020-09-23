@@ -22,21 +22,23 @@ public:
   virtual void fill(const Event & event){return;};
   void save(TFile* outfile);
   template <typename T, typename... TARGS>
-  shared_ptr<TH1F> book(TString name, TARGS... args){
+  shared_ptr<T> book(TString name, TARGS... args){
     gROOT->mkdir(dir);
     gROOT->cd(dir);
-    shared_ptr<TH1F> h;
+    shared_ptr<T> h;
     h.reset(new T(name, std::forward<TARGS>(args)...));
-    // h->SetDirectory(0);
+    h->SetDirectory(0);
     h->SetName(name);
     h->Sumw2();
     hists[name] = h;
+    histnames.emplace_back(name);
     gROOT->cd();
     return h;
   }
 
 
 protected:
+  vector<TString> histnames;
   map<TString, shared_ptr<TH1>> hists;
   TString dir;
 

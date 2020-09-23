@@ -30,8 +30,8 @@ void BaseHists::save(TFile* outfile){
   outfile->mkdir(dir);
   outfile->cd(dir);
 
-  for(const auto & m : hists){
-    m.second->Write();
+  for(const TString & n : histnames){
+    hists[n]->Write();
   }
   outfile->cd();
 }

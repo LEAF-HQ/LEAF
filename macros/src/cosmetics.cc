@@ -30,8 +30,8 @@ TPad* SetupPad() {
   TPad* m_pad = new TPad("pad1", "Control Plots 2", x1, y1, x2, y3);
 
   m_pad->SetTopMargin(0.05);
-  m_pad->SetBottomMargin(0.16);
-  m_pad->SetLeftMargin(0.19);
+  m_pad->SetBottomMargin(0.14);
+  m_pad->SetLeftMargin(0.14);
   m_pad->SetRightMargin(0.05);
 
   return m_pad;
@@ -124,7 +124,6 @@ void HistCosmetics(TH1* hist, bool ratio) {
   // hist->SetMinimum(0);
 
   // offset
-  hist->GetYaxis()->SetTitleOffset(1.55);
 
   if (ratio)
   {
@@ -138,7 +137,8 @@ void HistCosmetics(TH1* hist, bool ratio) {
   }
   else
   {
-    hist->GetXaxis()->SetTitleOffset(1.3);
+    hist->GetXaxis()->SetTitleOffset(1.05);
+    hist->GetYaxis()->SetTitleOffset(1.55);
   }
 }
 
@@ -158,6 +158,7 @@ void HistCosmetics(TGraph* hist, bool ratio) {
   // Y label
   hist->GetYaxis()->SetLabelFont(43);
   hist->GetYaxis()->SetLabelSize(16);
+  hist->GetYaxis()->SetNdivisions(505);
   // Y title
   hist->GetYaxis()->SetTitleFont(43);
   hist->GetYaxis()->SetTitleSize(18);
@@ -167,15 +168,21 @@ void HistCosmetics(TGraph* hist, bool ratio) {
   // hist->SetMinimum(0);
 
   // offset
-  hist->GetYaxis()->SetTitleOffset(2);
+
   if (ratio)
   {
+    hist->GetYaxis()->SetTitleOffset(1.7);
     hist->GetXaxis()->SetTitleOffset(3);
-    hist->GetYaxis()->SetTitleOffset(2);
-    hist->GetYaxis()->SetTitleSize(18);
-    hist->GetYaxis()->CenterTitle();
-    hist->GetYaxis()->SetLabelSize(12);
     hist->GetXaxis()->SetTickSize(0.07);
+    hist->GetYaxis()->SetTitleSize(15);
+    hist->GetYaxis()->CenterTitle();
+    hist->GetYaxis()->SetRangeUser(0.3, 1.7);
+    hist->GetYaxis()->SetLabelSize(14);
+  }
+  else
+  {
+    hist->GetXaxis()->SetTitleOffset(1.05);
+    hist->GetYaxis()->SetTitleOffset(1.55);
   }
 }
 
@@ -193,6 +200,7 @@ void HistCosmetics(TMultiGraph* hist, bool ratio) {
   // Y label
   hist->GetYaxis()->SetLabelFont(43);
   hist->GetYaxis()->SetLabelSize(16);
+  hist->GetYaxis()->SetNdivisions(505);
   // Y title
   hist->GetYaxis()->SetTitleFont(43);
   hist->GetYaxis()->SetTitleSize(18);
@@ -202,13 +210,20 @@ void HistCosmetics(TMultiGraph* hist, bool ratio) {
   // hist->SetMinimum(0);
 
   // offset
-  hist->GetYaxis()->SetTitleOffset(2);
+
   if (ratio)
   {
+    hist->GetYaxis()->SetTitleOffset(1.7);
     hist->GetXaxis()->SetTitleOffset(3);
-    hist->GetYaxis()->SetTitleOffset(2);
     hist->GetXaxis()->SetTickSize(0.07);
-    hist->GetYaxis()->SetTitleSize(18);
+    hist->GetYaxis()->SetTitleSize(15);
     hist->GetYaxis()->CenterTitle();
+    hist->GetYaxis()->SetRangeUser(0.3, 1.7);
+    hist->GetYaxis()->SetLabelSize(14);
+  }
+  else
+  {
+    hist->GetXaxis()->SetTitleOffset(1.05);
+    hist->GetYaxis()->SetTitleOffset(1.55);
   }
 }

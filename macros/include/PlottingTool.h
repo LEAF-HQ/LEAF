@@ -20,7 +20,17 @@ public:
   ~PlottingTool() = default;
 
   // Main functions
-  void PlotGenlevel(bool normalize = false, bool logy = true, bool singlePDF = false);
+  void Plot(bool normalize = false, bool logy = true, bool singlePDF = false);
+
+  void set_inpath(TString s){ base_path_analysisfiles = s;};
+  void set_outpath(TString s){ base_path_plots = s;};
+  void set_samplenames(vector<TString> s){ samples_genlevel = s;};
+  void set_legends(vector<TString> s){ labels_genlevel = s;};
+  void set_linecolors(vector<int> s){ linecolors_genlevel = s;};
+  void set_linestyles(vector<int> s){ linestyles_genlevel = s;};
+  void set_debug(bool s){ debug = s;};
+
+
 
 
 private:
