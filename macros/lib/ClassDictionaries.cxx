@@ -47,7 +47,6 @@ namespace std {} using namespace std;
 #include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Electron.h"
-#include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
 #include "include/Tau.h"
@@ -523,6 +522,51 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
+   static TClass *Electron_Dictionary();
+   static void Electron_TClassManip(TClass*);
+   static void *new_Electron(void *p = 0);
+   static void *newArray_Electron(Long_t size, void *p);
+   static void delete_Electron(void *p);
+   static void deleteArray_Electron(void *p);
+   static void destruct_Electron(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::Electron*)
+   {
+      ::Electron *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Electron));
+      static ::ROOT::TGenericClassInfo 
+         instance("Electron", "include/Electron.h", 11,
+                  typeid(::Electron), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &Electron_Dictionary, isa_proxy, 4,
+                  sizeof(::Electron) );
+      instance.SetNew(&new_Electron);
+      instance.SetNewArray(&newArray_Electron);
+      instance.SetDelete(&delete_Electron);
+      instance.SetDeleteArray(&deleteArray_Electron);
+      instance.SetDestructor(&destruct_Electron);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::Electron*)
+   {
+      return GenerateInitInstanceLocal((::Electron*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::Electron*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *Electron_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::Electron*)0x0)->GetClass();
+      Electron_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void Electron_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
    static TClass *RecoEvent_Dictionary();
    static void RecoEvent_TClassManip(TClass*);
    static void *new_RecoEvent(void *p = 0);
@@ -776,6 +820,27 @@ namespace ROOT {
       ((current_t*)p)->~current_t();
    }
 } // end of namespace ROOT for class ::Muon
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_Electron(void *p) {
+      return  p ? new(p) ::Electron : new ::Electron;
+   }
+   static void *newArray_Electron(Long_t nElements, void *p) {
+      return p ? new(p) ::Electron[nElements] : new ::Electron[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_Electron(void *p) {
+      delete ((::Electron*)p);
+   }
+   static void deleteArray_Electron(void *p) {
+      delete [] ((::Electron*)p);
+   }
+   static void destruct_Electron(void *p) {
+      typedef ::Electron current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::Electron
 
 namespace ROOT {
    // Wrappers around operator new
@@ -1508,7 +1573,7 @@ namespace ROOT {
       static ::ROOT::TGenericClassInfo 
          instance("vector<Electron>", -2, "vector", 216,
                   typeid(vector<Electron>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &vectorlEElectrongR_Dictionary, isa_proxy, 0,
+                  &vectorlEElectrongR_Dictionary, isa_proxy, 4,
                   sizeof(vector<Electron>) );
       instance.SetNew(&new_vectorlEElectrongR);
       instance.SetNewArray(&newArray_vectorlEElectrongR);
@@ -1567,7 +1632,6 @@ namespace {
 "include/Config.h",
 "include/GenHists.h",
 "include/Electron.h",
-"include/dummy.h",
 "include/Met.h",
 "include/GenJet.h",
 "include/Tau.h",
@@ -1609,6 +1673,7 @@ class __attribute__((annotate("$clingAutoload$include/GenJet.h")))  __attribute_
 class __attribute__((annotate("$clingAutoload$include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Jet;
 class __attribute__((annotate("$clingAutoload$include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Tau;
 class __attribute__((annotate("$clingAutoload$include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Muon;
+class __attribute__((annotate("$clingAutoload$include/Electron.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Electron;
 class __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  RecoEvent;
 class __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenEvent;
 class __attribute__((annotate("$clingAutoload$include/Event.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Event;
@@ -1634,7 +1699,6 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/Config.h"
 #include "include/GenHists.h"
 #include "include/Electron.h"
-#include "include/dummy.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
 #include "include/Tau.h"
@@ -1660,6 +1724,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";
     static const char* classesHeaders[]={
+"Electron", payloadCode, "@",
 "Event", payloadCode, "@",
 "FlavorParticle", payloadCode, "@",
 "GenEvent", payloadCode, "@",

@@ -2,9 +2,10 @@
 
 #include <functional>
 #include "RecoEvent.h"
+#include "GenEvent.h"
 
-typedef std::function<bool (const GenJet &, const Event &)> GenJetId;
-typedef std::function<bool (const GenParticle &, const Event &)> GenParticleId;
+template <typename T>
+using GenID = std::function<bool (const T &, const GenEvent &)>;
 template <typename T>
 using ID = std::function<bool (const T &, const RecoEvent &)>;
 

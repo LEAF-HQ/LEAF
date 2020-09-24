@@ -1,57 +1,41 @@
 #pragma once
 
 #include "AnalysisModule.h"
-#include "Event.h"
+#include "GenEvent.h"
 #include "RecoEvent.h"
 #include "ObjectIdUtils.h"
 #include "useful_functions.h"
 
-class GenJetCleaner : public GenAnalysisModule {
+class GenJetCleaner : public AnalysisModule<GenEvent> {
 public:
-    GenJetCleaner(const GenJetId & id_);
-    virtual bool process(Event & event) override;
+    GenJetCleaner(const GenID<GenJet> & id_);
+    virtual bool process(GenEvent & event) override;
 
 private:
-    GenJetId id;
+    GenID<GenJet> id;
 };
 
-class GenJetVisTauCleaner : public GenAnalysisModule {
+class GenJetVisTauCleaner : public AnalysisModule<GenEvent> {
 public:
     GenJetVisTauCleaner(const double & mindr_);
-    virtual bool process(Event & event) override;
+    virtual bool process(GenEvent & event) override;
 
 private:
     double mindr;
 };
 
-class GenVisTauCleaner : public GenAnalysisModule {
+class GenVisTauCleaner : public AnalysisModule<GenEvent> {
 public:
-    GenVisTauCleaner(const GenParticleId & id_);
-    virtual bool process(Event & event) override;
+    GenVisTauCleaner(const GenID<GenParticle> & id_);
+    virtual bool process(GenEvent & event) override;
 
 private:
-    GenParticleId id;
+    GenID<GenParticle> id;
 };
 
-// template <typename T>
-// class RecoObjectCleaner : public RecoAnalysisModule{
-// public:
-//     RecoObjectCleaner(const ID<T> & id_){id = id_;};
-//     virtual bool process(RecoEvent & event) override;
-//
-// private:
-//     ID<T> id;
-// };
-//
-// template <typename T>
-// bool RecoObjectCleaner::process(RecoEvent & event){
-//   clean_collection(event.jets, event, id);
-//   return true;
-// }
 
 
-
-class JetCleaner : public RecoAnalysisModule {
+class JetCleaner : public AnalysisModule<RecoEvent> {
 public:
     JetCleaner(const ID<Jet> & id_);
     virtual bool process(RecoEvent & event) override;
@@ -60,7 +44,7 @@ private:
     ID<Jet> id;
 };
 
-class MuonCleaner : public RecoAnalysisModule {
+class MuonCleaner : public AnalysisModule<RecoEvent> {
 public:
     MuonCleaner(const ID<Muon> & id_);
     virtual bool process(RecoEvent & event) override;
@@ -69,7 +53,7 @@ private:
     ID<Muon> id;
 };
 
-class ElectronCleaner : public RecoAnalysisModule {
+class ElectronCleaner : public AnalysisModule<RecoEvent> {
 public:
     ElectronCleaner(const ID<Electron> & id_);
     virtual bool process(RecoEvent & event) override;
@@ -78,7 +62,7 @@ private:
     ID<Electron> id;
 };
 
-class TauCleaner : public RecoAnalysisModule {
+class TauCleaner : public AnalysisModule<RecoEvent> {
 public:
     TauCleaner(const ID<Tau> & id_);
     virtual bool process(RecoEvent & event) override;

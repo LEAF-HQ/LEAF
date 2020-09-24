@@ -1,16 +1,11 @@
 #pragma once
 #include "include/RecoEvent.h"
+#include "include/GenEvent.h"
 
-class GenAnalysisModule {
+template <class E>
+class AnalysisModule {
 public:
 
-    virtual bool process(Event & event) = 0;
-    virtual ~GenAnalysisModule() = default;
-};
-
-class RecoAnalysisModule {
-public:
-
-    virtual bool process(RecoEvent & event) = 0;
-    virtual ~RecoAnalysisModule() = default;
+    virtual bool process(E & event) = 0;
+    virtual ~AnalysisModule() = default;
 };

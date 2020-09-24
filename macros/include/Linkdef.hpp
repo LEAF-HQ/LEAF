@@ -16,6 +16,7 @@
 #pragma link C++ class Jet+;
 #pragma link C++ class Tau+;
 #pragma link C++ class Muon+;
+#pragma link C++ class Electron+;
 #pragma link C++ class Event+;
 #pragma link C++ class GenEvent+;
 #pragma link C++ class RecoEvent+;
@@ -27,6 +28,7 @@
 #pragma link C++ class std::vector<Jet>+;
 #pragma link C++ class std::vector<Tau>+;
 #pragma link C++ class std::vector<Muon>+;
+#pragma link C++ class std::vector<Electron>+;
 #pragma link C++ class std::vector<Event>+;
 #pragma link C++ class std::vector<GenEvent>+;
 #pragma link C++ class std::vector<RecoEvent>+;

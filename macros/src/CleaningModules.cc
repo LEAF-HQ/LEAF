@@ -3,8 +3,8 @@
 
 using namespace std;
 
-GenJetCleaner::GenJetCleaner(const GenJetId & id_): id(id_) {}
-bool GenJetCleaner::process(Event & event){
+GenJetCleaner::GenJetCleaner(const GenID<GenJet> & id_): id(id_) {}
+bool GenJetCleaner::process(GenEvent & event){
   clean_collection(event.genjets, event, id);
   return true;
 }
@@ -34,7 +34,7 @@ bool TauCleaner::process(RecoEvent & event){
 }
 
 GenJetVisTauCleaner::GenJetVisTauCleaner(const double & mindr_): mindr(mindr_) {}
-bool GenJetVisTauCleaner::process(Event & event){
+bool GenJetVisTauCleaner::process(GenEvent & event){
 
   // throw away jets, that are closer than mindR to any visible tau
   vector<GenJet> cleaned_jets;
@@ -54,8 +54,8 @@ bool GenJetVisTauCleaner::process(Event & event){
   return true;
 }
 
-GenVisTauCleaner::GenVisTauCleaner(const GenParticleId & id_): id(id_) {}
-bool GenVisTauCleaner::process(Event & event){
+GenVisTauCleaner::GenVisTauCleaner(const GenID<GenParticle> & id_): id(id_) {}
+bool GenVisTauCleaner::process(GenEvent & event){
   clean_collection(event.genparticles_visibletaus, event, id);
   return true;
 }

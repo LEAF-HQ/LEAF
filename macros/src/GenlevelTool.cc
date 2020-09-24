@@ -25,8 +25,8 @@ private:
   GenEvent* event;
 
   // Modules used in the analysis
-  GenJetId      genjet_id;
-  GenParticleId genvistau_id;
+  GenID<GenJet>      genjet_id;
+  GenID<GenParticle> genvistau_id;
   double        mindr_genjet_tauvis;
 
   unique_ptr<GenJetCleaner>       cleaner_genjet;
