@@ -33,38 +33,56 @@ private:
     GenParticleId id;
 };
 
+// template <typename T>
+// class RecoObjectCleaner : public RecoAnalysisModule{
+// public:
+//     RecoObjectCleaner(const ID<T> & id_){id = id_;};
+//     virtual bool process(RecoEvent & event) override;
+//
+// private:
+//     ID<T> id;
+// };
+//
+// template <typename T>
+// bool RecoObjectCleaner::process(RecoEvent & event){
+//   clean_collection(event.jets, event, id);
+//   return true;
+// }
+
+
+
 class JetCleaner : public RecoAnalysisModule {
 public:
-    JetCleaner(const JetId & id_);
+    JetCleaner(const ID<Jet> & id_);
     virtual bool process(RecoEvent & event) override;
 
 private:
-    JetId id;
+    ID<Jet> id;
 };
 
 class MuonCleaner : public RecoAnalysisModule {
 public:
-    MuonCleaner(const MuonId & id_);
+    MuonCleaner(const ID<Muon> & id_);
     virtual bool process(RecoEvent & event) override;
 
 private:
-    MuonId id;
+    ID<Muon> id;
 };
 
 class ElectronCleaner : public RecoAnalysisModule {
 public:
-    ElectronCleaner(const ElectronId & id_);
+    ElectronCleaner(const ID<Electron> & id_);
     virtual bool process(RecoEvent & event) override;
 
 private:
-    ElectronId id;
+    ID<Electron> id;
 };
 
 class TauCleaner : public RecoAnalysisModule {
 public:
-    TauCleaner(const TauId & id_);
+    TauCleaner(const ID<Tau> & id_);
     virtual bool process(RecoEvent & event) override;
 
 private:
-    TauId id;
+    ID<Tau> id;
 };

@@ -9,25 +9,25 @@ bool GenJetCleaner::process(Event & event){
   return true;
 }
 
-JetCleaner::JetCleaner(const JetId & id_): id(id_) {}
+JetCleaner::JetCleaner(const ID<Jet> & id_): id(id_) {}
 bool JetCleaner::process(RecoEvent & event){
   clean_collection(event.jets, event, id);
   return true;
 }
 
-MuonCleaner::MuonCleaner(const MuonId & id_): id(id_) {}
+MuonCleaner::MuonCleaner(const ID<Muon> & id_): id(id_) {}
 bool MuonCleaner::process(RecoEvent & event){
   clean_collection(event.muons, event, id);
   return true;
 }
 
-ElectronCleaner::ElectronCleaner(const ElectronId & id_): id(id_) {}
+ElectronCleaner::ElectronCleaner(const ID<Electron> & id_): id(id_) {}
 bool ElectronCleaner::process(RecoEvent & event){
   clean_collection(event.electrons, event, id);
   return true;
 }
 
-TauCleaner::TauCleaner(const TauId & id_): id(id_) {}
+TauCleaner::TauCleaner(const ID<Tau> & id_): id(id_) {}
 bool TauCleaner::process(RecoEvent & event){
   clean_collection(event.taus, event, id);
   return true;

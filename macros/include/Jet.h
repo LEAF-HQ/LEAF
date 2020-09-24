@@ -33,24 +33,24 @@ public:
     m_n_electrons = -1;
   }
 
-  float area(){return m_area;};
-  float score_CSVv2(){return m_score_CSVv2;};
-  float score_DeepB(){return m_score_DeepB;};
-  float score_qgl(){return m_score_qgl;};
-  float ch_em_efrac(){return m_ch_em_efrac;};
-  float ch_had_efrac(){return m_ch_had_efrac;};
-  float ne_em_efrac(){return m_ne_em_efrac;};
-  float ne_had_efrac(){return m_ne_had_efrac;};
-  float mu_efrac(){return m_mu_efrac;};
-  int jet_id(){return m_jet_id;};
-  int pu_id(){return m_pu_id;};
-  float raw_factor(){return m_raw_factor;};
-  float muon_sub_raw_factor(){return m_muon_sub_raw_factor;};
-  int parton_flavor(){return m_parton_flavor;};
-  int hadron_flavor(){return m_hadron_flavor;};
-  int n_constituents(){return m_n_constituents;};
-  int n_muons(){return m_n_muons;};
-  int n_electrons(){return m_n_electrons;};
+  const float area() const {return m_area;};
+  const float score_CSVv2() const {return m_score_CSVv2;};
+  const float score_DeepB() const {return m_score_DeepB;};
+  const float score_qgl() const {return m_score_qgl;};
+  const float ch_em_efrac() const {return m_ch_em_efrac;};
+  const float ch_had_efrac() const {return m_ch_had_efrac;};
+  const float ne_em_efrac() const {return m_ne_em_efrac;};
+  const float ne_had_efrac() const {return m_ne_had_efrac;};
+  const float mu_efrac() const {return m_mu_efrac;};
+  const int jet_id() const {return m_jet_id;};
+  const int pu_id() const {return m_pu_id;};
+  const float raw_factor() const {return m_raw_factor;};
+  const float muon_sub_raw_factor() const {return m_muon_sub_raw_factor;};
+  const int parton_flavor() const {return m_parton_flavor;};
+  const int hadron_flavor() const {return m_hadron_flavor;};
+  const int n_constituents() const {return m_n_constituents;};
+  const int n_muons() const {return m_n_muons;};
+  const int n_electrons() const {return m_n_electrons;};
 
   void set_area(float x){m_area = x;};
   void set_score_CSVv2(float x){m_score_CSVv2 = x;};

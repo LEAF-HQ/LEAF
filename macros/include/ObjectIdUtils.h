@@ -5,10 +5,24 @@
 
 typedef std::function<bool (const GenJet &, const Event &)> GenJetId;
 typedef std::function<bool (const GenParticle &, const Event &)> GenParticleId;
-typedef std::function<bool (const Jet &, const Event &)> JetId;
-typedef std::function<bool (const Muon &, const Event &)> MuonId;
-typedef std::function<bool (const Electron &, const Event &)> ElectronId;
-typedef std::function<bool (const Tau &, const Event &)> TauId;
+template <typename T>
+using ID = std::function<bool (const T &, const RecoEvent &)>;
+
+template <typename T>
+class MultiID{
+
+public:
+    MultiID(std::initializer_list<ID<T>> ids_) : ids(ids_){}
+    bool operator()(const T & obj, const RecoEvent & event) const {
+        for(const ID<T> & id : ids){
+            if(!id(obj, event)) return false;
+        }
+        return true;
+    }
+
+private:
+    std::vector<ID<T>> ids;
+};
 
 
 class PtEtaId{
@@ -23,8 +37,8 @@ private:
     float min_pt, max_eta, max_pt, min_eta ;
 };
 
-template<typename T>
-inline void clean_collection(std::vector<T>* objects, const Event & event, const std::function<bool (const T &, const Event &)> id){
+template<typename T, typename E>
+inline void clean_collection(std::vector<T>* objects, const E & event, const std::function<bool (const T &, const E &)> id){
     std::vector<T> result;
     for(size_t i=0; i<objects->size(); i++){
         T obj = objects->at(i);

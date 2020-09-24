@@ -13,6 +13,7 @@
 #include "include/MuonHists.h"
 #include "include/ElectronHists.h"
 #include "include/TauHists.h"
+#include "include/JetIds.h"
 
 using namespace std;
 
@@ -32,13 +33,7 @@ private:
   RecoEvent* event;
 
   // Modules used in the analysis
-  JetId      jet_id;
-  // GenParticleId genvistau_id;
-  // double        mindr_genjet_tauvis;
-  //
-  unique_ptr<JetCleaner>       cleaner_jet;
-  // unique_ptr<GenVisTauCleaner>    cleaner_genvistau;
-  // unique_ptr<GenJetVisTauCleaner> cleaner_genjetvistau;
+  unique_ptr<JetCleaner> cleaner_jet;
 };
 
 
@@ -48,13 +43,8 @@ PreselectionTool::PreselectionTool(const Config & cfg) : BaseTool(cfg){
   event = new RecoEvent();
   event->reset();
 
-  jet_id           = PtEtaId(30, 2.5);
-  // genvistau_id        = PtEtaId(30, 2.5);
-  // mindr_genjet_tauvis = 0.4;
-  //
-  cleaner_jet      .reset(new JetCleaner(jet_id));
-  // cleaner_genvistau   .reset(new GenVisTauCleaner(genvistau_id));
-  // cleaner_genjetvistau.reset(new GenJetVisTauCleaner(mindr_genjet_tauvis));
+  MultiID<Jet> jet_id = {PtEtaId(30, 2.5), JetID(JetID::WP_TIGHT)};
+  cleaner_jet.reset(new JetCleaner(jet_id));
 
 
   // histfolders

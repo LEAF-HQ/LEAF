@@ -58,6 +58,7 @@ namespace std {} using namespace std;
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
 #include "include/ElectronHists.h"
+#include "include/JetIds.h"
 #include "include/PlottingTool.h"
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
@@ -1577,6 +1578,7 @@ namespace {
 "include/FlavorParticle.h",
 "include/cosmetics.h",
 "include/ElectronHists.h",
+"include/JetIds.h",
 "include/PlottingTool.h",
 "include/PreselectionHists.h",
 "include/BaseTool.h",
@@ -1643,6 +1645,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
 #include "include/ElectronHists.h"
+#include "include/JetIds.h"
 #include "include/PlottingTool.h"
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
