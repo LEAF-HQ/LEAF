@@ -20,19 +20,51 @@
 using namespace std;
 
 GenEvent::GenEvent(){
-  test                     = 1.;
+  genmet                   = new Met;
+  genmet_invis             = new Met;
+  genparticles_hard        = new vector<GenParticle>;
+  genparticles_final       = new vector<GenParticle>;
+  genparticles_visibletaus = new vector<GenParticle>;
+  genjets                  = new vector<GenJet>;
 }
 
 GenEvent::~GenEvent(){
-
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
 }
 
 void GenEvent::clear(){
   Event::clear();
-  test  = 1.;
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
+  genmet = 0;
+  genmet_invis = 0;
+  genparticles_hard = 0;
+  genparticles_final = 0;
+  genparticles_visibletaus = 0;
+  genjets = 0;
 }
 
 void GenEvent::reset(){
   Event::reset();
-  test                     = 1.;
+  delete genmet;
+  delete genmet_invis;
+  delete genparticles_hard;
+  delete genparticles_final;
+  delete genparticles_visibletaus;
+  delete genjets;
+  genmet                   = new Met;
+  genmet_invis             = new Met;
+  genparticles_hard        = new vector<GenParticle>;
+  genparticles_final       = new vector<GenParticle>;
+  genparticles_visibletaus = new vector<GenParticle>;
+  genjets                  = new vector<GenJet>;
 }

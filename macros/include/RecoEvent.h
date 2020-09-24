@@ -6,7 +6,8 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 
-#include "include/Event.h"
+#include "include/GenEvent.h"
+#include "include/Met.h"
 #include "include/Jet.h"
 #include "include/Tau.h"
 #include "include/Muon.h"
@@ -15,7 +16,7 @@
 using namespace std;
 
 // Container class for all quantities
-class RecoEvent : public Event{
+class RecoEvent : public GenEvent{
 
 public:
   // Constructors, destructor

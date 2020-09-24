@@ -34,6 +34,7 @@ private:
 
   // Modules used in the analysis
   unique_ptr<JetCleaner> cleaner_jet;
+  unique_ptr<MuonCleaner> cleaner_muon;
 };
 
 
@@ -43,8 +44,11 @@ PreselectionTool::PreselectionTool(const Config & cfg) : BaseTool(cfg){
   event = new RecoEvent();
   event->reset();
 
-  MultiID<Jet> jet_id = {PtEtaId(30, 2.5), JetID(JetID::WP_TIGHT)};
+  MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT)};
   cleaner_jet.reset(new JetCleaner(jet_id));
+
+  MultiID<Muon> muon_id = {PtEtaId(20, 2.4)};
+  cleaner_muon.reset(new MuonCleaner(muon_id));
 
 
   // histfolders
@@ -71,6 +75,7 @@ bool PreselectionTool::Process(){
   fill_histograms("input");
 
   cleaner_jet->process(*event);
+  cleaner_muon->process(*event);
   fill_histograms("cleaner");
 
 

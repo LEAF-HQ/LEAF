@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
-  tree->Branch("Event", &event);
+  tree->Branch("Events", &event);
 
   TTreeReader reader("Events", infile);
   TTreeReaderValue<float> genmet_pt (reader, "GenMET_pt");
@@ -196,7 +196,9 @@ int main(int argc, char* argv[]){
     // =========
 
     event.genmet->set_pt(*genmet_pt);
+    // event.genevent->genmet->set_pt(*genmet_pt);
     event.genmet->set_phi(*genmet_phi);
+    // event.genevent->genmet->set_phi(*genmet_phi);
 
     // Do GenJets
     // ==========
@@ -225,6 +227,7 @@ int main(int argc, char* argv[]){
       // save only genjets with at least 10 GeV (NanoAOD cut) and |eta| < 5
       if(gj.pt() < 10. || fabs(gj.eta()) > 5.) continue;
       event.genjets->emplace_back(gj);
+      // event.genevent->genjets->emplace_back(gj);
     }
 
     // Do GenParticles
@@ -252,9 +255,11 @@ int main(int argc, char* argv[]){
       }
       if(keepfinal){
         event.genparticles_final->emplace_back(gp);
+        // event.genevent->genparticles_final->emplace_back(gp);
       }
       if(is_hard){
         event.genparticles_hard->emplace_back(gp);
+        // event.genevent->genparticles_hard->emplace_back(gp);
       }
 
       // find the visible parts of the taus from the hard process
@@ -284,6 +289,7 @@ int main(int argc, char* argv[]){
         taudau_vis.set_p4(p4_vis);
         taudau_vis.set_pdgid(genparticle_pdgId[i]);
         event.genparticles_visibletaus->emplace_back(taudau_vis);
+        // event.genevent->genparticles_visibletaus->emplace_back(taudau_vis);
       }
 
     }
@@ -465,6 +471,7 @@ int main(int argc, char* argv[]){
   }
 
   event.clear();
+  // tree->OptimizeBaskets();
   tree->Write();
   outfile->Close();
   cout << green << "--> Successfully finished tuplization." << reset << endl;

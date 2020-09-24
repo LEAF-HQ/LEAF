@@ -49,6 +49,8 @@ MKDIRCOMMAND='LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p $TARGETFOLDERNAME; 
 eval "$MKDIRCOMMAND"
 
 # copy the file from /scratch to T2
+echo "ls -lrth"
+ls -lrth
 FILENAME=$(ls *.root)
 echo "copying file $FILENAME"
 eval "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f file:////$PWD/$FILENAME $TARGETFOLDERNAME"

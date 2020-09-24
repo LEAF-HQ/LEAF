@@ -9,7 +9,7 @@
 #include "FWCore/FWLite/interface/FWLiteEnabler.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include <iostream>
-#include "include/Event.h"
+#include "include/GenEvent.h"
 #include "include/Met.h"
 #include "include/Particle.h"
 #include "include/GenParticle.h"
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
   TFile* infile = TFile::Open(infilename, "READ");
 
   const vector<int> npids = get_npids();
-  Event event;
+  GenEvent event;
 
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");

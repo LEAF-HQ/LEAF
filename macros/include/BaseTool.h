@@ -75,8 +75,8 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cout  << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
 
   // Initialize event for later looping through chain
-  cfg.event_chain->SetBranchAddress("Event", &event);
-  cfg.outputtree->Branch("Event", &event);
+  cfg.event_chain->SetBranchAddress("Events", &event);
+  cfg.outputtree->Branch("Events", &event);
 
   // E outevent;
   // // outevent.reset();

@@ -110,6 +110,7 @@ void Config::process_datasets(){
     // write output histograms and trees
     outfile->cd();
     analysis->WriteHistograms(*this);
+    outputtree->OptimizeBaskets();
     outputtree->Write("", TObject::kOverwrite);
     outfile->Close();
 

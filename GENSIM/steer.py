@@ -429,7 +429,7 @@ def SubmitTuplize(submit, generation_step):
     ncores = 1
     queue   = 'quick'       # quick -- wn
     runtime = '00:05:00' # 01:00:00 -- 10:00:00
-    commandfilebase = gensimfolder + '/commands/tuplize_%s' % (configs[generation_step]['jobnametag'])
+    commandfilebase = gensimfolder + '/commands/tuplize_%s_' % (configs[generation_step]['jobnametag'])
 
     # Create command file for array of jobs
     for processname in processes:

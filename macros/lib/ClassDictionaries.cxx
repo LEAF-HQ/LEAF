@@ -581,7 +581,7 @@ namespace ROOT {
       ::RecoEvent *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::RecoEvent));
       static ::ROOT::TGenericClassInfo 
-         instance("RecoEvent", "include/RecoEvent.h", 18,
+         instance("RecoEvent", "include/RecoEvent.h", 19,
                   typeid(::RecoEvent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &RecoEvent_Dictionary, isa_proxy, 4,
                   sizeof(::RecoEvent) );

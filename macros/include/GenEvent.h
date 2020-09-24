@@ -25,6 +25,12 @@ public:
 
   void clear();
   void reset();
-  double test;
+
+  Met* genmet;
+  Met* genmet_invis;
+  vector<GenParticle>* genparticles_hard;
+  vector<GenParticle>* genparticles_final;
+  vector<GenParticle>* genparticles_visibletaus;
+  vector<GenJet>* genjets;
 
 };
