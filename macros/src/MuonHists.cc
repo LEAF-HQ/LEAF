@@ -22,6 +22,11 @@ using namespace std;
 MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 
   hnmuons = book<TH1D>("nmuons", ";N_{#mu}; Events / bin", 11, -0.5, 10.5);
+  hmuonpt = book<TH1D>("muonpt", ";p_{T}^{#mu} [GeV]; Events / bin", 150, 0, 3000);
+  hmuoneta = book<TH1D>("muoneta", ";#eta^{#mu};Events / bin", 100, -5., 5.);
+  hmuonphi = book<TH1D>("muonphi", ";#phi^{#mu};Events / bin", 70, -3.5, 3.5);
+  hmuonmass = book<TH1D>("muonmass", ";m^{#mu} [GeV];Events / bin", 150, 0, 3000);
+  hmuonenergy = book<TH1D>("muonenergy", ";E^{#mu} [GeV];Events / bin", 150, 0, 3000);
   hmuon1pt = book<TH1D>("muon1pt", ";p_{T}^{#mu 1} [GeV]; Events / bin", 150, 0, 3000);
   hmuon1eta = book<TH1D>("muon1eta", ";#eta^{#mu 1};Events / bin", 100, -5., 5.);
   hmuon1phi = book<TH1D>("muon1phi", ";#phi^{#mu 1};Events / bin", 70, -3.5, 3.5);
@@ -56,6 +61,12 @@ void MuonHists::fill(const RecoEvent & event){
   size_t nmuons = event.muons->size();
   for(size_t i=0; i<nmuons; i++){
     Muon m = event.muons->at(i);
+
+      hmuonpt->Fill(m.pt(), weight);
+      hmuoneta->Fill(m.eta(), weight);
+      hmuonphi->Fill(m.phi(), weight);
+      hmuonmass->Fill(m.m(), weight);
+      hmuonenergy->Fill(m.e(), weight);
 
     if(i==0){
       hmuon1pt->Fill(m.pt(), weight);

@@ -174,6 +174,10 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<float> electron_iso_rel_03(reader, "Electron_pfRelIso03_all");
   TTreeReaderArray<float> electron_iso_rel_03_charged(reader, "Electron_pfRelIso03_all");
   TTreeReaderArray<float> electron_sigma_ietaieta(reader, "Electron_sieie");
+  TTreeReaderArray<float> electron_pt(reader,   "Electron_pt");
+  TTreeReaderArray<float> electron_eta(reader,  "Electron_eta");
+  TTreeReaderArray<float> electron_phi(reader,  "Electron_phi");
+  TTreeReaderArray<float> electron_mass(reader, "Electron_mass");
   // uint64_t m_selector_bits
   TTreeReaderArray<int> electron_cut_based_id(reader, "Electron_cutBased");
   TTreeReaderArray<bool> electron_heep_id(reader, "Electron_cutBased_HEEP");
@@ -196,9 +200,7 @@ int main(int argc, char* argv[]){
     // =========
 
     event.genmet->set_pt(*genmet_pt);
-    // event.genevent->genmet->set_pt(*genmet_pt);
     event.genmet->set_phi(*genmet_phi);
-    // event.genevent->genmet->set_phi(*genmet_phi);
 
     // Do GenJets
     // ==========
@@ -227,7 +229,6 @@ int main(int argc, char* argv[]){
       // save only genjets with at least 10 GeV (NanoAOD cut) and |eta| < 5
       if(gj.pt() < 10. || fabs(gj.eta()) > 5.) continue;
       event.genjets->emplace_back(gj);
-      // event.genevent->genjets->emplace_back(gj);
     }
 
     // Do GenParticles
@@ -289,7 +290,6 @@ int main(int argc, char* argv[]){
         taudau_vis.set_p4(p4_vis);
         taudau_vis.set_pdgid(genparticle_pdgId[i]);
         event.genparticles_visibletaus->emplace_back(taudau_vis);
-        // event.genevent->genparticles_visibletaus->emplace_back(taudau_vis);
       }
 
     }
@@ -340,9 +340,6 @@ int main(int argc, char* argv[]){
       t.set_charge(tau_charge[i]);
       t.set_decay_mode(tau_decay_mode[i]);
       t.set_gen_part_flav(tau_gen_part_flav[i]);
-      t.set_id_deeptau_vse(tau_id_deeptau_vse[i]);
-      t.set_id_deeptau_vsmu(tau_id_deeptau_vsmu[i]);
-      t.set_id_deeptau_vsjet(tau_id_deeptau_vsjet[i]);
       t.set_charged_iso(tau_charged_iso[i]);
       t.set_neutral_iso(tau_neutral_iso[i]);
       t.set_dxy(tau_dxy[i]);
@@ -357,6 +354,29 @@ int main(int argc, char* argv[]){
       t.set_eta(tau_eta[i]);
       t.set_phi(tau_phi[i]);
       t.set_m(tau_mass[i]);
+
+      //set ID bits
+      t.set_selector(Tau::DeepTauVsJetVVVLoose, (tau_id_deeptau_vsjet[i] >= 1));
+      t.set_selector(Tau::DeepTauVsJetVVLoose, (tau_id_deeptau_vsjet[i] >= 2));
+      t.set_selector(Tau::DeepTauVsJetVLoose, (tau_id_deeptau_vsjet[i] >= 4));
+      t.set_selector(Tau::DeepTauVsJetLoose, (tau_id_deeptau_vsjet[i] >= 8));
+      t.set_selector(Tau::DeepTauVsJetMedium, (tau_id_deeptau_vsjet[i] >= 16));
+      t.set_selector(Tau::DeepTauVsJetTight, (tau_id_deeptau_vsjet[i] >= 32));
+      t.set_selector(Tau::DeepTauVsJetVTight, (tau_id_deeptau_vsjet[i] >= 64));
+      t.set_selector(Tau::DeepTauVsJetVVTight, (tau_id_deeptau_vsjet[i] >= 128));
+      t.set_selector(Tau::DeepTauVsEleVVVLoose, (tau_id_deeptau_vse[i] >= 1));
+      t.set_selector(Tau::DeepTauVsEleVVLoose, (tau_id_deeptau_vse[i] >= 2));
+      t.set_selector(Tau::DeepTauVsEleVLoose, (tau_id_deeptau_vse[i] >= 4));
+      t.set_selector(Tau::DeepTauVsEleLoose, (tau_id_deeptau_vse[i] >= 8));
+      t.set_selector(Tau::DeepTauVsEleMedium, (tau_id_deeptau_vse[i] >= 16));
+      t.set_selector(Tau::DeepTauVsEleTight, (tau_id_deeptau_vse[i] >= 32));
+      t.set_selector(Tau::DeepTauVsEleVTight, (tau_id_deeptau_vse[i] >= 64));
+      t.set_selector(Tau::DeepTauVsEleVVTight, (tau_id_deeptau_vse[i] >= 128));
+      t.set_selector(Tau::DeepTauVsMuVLoose, (tau_id_deeptau_vsmu[i] >= 1));
+      t.set_selector(Tau::DeepTauVsMuLoose, (tau_id_deeptau_vsmu[i] >= 2));
+      t.set_selector(Tau::DeepTauVsMuMedium, (tau_id_deeptau_vsmu[i] >= 4));
+      t.set_selector(Tau::DeepTauVsMuTight, (tau_id_deeptau_vsmu[i] >= 8));
+
       event.taus->emplace_back(t);
     }
 
@@ -386,14 +406,14 @@ int main(int argc, char* argv[]){
       m.set_m(muon_mass[i]);
 
       //set ID bits
-      m.set_selector(Muon::IDCutBasedGlobalHighPt, (muon_high_pt_id[i] == 2));
-      m.set_selector(Muon::IDCutBasedTrackerHighPt, (muon_high_pt_id[i] == 1));
+      m.set_selector(Muon::IDCutBasedGlobalHighPt, (muon_high_pt_id[i] >= 2));
+      m.set_selector(Muon::IDCutBasedTrackerHighPt, (muon_high_pt_id[i] >= 1));
       m.set_selector(Muon::IDMvaSoft, (muon_soft_mva_id[i]));
-      m.set_selector(Muon::IDMvaLoose, (muon_mva_id[i] == 1));
-      m.set_selector(Muon::IDMvaMedium, (muon_mva_id[i] == 2));
-      m.set_selector(Muon::IDMvaTight, (muon_mva_id[i] == 3));
-      m.set_selector(Muon::IDMvaVTight, (muon_mva_id[i] == 4));
-      m.set_selector(Muon::IDMvaVVTight, (muon_mva_id[i] == 5));
+      m.set_selector(Muon::IDMvaLoose, (muon_mva_id[i] >= 1));
+      m.set_selector(Muon::IDMvaMedium, (muon_mva_id[i] >= 2));
+      m.set_selector(Muon::IDMvaTight, (muon_mva_id[i] >= 3));
+      m.set_selector(Muon::IDMvaVTight, (muon_mva_id[i] >= 4));
+      m.set_selector(Muon::IDMvaVVTight, (muon_mva_id[i] >= 5));
       m.set_selector(Muon::IDCutBasedSoft, (muon_soft_id[i]));
       m.set_selector(Muon::IDCutBasedLoose, (muon_loose_id[i]));
       m.set_selector(Muon::IDCutBasedMedium, (muon_medium_id[i]));
@@ -401,23 +421,23 @@ int main(int argc, char* argv[]){
       m.set_selector(Muon::IDCutBasedTight, (muon_tight_id[i]));
       m.set_selector(Muon::IDTriggerLoose, (muon_trigger_id_loose[i]));
 
-      m.set_selector(Muon::IsoMultiLoose, (muon_multi_iso[i] == 1));
-      m.set_selector(Muon::IsoMultiMedium, (muon_multi_iso[i] == 2));
-      m.set_selector(Muon::IsoPFVLoose, (muon_pf_iso[i] == 1));
-      m.set_selector(Muon::IsoPFLoose, (muon_pf_iso[i] == 2));
-      m.set_selector(Muon::IsoPFMedium, (muon_pf_iso[i] == 3));
-      m.set_selector(Muon::IsoPFTight, (muon_pf_iso[i] == 4));
-      m.set_selector(Muon::IsoPFVTight, (muon_pf_iso[i] == 5));
-      m.set_selector(Muon::IsoPFVVTight, (muon_pf_iso[i] == 6));
-      m.set_selector(Muon::IsoTkLoose, (muon_tk_iso[i] == 1));
-      m.set_selector(Muon::IsoTkTight, (muon_tk_iso[i] == 2));
-      m.set_selector(Muon::IsoPuppiLoose, (muon_puppi_iso[i] == 1));
-      m.set_selector(Muon::IsoPuppiMedium, (muon_puppi_iso[i] == 2));
-      m.set_selector(Muon::IsoPuppiTight, (muon_puppi_iso[i] == 3));
-      m.set_selector(Muon::IsoMiniLoose, (muon_mini_iso[i] == 1));
-      m.set_selector(Muon::IsoMiniMedium, (muon_mini_iso[i] == 2));
-      m.set_selector(Muon::IsoMiniTight, (muon_mini_iso[i] == 3));
-      m.set_selector(Muon::IsoMiniVTight, (muon_mini_iso[i] == 4));
+      m.set_selector(Muon::IsoMultiLoose, (muon_multi_iso[i] >= 1));
+      m.set_selector(Muon::IsoMultiMedium, (muon_multi_iso[i] >= 2));
+      m.set_selector(Muon::IsoPFVLoose, (muon_pf_iso[i] >= 1));
+      m.set_selector(Muon::IsoPFLoose, (muon_pf_iso[i] >= 2));
+      m.set_selector(Muon::IsoPFMedium, (muon_pf_iso[i] >= 3));
+      m.set_selector(Muon::IsoPFTight, (muon_pf_iso[i] >= 4));
+      m.set_selector(Muon::IsoPFVTight, (muon_pf_iso[i] >= 5));
+      m.set_selector(Muon::IsoPFVVTight, (muon_pf_iso[i] >= 6));
+      m.set_selector(Muon::IsoTkLoose, (muon_tk_iso[i] >= 1));
+      m.set_selector(Muon::IsoTkTight, (muon_tk_iso[i] >= 2));
+      m.set_selector(Muon::IsoPuppiLoose, (muon_puppi_iso[i] >= 1));
+      m.set_selector(Muon::IsoPuppiMedium, (muon_puppi_iso[i] >= 2));
+      m.set_selector(Muon::IsoPuppiTight, (muon_puppi_iso[i] >= 3));
+      m.set_selector(Muon::IsoMiniLoose, (muon_mini_iso[i] >= 1));
+      m.set_selector(Muon::IsoMiniMedium, (muon_mini_iso[i] >= 2));
+      m.set_selector(Muon::IsoMiniTight, (muon_mini_iso[i] >= 3));
+      m.set_selector(Muon::IsoMiniVTight, (muon_mini_iso[i] >= 4));
 
       //gen_part_flav
       m.set_gen_part_flav((Muon::GenPartFlav)muon_gen_part_flav[i]);
@@ -445,12 +465,16 @@ int main(int argc, char* argv[]){
       e.set_iso_rel_03(electron_iso_rel_03[i]);
       e.set_iso_rel_03_charged(electron_iso_rel_03_charged[i]);
       e.set_sigma_ietaieta(electron_sigma_ietaieta[i]);
+      e.set_pt(electron_pt[i]);
+      e.set_eta(electron_eta[i]);
+      e.set_phi(electron_phi[i]);
+      e.set_m(electron_mass[i]);
 
       // set ID bits
-      e.set_selector(Electron::IDCutBasedVeto, (electron_cut_based_id[i] == 1));
-      e.set_selector(Electron::IDCutBasedLoose, (electron_cut_based_id[i] == 2));
-      e.set_selector(Electron::IDCutBasedMedium, (electron_cut_based_id[i] == 3));
-      e.set_selector(Electron::IDCutBasedTight, (electron_cut_based_id[i] == 4));
+      e.set_selector(Electron::IDCutBasedVeto, (electron_cut_based_id[i] >= 1));
+      e.set_selector(Electron::IDCutBasedLoose, (electron_cut_based_id[i] >= 2));
+      e.set_selector(Electron::IDCutBasedMedium, (electron_cut_based_id[i] >= 3));
+      e.set_selector(Electron::IDCutBasedTight, (electron_cut_based_id[i] >= 4));
       e.set_selector(Electron::IDCutBasedHEEP, electron_heep_id[i]);
       e.set_selector(Electron::IDMVAIsoLoose, electron_mva_id_iso_loose[i]);
       e.set_selector(Electron::IDMVAIsoEff90, electron_mva_id_iso_90[i]);

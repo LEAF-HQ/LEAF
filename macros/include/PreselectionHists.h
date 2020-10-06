@@ -25,6 +25,6 @@ public:
 
 protected:
 
-  shared_ptr<TH1D> hnjets, hsumweights;
+  shared_ptr<TH1D> hmetpt, hmetphi, hsumweights;
 
 };

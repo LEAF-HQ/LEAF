@@ -21,7 +21,8 @@ using namespace std;
 
 PreselectionHists::PreselectionHists(TString dir_) : BaseHists(dir_){
 
-  hnjets = book<TH1D>("njets", ";N_{jets}; Events / bin", 11, -0.5, 10.5);
+  hmetpt = book<TH1D>("metpt", ";p_{T}^{miss} [GeV]; Events / bin", 150, 0, 3000);
+  hmetphi = book<TH1D>("metphi", ";#phi(p_{T}^{miss}); Events / bin", 70, -3.5, 3.5);
   hsumweights = book<TH1D>("sumweights", ";;Sum of event weights", 1, 0.5, 1.5);
 
 }
@@ -29,7 +30,8 @@ PreselectionHists::PreselectionHists(TString dir_) : BaseHists(dir_){
 void PreselectionHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
+  hmetpt->Fill(event.met->pt(), weight);
+  hmetphi->Fill(event.met->phi(), weight);
 
-  hnjets->Fill(event.jets->size(), weight);
   hsumweights->Fill(1, weight);
 }

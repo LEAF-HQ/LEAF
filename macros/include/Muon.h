@@ -119,10 +119,8 @@ public:
   void set_iso_tk(float x){m_iso_tk = x;};
   void set_pt_rel_tunep(float x){m_pt_rel_tunep = x;};
 
-    uint64_t m_selector_bits;
-
 protected:
-  // uint64_t m_selector_bits;
+  uint64_t m_selector_bits;
   GenPartFlav m_gen_part_flav;
   bool m_is_global;
   bool m_is_pf;

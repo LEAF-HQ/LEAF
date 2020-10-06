@@ -25,7 +25,7 @@ public:
 
 protected:
 
-  shared_ptr<TH1D> hnmuons, hmuon1pt, hmuon1eta, hmuon1phi, hmuon1mass, hmuon1energy, hmuon2pt, hmuon2eta, hmuon2phi, hmuon2mass, hmuon2energy, hmuon3pt, hmuon3eta, hmuon3phi, hmuon3mass, hmuon3energy, hmuon4pt, hmuon4eta, hmuon4phi, hmuon4mass, hmuon4energy;
+  shared_ptr<TH1D> hnmuons, hmuonpt, hmuoneta, hmuonphi, hmuonmass, hmuonenergy, hmuon1pt, hmuon1eta, hmuon1phi, hmuon1mass, hmuon1energy, hmuon2pt, hmuon2eta, hmuon2phi, hmuon2mass, hmuon2energy, hmuon3pt, hmuon3eta, hmuon3phi, hmuon3mass, hmuon3energy, hmuon4pt, hmuon4eta, hmuon4phi, hmuon4mass, hmuon4energy;
 
 
 

@@ -25,7 +25,7 @@ public:
 
 protected:
 
-  shared_ptr<TH1D> hnelectrons, helectron1pt, helectron1eta, helectron1phi, helectron1mass, helectron1energy, helectron2pt, helectron2eta, helectron2phi, helectron2mass, helectron2energy, helectron3pt, helectron3eta, helectron3phi, helectron3mass, helectron3energy, helectron4pt, helectron4eta, helectron4phi, helectron4mass, helectron4energy;
+  shared_ptr<TH1D> hnelectrons, helectronpt, helectroneta, helectronphi, helectronmass, helectronenergy, helectron1pt, helectron1eta, helectron1phi, helectron1mass, helectron1energy, helectron2pt, helectron2eta, helectron2phi, helectron2mass, helectron2energy, helectron3pt, helectron3eta, helectron3phi, helectron3mass, helectron3energy, helectron4pt, helectron4eta, helectron4phi, helectron4mass, helectron4energy;
 
 
 

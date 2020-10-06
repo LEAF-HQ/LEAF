@@ -22,6 +22,11 @@ using namespace std;
 TauHists::TauHists(TString dir_) : BaseHists(dir_){
 
   hntaus = book<TH1D>("ntaus", ";N_{#tau}; Events / bin", 11, -0.5, 10.5);
+  htaupt = book<TH1D>("taupt", ";p_{T}^{#tau} [GeV]; Events / bin", 150, 0, 3000);
+  htaueta = book<TH1D>("taueta", ";#eta^{#tau};Events / bin", 100, -5., 5.);
+  htauphi = book<TH1D>("tauphi", ";#phi^{#tau};Events / bin", 70, -3.5, 3.5);
+  htaumass = book<TH1D>("taumass", ";m^{#tau} [GeV];Events / bin", 150, 0, 3000);
+  htauenergy = book<TH1D>("tauenergy", ";E^{#tau 1} [GeV];Events / bin", 150, 0, 3000);
   htau1pt = book<TH1D>("tau1pt", ";p_{T}^{#tau 1} [GeV]; Events / bin", 150, 0, 3000);
   htau1eta = book<TH1D>("tau1eta", ";#eta^{#tau 1};Events / bin", 100, -5., 5.);
   htau1phi = book<TH1D>("tau1phi", ";#phi^{#tau 1};Events / bin", 70, -3.5, 3.5);
@@ -56,6 +61,12 @@ void TauHists::fill(const RecoEvent & event){
   size_t ntaus = event.taus->size();
   for(size_t i=0; i<ntaus; i++){
     Tau t = event.taus->at(i);
+
+    htaupt->Fill(t.pt(), weight);
+    htaueta->Fill(t.eta(), weight);
+    htauphi->Fill(t.phi(), weight);
+    htaumass->Fill(t.m(), weight);
+    htauenergy->Fill(t.e(), weight);
 
     if(i==0){
       htau1pt->Fill(t.pt(), weight);

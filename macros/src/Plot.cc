@@ -73,7 +73,6 @@ void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, 
 
     TString foldername = foldernames[i];
     plot_folder(infiles, outfolder, foldername, singlePDF, normalize, logy, labels, linecolors, linestyles, debug);
-
   }
 
   for(size_t i=0; i<infiles.size(); i++){
@@ -90,6 +89,11 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
 
   // get names of histograms in this folder
   vector<TString> histnames = get_histnames(infiles[0], foldername);
+
+
+  // make sure outfolder exists
+  if(singlePDF) outfolder += "SinglePDF/";
+  mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 
   //set up canvas
   TCanvas* c = new TCanvas("c", "c", 400, 400);
@@ -135,15 +139,13 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
     leg->Draw();
     if(logy) pad->SetLogy(true);
 
-    // make sure outfolder exists
-    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-
     TString outfilename = "";
     if(singlePDF){
-      outfilename = outfolder + "SinglePDF/" + foldername + "_" + histname + ".pdf";
+      outfilename = outfolder + foldername + "_" + histname + ".pdf";
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       c->Print(outfilename);
+      // cout << "outfilename: " << outfilename << endl;
     }
     else{
       outfilename = outfolder + foldername + ".pdf";

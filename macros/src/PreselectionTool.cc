@@ -14,6 +14,9 @@
 #include "include/ElectronHists.h"
 #include "include/TauHists.h"
 #include "include/JetIds.h"
+#include "include/MuonIds.h"
+#include "include/ElectronIds.h"
+#include "include/TauIds.h"
 
 using namespace std;
 
@@ -34,7 +37,10 @@ private:
 
   // Modules used in the analysis
   unique_ptr<JetCleaner> cleaner_jet;
+  unique_ptr<JetCleaner> cleaner_jettauoverlap;
   unique_ptr<MuonCleaner> cleaner_muon;
+  unique_ptr<ElectronCleaner> cleaner_electron;
+  unique_ptr<TauCleaner> cleaner_tau;
 };
 
 
@@ -44,15 +50,22 @@ PreselectionTool::PreselectionTool(const Config & cfg) : BaseTool(cfg){
   event = new RecoEvent();
   event->reset();
 
-  MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT)};
-  cleaner_jet.reset(new JetCleaner(jet_id));
+  MultiID<Muon> muon_id = {PtEtaId(20, 2.4), MuonID(Muon::IDCutBasedLoose)};
+  MultiID<Electron> electron_id = {PtEtaId(20, 2.4), ElectronID(Electron::IDCutBasedLoose)};
+  MultiID<Tau> tau_id = {PtEtaId(20, 2.4), TauID(Tau::DeepTauVsJetMedium), TauID(Tau::DeepTauVsEleVVVLoose), TauID(Tau::DeepTauVsMuVLoose)};
+  // MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT), JetTauOverlapID(0.4)};
+  MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
+  MultiID<Jet> jet_overlapid = {JetTauOverlapID(0.4), JetLeptonOverlapID(0.4)};
 
-  MultiID<Muon> muon_id = {PtEtaId(20, 2.4)};
   cleaner_muon.reset(new MuonCleaner(muon_id));
+  cleaner_electron.reset(new ElectronCleaner(electron_id));
+  cleaner_tau.reset(new TauCleaner(tau_id));
+  cleaner_jet.reset(new JetCleaner(jet_id));
+  cleaner_jettauoverlap.reset(new JetCleaner(jet_overlapid));
 
 
   // histfolders
-  vector<TString> histtags = {"input", "cleaner"};
+  vector<TString> histtags = {"input", "cleaner", "jettaucleaner"};
   book_histograms(histtags);
 }
 
@@ -74,9 +87,14 @@ bool PreselectionTool::Process(){
   sort_by_pt<Tau>(*event->taus);
   fill_histograms("input");
 
-  cleaner_jet->process(*event);
   cleaner_muon->process(*event);
+  cleaner_electron->process(*event);
+  cleaner_tau->process(*event);
+  cleaner_jet->process(*event);
   fill_histograms("cleaner");
+
+  cleaner_jettauoverlap->process(*event);
+  fill_histograms("jettaucleaner");
 
 
 

@@ -22,6 +22,11 @@ using namespace std;
 ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   hnelectrons = book<TH1D>("nelectrons", ";N_{e}; Events / bin", 11, -0.5, 10.5);
+  helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 150, 0, 3000);
+  helectroneta = book<TH1D>("electroneta", ";#eta^{e};Events / bin", 100, -5., 5.);
+  helectronphi = book<TH1D>("electronphi", ";#phi^{e};Events / bin", 70, -3.5, 3.5);
+  helectronmass = book<TH1D>("electronmass", ";m^{e} [GeV];Events / bin", 150, 0, 3000);
+  helectronenergy = book<TH1D>("electronenergy", ";E^{e} [GeV];Events / bin", 150, 0, 3000);
   helectron1pt = book<TH1D>("electron1pt", ";p_{T}^{e 1} [GeV]; Events / bin", 150, 0, 3000);
   helectron1eta = book<TH1D>("electron1eta", ";#eta^{e 1};Events / bin", 100, -5., 5.);
   helectron1phi = book<TH1D>("electron1phi", ";#phi^{e 1};Events / bin", 70, -3.5, 3.5);
@@ -56,6 +61,12 @@ void ElectronHists::fill(const RecoEvent & event){
   size_t nelectrons = event.electrons->size();
   for(size_t i=0; i<nelectrons; i++){
     Electron e = event.electrons->at(i);
+
+    helectronpt->Fill(e.pt(), weight);
+    helectroneta->Fill(e.eta(), weight);
+    helectronphi->Fill(e.phi(), weight);
+    helectronmass->Fill(e.m(), weight);
+    helectronenergy->Fill(e.e(), weight);
 
     if(i==0){
       helectron1pt->Fill(e.pt(), weight);

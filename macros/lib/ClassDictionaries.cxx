@@ -39,6 +39,7 @@ namespace std {} using namespace std;
 // Header files passed as explicit arguments
 #include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
+#include "include/MuonIds.h"
 #include "include/massconfig.h"
 #include "include/Jet.h"
 #include "include/Particle.h"
@@ -54,6 +55,7 @@ namespace std {} using namespace std;
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
+#include "include/ElectronIds.h"
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
 #include "include/ElectronHists.h"
@@ -62,6 +64,7 @@ namespace std {} using namespace std;
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
 #include "include/MuonHists.h"
+#include "include/TauIds.h"
 #include "include/JetHists.h"
 #include "include/RecoEvent.h"
 #include "include/constants.h"
@@ -1624,6 +1627,7 @@ namespace {
     static const char* headers[] = {
 "include/GenEvent.h",
 "include/ObjectIdUtils.h",
+"include/MuonIds.h",
 "include/massconfig.h",
 "include/Jet.h",
 "include/Particle.h",
@@ -1639,6 +1643,7 @@ namespace {
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
+"include/ElectronIds.h",
 "include/FlavorParticle.h",
 "include/cosmetics.h",
 "include/ElectronHists.h",
@@ -1647,6 +1652,7 @@ namespace {
 "include/PreselectionHists.h",
 "include/BaseTool.h",
 "include/MuonHists.h",
+"include/TauIds.h",
 "include/JetHists.h",
 "include/RecoEvent.h",
 "include/constants.h",
@@ -1691,6 +1697,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #define _BACKWARD_BACKWARD_WARNING_H
 #include "include/GenEvent.h"
 #include "include/ObjectIdUtils.h"
+#include "include/MuonIds.h"
 #include "include/massconfig.h"
 #include "include/Jet.h"
 #include "include/Particle.h"
@@ -1706,6 +1713,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
+#include "include/ElectronIds.h"
 #include "include/FlavorParticle.h"
 #include "include/cosmetics.h"
 #include "include/ElectronHists.h"
@@ -1714,6 +1722,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
 #include "include/MuonHists.h"
+#include "include/TauIds.h"
 #include "include/JetHists.h"
 #include "include/RecoEvent.h"
 #include "include/constants.h"

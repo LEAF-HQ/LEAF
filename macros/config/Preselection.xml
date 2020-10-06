@@ -20,9 +20,6 @@
 <!ENTITY PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0     SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0.xml"     >
 <!ENTITY PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0     SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0.xml"     >
 <!ENTITY PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0    SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0.xml"    >
-<!ENTITY test    SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/test.xml"    >
-<!ENTITY testt3local    SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/testt3local.xml"    >
-<!ENTITY testt3    SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/testt3.xml"    >
 
 ]>
 
@@ -72,15 +69,6 @@
         <Dataset Name="PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0"     Lumi="100000"  Type="MC" >
             &PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0;
         </Dataset>
-        <!-- <Dataset Name="test"     Lumi="100000"  Type="MC" >
-            &test;
-        </Dataset>
-        <Dataset Name="testt3local"     Lumi="100000"  Type="MC" >
-            &testt3local;
-        </Dataset>
-        <Dataset Name="testt3"     Lumi="100000"  Type="MC" >
-            &testt3;
-        </Dataset> -->
 
     </InputDatasets>
 
