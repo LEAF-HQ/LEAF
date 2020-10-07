@@ -24,7 +24,7 @@
 ]>
 
 
-<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="PreselectionTool">
+<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="TestTool">
     <InputDatasets>
 
         <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
