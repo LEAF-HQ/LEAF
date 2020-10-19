@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
 
-  tree->Branch("Event", &event);
+  tree->Branch("Events", &event);
 
   fwlite::Handle<std::vector<reco::GenParticle> > handle_gps;
   fwlite::Handle<vector<reco::GenMET> >           handle_met;

@@ -19,6 +19,8 @@ public:
   ~GenlevelTool() = default;
   void ProcessDataset(const Config & cfg) override {LoopEvents<GenlevelTool, GenEvent>(cfg, event, *this);};
   virtual bool Process() override;
+  void book_histograms(vector<TString>);
+  void fill_histograms(TString);
 
 
 private:
@@ -27,7 +29,7 @@ private:
   // Modules used in the analysis
   GenID<GenJet>      genjet_id;
   GenID<GenParticle> genvistau_id;
-  double        mindr_genjet_tauvis;
+  double             mindr_genjet_tauvis;
 
   unique_ptr<GenJetCleaner>       cleaner_genjet;
   unique_ptr<GenVisTauCleaner>    cleaner_genvistau;
@@ -55,10 +57,7 @@ GenlevelTool::GenlevelTool(const Config & cfg) : BaseTool(cfg){
 
   // histfolders
   vector<TString> histtags = {"input", "cleaner", "objectselection", "stmet"};
-  for(const TString s : histtags){
-    histmap[s].reset(new GenHists(s));
-    histfolders.emplace_back(s);
-  }
+  book_histograms(histtags);
 }
 
 
@@ -76,20 +75,20 @@ bool GenlevelTool::Process(){
   sort_by_pt<GenParticle>(*event->genparticles_visibletaus);
   sort_by_pt<GenParticle>(*event->genparticles_final);
   sort_by_pt<GenJet>(*event->genjets);
-  histmap["input"]->fill(*event);
+  fill_histograms("input");
 
 
   // clean jets and visible taus
   cleaner_genvistau   ->process(*event);
   cleaner_genjet      ->process(*event);
   cleaner_genjetvistau->process(*event);
-  histmap["cleaner"]  ->fill(*event);
+  fill_histograms("cleaner");
 
   if(event->genparticles_visibletaus->size() < 1) return false;
   if(event->genparticles_visibletaus->at(0).pt() < 50) return false;
   if(event->genjets->size() < 1) return false;
   if(event->genjets->at(0).pt() < 50) return false;
-  histmap["objectselection"]->fill(*event);
+  fill_histograms("objectselection");
 
 
 
@@ -102,13 +101,27 @@ bool GenlevelTool::Process(){
   for(int i=0; i<ntauvismax; i++) st += event->genparticles_visibletaus->at(i).pt();
   stmet += st;
   if(stmet < 600) return false;
-  histmap["stmet"]->fill(*event);
+  fill_histograms("stmet");
 
 
 
   return true;
 }
 
+
+
+
+void GenlevelTool::book_histograms(vector<TString> tags){
+  for(const TString & tag : tags){
+    TString mytag = tag+"_GenLevel";
+    book_HistFolder(mytag, new GenHists(mytag));
+  }
+}
+
+void GenlevelTool::fill_histograms(TString tag){
+  TString mytag = tag+"_GenLevel";
+  HistFolder<GenHists>(mytag)->fill(*event);
+}
 
 
 

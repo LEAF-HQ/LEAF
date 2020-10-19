@@ -24,7 +24,7 @@ int main(){
   // Plotter_Genlevel.Plot(true, true, false);     // normalized
   // Plotter_Genlevel.Plot(false, false, false);   // lin Y
   // Plotter_Genlevel.Plot(true, false, false);    // lin Y normalized
-  // Plotter_Genlevel.Plot(false, true, true);        // SinglePDF
+  Plotter_Genlevel.Plot(false, true, true);        // SinglePDF
   // Plotter_Genlevel.Plot(true, true, true);         // SinglePDF normalized
 
 
@@ -40,7 +40,7 @@ int main(){
   Plotter_Recolevel.set_linestyles({1, 1, 1, 1});
 
   //Plotter_Recolevel.Plot(normalize, logY, SinglePDF);
-  Plotter_Recolevel.Plot(false, true, false);       // usual
+  // Plotter_Recolevel.Plot(false, true, false);       // usual
   // Plotter_Recolevel.Plot(true, true, false);     // normalized
   // Plotter_Recolevel.Plot(false, false, false);   // lin Y
   // Plotter_Recolevel.Plot(true, false, false);    // lin Y normalized
