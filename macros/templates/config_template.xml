@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[
+
+
+<!ENTITY TargetLumi  "1" >
+<!ENTITY outfilepath "/work/areimers/test" >
+
+
+<!ENTITY LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0        SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0.xml"        >
+
+]>
+
+
+<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="$MYTOOLNAME">
+    <InputDatasets>
+
+        <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
+            &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
+        </Dataset>
+
+    </InputDatasets>
+
+    <AdditionalVariables>
+        <Variable Name="test" Value="testvalue"/>
+    </AdditionalVariables>
+</Configuration>
