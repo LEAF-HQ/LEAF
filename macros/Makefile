@@ -3,7 +3,7 @@
 
 
 BINARIES    := $(wildcard $(BINDIR)/*)
-CUSTOMLIBS  := $(foreach subdir,$(subdirs), $(subdir)/$(LIBDIR)/libCustom.so)
+CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
 
 
 
@@ -13,6 +13,7 @@ all: Tuplizer Tuplizer_NANOAOD Plotter Analyzer
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
 	@for d in $(subdirs); do ( $(MAKE) -C $$d lib ) || exit 1; done
 	@echo "--> Creating Analyzer"
+	@echo "$(CUSTOMLIBS)"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS)
 
 Tuplizer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer.o
