@@ -13,6 +13,7 @@
 #include "include/Config.h"
 #include "include/Registry.h"
 #include "include/Jet.h"
+#include <chrono>
 
 class BaseTool {
 
@@ -83,9 +84,24 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   // cfg.outputtree->Branch("Event", &outevent);
 
   // Loop through chain
+  auto start = std::chrono::high_resolution_clock::now();
   for(int i=0; i<cfg.event_chain->GetEntries(); ++i) {
-    if(i%1000==0){
-      cout << green << "    --> Processing event no. (" << i << " / " << cfg.nevt << ")" << reset << endl;
+    if(i%1000==0 || i== cfg.event_chain->GetEntries()-1){
+      auto now = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+      std::chrono::milliseconds sec_left = std::chrono::milliseconds(999999999999);
+      if(i > 0){
+        std::chrono::milliseconds msec_left = std::chrono::milliseconds((int)(((double)duration.count()) / ((double)i) * ((double)cfg.nevt) - ((double)duration.count())));
+        auto seconds_left = std::chrono::duration_cast<std::chrono::seconds>(msec_left);
+        auto minutes_left = std::chrono::duration_cast<std::chrono::minutes>(seconds_left);
+        seconds_left -= std::chrono::duration_cast<std::chrono::seconds>(minutes_left);
+        auto hours_left = std::chrono::duration_cast<std::chrono::hours>(minutes_left);
+        minutes_left -= std::chrono::duration_cast<std::chrono::minutes>(hours_left);
+        cout << green << "    --> Processing event no. (" << i+1 << " / " << cfg.nevt << "), time left: " << std::setfill('0') << std::setw(2) << hours_left.count() << ":" << std::setfill('0') << std::setw(2) << minutes_left.count() << ":" << std::setfill('0') << std::setw(2) << seconds_left.count() << reset << endl;
+      }
+      else{
+        cout << green << "    --> Processing event no. (" << i+1 << " / " << cfg.nevt << ")" << reset << endl;
+      }
     }
 
     // read the data for i-th event
