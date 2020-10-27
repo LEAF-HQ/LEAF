@@ -98,6 +98,8 @@ def createNewSources(name, placeholders):
 def createNewConfigs(name, placeholders):
     command = 'cp templates/config_template.xml %s/config/%s.xml' % (name, placeholders['$MYANALYSISNAME'])
     os.system(command)
+    command = 'cp templates/Configuration.dtd %s/config/' % (name)
+    os.system(command)
 
     replace_placeholders('%s/config/%s.xml' % (name, placeholders['$MYANALYSISNAME']), placeholders)
 
