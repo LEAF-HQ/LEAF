@@ -6,3 +6,4 @@
 *.pdf
 *.root
 */commands/*.txt
+*.dat
