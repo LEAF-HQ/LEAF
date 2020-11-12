@@ -1,9 +1,11 @@
-# Author: Izaak Neutelings (October, 2019)
+# Author: Arne Reimers
 import os, sys
 from fnmatch import fnmatch
 import subprocess
 import time
 from preferred_configurations import *
+from bisect import bisect_left
+
 
 def ensureDirectory(dirname):
     """Make directory if it does not exist."""
@@ -66,29 +68,31 @@ def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''
     return formatted
 
-def execute_commands_parallel(commands=[], ncores=10):
+def execute_commands_parallel(commands=[], ncores=10, niceness=10):
     n_running = 0
     n_completed = 0
     n_jobs = len(commands)
     processes = []
+    DEVNULL = open(os.devnull, 'wb')
     for c in commands:
+        c = 'nice -n %i %s' % (niceness, c)
         b_wait = (n_running >= ncores)
         while b_wait:
             n_running = 0
             n_completed = 0
             for proc in processes:
-                if proc.poll() == None: n_running += 1
+                if proc.poll() == None:
+                    n_running += 1
                 else:
                     n_completed += 1
             percent = round(float(n_completed)/float(n_jobs)*100, 1)
             sys.stdout.write( '{0:d} of {1:d} ({2:4.2f}%) jobs done.\r'.format(n_completed, n_jobs, percent))
             sys.stdout.flush()
-            time.sleep(10)
+            time.sleep(.5)
             b_wait = (n_running >= ncores)
         n_running += 1
-        p = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        p = subprocess.Popen(c, stdout=DEVNULL, stderr=DEVNULL, shell=True)
         processes.append(p)
-
     # submitted all jobs, now just wait.
     b_wait = (n_completed < n_jobs)
     while b_wait:
@@ -100,5 +104,25 @@ def execute_commands_parallel(commands=[], ncores=10):
         percent = float(n_completed)/float(n_jobs)*100
         sys.stdout.write( '{0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(n_completed, n_jobs, percent))
         sys.stdout.flush()
-        time.sleep(10)
+        time.sleep(2)
         b_wait = (n_completed < n_jobs)
+    DEVNULL.close()
+
+
+def find_closest(myList, myNumber):
+    """
+    Assumes myList is sorted. Returns closest value to myNumber.
+
+    If two numbers are equally close, return the smallest number.
+    """
+    pos = bisect_left(myList, myNumber)
+    if pos == 0:
+        return myList[0]
+    if pos == len(myList):
+        return myList[-1]
+    before = myList[pos - 1]
+    after = myList[pos]
+    if after - myNumber < myNumber - before:
+       return after
+    else:
+       return before

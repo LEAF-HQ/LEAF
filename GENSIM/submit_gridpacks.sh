@@ -33,8 +33,8 @@ echo TMPDIR: $TMPDIR
 mkdir -p $TMPDIR
 
 # actual job
-source $VO_CMS_SW_DIR/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc700
+source $VO_CMS_SW_DIR/cmsset_default.sh
 
 # cd /work/areimers/CMSSW_10_2_10/src/genproductions/bin/MadGraph5_aMCatNLO
 cd $CMSSW_MG_FOLDER
