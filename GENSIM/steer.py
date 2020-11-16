@@ -61,10 +61,31 @@ procname_to_decaymodes = {
     'LQLQToPsiChi':  [(9000009, 9000007), (9000009, 9000007)]
 }
 
+mlq_min = min(preferred_configurations.keys())
+mlq_max = max(preferred_configurations.keys())
+print mlq_max
+mch_min = 999999999
+mch_max = 0
+for mlq in preferred_configurations.keys():
+    for mch in preferred_configurations[mlq].keys():
+        mch_min = min(mch_min, mch)
+        mch_max = max(mch_max, mch)
+
+all_combinations = {}
+mlq_stepsize = 90
+mch_exp_stepsize = 0.03
+for mlq in range(mlq_min, mlq_max+mlq_stepsize, mlq_stepsize):
+    all_combinations[mlq] = []
+    for mch_exp in range(int(math.log(mch_min, 10)*100), int(math.log(mch_max, 10)*100) + int(mch_exp_stepsize*100), int(mch_exp_stepsize*100)):
+        mch_exp = float(mch_exp / 100.)
+        mch = int(round(10**(float(mch_exp))))
+        all_combinations[mlq].append(mch)
+# print all_combinations
+
 # exclude combinations of process -- mass_config for processes without phase space
 excluded_configurations = {}
 for proc in processes_xsec:
-    if not ('PsiChi' in proc) and not (proc == 'LQLQ') and not ('PsiPsi' in proc): continue
+    # if not ('PsiChi' in proc) and not (proc == 'LQLQ') and not ('PsiPsi' in proc): continue
     excl_configs = []
     for mlq in preferred_configurations.keys():
         for mch in preferred_configurations[mlq].keys():
@@ -78,15 +99,22 @@ for proc in processes_xsec:
             if 'LQLQ' in proc:
                 if mlq > 13000./2.: #too heavy for 13TeV
                     excl_configs.append(excl_config)
-                if mlq < mps + mch: #LQ cannot decay to psi+chi1
-                    excl_configs.append(excl_config)
+
+                # now look at decay channels
+                if 'PsiChi' in proc:
+                    if mlq < mps + mch: #LQ cannot decay to psi+chi1
+                        excl_configs.append(excl_config)
     excluded_configurations[proc] = excl_configs
 
+preferred_lambdas = {}
+for mlq in preferred_configurations.keys():
+    preferred_lambdas[mlq] = float(1.1/2. * (mlq/1000.))
+
+# lambdas = [1.0, 'best']
 lambdas = [1.0]
 tag = ''                # tags are auto-formatted to '_XXXX'
 maxindex        = 100   # Number of samples per configuration
 nevents         = 1000  # Events per sample
-
 
 username       = 'areimers'
 arch_tag       = 'slc7_amd64_gcc700'
@@ -306,6 +334,8 @@ def ProduceCards():
 
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 make_card(card_template_folder=cardfolder, card_output_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=True)
     print green('Done producing cards from templates')
 
@@ -319,6 +349,8 @@ def SubmitGridpacks(submit):
 
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
 
                 command = 'sbatch -J gridpacks_%s -p wn -t 05:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, mgfolder, jobname, cardfolder)
@@ -340,6 +372,8 @@ def MoveGridpacks(submit):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
 
                 gpname = jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
@@ -367,6 +401,8 @@ def CleanMGArea(submit):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 command = 'rm -rf ' + mgfolder + '/' + jobname + '*'
                 commands.append(command)
@@ -410,6 +446,8 @@ def SubmitGenerationStep(submit, generation_step, mode='new'):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 commandfilename = commandfilebase + jobname + '.txt'
                 f = open(commandfilename, 'w')
@@ -463,6 +501,8 @@ def RemoveSamples(submit, generation_step):
                 continue
             for lamb in lambdas:
                 mlq, mps, mch = get_mlq_mps_mch(config)
+                if lamb == 'best':
+                    lamb = preferred_lambdas[mlq]
                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                 samplepath   = T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname
                 command  = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
@@ -481,10 +521,9 @@ def RemoveSamples(submit, generation_step):
 def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False, clean_folders=False, rerun_mg=False, readout_crossbr=False, rootify_crossbr=False, plot_crossbr=False, submit=False):
     # Produce MG5 cards for running cross section and BR calculations
     ncores = 2
-    # if rerun_mg: ncores = 4
-    runtime_hrs = 0
-    # if rerun_mg: runtime_hrs = 5
-    runtime_min = 30
+    maxjobs_per_proc = 100
+    runtime_hrs = 00
+    runtime_min = 45
     runtime = '%02i:%02i:00' % (runtime_hrs, runtime_min)
     queue   = 'wn' if runtime_hrs > 1 else 'quick'      # quick -- wn
 
@@ -494,7 +533,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
         configs = []
 
         for mlq in preferred_configurations.keys():
-            if mlq > 3000: continue
+            # if mlq > 6000: continue
             for mch in preferred_configurations[mlq].keys():
                 config = {}
                 config['mlq'] = mlq
@@ -505,15 +544,16 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
 
         # loop through configs
         if redo_cards:
-            print len(configs)
             idx = 0
             for config in configs:
                 for lamb in lambdas:
                     mlq, mps, mch = get_mlq_mps_mch(config)
+                    if lamb == 'best':
+                        lamb = preferred_lambdas[mlq]
                     make_card(card_template_folder=cardfolder+'/CrossBR', card_output_folder=cardfolder+'/CrossBR/%s' % (processname), processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
                     idx += 1
                     if idx % 20 is 0:
-                        print green('Produced %i out of %i cards for this process (%.2f%%).' % (idx, len(configs), float(idx)/float(len(configs))*100))
+                        print green('Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(configs)*len(lambdas), processname, float(idx)/float(len(configs)*len(lambdas))*100))
 
         if run_mg or rerun_mg:
             if run_mg and rerun_mg:
@@ -525,8 +565,9 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             f = open(commandfilename, 'w')
             for config in configs:
                 for lamb in lambdas:
-                    # if njobs >= 1: continue
                     mlq, mps, mch = get_mlq_mps_mch(config)
+                    if lamb == 'best':
+                        lamb = preferred_lambdas[mlq]
                     jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
 
                     write_command = True
@@ -547,7 +588,6 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                         njobs += 1
             f.close()
             slurmjobname = 'CrossBR_%s' % (processname)
-            maxjobs_per_proc = 200
             command = 'sbatch --parsable -a 1-%s%%%i -J %s -p %s -t %s --cpus-per-task %i submit_crossbr_array.sh %s' % (str(njobs), maxjobs_per_proc, slurmjobname, queue, runtime, ncores, commandfilename)
             if submit:
                 if njobs == 0:
@@ -604,22 +644,20 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     print yellow('--> didn\'t find the summary or systematics in file %s, going to skip this file, won\'t create a shortfile, deleting the logfile.' % (infilename))
                 elif submit:
                     fout = open(shortfilename,'w')
-                    print green('--> producing shortened file: %s' % (shortfilename))
+                    print green('--> Replacing long with shortened file: %s' % (shortfilename))
                     for newline in newlines:
                         fout.write(newline)
                     fout.close()
                 else:
-                    print yellow('--> Would write shortfile %s' % (shortfilename))
+                    print yellow('--> Would replace long with shortened file %s' % (shortfilename))
 
                 if submit:
                     os.remove(infilename)
-                    print green('--> deleted long file %s' % (infilename))
-                else:
-                    print yellow('--> Would delete long file %s' % (infilename))
             if submit: check_shortfiles(filepath=crosssecfolder+'/'+processname)
 
 
         if readout_crossbr:
+
             total_writelines_cross = []
             total_writelines_br = []
 
@@ -682,8 +720,6 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     # put everything into the right tuples and sort
                     mref = mch if 'LQLQ' in processname else mlq
                     mdep = mlq if 'LQLQ' in processname else mch
-                    if mref == 2951:
-                        print mlq, '  ', xsec
                     if not mref in tupledicts_per_lambda[lamb]: tupledicts_per_lambda[lamb][mref] = []
                     tupledicts_per_lambda[lamb][mref].append((mdep, xsec, scale_down, scale_up, str(max(float(pdf_up), float(pdf_down)))))
 
@@ -783,6 +819,8 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             for config in configs:
                 for lamb in lambdas:
                     mlq, mps, mch = get_mlq_mps_mch(config)
+                    if lamb == 'best':
+                        lamb = preferred_lambdas[mlq]
                     jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                     # 1) move folders
                     command_folder_mv = 'mv ' + mgfolder_local + '/' + jobname + ' ' + mgfolder_local + '/' + jobname + '_old'
@@ -802,6 +840,8 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             for config in configs:
                 for lamb in lambdas:
                     mlq, mps, mch = get_mlq_mps_mch(config)
+                    if lamb == 'best':
+                        lamb = preferred_lambdas[mlq]
                     jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
                     # 1) remove moved folders
                     command_folder_rm = 'rm -rf ' + mgfolder_local + '/' + jobname + '_old'
@@ -837,9 +877,20 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             for lamb in lambdas:
                 if not lamb in crosssections: continue
                 print green('  --> Now at lambda: %1.1f' % (lamb))
+                # for mlq in sorted(all_combinations.keys()):
+                #     if not mlq in crosssections[lamb]:
+                #         crosssections[lamb][mlq] = []
+                #     for mch in all_combinations[mlq]:
+                #         if (len(crosssections[lamb][mlq]) == 0) or (not mch in crosssections[lamb][mlq]):
+
                 xsecs_per_mref = crosssections[lamb]
                 graph2d = TGraph2D()
                 npoints2d=0
+                set_points ={}
+                for mlq in all_combinations:
+                    set_points[mlq] = {}
+                    for mch in all_combinations[mlq]:
+                        set_points[mlq][mch] = False
                 for mref in xsecs_per_mref:
                     xsecs = xsecs_per_mref[mref]
                     final_xsecs = []
@@ -851,6 +902,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     mdeps_hi = array('d')
 
                     for tuple in xsecs:
+
                         mdep, sigma, q_lo, q_hi, pdf = tuple
                         tot_lo = XsecTotErr(sigma, q_lo, pdf)
                         tot_hi = XsecTotErr(sigma, q_hi, pdf)
@@ -863,8 +915,10 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                         mdeps_hi.append(0.)
                         if 'LQLQ' in processname:
                             graph2d.SetPoint(npoints2d, mdep, mref, sigma)
+                            set_points[mdep][mref] = True
                         elif 'PsiPsi' in processname:
                             graph2d.SetPoint(npoints2d, mref, mdep, sigma)
+                            set_points[mref][mdep] = True
                         else:
                             raise ValueError('processname does not contain \'LQLQ\' or \'PsiPsi\', what kind of process are we looking at here?')
                         npoints2d += 1
@@ -895,6 +949,13 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     graph.SetTitle(graphtitle)
                     outfile.cd()
                     graph.Write()
+
+                # fill remaining points in 2d graph with zeros
+                for mlq in set_points:
+                    for mch in set_points[mlq]:
+                        if not set_points[mlq][mch]:
+                            graph2d.SetPoint(npoints2d, mlq, mch, 0.)
+                            npoints2d += 1
                 graph2d.SetName(processname + ('_L%1.1f' % (lamb)).replace('.', 'p'))
                 graph2d.GetXaxis().SetTitle('M_{LQ} [GeV]')
                 graph2d.GetYaxis().SetTitle('M_{#chi_{1}} = %i [GeV]')
@@ -912,6 +973,13 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                 outfile = TFile(outfilename_br, 'RECREATE')
                 brs2d = {}
                 npoints2d = {}
+                set_points ={}
+                for mlq in all_combinations:
+                    set_points[mlq] = {}
+                    for mch in all_combinations[mlq]:
+                        set_points[mlq][mch] = {}
+                        for decaymode in decaymode_dict.keys():
+                            set_points[mlq][mch][decaymode] = False
                 for mlq in sorted(brs):
                     mchs_per_decaymode = {}
                     brs_per_decaymode = {}
@@ -919,6 +987,9 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                         for decaymode in brs[mlq][mch]:
                             if not decaymode in mchs_per_decaymode.keys(): mchs_per_decaymode[decaymode] = array('d')
                             if not decaymode in brs_per_decaymode.keys(): brs_per_decaymode[decaymode] = array('d')
+                            # if not decaymode in set_points[mlq][mch].keys():
+                            #     # print mlq, mch, decaymode
+                            #     set_points[mlq][mch][decaymode] = False
                             if not decaymode in brs2d.keys():
                                 graphname2d = processname + ('_%i_%i' % (abs(decaymode[0]), abs(decaymode[1])))
                                 # print graphname2d
@@ -933,6 +1004,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                             mchs_per_decaymode[decaymode].append(mch)
                             brs_per_decaymode[decaymode].append(brs[mlq][mch][decaymode][0])
                             brs2d[decaymode].SetPoint(npoints2d[decaymode], mlq, mch, brs[mlq][mch][decaymode][0])
+                            set_points[mlq][mch][decaymode] = True
                             npoints2d[decaymode] += 1
 
                     for decaymode in mchs_per_decaymode.keys():
@@ -943,6 +1015,14 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                         graph.GetYaxis().SetTitle('BR (LQLQ#rightarrow%s)' % (decaymode_dict[decaymode]))
                         graph.SetTitle(processname + ', %s' % (decaymode_dict[decaymode]))
                         graph.Write()
+                # fill remaining points in 2d graph with zeros
+                for mlq in set_points:
+                    for mch in set_points[mlq]:
+                        for decaymode in set_points[mlq][mch]:
+                            if not set_points[mlq][mch][decaymode]:
+                                # print 'Setting BR for MLQ=%i, MCH=%i, decay=(%i, %i) to 0' % (mlq, mch, decaymode[0], decaymode[1])
+                                brs2d[decaymode].SetPoint(npoints2d[decaymode], mlq, mch, 0)
+                                npoints2d[decaymode] += 1
                 for decaymode in brs2d:
                     brs2d[decaymode].Write()
                 outfile.Close()
@@ -954,7 +1034,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
 
             # for a reasonably spaced set of particle masses, find the closest correspondence in the preferred_configurations:
             if 'PsiPsi' in processname:
-                mrefs_initial = [1000, 1500, 2000, 2500, 3000]
+                mrefs_initial = [1000, 2000, 3000, 4500, 6000]
                 xaxis_min = 100
                 xaxis_max = 5000
                 xaxis_title = 'M_{#chi_{1}} [GeV]'
@@ -962,7 +1042,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             else:
                 mrefs_initial = [100, 300, 1000, 3000, 10000]
                 xaxis_min = 1000
-                xaxis_max = 3000
+                xaxis_max = 10000
                 xaxis_title = 'M_{LQ} [GeV]'
 
             mrefs = []
@@ -980,7 +1060,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
             rootfilename = crosssecfolder+'/Crosssections_%s%s.root' % (processname, tag)
             infile = TFile(rootfilename, 'READ');
             for lamb in lambdas:
-                ymin = 2E-7 if 'LQLQ' in processname else 2E-15
+                ymin = 2E-15 #if 'LQLQ' in processname else 2E-15
                 ymax = 1 if 'LQLQ' in processname else 1E5
                 c = tdrCanvas('c', xaxis_min, xaxis_max, ymin, ymax, xaxis_title, '#sigma (pp #rightarrow %s) [pb]' % (procname_to_latex[processname]), square=True, iPeriod=0, iPos=11)
                 c.SetLogy()
@@ -1009,33 +1089,46 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                         continue
                     idx += 1
                 leg.Draw('SAME')
-                plotname = crosssecfolder+'/Crosssections_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), tag)
+                plotname = crosssecfolder+'/plots/Crosssections_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), tag)
                 if submit:
                     c.SaveAs(plotname)
 
                 if 'LQLQ' in processname and not processname == 'LQLQ':
                     infile_brs = TFile(rootfilename_brs, 'READ')
                     infile_lqlq = TFile(crosssecfolder+'/Crosssections_LQLQ.root', 'READ')
-                    c_ratio = tdrDiCanvas('c_ratio', xaxis_min, xaxis_max, ymin, ymax, 0.3, 1.7, xaxis_title, '#sigma (pp #rightarrow %s) [pb]' % (procname_to_latex[processname]), '#sigma (full) / #sigma #times BR', square=True, iPeriod=0, iPos=11)
                     decaymodes = procname_to_decaymodes[processname]
                     graphname_br1 = 'LQLQ_%i_%i' % (abs(decaymodes[0][0]), abs(decaymodes[0][1]))
                     graphname_br2 = 'LQLQ_%i_%i' % (abs(decaymodes[1][0]), abs(decaymodes[1][1]))
                     graph_br1 = infile_brs.Get(graphname_br1)
                     graph_br2 = infile_brs.Get(graphname_br2)
 
-                    c_ratio.cd(1)
-                    gPad.SetLogy()
-                    leg_ratio = tdrLeg(0.55,0.55,0.9,0.9)
                     idx = 0
                     for mref in mrefs:
+                        c_ratio = tdrDiCanvas('c_ratio', xaxis_min, xaxis_max, ymin, ymax, 0.3, 1.7, xaxis_title, '#sigma (pp #rightarrow %s) [pb]' % (procname_to_latex[processname]), '#sigma (full) / #sigma #times BR', square=True, iPeriod=0, iPos=11)
+                        c_ratio.cd(1)
+                        gPad.SetLogy()
+                        leg_ratio = tdrLeg(0.55,0.8,0.9,0.9)
                         graphname_top = processname + '_MC1%i_L%s' % (mref, get_lambdastring(lamb))
                         graph_top = infile.Get(graphname_top)
                         graphname_xsecbr = 'LQLQ_MC1%i_L%s' % (mref, get_lambdastring(lamb))
                         graph_xsecbr = infile_lqlq.Get(graphname_xsecbr)
                         try:
+                            c_ratio.cd(1)
                             tdrDraw(graph_top, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.2)
                             graph_top.GetXaxis().SetLabelSize(14)
+                            masses_orig_top = array('d')
+                            y_top_ups = array('d')
+                            y_top_dns = array('d')
+                            for i in range(graph_top.GetN()):
+                                x=Double(0)
+                                y=Double(0)
+                                graph_top.GetPoint(i, x, y)
+                                masses_orig_top.append(x)
+                                y_top_ups.append(Double(graph_top.GetErrorYhigh(i)))
+                                y_top_dns.append(Double(graph_top.GetErrorYlow(i)))
+
                             nremoved = 0
+                            masses_orig_xsec = array('d')
                             for i in range(graph_xsecbr.GetN()):
                                 x=Double(0)
                                 y=Double(0)
@@ -1049,31 +1142,46 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                                     nremoved += 1
                                 else:
                                     graph_xsecbr.SetPoint(i-nremoved, x, newval)
+                                    masses_orig_xsec.append(x)
                             tdrDraw(graph_xsecbr, "LX", mcolor=colors[idx], lcolor=colors[idx])
                             graph_xsecbr.SetLineStyle(2)
-                            # tdrDraw(graph_xsecbr, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
-                            # for i in range(graph_top.GetN()):
-                            #     x=Double(0)
-                            #     y=Double(0)
-                            #     graph_top.GetPoint(i, x, y)
+
+                            # calculate ratio
+                            graph_top_up = TGraph(len(masses_orig_top), masses_orig_top, y_top_ups)
+                            graph_top_dn = TGraph(len(masses_orig_top), masses_orig_top, y_top_dns)
+                            xs = array('d')
+                            xs_up = array('d')
+                            xs_dn = array('d')
+                            ys = array('d')
+                            ys_up = array('d')
+                            ys_dn = array('d')
+                            for mass in masses_orig_top:
+                                if mass in masses_orig_xsec:
+                                    xs.append(Double(mass))
+                                    xs_up.append(Double(0))
+                                    xs_dn.append(Double(0))
+                                    ys.append(Double(graph_top.Eval(mass) / graph_xsecbr.Eval(mass)))
+                                    ys_up.append(Double(graph_top_up.Eval(mass) / graph_xsecbr.Eval(mass)))
+                                    ys_dn.append(Double(graph_top_dn.Eval(mass) / graph_xsecbr.Eval(mass)))
+                            graph_ratio = TGraphAsymmErrors(len(xs), xs, ys, xs_dn, xs_up, ys_dn, ys_up)
+                            c_ratio.cd(2)
+                            tdrDraw(graph_ratio, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
                             legtext_ratio = 'M_{#chi_{1}} = %i GeV' % (mref)
                             leg_ratio.AddEntry(graph_top, legtext_ratio, 'lf');
                         except ReferenceError:
-                            # print 'skip this one'
                             idx +=1
                             continue
                         idx += 1
-                    # leg_ratio.Draw('SAME')
-                    plotname_ratio = crosssecfolder+'/Crosssections_comparison_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), tag)
-                    if submit:
-                        c_ratio.SaveAs(plotname_ratio)
-                    # infile_brs.Close()
-                    # infile_lqlq.Close()
+                        plotname_ratio = crosssecfolder+'/plots/Crosssections_comparison_%s_MC1%i_L%s%s.pdf' % (processname, mref, get_lambdastring(lamb), tag)
+                        if submit:
+                            c_ratio.SaveAs(plotname_ratio)
+                    infile_brs.Close()
+                    infile_lqlq.Close()
 
                 graphname2 = processname
                 graphname2 += '_L%s' % (get_lambdastring(lamb))
                 graph2d = infile.Get(graphname2)
-                h2 = TH2D('h2', 'h2', 500, 1000, 3000, 500, 100, 21000)
+                h2 = TH2D('h2', 'h2', 500, mlq_min, mlq_max, 500, 100, 21000)
                 graph2d.SetHistogram(h2)
                 c2 = TCanvas('c2', 'c2', 800, 600)
                 graph2d.Draw("COLZ")
@@ -1085,21 +1193,21 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                 graph2d.GetHistogram().GetZaxis().SetTitleOffset(1.25)
                 graph2d.GetHistogram().GetYaxis().SetTitleOffset(1.0)
                 graph2d.GetHistogram().SetMaximum(1E-1)
-                graph2d.GetHistogram().SetMinimum(2E-7)
+                graph2d.GetHistogram().SetMinimum(2E-19)
                 c2.SetLogy()
                 c2.SetLogz()
                 c2.SetRightMargin(0.20)
                 c2.SetLeftMargin(0.13)
                 c2.SetTopMargin(0.05)
                 c2.Update()
-                plotname = crosssecfolder+'/Crosssections2d_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), tag)
+                plotname = crosssecfolder+'/plots/Crosssections2d_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), tag)
                 if submit:
                     c2.SaveAs(plotname)
             infile.Close()
             if processname == 'LQLQ':
                 # decaymodes = [(5, -15), (6, -16), (9000009, 9000007), (9000009, 9000008)]
                 decaymodes = decaymode_dict.keys()
-                mlqs_initial = [1000, 1500, 2000, 2500, 3000]
+                mlqs_initial = [1000, 2000, 3000, 4500, 6000]
                 xaxis_min = 90
                 xaxis_max = 20000
                 xaxis_title = 'M_{#chi_{1}} [GeV]'
@@ -1132,7 +1240,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                             continue
                         idx += 1
                     leg3.Draw('SAME')
-                    plotname = crosssecfolder+'/Branchingratios_%s_MLQ%i%s.pdf' % (processname, mlq, tag)
+                    plotname = crosssecfolder+'/plots/Branchingratios_%s_MLQ%i%s.pdf' % (processname, mlq, tag)
                     if submit:
                         print plotname
                         c3.SaveAs(plotname)
@@ -1140,7 +1248,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                 for decaymode in decaymodes:
                     graphname = processname + '_%i_%i' % (abs(decaymode[0]), abs(decaymode[1]))
                     graph2d = infile_brs.Get(graphname)
-                    h2 = TH2D('h2', 'h2', 500, 1000, 3000, 500, 100, 21000)
+                    h2 = TH2D('h2', 'h2', 500, mlq_min, mlq_max, 500, 100, 21000)
                     graph2d.SetHistogram(h2)
                     c4 = TCanvas('c4', 'c4', 800, 600)
                     graph2d.Draw("COLZ")
@@ -1151,7 +1259,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     graph2d.GetHistogram().GetZaxis().SetTitle('BR (LQ #rightarrow %s)' % (decaymode_dict[decaymode]))
                     graph2d.GetHistogram().GetZaxis().SetTitleOffset(1.25)
                     graph2d.GetHistogram().GetYaxis().SetTitleOffset(1.0)
-                    graph2d.GetHistogram().SetMaximum(.7)
+                    graph2d.GetHistogram().SetMaximum(0.7)
                     graph2d.GetHistogram().SetMinimum(0.)
                     c4.SetLogy()
                     # c4.SetLogz()
@@ -1159,7 +1267,7 @@ def SubmitCrosssectionRuns(redo_cards=False, run_mg=False, shorten_crossbr=False
                     c4.SetLeftMargin(0.13)
                     c4.SetTopMargin(0.05)
                     c4.Update()
-                    plotname = crosssecfolder+'/Branchingratios2d_%s_%i_%i%s.pdf' % (processname, abs(decaymode[0]), abs(decaymode[1]), tag)
+                    plotname = crosssecfolder+'/plots/Branchingratios2d_%s_%i_%i%s.pdf' % (processname, abs(decaymode[0]), abs(decaymode[1]), tag)
                     if submit:
                         c4.SaveAs(plotname)
 
