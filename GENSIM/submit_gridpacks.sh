@@ -36,17 +36,19 @@ mkdir -p $TMPDIR
 export SCRAM_ARCH=slc7_amd64_gcc700
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-# cd /work/areimers/CMSSW_10_2_10/src/genproductions/bin/MadGraph5_aMCatNLO
 cd $CMSSW_MG_FOLDER
 RELPATH_TO_CARDS=`realpath --relative-to="${PWD}" ${CARDDIR}`
 
-TASKCMD="./gridpack_generation.sh ${JOBNAME} ${RELPATH_TO_CARDS} ${QUEUEMODE}"
+TASKCMD="./gridpack_generation.sh ${JOBNAME} ${RELPATH_TO_CARDS} ${QUEUEMODE} ${TMPDIR}"
 
 echo $TASKCMD
 eval $TASKCMD
 
+mv ${TMPDIR}/*${JOBNAME}*_tarball.tar.xz ${CMSSW_MG_FOLDER}
 
 # cleaning of temporal working dir when job was completed:
+
+echo Removing TMPDIR: $TMPDIR
 rm -rf $TMPDIR
 echo Removed TMPDIR: $TMPDIR
 echo Done.

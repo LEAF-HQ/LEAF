@@ -9,5 +9,5 @@ set max_npoint_for_channel 0
 
 import model chi-psi_UFO
 define p = p b b~
-generate p p > vlq vlq~ NP=0 QCD=2, (vlq > ~c1 ~ps), (vlq~ > ~c1 ~ps~)
+generate p p > vlq vlq~ NP=0 QCD=2 QED=0, (vlq > ~c1 ~ps), (vlq~ > ~c1 ~ps~)
 output $OUTPUT

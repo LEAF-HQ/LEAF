@@ -11,9 +11,9 @@ def ensureDirectory(dirname):
     """Make directory if it does not exist."""
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-        print '>>> made directory "%s"'%(dirname)
+        print green('--> made directory "%s"'%(dirname))
         if not os.path.exists(dirname):
-            print '>>> failed to make directory "%s"'%(dirname)
+            print yellow('--> failed to make directory "%s"'%(dirname))
     return dirname
 
 
@@ -36,31 +36,6 @@ def blue(string):
 
 def bold(string):
     return "\033[1m%s\033[0m"%string
-
-
-
-
-def get_samplename(mlq, mps, mch, lamb, tag):
-    return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
-
-def get_jobname(processname, mlq, mps, mch, lamb, tag):
-    return processname + '_' + get_samplename(mlq, mps, mch, lamb, tag)
-
-def get_lambdastring(lamb):
-    return ('%1.1f' % (lamb)).replace('.', 'p')
-
-def get_mlq_mps_mch(config):
-    # return (config['mlq'], config['mps'], config['mch'])
-    return (config['mlq'], preferred_configurations[config['mlq']][config['mch']][0], config['mch'])
-
-def is_config_excluded(excluded_configurations, config, processname):
-    if not processname in excluded_configurations.keys(): # no config of this proc is excluded
-        return False
-
-    if config in excluded_configurations[processname]:
-        return True
-    else:
-        return False
 
 
 
@@ -88,7 +63,10 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
             percent = round(float(n_completed)/float(n_jobs)*100, 1)
             sys.stdout.write( '{0:d} of {1:d} ({2:4.2f}%) jobs done.\r'.format(n_completed, n_jobs, percent))
             sys.stdout.flush()
-            time.sleep(.5)
+            time_to_sleep = 0.5
+            if len(commands) > 10000:
+                time_to_sleep = time_to_sleep/10000.
+            time.sleep(time_to_sleep)
             b_wait = (n_running >= ncores)
         n_running += 1
         p = subprocess.Popen(c, stdout=DEVNULL, stderr=DEVNULL, shell=True)

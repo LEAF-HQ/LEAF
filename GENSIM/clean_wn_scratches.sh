@@ -14,7 +14,8 @@ echo "Running job on machine `uname -a`"
 function peval { echo "--> $@"; eval "$@"; }
 # function peval { echo "--> $@"; }
 
-peval "cd /scratch/${USER}"
+peval "cd /scratch/${USER}" || { echo 'cd failed' ; exit 1; }
+peval "ls | wc -l"
 
 for FILE in $(ls)
 do

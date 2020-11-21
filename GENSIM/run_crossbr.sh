@@ -63,7 +63,7 @@ peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${N
 # cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}
 
 # copy logfile and param_card for later scrutiny
-mkdir -p $TARGETFOLDER/$PROCNAME
+peval "mkdir -p $TARGETFOLDER/$PROCNAME"
 echo "--> Copying logfile and param_card.dat to target directory:"
 peval "cp $LOGDIR/${SLURM_JOB_NAME}-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}.out $TARGETFOLDER/$PROCNAME/${JOBNAME}_crosssection.txt"
 # cp $LOGDIR/${SLURM_JOB_NAME}-${SLURM_ARRAY_JOB_ID}-${SLURM_ARRAY_TASK_ID}.out $TARGETFOLDER/$PROCNAME/${JOBNAME}_crosssection.txt
@@ -76,7 +76,6 @@ peval "cd .."
 peval "ls"
 peval "rm -rf $WORKDIR"
 peval "ls"
-# rm $COMMANDFILE
 
 
 echo Done with daughter-job.
