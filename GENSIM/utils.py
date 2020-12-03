@@ -86,6 +86,70 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
         b_wait = (n_completed < n_jobs)
     DEVNULL.close()
 
+def getoutput_commands_parallel(commands=[], ncores=10, niceness=10, max_time=10):
+    n_running = 0
+    n_completed = 0
+    n_jobs = len(commands)
+    processes = []
+    commands_resub = []
+    for tuple in commands:
+        c = tuple[0]
+        info = tuple[1]
+        c = 'nice -n %i %s' % (niceness, c)
+        b_wait = (n_running >= ncores)
+        while b_wait:
+            n_running = 0
+            n_completed = 0
+            for tuple in processes:
+                proc = tuple[0]
+                if proc.poll() == None:
+                    n_running += 1
+                else:
+                    n_completed += 1
+            percent = round(float(n_completed)/float(n_jobs)*100, 1)
+            sys.stdout.write( '{0:d} of {1:d} ({2:4.2f}%) jobs done.\r'.format(n_completed, n_jobs, percent))
+            sys.stdout.flush()
+            time_to_sleep = 0.5
+            if len(commands) > 10000:
+                time_to_sleep = time_to_sleep/10000.
+            time.sleep(time_to_sleep)
+            b_wait = (n_running >= ncores)
+
+        n_running += 1
+        p = subprocess.Popen(c, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        processes.append((p, info, c))
+    # submitted all jobs, now just wait.
+    b_wait = (n_completed < n_jobs)
+    time_gone = 0
+    while b_wait:
+        n_running = 0
+        n_completed = 0
+        for tuple in processes:
+            proc = tuple[0]
+            if proc.poll() == None: n_running += 1
+            else:                   n_completed += 1
+        percent = float(n_completed)/float(n_jobs)*100
+        sys.stdout.write( '{0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(n_completed, n_jobs, percent))
+        sys.stdout.flush()
+        timestep = 2
+        time.sleep(2)
+        time_gone += timestep
+        b_wait = (n_completed < n_jobs) and (time_gone < max_time)
+    outputs = []
+    # commands_resub = []
+    resub_outputs = []
+    for tuple in processes:
+        if tuple[0].poll() is not None:
+            outputs.append((tuple[0].communicate()[0], tuple[1]))
+        else:
+            tuple[0].kill()
+            commands_resub.append((tuple[2].split('nice -n %i ' % (niceness))[1], tuple[1]))
+    if len(commands_resub) > 0:
+        resub_outputs = getoutput_commands_parallel(commands_resub)
+        for o in resub_outputs:
+            outputs.append(o)
+    return outputs
+
 
 def find_closest(myList, myNumber):
     """

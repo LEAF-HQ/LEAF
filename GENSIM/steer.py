@@ -328,168 +328,168 @@ def main():
 # ----------
 # Make cards
 # ----------
-def ProduceCards():
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
+# def ProduceCards():
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 make_card(card_template_folder=cardfolder, card_output_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=True)
+#     print green('Done producing cards from templates')
+#
+# def SubmitGridpacks(submit):
+#     # Submit gridpacks based on cards created above
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#
+#                 command = 'sbatch -J gridpacks_%s -p wn -t 05:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, mgfolder, jobname, cardfolder)
+#                 print command
+#                 if submit: os.system(command)
+#
+#     if submit: print green('Done submitting gridpacks.')
+#     else:      print yellow('Would have submitted gridpacks.')
+#
+#
+#
+# def MoveGridpacks(submit):
+#     # Move gridpacks to new dir
+#     commands = []
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#
+#                 gpname = jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
+#                 sourcefile = mgfolder + '/' + gpname
+#                 targetfile = gridpackfolder + '/' + gpname
+#                 command = 'mv %s %s' % (sourcefile, targetfile)
+#                 commands.append(command)
+#                 if submit:
+#                     print green('moving gridpack \'%s\'' % (gpname))
+#                 else:
+#                     print yellow('would move gridpack \'%s\'' % (gpname))
+#     if submit:
+#         execute_commands_parallel(commands=commands, ncores=15)
+#         print green('\ndone moving gridpacks')
+#
+#
+#
+# def CleanMGArea(submit):
+#     # Clean MG area from workdirs of gridpack generation
+#     commands = []
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#                 command = 'rm -rf ' + mgfolder + '/' + jobname + '*'
+#                 commands.append(command)
+#                 if submit:
+#                     print green('removing MG files \'%s*\'' % (jobname))
+#                 else:
+#                     print yellow('would remove MG files \'%s*\'' % (jobname))
+#     if submit:
+#         execute_commands_parallel(commands=commands, ncores=15)
+#         print green('\ndone cleaning up MG area')
 
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                make_card(card_template_folder=cardfolder, card_output_folder=cardfolder, processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=True)
-    print green('Done producing cards from templates')
-
-def SubmitGridpacks(submit):
-    # Submit gridpacks based on cards created above
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-
-                command = 'sbatch -J gridpacks_%s -p wn -t 05:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, mgfolder, jobname, cardfolder)
-                print command
-                if submit: os.system(command)
-
-    if submit: print green('Done submitting gridpacks.')
-    else:      print yellow('Would have submitted gridpacks.')
 
 
-
-def MoveGridpacks(submit):
-    # Move gridpacks to new dir
-    commands = []
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-
-                gpname = jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
-                sourcefile = mgfolder + '/' + gpname
-                targetfile = gridpackfolder + '/' + gpname
-                command = 'mv %s %s' % (sourcefile, targetfile)
-                commands.append(command)
-                if submit:
-                    print green('moving gridpack \'%s\'' % (gpname))
-                else:
-                    print yellow('would move gridpack \'%s\'' % (gpname))
-    if submit:
-        execute_commands_parallel(commands=commands, ncores=15)
-        print green('\ndone moving gridpacks')
-
-
-
-def CleanMGArea(submit):
-    # Clean MG area from workdirs of gridpack generation
-    commands = []
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                jobname   = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                command = 'rm -rf ' + mgfolder + '/' + jobname + '*'
-                commands.append(command)
-                if submit:
-                    print green('removing MG files \'%s*\'' % (jobname))
-                else:
-                    print yellow('would remove MG files \'%s*\'' % (jobname))
-    if submit:
-        execute_commands_parallel(commands=commands, ncores=15)
-        print green('\ndone cleaning up MG area')
-
-
-
-def SubmitGenerationStep(submit, generation_step, mode='new'):
-    # Submit event generation jobs to the SLURM cluster
-
-    if mode is not 'new' and mode is not 'resubmit':
-        raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-
-    ncores  = 8
-    if generation_step is 'NANOAOD' or generation_step is 'MINIAOD':
-        ncores = int(ncores / 2)
-    elif generation_step is 'FLAT':
-        ncores = int(ncores / 4)
-    runtime_hrs = 10
-    if generation_step is 'NANOAOD' or generation_step is 'FLAT':
-        runtime_hrs = min(int(float(runtime_hrs)/10.), 1)
-    runtime = '%i:00:00' % (runtime_hrs)
-    #runtime = '10:00:00' # 01:00:00 -- 10:00:00
-    queue   = 'wn' if runtime_hrs > 1 else 'quick'      # quick -- wn
-
-    commandfilebase = ''
-    if mode is 'new':        commandfilebase = gensimfolder + '/commands/%s_' % (configs[generation_step]['jobnametag'])
-    elif mode is 'resubmit': commandfilebase = gensimfolder + '/commands/resubmit_%s_' % (configs[generation_step]['jobnametag'])
-
-    # Create command file for array of jobs
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                commandfilename = commandfilebase + jobname + '.txt'
-                f = open(commandfilename, 'w')
-                indices = -1
-                if mode is 'new':        indices = range(maxindex)
-                elif mode is 'resubmit': indices = missing_indices = findMissingFilesT2(filepath=T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, filename_base=configs[generation_step]['outfilenamebase'], maxindex=maxindex)
-
-                njobs = 0
-                for i in indices:
-                    outfilename = '%s_%i.root' % (configs[generation_step]['outfilenamebase'], i+1)
-                    command = ''
-                    if generation_step is not 'GENSIM':
-                        infilename   = T2_director+T2_path+'/'+configs[generation_step]['infilepathtag']+'/'+jobname+'/%s_%i.root' % (configs[generation_step]['infilenamebase'], i+1)
-                        command = getcmsRunCommand(pset=configs[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=nevents, ncores=ncores)
-                    else:
-                        infilename   = gridpackfolder + '/' + jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
-                        command = getcmsRunCommand(pset=configs[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=nevents, ncores=ncores)
-
-                    f.write(command + '\n')
-                    njobs += 1
-
-                f.close()
-                slurmjobname = ''
-                if mode is 'new':        slurmjobname = '%s' % (configs[generation_step]['jobnametag'])
-                elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (configs[generation_step]['jobnametag'])
-                command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, gensimfolder, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
-                if njobs > 0:
-                    if submit:
-                        os.system(command)
-                        print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
-                    else:
-                        print command
-                        print yellow("Would submit an array of %i jobs"%(njobs))
-
-                else:
-                    if mode is 'resubmit':
-                        print green('No jobs to resubmit.')
-                    else:
-                        print green('No jobs to submit.')
+# def SubmitGenerationStep(submit, generation_step, mode='new'):
+#     # Submit event generation jobs to the SLURM cluster
+#
+#     if mode is not 'new' and mode is not 'resubmit':
+#         raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
+#
+#     ncores  = 8
+#     if generation_step is 'NANOAOD' or generation_step is 'MINIAOD':
+#         ncores = int(ncores / 2)
+#     elif generation_step is 'FLAT':
+#         ncores = int(ncores / 4)
+#     runtime_hrs = 10
+#     if generation_step is 'NANOAOD' or generation_step is 'FLAT':
+#         runtime_hrs = min(int(float(runtime_hrs)/10.), 1)
+#     runtime = '%i:00:00' % (runtime_hrs)
+#     #runtime = '10:00:00' # 01:00:00 -- 10:00:00
+#     queue   = 'wn' if runtime_hrs > 1 else 'quick'      # quick -- wn
+#
+#     commandfilebase = ''
+#     if mode is 'new':        commandfilebase = gensimfolder + '/commands/%s_' % (configs[generation_step]['jobnametag'])
+#     elif mode is 'resubmit': commandfilebase = gensimfolder + '/commands/resubmit_%s_' % (configs[generation_step]['jobnametag'])
+#
+#     # Create command file for array of jobs
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#                 commandfilename = commandfilebase + jobname + '.txt'
+#                 f = open(commandfilename, 'w')
+#                 indices = -1
+#                 if mode is 'new':        indices = range(maxindex)
+#                 elif mode is 'resubmit': indices = missing_indices = findMissingFilesT2(filepath=T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, filename_base=configs[generation_step]['outfilenamebase'], maxindex=maxindex)
+#
+#                 njobs = 0
+#                 for i in indices:
+#                     outfilename = '%s_%i.root' % (configs[generation_step]['outfilenamebase'], i+1)
+#                     command = ''
+#                     if generation_step is not 'GENSIM':
+#                         infilename   = T2_director+T2_path+'/'+configs[generation_step]['infilepathtag']+'/'+jobname+'/%s_%i.root' % (configs[generation_step]['infilenamebase'], i+1)
+#                         command = getcmsRunCommand(pset=configs[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=nevents, ncores=ncores)
+#                     else:
+#                         infilename   = gridpackfolder + '/' + jobname + '_' + arch_tag + '_' + cmssw_tag_gp + '_tarball.tar.xz'
+#                         command = getcmsRunCommand(pset=configs[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=nevents, ncores=ncores)
+#
+#                     f.write(command + '\n')
+#                     njobs += 1
+#
+#                 f.close()
+#                 slurmjobname = ''
+#                 if mode is 'new':        slurmjobname = '%s' % (configs[generation_step]['jobnametag'])
+#                 elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (configs[generation_step]['jobnametag'])
+#                 command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime, ncores, gensimfolder, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname, commandfilename)
+#                 if njobs > 0:
+#                     if submit:
+#                         os.system(command)
+#                         print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
+#                     else:
+#                         print command
+#                         print yellow("Would submit an array of %i jobs"%(njobs))
+#
+#                 else:
+#                     if mode is 'resubmit':
+#                         print green('No jobs to resubmit.')
+#                     else:
+#                         print green('No jobs to submit.')
 
 
 def RemoveSamples(submit, generation_step):
@@ -1277,82 +1277,82 @@ def RemoveSamples(submit, generation_step):
 #                 infile_brs.Close()
 
 
+#
+#
+#
+# def SubmitTuplize(submit, generation_step):
+#     # Submit tuplize jobs to the SLURM cluster
+#     ncores = 1
+#     queue   = 'quick'       # quick -- wn
+#     runtime = '00:05:00' # 01:00:00 -- 10:00:00
+#     commandfilebase = gensimfolder + '/commands/tuplize_%s_' % (configs[generation_step]['jobnametag'])
+#
+#     # Create command file for array of jobs
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#                 outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
+#                 commandfilename = commandfilebase + jobname + '.txt'
+#                 f = open(commandfilename, 'w')
+#                 njobs = 0
+#                 for i in range(maxindex):
+#                     # infilename = T3_path + '/' + gensim_path_tag + '/' + jobname + '/GENSIM_%i.root' % (i+1)
+#                     infilename = T2_director_root + T2_path + '/' + configs[generation_step]['infilepathtag'] + '/' + jobname + '/' + configs[generation_step]['infilenamebase'] + '_' + str(i+1) + '.root'
+#                     outfilename = configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
+#                     command = '%s %s %s' % (configs[generation_step]['tuplizer'], infilename, outfilename)
+#                     f.write(command + '\n')
+#                     njobs += 1
+#                 f.close()
+#
+#                 command = 'sbatch -a 1-%s -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize.sh %s %s %s %s %s %s' % (str(maxindex), configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename, configs[generation_step]['jobnametag'])
+#                 if submit:
+#                     os.system(command)
+#                     print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
+#                 else:
+#                     print command
+#                     print yellow("Would submit an array of %i jobs for name %s"%(njobs, jobname))
 
 
 
-def SubmitTuplize(submit, generation_step):
-    # Submit tuplize jobs to the SLURM cluster
-    ncores = 1
-    queue   = 'quick'       # quick -- wn
-    runtime = '00:05:00' # 01:00:00 -- 10:00:00
-    commandfilebase = gensimfolder + '/commands/tuplize_%s_' % (configs[generation_step]['jobnametag'])
-
-    # Create command file for array of jobs
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                outfoldername = T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
-                commandfilename = commandfilebase + jobname + '.txt'
-                f = open(commandfilename, 'w')
-                njobs = 0
-                for i in range(maxindex):
-                    # infilename = T3_path + '/' + gensim_path_tag + '/' + jobname + '/GENSIM_%i.root' % (i+1)
-                    infilename = T2_director_root + T2_path + '/' + configs[generation_step]['infilepathtag'] + '/' + jobname + '/' + configs[generation_step]['infilenamebase'] + '_' + str(i+1) + '.root'
-                    outfilename = configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
-                    command = '%s %s %s' % (configs[generation_step]['tuplizer'], infilename, outfilename)
-                    f.write(command + '\n')
-                    njobs += 1
-                f.close()
-
-                command = 'sbatch -a 1-%s -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize.sh %s %s %s %s %s %s' % (str(maxindex), configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename, configs[generation_step]['jobnametag'])
-                if submit:
-                    os.system(command)
-                    print green("Submitted an array of %i jobs for name %s"%(njobs, jobname))
-                else:
-                    print command
-                    print yellow("Would submit an array of %i jobs for name %s"%(njobs, jobname))
-
-
-
-def SubmitAdd(submit, generation_step):
-    # Submit add jobs to the SLURM cluster
-    ncores = 1
-    queue   = 'quick'       # quick -- wn
-    runtime = '00:05:00' # 01:00:00 -- 10:00:00
-
-    commandfilebase = gensimfolder + '/commands/add_'
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                infoldername= T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
-                infilestring = ''
-                for i in range(maxindex):
-                    fn = infoldername +  '/' + configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
-                    infilestring = infilestring + ' ' + fn
-                outfilename = configs[generation_step]['outfilenamebase'] + '.root'
-                outfoldername = infoldername
-                commandfilename = commandfilebase + jobname + '.txt'
-                f = open(commandfilename, 'w')
-                command = 'hadd -f %s %s ; sleep 5 ; ' % (outfilename, infilestring)
-                f.write(command)
-                f.close()
-                command = 'sbatch -J add_%s -p %s -t %s --cpus-per-task %i submit_add.sh %s %s' % (configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename)
-                if submit:
-                    os.system(command)
-                    print green("Submitted job for adding tuplized samples: %s."%(jobname))
-                else:
-                    print command
-                    print yellow("Would submit job for adding tuplized samples: %s."%(jobname))
+# def SubmitAdd(submit, generation_step):
+#     # Submit add jobs to the SLURM cluster
+#     ncores = 1
+#     queue   = 'quick'       # quick -- wn
+#     runtime = '00:05:00' # 01:00:00 -- 10:00:00
+#
+#     commandfilebase = gensimfolder + '/commands/add_'
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#                 infoldername= T3_director + T3_path + '/' + campaign + '/' + configs[generation_step]['pathtag'] + '/' + jobname
+#                 infilestring = ''
+#                 for i in range(maxindex):
+#                     fn = infoldername +  '/' + configs[generation_step]['outfilenamebase'] + '_%i.root' % (i+1)
+#                     infilestring = infilestring + ' ' + fn
+#                 outfilename = configs[generation_step]['outfilenamebase'] + '.root'
+#                 outfoldername = infoldername
+#                 commandfilename = commandfilebase + jobname + '.txt'
+#                 f = open(commandfilename, 'w')
+#                 command = 'hadd -f %s %s ; sleep 5 ; ' % (outfilename, infilestring)
+#                 f.write(command)
+#                 f.close()
+#                 command = 'sbatch -J add_%s -p %s -t %s --cpus-per-task %i submit_add.sh %s %s' % (configs[generation_step]['jobnametag'], queue, runtime, ncores, arch_tag, workarea+'/'+configs[generation_step]['cmsswtag'], basefolder, outfoldername, commandfilename)
+#                 if submit:
+#                     os.system(command)
+#                     print green("Submitted job for adding tuplized samples: %s."%(jobname))
+#                 else:
+#                     print command
+#                     print yellow("Would submit job for adding tuplized samples: %s."%(jobname))
 
 
 

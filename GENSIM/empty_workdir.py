@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-
 import os, sys, math
+import glob
 from os.path import isfile, join
 import subprocess
 import time
@@ -12,14 +12,7 @@ from utils import *
 
 workdir = '/work/areimers/workdir_slurm'
 
-command = 'ls %s' % (workdir)
-filelist = subprocess.check_output(command.split(' ')).split('\n')
-print filelist[0:20]
-print len(filelist)
-
-commands = []
-for file in filelist:
-    commands.append('rm %s/%s' % (workdir, file))
-
-print commands[0:20]
-execute_commands_parallel(commands=commands, ncores=1)
+print len(glob.glob('%s/*' % workdir))
+for file in glob.glob('%s/*' % workdir):
+    # print file
+    os.remove(file)

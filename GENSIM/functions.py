@@ -229,9 +229,14 @@ def get_all_combinations(preferred_configurations, mlq_stepsize=90, mch_exp_step
 def get_best_lambda(mlq):
     return float(1.1/2. * (mlq/1000.))
 
-def findMissingFilesT2(filepath, filename_base, maxindex, gensimfolder):
+def findMissingFilesT2(filepath, filename_base, maxindex, gensimfolder, generation_step):
     missing_indices = []
     filename_base = filepath+'/'+filename_base
+    min_size = 0
+    if generation_step is 'GENSIM':
+        min_size = 1E7
+    elif generation_step is 'DR':
+        min_size = 1E9
     for idx in range(maxindex):
         filename = filename_base + '_' + str(idx+1) + '.root'
         # print 'didn\'t find file %s, going to try to open it' % (filename)
@@ -241,12 +246,33 @@ def findMissingFilesT2(filepath, filename_base, maxindex, gensimfolder):
         if returncode > 0: # opening failed
             print 'opening failed for index %i' % (idx+1)
             missing_indices.append(idx)
-        # else:
-        #     size = int(output.split()[4])
-        #     # print size
-        #     if size < 5E9: # file too small.
-        #         print 'size for index %i is %i, resubmit.' % (idx+1, size)
-        #         missing_indices.append(idx)
+        else:
+            size = int(output.split()[4])
+            # print size
+            if size < min_size: # file too small.
+                print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
+                missing_indices.append(idx)
+    return missing_indices
+
+def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
+    missing_indices = []
+    filename_base = filepath+'/'+filename_base
+    min_size = 0
+    if generation_step is 'Tuples_GENSIM':
+        min_size = 1E5
+    for idx in range(maxindex):
+        filename = filename_base + '_' + str(idx+1) + '.root'
+        result = subprocess.Popen(['ls', '-lrt', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, error = result.communicate()
+        returncode = result.returncode
+        if returncode > 0: # opening failed
+            print 'opening failed for index %i' % (idx+1)
+            missing_indices.append(idx)
+        else:
+            size = int(output.split()[4])
+            if size < min_size: # file too small.
+                print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
+                missing_indices.append(idx)
     return missing_indices
 
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
@@ -257,3 +283,7 @@ def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=Non
     elif infilename is not None and gridpack is None:
         command = 'cmsRun %s infilename=%s outfilename=%s nevents=%i nThreads=%i' % (pset, infilename, outfilename, N, ncores)
     return command
+
+def get_das_filelist(dasname):
+    command = 'dasgoclient -query="file dataset=%s"' % (dasname)
+    print command
