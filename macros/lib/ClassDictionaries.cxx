@@ -46,7 +46,7 @@ namespace std {} using namespace std;
 #include "include/Registry.h"
 #include "include/BaseHists.h"
 #include "include/Config.h"
-#include "include/GenHists.h"
+#include "include/PreselectionHists.h"
 #include "include/Electron.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -61,7 +61,6 @@ namespace std {} using namespace std;
 #include "include/ElectronHists.h"
 #include "include/JetIds.h"
 #include "include/PlottingTool.h"
-#include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
 #include "include/MuonHists.h"
 #include "include/TauIds.h"
@@ -1634,7 +1633,7 @@ namespace {
 "include/Registry.h",
 "include/BaseHists.h",
 "include/Config.h",
-"include/GenHists.h",
+"include/PreselectionHists.h",
 "include/Electron.h",
 "include/Met.h",
 "include/GenJet.h",
@@ -1649,7 +1648,6 @@ namespace {
 "include/ElectronHists.h",
 "include/JetIds.h",
 "include/PlottingTool.h",
-"include/PreselectionHists.h",
 "include/BaseTool.h",
 "include/MuonHists.h",
 "include/TauIds.h",
@@ -1704,7 +1702,7 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/Registry.h"
 #include "include/BaseHists.h"
 #include "include/Config.h"
-#include "include/GenHists.h"
+#include "include/PreselectionHists.h"
 #include "include/Electron.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
@@ -1719,7 +1717,6 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/ElectronHists.h"
 #include "include/JetIds.h"
 #include "include/PlottingTool.h"
-#include "include/PreselectionHists.h"
 #include "include/BaseTool.h"
 #include "include/MuonHists.h"
 #include "include/TauIds.h"

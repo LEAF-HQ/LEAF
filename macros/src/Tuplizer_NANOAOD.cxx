@@ -29,9 +29,14 @@ using namespace std;
 int main(int argc, char* argv[]){
 
 
-  if(argc != 3) throw runtime_error("Expected exactly two arguments. Usage: Tuplizer_NANOAOD <infilename> <outfilename>");
+  if(argc != 5) throw runtime_error("Expected exactly four arguments. Usage: Tuplizer_NANOAOD <infilename> <outfilename>");
   string inarg  = argv[1];
   string outarg = argv[2];
+  string s_idx_start = argv[3]; // start including this idx
+  string s_idx_stop = argv[4]; // stop BEFORE processing this idx
+  int idx_start = stoi(s_idx_start);
+  int idx_stop = stoi(s_idx_stop);
+
 
   TString infilename = (TString)inarg;
   TString outfilename = (TString)outarg;
@@ -45,6 +50,9 @@ int main(int argc, char* argv[]){
   TFile* outfile = new TFile(outfilename, "RECREATE");
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
   tree->Branch("Events", &event);
+
+  // int n_total = ((TTree*)infile->Get("Events"))->GetEntries();
+  // cout << green << "--> Total number of events to be processed: " << n_total << reset << endl;
 
   TTreeReader reader("Events", infile);
   TTreeReaderValue<float> genmet_pt (reader, "GenMET_pt");
@@ -193,8 +201,13 @@ int main(int argc, char* argv[]){
 
   int idx = 0;
   while (reader.Next()) {
+    if(idx < idx_start){
+      idx++;
+      continue;
+    }
+    if(idx >= idx_stop) break;
     // cout << "+++++++++++++ NEW EVENT" << endl;
-    if(((idx+1) % 500 == 0) || idx == 0) cout << green << "    --> At event: " << idx+1 << reset << endl;
+    if(((idx+1) % 1000 == 0) || idx == 0) cout << green << "    --> At event: " << idx-idx_start+1 << reset << endl;
 
     // Do GenMET
     // =========

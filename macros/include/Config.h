@@ -8,7 +8,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include "include/Event.h"
-#include "include/GenHists.h"
+#include "include/BaseHists.h"
 #include "include/CleaningModules.h"
 
 struct dataset{

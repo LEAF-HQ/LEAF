@@ -24,6 +24,7 @@ def main():
     for folder in subfolders:
         makeNewDirectory('%s/%s' % (name, folder))
 
+    # define placeholders and desired replacements
     placeholder_dict = {
     '$MYANALYSISNAME': name,
     '$MYEVENTCLASS' : '%sEvent' % (name),

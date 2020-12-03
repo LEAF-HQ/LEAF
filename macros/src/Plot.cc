@@ -19,8 +19,8 @@
 
 using namespace std;
 
-void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug = false);
-void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug = false);
+void make_plots(vector<TString> infilenames, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug = false);
+void plot_folder(vector<TFile*> infiles, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug = false);
 vector<TString> produce_infilenames(TString infolder, TString postfix, vector<TString> samples);
 vector<TString> get_foldernames(TFile* infile);
 vector<TString> get_histnames(TFile* infile, TString foldername);
@@ -41,6 +41,7 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
   vector<int> linecolors  = PlottingTool::linecolors_genlevel;
   vector<int> linestyles  = PlottingTool::linestyles_genlevel;
   TString outfolder = PlottingTool::base_path_plots;
+  TString outnameprefix = PlottingTool::prefix_plots;
 
 
 
@@ -48,12 +49,12 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
 
 
   vector<TString> infilenames = produce_infilenames(infolder, infile_postfix, samples);
-  make_plots(infilenames, outfolder, singlePDF, normalize, logy, labels, linecolors, linestyles, debug);
+  make_plots(infilenames, outfolder, outnameprefix, singlePDF, normalize, logy, labels, linecolors, linestyles, debug);
 
 
 }
 
-void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug){
+void make_plots(vector<TString> infilenames, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug){
 
   gErrorIgnoreLevel = kError;
   gStyle->SetPadTickX(1);
@@ -72,7 +73,7 @@ void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, 
   for(size_t i=0; i<foldernames.size(); i++){
 
     TString foldername = foldernames[i];
-    plot_folder(infiles, outfolder, foldername, singlePDF, normalize, logy, labels, linecolors, linestyles, debug);
+    plot_folder(infiles, outfolder, outnameprefix, foldername, singlePDF, normalize, logy, labels, linecolors, linestyles, debug);
   }
 
   for(size_t i=0; i<infiles.size(); i++){
@@ -82,7 +83,7 @@ void make_plots(vector<TString> infilenames, TString outfolder, bool singlePDF, 
 }
 
 // Function to plot plots in a single folder
-void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug){
+void plot_folder(vector<TFile*> infiles, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels, vector<int> linecolors, vector<int> linestyles, bool debug){
 
 
   cout << green << "    --> Folder: " << foldername << reset << endl;
@@ -105,7 +106,7 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
   for(size_t i=0; i<histnames.size(); i++){
     TString histname = histnames[i];
 
-    TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
+    TLegend* leg = new TLegend(0.5, 0.7, 0.9, 0.9);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(43);
@@ -141,14 +142,14 @@ void plot_folder(vector<TFile*> infiles, TString outfolder, TString foldername, 
 
     TString outfilename = "";
     if(singlePDF){
-      outfilename = outfolder + foldername + "_" + histname + ".pdf";
+      outfilename = outfolder + outnameprefix + foldername + "_" + histname + ".pdf";
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       c->Print(outfilename);
       // cout << "outfilename: " << outfilename << endl;
     }
     else{
-      outfilename = outfolder + foldername + ".pdf";
+      outfilename = outfolder + outnameprefix + foldername + ".pdf";
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       if(i==0)                     outfilename += "(";

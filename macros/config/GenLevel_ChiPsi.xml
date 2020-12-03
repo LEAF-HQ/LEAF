@@ -26,7 +26,7 @@
 
 <Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="GenlevelTool">
     <InputDatasets>
-<!--
+
         <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
             &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
         </Dataset>
@@ -34,11 +34,11 @@
         <Dataset Name="LQLQToBTau_MLQ1000_MPS983_MC1912_L1p0"         Lumi="100000"  Type="MC" >
             &LQLQToBTau_MLQ1000_MPS983_MC1912_L1p0;
         </Dataset>
--->
+
         <Dataset Name="LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0"         Lumi="100000"  Type="MC" >
             &LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0;
         </Dataset>
-<!--
+
         <Dataset Name="LQLQToBTau_MLQ1900_MPS1064_MC1794_L1p0"        Lumi="100000"  Type="MC" >
             &LQLQToBTau_MLQ1900_MPS1064_MC1794_L1p0;
         </Dataset>
@@ -46,11 +46,11 @@
         <Dataset Name="LQLQToBTauPsiChi_MLQ1000_MPS574_MC1427_L1p0"   Lumi="100000"  Type="MC" >
             &LQLQToBTauPsiChi_MLQ1000_MPS574_MC1427_L1p0;
         </Dataset>
--->
+
         <Dataset Name="LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0"   Lumi="100000"  Type="MC" >
             &LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0;
         </Dataset>
-<!--
+
         <Dataset Name="LQLQToBTauPsiChi_MLQ1900_MPS1064_MC1794_L1p0"  Lumi="100000"  Type="MC" >
             &LQLQToBTauPsiChi_MLQ1900_MPS1064_MC1794_L1p0;
         </Dataset>
@@ -58,11 +58,11 @@
         <Dataset Name="LQLQToPsiChi_MLQ1000_MPS574_MC1427_L1p0"       Lumi="100000"  Type="MC" >
             &LQLQToPsiChi_MLQ1000_MPS574_MC1427_L1p0;
         </Dataset>
--->
+
         <Dataset Name="LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0"       Lumi="100000"  Type="MC" >
             &LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0;
         </Dataset>
-<!--
+
         <Dataset Name="LQLQToPsiChi_MLQ1900_MPS1064_MC1794_L1p0"      Lumi="100000"  Type="MC" >
             &LQLQToPsiChi_MLQ1900_MPS1064_MC1794_L1p0;
         </Dataset>
@@ -74,15 +74,15 @@
         <Dataset Name="PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0"      Lumi="100000"  Type="MC" >
             &PsiPsiToLQChi_MLQ1000_MPS983_MC1912_L1p0;
         </Dataset>
--->
+
         <Dataset Name="PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0"      Lumi="100000"  Type="MC" >
             &PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0;
         </Dataset>
-<!--
+
         <Dataset Name="PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0"     Lumi="100000"  Type="MC" >
             &PsiPsiToLQChi_MLQ1900_MPS1064_MC1794_L1p0;
         </Dataset>
--->
+
     </InputDatasets>
 
     <AdditionalVariables>

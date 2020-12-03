@@ -7,7 +7,6 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include "include/Event.h"
-#include "include/GenHists.h"
 
 class PlottingTool {
 
@@ -24,6 +23,7 @@ public:
 
   void set_inpath(TString s){ base_path_analysisfiles = s;};
   void set_outpath(TString s){ base_path_plots = s;};
+  void set_outnameprefix(TString s){ prefix_plots = s;};
   void set_samplenames(vector<TString> s){ samples_genlevel = s;};
   void set_legends(vector<TString> s){ labels_genlevel = s;};
   void set_linecolors(vector<int> s){ linecolors_genlevel = s;};
@@ -35,6 +35,7 @@ public:
 
 private:
   TString base_path_analysisfiles, base_path_plots;
+  TString prefix_plots = "";
   vector<TString> samples_genlevel, labels_genlevel;
   vector<int> linecolors_genlevel, linestyles_genlevel;
   bool debug;

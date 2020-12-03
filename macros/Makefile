@@ -7,13 +7,12 @@ CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
 
 
 
-all: Tuplizer Tuplizer_NANOAOD Plotter Analyzer
+all: Tuplizer Tuplizer_NANOAOD Counter_NANOAOD Plotter Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
 	@for d in $(subdirs); do ( $(MAKE) -C $$d lib ) || exit 1; done
 	@echo "--> Creating Analyzer"
-	@echo "$(CUSTOMLIBS)"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS)
 
 Tuplizer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer.o
@@ -23,6 +22,10 @@ Tuplizer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer.o
 Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.o
 	@echo "--> Creating Tuplizer_NANOAOD"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+Counter_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Counter_NANOAOD.o
+	@echo "--> Creating Counter_NANOAOD"
+	@$(CC) $(OBJECTS) $(OBJDIR)/Counter_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 Plotter: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Plotter.o
 	@echo "--> Creating Plotter"

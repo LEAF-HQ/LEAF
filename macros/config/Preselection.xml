@@ -3,7 +3,7 @@
 
 
 <!ENTITY TargetLumi  "1" >
-<!ENTITY outfilepath "/work/areimers/LQDM/UL17/Preselection" >
+<!ENTITY outfilepath "/work/areimers/LQDM/UL17/test" >
 
 
 <!ENTITY LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0        SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0.xml"        >
@@ -24,7 +24,7 @@
 ]>
 
 
-<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="TestTool">
+<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="PreselectionTool">
     <InputDatasets>
 
         <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
