@@ -10,3 +10,10 @@
 .nfs*
 *DS_Store
 .fuse*
+GENSIM/crosssections/ChiPsi/LQLQ/*
+GENSIM/crosssections/ChiPsi/LQLQToBTau/*
+GENSIM/crosssections/ChiPsi/LQLQToBTauPsiChi/*
+GENSIM/crosssections/ChiPsi/LQLQToPsiChi/*
+GENSIM/crosssections/ChiPsi/PsiPsi/*
+GENSIM/NanoAODTools/
+GENSIM/exampleAnalysis.py
