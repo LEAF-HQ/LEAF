@@ -28,7 +28,7 @@ class Storage_DAS(Storage):
 class Storage_T2PSI(Storage):
     def __init__(self, path):
         self.director = 'root://storage01.lcg.cscs.ch/'
-        self.path = path
+        self.path = '/pnfs/lcg.cscs.ch/cms/trivcat' + path
         self.filelist = self.get_file_list()
 
     def get_file_list(self):
@@ -44,7 +44,7 @@ class Storage_T2PSI(Storage):
 class Storage_T3PSI(Storage):
     def __init__(self, path):
         self.director = 'root://t3dcachedb03.psi.ch/'
-        self.path = path
+        self.path = '/pnfs/psi.ch/cms/trivcat' + path
         self.filelist = self.get_file_list()
 
     # if the path does not yet exist, create it

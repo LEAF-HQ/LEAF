@@ -182,9 +182,11 @@ class GensimRunner:
                     slurmjobname = ''
                     if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
                     elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
+                    # jobs_per_sample_string = '%10' if mode == 'new' else ''
                     command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.gensimfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
                     if njobs > 0:
                         if self.submit:
+                            # print command
                             os.system(command)
                             print green("  --> Submitted an array of %i jobs for name %s"%(njobs, jobname))
                         else:
@@ -258,6 +260,28 @@ class GensimRunner:
                         else:
                             print green('  --> No jobs to submit for job %s.' % (jobname))
 
-
-
-#
+    def RemoveSamples(self, generation_step):
+        # Remove old samples from the T2 if they are no longer needed. This saves A LOT of space. This can run locally from the login node since it recursively deletes the entire folder.
+        # Loop through samples to find all that should be deleted
+        commands = []
+        for processname in self.processnames:
+            allowed_configs = []
+            for config in self.configs:
+                if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
+                    allowed_configs.append(config)
+                else:
+                    print yellow('--> Skip config %s for process \'%s\'' % (config, processname))
+            for config in allowed_configs:
+                for lamb in self.lambdas:
+                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
+                    jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
+                    samplepath    = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname
+                    command       = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
+                    # print command
+                    if self.submit:
+                        print green('--> Will delete files from job %s for generation step %s'%(jobname, generation_step))
+                    else:
+                        print yellow('--> Would delete files from job %s for generation step %s'%(jobname, generation_step))
+                    commands.append(command)
+        if self.submit:
+            execute_commands_parallel(commands=commands, niceness=None)

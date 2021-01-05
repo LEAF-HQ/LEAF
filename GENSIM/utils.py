@@ -50,7 +50,8 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
     processes = []
     DEVNULL = open(os.devnull, 'wb')
     for c in commands:
-        c = 'nice -n %i %s' % (niceness, c)
+        if niceness is not None:
+            c = 'nice -n %i %s' % (niceness, c)
         b_wait = (n_running >= ncores)
         while b_wait:
             n_running = 0
@@ -70,6 +71,7 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
             b_wait = (n_running >= ncores)
         n_running += 1
         p = subprocess.Popen(c, stdout=DEVNULL, stderr=DEVNULL, shell=True)
+        # p = subprocess.Popen(c, shell=True)
         processes.append(p)
     # submitted all jobs, now just wait.
     b_wait = (n_completed < n_jobs)
@@ -145,7 +147,7 @@ def getoutput_commands_parallel(commands=[], ncores=10, niceness=10, max_time=10
             tuple[0].kill()
             commands_resub.append((tuple[2].split('nice -n %i ' % (niceness))[1], tuple[1]))
     if len(commands_resub) > 0:
-        resub_outputs = getoutput_commands_parallel(commands_resub)
+        resub_outputs = getoutput_commands_parallel(commands_resub, max_time=max_time)
         for o in resub_outputs:
             outputs.append(o)
     return outputs

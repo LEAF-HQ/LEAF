@@ -260,6 +260,8 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
     min_size = 0
     if generation_step is 'Tuples_GENSIM':
         min_size = 1E5
+    if generation_step is 'Tuples_NANOAOD':
+        min_size = 1E5
     for idx in range(maxindex):
         filename = filename_base + '_' + str(idx+1) + '.root'
         result = subprocess.Popen(['ls', '-lrt', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -283,7 +285,3 @@ def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=Non
     elif infilename is not None and gridpack is None:
         command = 'cmsRun %s infilename=%s outfilename=%s nevents=%i nThreads=%i' % (pset, infilename, outfilename, N, ncores)
     return command
-
-def get_das_filelist(dasname):
-    command = 'dasgoclient -query="file dataset=%s"' % (dasname)
-    print command

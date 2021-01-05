@@ -33,6 +33,7 @@ mchs_exp_lqlq_sm = [2.0] # to reasonable precision, the LQ->btau decay kinematic
 lambdas_lqlq_sm  = [1.0, 'best']
 
 processes_lqlq_dark = ['LQLQToBTauPsiChi', 'LQLQToPsiChi']
+# processes_lqlq_dark = ['LQLQToPsiChi']
 mlqs_lqlq_dark     = [1000, 1400, 1800, 2200, 2600]
 # mchs_exp_lqlq_dark = [2.0, 2.33, 2.66, 3.0, 3.33, 3.66, 4.0, 4.33] #Too many! do a coarser grid before!
 mchs_exp_lqlq_dark = [2.0, 2.66, 3.33, 4.0, 4.33]
@@ -198,7 +199,7 @@ ensureDirectory(workdir_slurm)
 
 
 
-submit = False
+submit = True
 
 
 CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, gensimfolder=gensimfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
@@ -221,7 +222,16 @@ EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, c
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='new')
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='resubmit')
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='new')
-EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='new')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_sm.RemoveSamples(generation_step='DR')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='new')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
+EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 
@@ -234,7 +244,16 @@ EventGenerator_lqlq_dark = GensimRunner(processnames=processes_lqlq_dark, tag=ta
 # EventGenerator_lqlq_dark.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='new')
 # EventGenerator_lqlq_dark.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='resubmit')
 # EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='new')
-EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='new')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_dark.RemoveSamples(generation_step='DR')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='new')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='resubmit')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
+EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, configs=mass_configurations_psipsi, lambdas=lambdas_psipsi, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, gensimfolder=gensimfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
@@ -246,7 +265,16 @@ EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, con
 # EventGenerator_psipsi.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='new')
 # EventGenerator_psipsi.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='resubmit')
 # EventGenerator_psipsi.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='new')
-EventGenerator_psipsi.SubmitGenerationStep(generation_step='DR', ncores=2, runtime=(10,00), mode='resubmit')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='new')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='resubmit')
+# EventGenerator_psipsi.RemoveSamples(generation_step='DR')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='new')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00), mode='resubmit')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
+EventGenerator_psipsi.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 

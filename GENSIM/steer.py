@@ -492,29 +492,29 @@ def main():
 #                         print green('No jobs to submit.')
 
 
-def RemoveSamples(submit, generation_step):
-    # Remove old samples from the T2 if they are no longer needed. This saves A LOT of space. This can run locally from the login node since it recursively deletes the entire folder.
-
-    # Loop through samples to find all that should be deleted
-    commands = []
-    for processname in processes:
-        for config in mass_configurations:
-            if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
-                print yellow('Skip config %s for process \'%s\'' % (config, processname))
-                continue
-            for lamb in lambdas:
-                mlq, mps, mch = get_mlq_mps_mch(config)
-                if lamb == 'best':
-                    lamb = preferred_lambdas[mlq]
-                jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-                samplepath   = T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname
-                command  = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
-
-                print command
-                commands.append(command)
-
-    if submit:
-        execute_commands_parallel(commands=commands)
+# def RemoveSamples(submit, generation_step):
+#     # Remove old samples from the T2 if they are no longer needed. This saves A LOT of space. This can run locally from the login node since it recursively deletes the entire folder.
+#
+#     # Loop through samples to find all that should be deleted
+#     commands = []
+#     for processname in processes:
+#         for config in mass_configurations:
+#             if is_config_excluded(excluded_configurations=excluded_configurations, config=config, processname=processname):
+#                 print yellow('Skip config %s for process \'%s\'' % (config, processname))
+#                 continue
+#             for lamb in lambdas:
+#                 mlq, mps, mch = get_mlq_mps_mch(config)
+#                 if lamb == 'best':
+#                     lamb = preferred_lambdas[mlq]
+#                 jobname      = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+#                 samplepath   = T2_director+T2_path+'/'+configs[generation_step]['pathtag']+'/'+jobname
+#                 command  = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
+#
+#                 print command
+#                 commands.append(command)
+#
+#     if submit:
+#         execute_commands_parallel(commands=commands)
 
 
 

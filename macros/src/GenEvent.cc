@@ -22,6 +22,8 @@ using namespace std;
 GenEvent::GenEvent(){
   genmet                   = new Met;
   genmet_invis             = new Met;
+
+  GenParticle p;
   genparticles_hard        = new vector<GenParticle>;
   genparticles_final       = new vector<GenParticle>;
   genparticles_visibletaus = new vector<GenParticle>;
@@ -61,6 +63,7 @@ void GenEvent::reset(){
   delete genparticles_final;
   delete genparticles_visibletaus;
   delete genjets;
+  GenParticle p;
   genmet                   = new Met;
   genmet_invis             = new Met;
   genparticles_hard        = new vector<GenParticle>;

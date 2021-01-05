@@ -6,7 +6,7 @@
 #include <TFile.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
-#include "include/Event.h"
+// #include "include/Event.h"
 
 class PlottingTool {
 
@@ -24,10 +24,11 @@ public:
   void set_inpath(TString s){ base_path_analysisfiles = s;};
   void set_outpath(TString s){ base_path_plots = s;};
   void set_outnameprefix(TString s){ prefix_plots = s;};
-  void set_samplenames(vector<TString> s){ samples_genlevel = s;};
-  void set_legends(vector<TString> s){ labels_genlevel = s;};
-  void set_linecolors(vector<int> s){ linecolors_genlevel = s;};
-  void set_linestyles(vector<int> s){ linestyles_genlevel = s;};
+  void set_samplenames(std::vector<TString> s){ samples = s;};
+  void set_legends(std::map<TString, TString> s){ labels = s;};
+  void set_colors(std::map<TString, int> s){ colors = s;};
+  void set_linestyles(std::map<TString, int> s){ linestyles = s;};
+  void set_stacks(std::vector<TString> s){ stacks = s;};
   void set_debug(bool s){ debug = s;};
 
 
@@ -36,8 +37,9 @@ public:
 private:
   TString base_path_analysisfiles, base_path_plots;
   TString prefix_plots = "";
-  vector<TString> samples_genlevel, labels_genlevel;
-  vector<int> linecolors_genlevel, linestyles_genlevel;
+  std::vector<TString> samples, stacks;
+  std::map<TString, TString> labels;
+  std::map<TString, int> colors, linestyles;
   bool debug;
 
 

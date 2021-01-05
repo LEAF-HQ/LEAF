@@ -19,8 +19,6 @@ class GenEvent : public Event{
 public:
   // Constructors, destructor
   GenEvent();
-  // GenEvent(const GenEvent &) = default;
-  // GenEvent & operator = (const GenEvent &) = default;
   ~GenEvent();
 
   void clear();
@@ -32,5 +30,4 @@ public:
   vector<GenParticle>* genparticles_final;
   vector<GenParticle>* genparticles_visibletaus;
   vector<GenJet>* genjets;
-
 };

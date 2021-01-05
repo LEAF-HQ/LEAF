@@ -25,19 +25,23 @@ using namespace std;
 // TLorentzVector p4sumvis(vector<GenParticle> particles);
 // vector<reco::GenParticle> finalDaughters(reco::GenParticle particle, vector<reco::GenParticle> daus);
 
+// template class std::vector<GenParticle>;
 
 int main(int argc, char* argv[]){
 
 
-  if(argc != 5) throw runtime_error("Expected exactly four arguments. Usage: Tuplizer_NANOAOD <infilename> <outfilename>");
-  string inarg  = argv[1];
-  string outarg = argv[2];
-  string s_idx_start = argv[3]; // start including this idx
-  string s_idx_stop = argv[4]; // stop BEFORE processing this idx
+  if(argc != 6) throw runtime_error("Expected exactly five arguments. Usage: Tuplizer_NANOAOD <type> <infilename> <outfilename> <idx_start> <idx_stop>");
+  TString type = (TString)argv[1];
+  if(!(type == "MC" || type == "DATA")) throw runtime_error("Invalid event type specified, can be 'MC' or 'DATA'.");
+  string inarg  = argv[2];
+  string outarg = argv[3];
+  string s_idx_start = argv[4]; // start including this idx
+  string s_idx_stop = argv[5]; // stop BEFORE processing this idx
   int idx_start = stoi(s_idx_start);
   int idx_stop = stoi(s_idx_stop);
 
-
+  bool is_mc = false;
+  if(type == "MC") is_mc = true;
   TString infilename = (TString)inarg;
   TString outfilename = (TString)outarg;
   cout << green << "--> Tuplizing input file: " << infilename << reset << endl;
@@ -55,26 +59,51 @@ int main(int argc, char* argv[]){
   // cout << green << "--> Total number of events to be processed: " << n_total << reset << endl;
 
   TTreeReader reader("Events", infile);
-  TTreeReaderValue<float> genmet_pt (reader, "GenMET_pt");
-  TTreeReaderValue<float> genmet_phi(reader, "GenMET_phi");
+  TString varname = "MET_pt"; //dummy for data
+  if(is_mc) varname = "GenMET_pt";
+  TTreeReaderValue<float> genmet_pt(reader, varname);
+  if(is_mc) varname = "GenMET_phi";
+  TTreeReaderValue<float> genmet_phi(reader, varname);
 
-  TTreeReaderValue<unsigned int> genjet_n(reader, "nGenJet");
-  TTreeReaderArray<float> genjet_pt(reader, "GenJet_pt");
-  TTreeReaderArray<float> genjet_eta(reader, "GenJet_eta");
-  TTreeReaderArray<float> genjet_phi(reader, "GenJet_phi");
-  TTreeReaderArray<float> genjet_mass(reader, "GenJet_mass");
+  varname = "nJet"; //dummy
+  if(is_mc) varname = "nGenJet";
+  TTreeReaderValue<unsigned int> genjet_n(reader, varname);
+  varname = "MET_pt"; //dummy for data
+  if(is_mc) varname = "GenJet_pt";
+  TTreeReaderArray<float> genjet_pt(reader, varname);
+  if(is_mc) varname = "GenJet_eta";
+  TTreeReaderArray<float> genjet_eta(reader, varname);
+  if(is_mc) varname = "GenJet_phi";
+  TTreeReaderArray<float> genjet_phi(reader, varname);
+  if(is_mc) varname = "GenJet_mass";
+  TTreeReaderArray<float> genjet_mass(reader, varname);
 
-  TTreeReaderValue<unsigned int> genparticle_n(reader, "nGenPart");
-  TTreeReaderArray<float> genparticle_pt(reader, "GenPart_pt");
-  TTreeReaderArray<float> genparticle_eta(reader, "GenPart_eta");
-  TTreeReaderArray<float> genparticle_phi(reader, "GenPart_phi");
-  TTreeReaderArray<float> genparticle_mass(reader, "GenPart_mass");
-  TTreeReaderArray<int> genparticle_pdgId(reader, "GenPart_pdgId");
-  TTreeReaderArray<int> genparticle_statusFlags(reader, "GenPart_statusFlags");
-  TTreeReaderArray<int> genparticle_status(reader, "GenPart_status");
-  TTreeReaderArray<int> genparticle_idxmother(reader, "GenPart_genPartIdxMother");
 
-  TTreeReaderValue<float> genWeight (reader, "genWeight");
+  varname = "nJet"; //dummy
+  if(is_mc) varname = "nGenPart";
+  TTreeReaderValue<unsigned int> genparticle_n(reader, varname);
+  varname = "MET_pt"; //dummy
+  if(is_mc) varname = "GenPart_pt";
+  TTreeReaderArray<float> genparticle_pt(reader, varname);
+  if(is_mc) varname = "GenPart_eta";
+  TTreeReaderArray<float> genparticle_eta(reader, varname);
+  if(is_mc) varname = "GenPart_phi";
+  TTreeReaderArray<float> genparticle_phi(reader, varname);
+  if(is_mc) varname = "GenPart_mass";
+  TTreeReaderArray<float> genparticle_mass(reader, varname);
+  varname = "Jet_jetId"; //dummys
+  if(is_mc) varname = "GenPart_pdgId";
+  TTreeReaderArray<int> genparticle_pdgId(reader, varname);
+  if(is_mc) varname = "GenPart_statusFlags";
+  TTreeReaderArray<int> genparticle_statusFlags(reader, varname);
+  if(is_mc) varname = "GenPart_status";
+  TTreeReaderArray<int> genparticle_status(reader, varname);
+  if(is_mc) varname = "GenPart_genPartIdxMother";
+  TTreeReaderArray<int> genparticle_idxmother(reader, varname);
+
+  varname = "MET_pt"; //dummy for data
+  if(is_mc) varname = "genWeight";
+  TTreeReaderValue<float> genWeight (reader, varname);
 
   TTreeReaderValue<float> met_pt (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
@@ -94,8 +123,11 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<int>   jet_pu_id(reader, "Jet_puId");
   TTreeReaderArray<float> jet_raw_factor(reader, "Jet_rawFactor");
   TTreeReaderArray<float> jet_muon_sub_raw_factor(reader, "Jet_muonSubtrFactor");
-  TTreeReaderArray<int>   jet_parton_flavor(reader, "Jet_partonFlavour");
-  TTreeReaderArray<int>   jet_hadron_flavor(reader, "Jet_hadronFlavour");
+  varname = "Jet_jetId";
+  if(is_mc) varname = "Jet_partonFlavour";
+  TTreeReaderArray<int>   jet_parton_flavor(reader, varname);
+  if(is_mc) varname = "Jet_hadronFlavour";
+  TTreeReaderArray<int>   jet_hadron_flavor(reader, varname);
   TTreeReaderArray<int>   jet_n_constituents(reader, "Jet_nConstituents");
   TTreeReaderArray<int>   jet_n_muons(reader, "Jet_nMuons");
   TTreeReaderArray<int>   jet_n_electrons(reader, "Jet_nElectrons");
@@ -108,7 +140,9 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<unsigned int> tau_n(reader, "nTau");
   TTreeReaderArray<int> tau_charge(reader, "Tau_charge");
   TTreeReaderArray<int> tau_decay_mode(reader, "Tau_decayMode");
-  TTreeReaderArray<unsigned char> tau_gen_part_flav(reader, "Tau_genPartFlav");
+  varname = "Tau_idDeepTau2017v2p1VSe";
+  if(is_mc) varname = "Tau_genPartFlav";
+  TTreeReaderArray<unsigned char> tau_gen_part_flav(reader, varname);
   TTreeReaderArray<unsigned char> tau_id_deeptau_vse(reader, "Tau_idDeepTau2017v2p1VSe");
   TTreeReaderArray<unsigned char> tau_id_deeptau_vsmu(reader, "Tau_idDeepTau2017v2p1VSmu");
   TTreeReaderArray<unsigned char> tau_id_deeptau_vsjet(reader, "Tau_idDeepTau2017v2p1VSjet");
@@ -164,7 +198,9 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<unsigned char> muon_puppi_iso(reader, "Muon_puppiIsoId");
   TTreeReaderArray<unsigned char> muon_tk_iso(reader, "Muon_tkIsoId");
   // for gen_part_flav
-  TTreeReaderArray<unsigned char> muon_gen_part_flav(reader, "Muon_genPartFlav");
+  varname = "Muon_miniIsoId";
+  if(is_mc) varname = "Muon_genPartFlav";
+  TTreeReaderArray<unsigned char> muon_gen_part_flav(reader, varname);
 
   // Electrons
   TTreeReaderValue<unsigned int> electron_n(reader, "nElectron");
@@ -208,108 +244,93 @@ int main(int argc, char* argv[]){
     if(idx >= idx_stop) break;
     // cout << "+++++++++++++ NEW EVENT" << endl;
     if(((idx+1) % 1000 == 0) || idx == 0) cout << green << "    --> At event: " << idx-idx_start+1 << reset << endl;
+    event.is_data = !is_mc;
+    if(is_mc){
+      // Do GenMET
+      // =========
+      event.genmet->set_pt(*genmet_pt);
+      event.genmet->set_phi(*genmet_phi);
 
-    // Do GenMET
-    // =========
+      // Do GenJets
+      // ==========
+      for(size_t i=0; i<*genjet_n; i++){
+        GenJet gj;
+        gj.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
 
-    event.genmet->set_pt(*genmet_pt);
-    event.genmet->set_phi(*genmet_phi);
-
-    // Do GenJets
-    // ==========
-
-    for(size_t i=0; i<*genjet_n; i++){
-      GenJet gj;
-      gj.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
-
-      // // remove NP particles that have been clustered into a jet from the jet. Only happens for DM.
-      // for(size_t j=0; j<gjs->at(i).getGenConstituents().size(); j++){
-      //   int id = abs(gjs->at(i).getGenConstituents().at(j)->pdgId());
-      //   for(size_t k=0; k<npids.size(); k++){
-      //     if(id == npids[k]){
-      //
-      //       //Get NP 4-momentum
-      //       GenParticle np;
-      //       np.set_p4(gjs->at(i).getGenConstituents().at(j)->pt(), gjs->at(i).getGenConstituents().at(j)->eta(), gjs->at(i).getGenConstituents().at(j)->phi(), gjs->at(i).getGenConstituents().at(j)->mass());
-      //
-      //       //Remove np 4-momentum
-      //       gj.set_p4(gj.p4() - np.p4());
-      //       n_const_removed++;
-      //     }
-      //   }
-      // }
-
-      // save only genjets with at least 10 GeV (NanoAOD cut) and |eta| < 5
-      if(gj.pt() < 10. || fabs(gj.eta()) > 5.) continue;
-      event.genjets->emplace_back(gj);
-    }
-
-    // Do GenParticles
-    // ===============
-
-    int flag_ishard = pow(2, 7);
-    int flag_isfinal = pow(2, 13);
-    int flag_isfromhardtau = pow(2, 9); //isHardProcessTauDecayProduct in https://github.com/cms-sw/cmssw/blob/master/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
-    for(size_t i=0; i<*genparticle_n; i++){
-      int id = fabs(genparticle_pdgId[i]);
-      int status_flag = genparticle_statusFlags[i];
-      bool is_hard = ((flag_ishard&status_flag) == flag_ishard);
-      bool is_final = ((flag_isfinal&status_flag) == flag_isfinal);
-      bool keepfinal = false;
-      GenParticle gp;
-      gp.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
-      gp.set_pdgid(genparticle_pdgId[i]);
-
-      if(is_final){
-        //keep, if final particle is b, t, tau, or nutau
-        for(size_t j=0; j<npids.size(); j++){
-          if(id == npids[j]) keepfinal = true;
-        }
-        if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
-      }
-      if(keepfinal){
-        event.genparticles_final->emplace_back(gp);
-        // event.genevent->genparticles_final->emplace_back(gp);
-      }
-      if(is_hard){
-        event.genparticles_hard->emplace_back(gp);
-        // event.genevent->genparticles_hard->emplace_back(gp);
+        // save only genjets with at least 10 GeV (NanoAOD cut) and |eta| < 5
+        if(gj.pt() < 10. || fabs(gj.eta()) > 5.) continue;
+        event.genjets->emplace_back(gj);
       }
 
-      // find the visible parts of the taus from the hard process
-      if (id == 15 && is_final){
-        TLorentzVector p4_vis;
-        for(size_t j=0; j<*genparticle_n; j++){
-          if(fabs(genparticle_pdgId[j]) == 12 || fabs(genparticle_pdgId[j]) == 14 || fabs(genparticle_pdgId[j]) == 16) continue;
-          int thisstatusflag = genparticle_statusFlags[j];
-          //                  is_fromhardtau                             &&        is_finalstate
-          if(((flag_isfromhardtau&thisstatusflag) == flag_isfromhardtau) && (genparticle_status[j] == 1)){
+      // Do GenParticles
+      // ===============
+      int flag_ishard = pow(2, 7);
+      int flag_isfinal = pow(2, 13);
+      int flag_isfromhardtau = pow(2, 9); //isHardProcessTauDecayProduct in https://github.com/cms-sw/cmssw/blob/master/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
+      for(size_t i=0; i<*genparticle_n; i++){
+        int id = fabs(genparticle_pdgId[i]);
+        int status_flag = genparticle_statusFlags[i];
+        bool is_hard = ((flag_ishard&status_flag) == flag_ishard);
+        bool is_final = ((flag_isfinal&status_flag) == flag_isfinal);
+        bool keepfinal = false;
+        GenParticle gp;
+        gp.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
+        gp.set_pdgid(genparticle_pdgId[i]);
 
-            // check if this stable particle comes from this tau or another one. Go backwards in the chain.
-            unsigned int checkidx = genparticle_idxmother[j];
-            while(fabs(genparticle_pdgId[checkidx]) != 15){
-              checkidx = genparticle_idxmother[checkidx];
-            }
-            // if arriving here, particle j indeed comes from this tau.
-            if(checkidx == i){
-              TLorentzVector v;
-              v.SetPtEtaPhiM(genparticle_pt[j], genparticle_eta[j], genparticle_phi[j], genparticle_mass[j]);
-              p4_vis += v;
-            }
-
+        if(is_final){
+          //keep, if final particle is b, t, tau, or nutau
+          for(size_t j=0; j<npids.size(); j++){
+            if(id == npids[j]) keepfinal = true;
           }
+          if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
         }
-        GenParticle taudau_vis;
-        taudau_vis.set_p4(p4_vis);
-        taudau_vis.set_pdgid(genparticle_pdgId[i]);
-        event.genparticles_visibletaus->emplace_back(taudau_vis);
+        if(keepfinal){
+          event.genparticles_final->emplace_back(gp);
+          // event.genevent->genparticles_final->emplace_back(gp);
+        }
+        if(is_hard){
+          event.genparticles_hard->emplace_back(gp);
+          // event.genevent->genparticles_hard->emplace_back(gp);
+        }
+
+        // find the visible parts of the taus from the hard process
+        if (id == 15 && is_final){
+          TLorentzVector p4_vis;
+          for(size_t j=0; j<*genparticle_n; j++){
+            if(fabs(genparticle_pdgId[j]) == 12 || fabs(genparticle_pdgId[j]) == 14 || fabs(genparticle_pdgId[j]) == 16) continue;
+            int thisstatusflag = genparticle_statusFlags[j];
+            //                  is_fromhardtau                             &&        is_finalstate
+            if(((flag_isfromhardtau&thisstatusflag) == flag_isfromhardtau) && (genparticle_status[j] == 1)){
+
+              // check if this stable particle comes from this tau or another one. Go backwards in the chain.
+              unsigned int checkidx = genparticle_idxmother[j];
+              while(fabs(genparticle_pdgId[checkidx]) != 15){
+                checkidx = genparticle_idxmother[checkidx];
+              }
+              // if arriving here, particle j indeed comes from this tau.
+              if(checkidx == i){
+                TLorentzVector v;
+                v.SetPtEtaPhiM(genparticle_pt[j], genparticle_eta[j], genparticle_phi[j], genparticle_mass[j]);
+                p4_vis += v;
+              }
+
+            }
+          }
+          GenParticle taudau_vis;
+          taudau_vis.set_p4(p4_vis);
+          taudau_vis.set_pdgid(genparticle_pdgId[i]);
+          event.genparticles_visibletaus->emplace_back(taudau_vis);
+        }
+
       }
 
+      // Do Genweight
+      // ============
+      event.weight = *genWeight;
     }
-
-    // Do Genweight
-    // ============
-    event.weight = *genWeight;
+    else{
+      event.weight = 1.;
+    }
 
     // Do MET
     // ======
@@ -333,8 +354,10 @@ int main(int argc, char* argv[]){
       j.set_pu_id(jet_pu_id[i]);
       j.set_raw_factor(jet_raw_factor[i]);
       j.set_muon_sub_raw_factor(jet_muon_sub_raw_factor[i]);
-      j.set_parton_flavor(jet_parton_flavor[i]);
-      j.set_hadron_flavor(jet_hadron_flavor[i]);
+      if(is_mc){
+        j.set_parton_flavor(jet_parton_flavor[i]);
+        j.set_hadron_flavor(jet_hadron_flavor[i]);
+      }
       j.set_n_constituents(jet_n_constituents[i]);
       j.set_n_muons(jet_n_muons[i]);
       j.set_n_electrons(jet_n_electrons[i]);
@@ -511,5 +534,6 @@ int main(int argc, char* argv[]){
   // tree->OptimizeBaskets();
   tree->Write();
   outfile->Close();
+
   cout << green << "--> Successfully finished tuplization." << reset << endl;
 }

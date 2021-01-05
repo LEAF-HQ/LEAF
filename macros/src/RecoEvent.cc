@@ -24,6 +24,7 @@ RecoEvent::RecoEvent(){
   taus = new vector<Tau>;
   muons = new vector<Muon>;
   electrons = new vector<Electron>;
+  is_data = false;
 }
 
 RecoEvent::~RecoEvent(){
@@ -60,5 +61,6 @@ void RecoEvent::reset(){
   taus = new vector<Tau>;
   muons = new vector<Muon>;
   electrons = new vector<Electron>;
+  is_data = false;
 
 }

@@ -1,6 +1,5 @@
 #include <cmath>
 #include <iostream>
-#include "include/PlottingTool.h"
 #include "include/constants.h"
 #include "include/Config.h"
 #include <TString.h>

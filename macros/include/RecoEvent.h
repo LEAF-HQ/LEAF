@@ -26,6 +26,7 @@ public:
   void clear();
   void reset();
 
+  bool is_data;
   Met* met;
   vector<Jet>* jets;
   vector<Tau>* taus;
