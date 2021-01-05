@@ -17,3 +17,6 @@ GENSIM/crosssections/ChiPsi/LQLQToPsiChi/*
 GENSIM/crosssections/ChiPsi/PsiPsi/*
 GENSIM/NanoAODTools/
 GENSIM/exampleAnalysis.py
+macros/obj/*
+macros/lib/*
+macros/bin/*
