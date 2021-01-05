@@ -50,14 +50,14 @@ namespace std {} using namespace std;
 #include "include/Electron.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/Tau.h"
+#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/ElectronIds.h"
 #include "include/FlavorParticle.h"
-#include "include/cosmetics.h"
+#include "include/Tau.h"
 #include "include/ElectronHists.h"
 #include "include/JetIds.h"
 #include "include/BaseTool.h"
@@ -65,7 +65,6 @@ namespace std {} using namespace std;
 #include "include/TauIds.h"
 #include "include/JetHists.h"
 #include "include/RecoEvent.h"
-#include "include/constants.h"
 #include "include/Muon.h"
 #include "include/TauHists.h"
 #include "include/useful_functions.h"
@@ -1636,14 +1635,14 @@ namespace {
 "include/Electron.h",
 "include/Met.h",
 "include/GenJet.h",
-"include/Tau.h",
+"include/constants.h",
 "include/CleaningModules.h",
 "include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
 "include/ElectronIds.h",
 "include/FlavorParticle.h",
-"include/cosmetics.h",
+"include/Tau.h",
 "include/ElectronHists.h",
 "include/JetIds.h",
 "include/BaseTool.h",
@@ -1651,7 +1650,6 @@ namespace {
 "include/TauIds.h",
 "include/JetHists.h",
 "include/RecoEvent.h",
-"include/constants.h",
 "include/Muon.h",
 "include/TauHists.h",
 "include/useful_functions.h",
@@ -1704,14 +1702,14 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/Electron.h"
 #include "include/Met.h"
 #include "include/GenJet.h"
-#include "include/Tau.h"
+#include "include/constants.h"
 #include "include/CleaningModules.h"
 #include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/ElectronIds.h"
 #include "include/FlavorParticle.h"
-#include "include/cosmetics.h"
+#include "include/Tau.h"
 #include "include/ElectronHists.h"
 #include "include/JetIds.h"
 #include "include/BaseTool.h"
@@ -1719,7 +1717,6 @@ class __attribute__((annotate("$clingAutoload$include/GenParticle.h")))  __attri
 #include "include/TauIds.h"
 #include "include/JetHists.h"
 #include "include/RecoEvent.h"
-#include "include/constants.h"
 #include "include/Muon.h"
 #include "include/TauHists.h"
 #include "include/useful_functions.h"
