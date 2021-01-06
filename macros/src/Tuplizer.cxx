@@ -1,3 +1,6 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <TFile.h>
 #include <TTree.h>
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -19,6 +22,7 @@
 #include <TSystem.h>
 #include <sys/stat.h>
 #include <experimental/filesystem>
+#pragma GCC diagnostic pop
 
 using namespace std;
 
