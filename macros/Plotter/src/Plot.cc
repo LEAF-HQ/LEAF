@@ -1,6 +1,5 @@
 #include "Plotter/include/PlottingTool.h"
 #include "Plotter/include/cosmetics.h"
-// #include "include/constants.h"
 #include "include/useful_functions.h"
 #include <TH1D.h>
 #include <THStack.h>

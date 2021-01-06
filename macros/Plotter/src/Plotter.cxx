@@ -8,7 +8,7 @@ using namespace std;
 int main(){
 
   // Greet
-  cout << "Hello from the Plotter." << endl;
+  // cout << "Hello from the Plotter." << endl;
 
   // PlottingTool Plotter_Genlevel;
   // Plotter_Genlevel.set_inpath("/work/areimers/LQDM/GENSIM/analysisfiles/");
@@ -104,13 +104,13 @@ int main(){
   // Plotter_Genlevel.Plot(false, true, false);       // usual
 
   map<TString, TString> legends {
-    {"MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau"},
-    {"MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "LQLQ#rightarrow b#tau #psi#chi_{1}"},
-    {"MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}"},
-    {"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"},
-    {"MC__ST_tch_top",                                  "Single t (t-ch top)"},
-    {"MC__ST_tch_antitop",                              "Single t (t-ch antitop)"},
-    {"MC__DYJetsToLL",                                  "DY #rightarrow ll"}
+    make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau"})
+    make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "LQLQ#rightarrow b#tau #psi#chi_{1}"),
+    make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}"),
+    make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"),
+    make_pair("MC__ST_tch_top",                                  "Single t (t-ch top)"),
+    make_pair("MC__ST_tch_antitop",                              "Single t (t-ch antitop)"),
+    make_pair("MC__DYJetsToLL",                                  "DY #rightarrow ll")
   };
 
   map<TString, int> colors {
@@ -146,11 +146,7 @@ int main(){
 
   // Plotter_Recolevel.Plot(normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(false, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, true, false);     // normalized
-  // Plotter_Recolevel.Plot(false, false, false);   // lin Y
-  // Plotter_Recolevel.Plot(true, false, false);    // lin Y normalized
   // Plotter_Recolevel.Plot(false, true, true);        // SinglePDF
-  // Plotter_Recolevel.Plot(true, true, true);         // SinglePDF normalized
 
 
 
