@@ -49,6 +49,8 @@ TString getJobOutputpath(xmlNode* node);
 TString getJobPostfix(xmlNode* node);
 float   getJobTargetlumi(xmlNode* node);
 string  getJobAnalysisTool(xmlNode* node);
+int     getJobNEventsMax(xmlNode* node);
+int     getJobNEventsSkip(xmlNode* node);
 
 std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);

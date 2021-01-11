@@ -9,15 +9,15 @@ def ensureDirectory(dirname):
     """Make directory if it does not exist."""
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-        print '>>> made directory "%s"'%(dirname)
+        # print 'made directory "%s"'%(dirname)
         if not os.path.exists(dirname):
-            print '>>> failed to make directory "%s"'%(dirname)
+            raise ValueError(red('Failed to make directory "%s"'%(dirname)))
     return dirname
 
 def makeNewDirectory(dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-        print green('--> made directory "%s"'%(dirname))
+        print green('--> Made directory "%s"'%(dirname))
         if not os.path.exists(dirname):
             print red('--> failed to make directory "%s"'%(dirname))
     else:
@@ -26,7 +26,6 @@ def makeNewDirectory(dirname):
 
 def is_file_empty(file_path):
     """ Check if file is empty by confirming if its size is 0 bytes"""
-    # Check if file exist and it is empty
     return os.path.exists(file_path) and os.stat(file_path).st_size == 0
 
 def green(string):
@@ -63,7 +62,6 @@ def get_mlq_mps_mch(config):
 def is_config_excluded(excluded_configurations, config, processname):
     if not processname in excluded_configurations.keys(): # no config of this proc is excluded
         return False
-
     if config in excluded_configurations[processname]:
         return True
     else:

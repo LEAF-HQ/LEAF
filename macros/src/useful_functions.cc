@@ -181,7 +181,7 @@ TString getJobOutputpath(xmlNode* node){
 }
 
 TString getJobPostfix(xmlNode* node){
-  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Postfix");
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"PostFix");
   TString pf = (const char*)prop;
   return pf;
 }
@@ -197,6 +197,20 @@ string getJobAnalysisTool(xmlNode* node){
   xmlChar* prop = xmlGetProp(node, (xmlChar*)"AnalysisTool");
   string at = (const char*)prop;
   return at;
+}
+
+int getJobNEventsMax(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"NEventsMax");
+  string s_nevt = (const char*)prop;
+  int lumi = stoi(s_nevt);
+  return lumi;
+}
+
+int getJobNEventsSkip(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"NEventsSkip");
+  string s_nevt = (const char*)prop;
+  int lumi = stoi(s_nevt);
+  return lumi;
 }
 
 string getVariableName(xmlNode* node){

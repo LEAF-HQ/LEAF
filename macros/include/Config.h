@@ -39,6 +39,8 @@ public:
   const TString postfix() const {return m_postfix;};
   const double  target_lumi() const {return m_target_lumi;};
   const string  analysis_tool() const {return m_analysis_tool;};
+  const int     nevt_max() const {return m_nevt_max;};
+  const int     nevt_skip() const {return m_nevt_skip;};
   const TString dataset_name() const {return m_datasets[m_idx].name;};
   const TString dataset_type() const {return m_datasets[m_idx].type;};
   const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
@@ -59,6 +61,7 @@ private:
   TString m_output_directory, m_postfix;
   string m_analysis_tool;
   double m_target_lumi;
+  int m_nevt_max, m_nevt_skip;
   std::unordered_map<std::string, std::string> m_additionalvariables;
   std::vector<dataset> m_datasets = {};
   size_t m_idx = 0;

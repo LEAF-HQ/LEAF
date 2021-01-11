@@ -79,28 +79,30 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cfg.event_chain->SetBranchAddress("Events", &event);
   cfg.outputtree->Branch("Events", &event);
 
-  // E outevent;
-  // // outevent.reset();
-  // cfg.outputtree->Branch("Event", &outevent);
-
   // Loop through chain
   auto start = std::chrono::high_resolution_clock::now();
-  for(int i=0; i<cfg.event_chain->GetEntries(); ++i) {
-    if(i%10000==0 || i== cfg.event_chain->GetEntries()-1){
+  Long64_t maxidx = -1;
+  if(cfg.nevt_max() < 0) maxidx = cfg.event_chain->GetEntries();
+  else if(cfg.nevt_max() > 0) maxidx = min((Long64_t)(cfg.nevt_skip() + cfg.nevt_max()), cfg.event_chain->GetEntries());
+  else throw runtime_error("cfg.nevt_max() returned 0. This should have been caught by an earlier condition in Config.cc. In any case, this is not allowed. Must be > or < 0.");
+  cout << green << "--> Going to process " << maxidx - cfg.nevt_skip() << " events, skipping the first " << cfg.nevt_skip() << "." << reset << endl;
+
+  for(Long64_t i=cfg.nevt_skip(); i<maxidx; ++i) {
+    if(i%10000==0 || i == maxidx-1){
       auto now = std::chrono::high_resolution_clock::now();
       auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
       std::chrono::milliseconds sec_left = std::chrono::milliseconds(999999999999);
-      if(i > 0){
-        std::chrono::milliseconds msec_left = std::chrono::milliseconds((int)(((double)duration.count()) / ((double)i) * ((double)cfg.nevt) - ((double)duration.count())));
+      if(i > cfg.nevt_skip()){
+        std::chrono::milliseconds msec_left = std::chrono::milliseconds((int)(((double)duration.count()) / ((double)i-cfg.nevt_skip()) * ((double)(maxidx - cfg.nevt_skip())) - ((double)duration.count())));
         auto seconds_left = std::chrono::duration_cast<std::chrono::seconds>(msec_left);
         auto minutes_left = std::chrono::duration_cast<std::chrono::minutes>(seconds_left);
         seconds_left -= std::chrono::duration_cast<std::chrono::seconds>(minutes_left);
         auto hours_left = std::chrono::duration_cast<std::chrono::hours>(minutes_left);
         minutes_left -= std::chrono::duration_cast<std::chrono::minutes>(hours_left);
-        cout << green << "    --> Processing event no. (" << i+1 << " / " << cfg.nevt << ") [ " << fixed << setprecision(2) << ((double)(i+1))/((double)cfg.nevt)*100 << "% ], time left: " << std::setfill('0') << std::setw(2) << hours_left.count() << ":" << std::setfill('0') << std::setw(2) << minutes_left.count() << ":" << std::setfill('0') << std::setw(2) << seconds_left.count() << reset << endl;
+        cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ") [ " << fixed << setprecision(2) << ((double)(i+1-cfg.nevt_skip()))/((double)(maxidx - cfg.nevt_skip()))*100 << "% ], time left: " << std::setfill('0') << std::setw(2) << hours_left.count() << ":" << std::setfill('0') << std::setw(2) << minutes_left.count() << ":" << std::setfill('0') << std::setw(2) << seconds_left.count() << reset << endl;
       }
       else{
-        cout << green << "    --> Processing event no. (" << i+1 << " / " << cfg.nevt << ")" << reset << endl;
+        cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ")" << reset << endl;
       }
     }
 

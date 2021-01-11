@@ -11,6 +11,8 @@
 #include <libxml/tree.h>
 #include <libxml/xmlreader.h>
 
+// #include <boost/filesystem.hpp>
+
 using namespace std;
 
 Config::Config(TString configfilename){
@@ -27,6 +29,10 @@ Config::Config(TString configfilename){
   m_postfix = getJobPostfix(root_element);
   m_target_lumi = getJobTargetlumi(root_element);
   m_analysis_tool = getJobAnalysisTool(root_element);
+  m_nevt_max = getJobNEventsMax(root_element);
+  if(m_nevt_max == 0) throw runtime_error("Apparently, 'NEventsMax = 0' has been specified in the config file. This is an invalid value, either set it to <0 (running on all events) or >0, then stopping after the specified number of events.");
+  m_nevt_skip = getJobNEventsSkip(root_element);
+  if(m_nevt_skip < 0) throw runtime_error("Apparently, 'NEventsSkip < 0' has been specified in the config file. This is an invalid value, set it to >= 0.");
 
 
   // Loop through InputDatasets and extract their information
@@ -93,11 +99,26 @@ void Config::process_datasets(){
 
     // make sure outdir exists
     TString outfolder = output_directory();
-    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    TString mkdircommand = "mkdir -p " + outfolder;
+    system((const char*)mkdircommand);
 
-    // create output file
-    TString outfilename = outfolder + "/" + dataset_type() + "__" + dataset_name() + "_tmp.root";
-    outfile.reset(new TFile(outfilename, "RECREATE"));
+    // create output file and handle exception for /pnfs storage that is not immediately writeable
+    TString filename_tmp = dataset_type() + "__" + dataset_name() + postfix() + "_tmp.root";
+    TString outfilename_target = outfolder + "/" + filename_tmp;
+
+    // this is PSI T3 specific, change in other environments!
+    TString outfilename_tmp = "";
+    TString env_USER = getenv("USER");
+    if(outfilename_target.Contains("/pnfs")){
+      TString tmpworkdirname = "/scratch/" + env_USER + "/tmp_workdir";
+      mkdir(tmpworkdirname, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+      outfilename_tmp = tmpworkdirname + "/" + filename_tmp;
+    }
+    else{
+      outfilename_tmp = outfilename_target;
+    }
+
+    outfile.reset(new TFile(outfilename_tmp, "RECREATE"));
 
     // create output tree
     outputtree = new TTree("AnalysisTree", "Events that passed the selection so far");
@@ -115,10 +136,10 @@ void Config::process_datasets(){
     outfile->Close();
 
     //rename tmp file
-    TString outfilename_final = outfilename;
+    TString outfilename_final = outfilename_target;
     outfilename_final.ReplaceAll("_tmp.root", ".root");
 
-    string command = "mv " + (string)outfilename + " " + (string)outfilename_final;
+    string command = "mv -f " + (string)outfilename_tmp + " " + (string)outfilename_final;
     system(command.c_str());
     cout << green << "--> Wrote histograms and tree to file: " << outfilename_final << reset << endl << endl;
 

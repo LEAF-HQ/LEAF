@@ -12,15 +12,17 @@
 
 
 <Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="$MYTOOLNAME">
-    <InputDatasets>
 
-        <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
-            &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
-        </Dataset>
+  <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" />
 
-    </InputDatasets>
+  <InputDatasets>
+    <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
+      &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
+    </Dataset>
+  </InputDatasets>
 
-    <AdditionalVariables>
-        <Variable Name="test" Value="testvalue"/>
-    </AdditionalVariables>
+  <AdditionalVariables>
+    <Variable Name="test" Value="testvalue"/>
+  </AdditionalVariables>
+
 </Configuration>

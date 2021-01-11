@@ -11,7 +11,6 @@ def ensureDirectory(dirname):
     """Make directory if it does not exist."""
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-        print green('--> made directory "%s"'%(dirname))
         if not os.path.exists(dirname):
             print yellow('--> failed to make directory "%s"'%(dirname))
     return dirname

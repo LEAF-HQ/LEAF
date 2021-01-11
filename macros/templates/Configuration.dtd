@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!ELEMENT Configuration (InputDatasets,AdditionalVariables)>
+
+
+<!ELEMENT Configuration (SubmissionSettings,InputDatasets,AdditionalVariables)>
 <!ATTLIST Configuration
     TargetLumi           CDATA            #REQUIRED
     OutputDirectory      CDATA            #REQUIRED
     PostFix              CDATA            ""
     AnalysisTool         CDATA            #REQUIRED
+    NEventsMax           CDATA            "-1"
+    NEventsSkip          CDATA            "0"
+>
+
+
+<!ELEMENT SubmissionSettings EMPTY>
+<!ATTLIST SubmissionSettings
+    EventsPerJob         CDATA            "-1"
+    FilesPerJob          CDATA            "-1"
 >
 
 <!ELEMENT InputDatasets (Dataset+)>
