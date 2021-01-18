@@ -46,6 +46,7 @@ TString getInputFileFileName(xmlNode* node);
 
 
 TString getJobOutputpath(xmlNode* node);
+TString getJobSEDirector(xmlNode* node);
 TString getJobPostfix(xmlNode* node);
 float   getJobTargetlumi(xmlNode* node);
 string  getJobAnalysisTool(xmlNode* node);

@@ -36,6 +36,7 @@ public:
   const bool    has(const string s) const {auto it = m_additionalvariables.find(s); return (it != m_additionalvariables.end());};
   const string  get(const string s) {return m_additionalvariables[s];};
   const TString output_directory() const {return m_output_directory;};
+  const TString se_director() const {return m_se_director;};
   const TString postfix() const {return m_postfix;};
   const double  target_lumi() const {return m_target_lumi;};
   const string  analysis_tool() const {return m_analysis_tool;};
@@ -58,7 +59,7 @@ public:
   shared_ptr<TFile> outfile;
 
 private:
-  TString m_output_directory, m_postfix;
+  TString m_output_directory, m_se_director, m_postfix;
   string m_analysis_tool;
   double m_target_lumi;
   int m_nevt_max, m_nevt_skip;

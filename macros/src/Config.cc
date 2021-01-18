@@ -26,6 +26,7 @@ Config::Config(TString configfilename){
   // ============================
 
   m_output_directory = getJobOutputpath(root_element);
+  m_se_director = getJobSEDirector(root_element);
   m_postfix = getJobPostfix(root_element);
   m_target_lumi = getJobTargetlumi(root_element);
   m_analysis_tool = getJobAnalysisTool(root_element);
@@ -111,7 +112,8 @@ void Config::process_datasets(){
     TString env_USER = getenv("USER");
     if(outfilename_target.Contains("/pnfs")){
       TString tmpworkdirname = "/scratch/" + env_USER + "/tmp_workdir";
-      mkdir(tmpworkdirname, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+      string command = "mkdir -p " + (string)tmpworkdirname;
+      system(command.c_str());
       outfilename_tmp = tmpworkdirname + "/" + filename_tmp;
     }
     else{
@@ -139,7 +141,10 @@ void Config::process_datasets(){
     TString outfilename_final = outfilename_target;
     outfilename_final.ReplaceAll("_tmp.root", ".root");
 
-    string command = "mv -f " + (string)outfilename_tmp + " " + (string)outfilename_final;
+    string command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + (string)outfilename_tmp + " " + (string)se_director() + (string)outfilename_final;// + " > /dev/null";
+    cout << "copy command: " << command << endl;
+    system(command.c_str());
+    command = (string)"LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + (string)outfilename_tmp;// + " > /dev/null";
     system(command.c_str());
     cout << green << "--> Wrote histograms and tree to file: " << outfilename_final << reset << endl << endl;
 
