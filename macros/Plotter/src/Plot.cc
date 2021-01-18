@@ -47,6 +47,9 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
   TString outfolder = PlottingTool::base_path_plots;
   TString outnameprefix = PlottingTool::prefix_plots;
 
+  TString mkdircommand = "mkdir -p " + outfolder;
+  system((const char*)mkdircommand);
+
 
 
 
@@ -138,7 +141,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
   pad->Draw();
   pad->cd();
 
-  float height_per_legitem = 0.033;
+  float height_per_legitem = 0.037;
   float leg_y_high = 0.9;
   float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
 
@@ -165,16 +168,30 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     //same for stacked histograms
     THStack* stack = new THStack("stack", "");
     for(size_t j=0; j<infiles_stack.size(); j++){
+      // cout << "j1: " << j << endl;
       TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
-      // do_cosmetics(hist, minimum, maximum*maxscale, colors_stack[j], linestyles_stack[j]);
       hist->SetFillColor(colors_stack[j]);
       hist->SetLineWidth(0);
-      // hist->SetLineStyle(0);
       stack->Add(hist);
       stack->SetHistogram(hist);
+    }
+
+    vector<bool> is_data = {};
+    for(size_t j=0; j<infiles_single.size(); j++){
+      if(((TString)infiles_single[j]->GetName()).Contains("DATA")) is_data.emplace_back(true);
+      else is_data.emplace_back(false);
+      TH1F* hist = ((TH1F*)infiles_single[j]->Get(foldername + "/" + histname));
+      if(is_data[j]) {
+        leg->AddEntry(hist, labels_single[j], "lp");
+      }
+    }
+
+    for(int j=infiles_stack.size()-1; j>=0; j--){
+      // cout << "j2: " << j << endl;
+      TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
+      hist->SetFillColor(colors_stack[j]);
       leg->AddEntry(hist, labels_stack[j], "f");
-      // cout << "Added to the stack: " << labels_stack[j] << ", color: " << colors_stack[j] << endl;
     }
     if(infiles_stack.size() > 0){
       maximum = max(max(maximum, ((TH1*)(stack->GetStack()->Last()))->GetMaximum()), 1E-4);
@@ -187,7 +204,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
       if(normalize) hist->Scale(1./hist->Integral());
       maximum = max(max(maximum, hist->GetMaximum()), 1E-4);
       hists_single.emplace_back(hist);
-      leg->AddEntry(hist, labels_single[j], "l");
+      if(!is_data[j])leg->AddEntry(hist, labels_single[j], "l");
     }
 
     // first draw a histogram (if any)
@@ -195,8 +212,13 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     for(size_t j=0; j<hists_single.size(); j++){
       do_cosmetics(hists_single[j], minimum, maximum*maxscale, colors_single[j], linestyles_single[j]);
       if(normalize) hists_single[j]->GetYaxis()->SetTitle("Event fraction");
-      if(j==0) hists_single[j]->Draw("HIST");
-      else     hists_single[j]->Draw("HIST SAME");
+      if(is_data[j]) hists_single[j]->SetMarkerStyle(20);
+
+      TString opt = "HIST";
+      if (is_data[j]) opt = "E";
+
+      if (j > 0) opt += " SAME";
+      hists_single[j]->Draw(opt);
       nsingle++;
     }
 
@@ -210,6 +232,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     // now draw single histograms again (so they are in the foreground)
     for(size_t j=0; j<hists_single.size(); j++){
       TString opt = "HIST";
+      if (is_data[j]) opt = "E";
       if(nsingle > 0 || stack) opt += " SAME";
       hists_single[j]->Draw(opt);
     }

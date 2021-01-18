@@ -104,45 +104,51 @@ int main(){
   // Plotter_Genlevel.Plot(false, true, false);       // usual
 
   map<TString, TString> legends {
-    make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau"})
+    make_pair("DATA__DATA_Tau",                                  "Data"),
+    make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau"),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "LQLQ#rightarrow b#tau #psi#chi_{1}"),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}"),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"),
-    make_pair("MC__ST_tch_top",                                  "Single t (t-ch top)"),
-    make_pair("MC__ST_tch_antitop",                              "Single t (t-ch antitop)"),
-    make_pair("MC__DYJetsToLL",                                  "DY #rightarrow ll")
+    make_pair("MC__TT",                                          "t#bar{t}"),
+    make_pair("MC__ST",                                          "Single t"),
+    make_pair("MC__DYJetsToLL",                                  "DY #rightarrow ll"),
+    make_pair("MC__WJetsToLNu",                                  "W+jets #rightarrow l#nu")
   };
 
   map<TString, int> colors {
+    make_pair("DATA__DATA_Tau",                                  kBlack),
     make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       kBlack),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", kBlack),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     kBlack),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    kBlack),
-    make_pair("MC__ST_tch_top",                                  kRed+1),
-    make_pair("MC__ST_tch_antitop",                              kAzure-2),
-    make_pair("MC__DYJetsToLL",                                  kOrange)
+    make_pair("MC__TT",                                          kOrange+10),
+    make_pair("MC__ST",                                          kAzure-2), // kMagenta-3
+    make_pair("MC__DYJetsToLL",                                  kOrange-2),
+    make_pair("MC__WJetsToLNu",                                  kSpring-6)
   };
 
   map<TString, int> linestyles {
+    make_pair("DATA__DATA_Tau",                                  0),
     make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       1),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", 2),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     3),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    4),
-    make_pair("MC__ST_tch_top",                                  0),
-    make_pair("MC__ST_tch_antitop",                              0),
-    make_pair("MC__DYJetsToLL",                                  0)
+    make_pair("MC__TT",                                          0),
+    make_pair("MC__ST",                                          0),
+    make_pair("MC__DYJetsToLL",                                  0),
+    make_pair("MC__WJetsToLNu",                                  0)
   };
 
 
 
   PlottingTool Plotter_Recolevel;
-  Plotter_Recolevel.set_inpath("/work/areimers/LQDM/UL17/Preselection/");
-  Plotter_Recolevel.set_outpath("/work/areimers/LQDM/UL17/Preselection/plots/");
-  Plotter_Recolevel.set_samplenames({"MC__ST_tch_antitop", "MC__ST_tch_top", "MC__DYJetsToLL", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Preselection/Initial/");
+  Plotter_Recolevel.set_outpath("/work/areimers/LQDM/UL17/Preselection/Initial/plots/");
+  Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__ST", "MC__TT", "MC__DYJetsToLL", "MC__WJetsToLNu", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
-  Plotter_Recolevel.set_stacks({"MC__ST_tch_antitop", "MC__DYJetsToLL", "MC__ST_tch_top"});
+  Plotter_Recolevel.set_stacks({"MC__ST", "MC__DYJetsToLL", "MC__TT", "MC__WJetsToLNu"});
 
   // Plotter_Recolevel.Plot(normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(false, true, false);       // usual

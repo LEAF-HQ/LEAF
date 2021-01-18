@@ -180,6 +180,12 @@ TString getJobOutputpath(xmlNode* node){
   return path;
 }
 
+TString getJobSEDirector(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"SEDirector");
+  TString path = (const char*)prop;
+  return path;
+}
+
 TString getJobPostfix(xmlNode* node){
   xmlChar* prop = xmlGetProp(node, (xmlChar*)"PostFix");
   TString pf = (const char*)prop;
