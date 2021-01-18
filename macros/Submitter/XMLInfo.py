@@ -3,6 +3,7 @@ import xml.dom.minidom as minidom
 import subprocess
 import StringIO
 import xml.sax
+from copy import deepcopy
 
 class XMLInfo:
     def __init__(self, xmlfilename):
@@ -16,7 +17,7 @@ class XMLInfo:
         self.submissionsettings = self.read_submission_settings()
         self.additionalvars = self.read_additional_variables()
         self.datasets = self.read_datasets()
-
+        self.datasets_to_write = deepcopy(self.datasets) # deep copy of datasets. Modify this one.
 
 
     def get_XML_document(self):
@@ -53,7 +54,8 @@ class XMLInfo:
             infiles = []
             for child in var.getElementsByTagName('InputFile'):
                 infiles.append(child.attributes.items()[0][1])
-            datasets.append(InputDataset(attributes_and_values, infiles))
+            this_dataset = InputDataset(attributes_and_values, infiles)
+            datasets.append(this_dataset)
         return datasets
 
 
@@ -72,7 +74,7 @@ class XMLInfo:
     def write_datasets(self, doc, rootnode):
         tempdatasets = doc.createElement('InputDatasets')
         rootnode.appendChild(tempdatasets)
-        for dataset in self.datasets:
+        for dataset in self.datasets_to_write:
             tempdataset = doc.createElement('Dataset')
             tempdatasets.appendChild(tempdataset)
             for attr in dataset.settings.__dict__:
