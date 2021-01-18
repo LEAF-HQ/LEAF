@@ -64,7 +64,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile()
-    create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
