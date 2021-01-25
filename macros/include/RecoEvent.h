@@ -32,4 +32,5 @@ public:
   vector<Tau>* taus;
   vector<Muon>* muons;
   vector<Electron>* electrons;
+  float rho;
 };

@@ -1,8 +1,11 @@
 #pragma once
 #include <TString.h>
-#include "massconfig.h"
+
+#include <iostream>
+#include <map>
+// #include "massconfig.h"
 #include <vector>
-#include "include/Jet.h"
+// #include "include/Jet.h"
 
 
 // const std::vector<int> lqids = {9000008, 9000009};
@@ -36,3 +39,38 @@ const std::vector<int> chiids = {9000007};
 // };
 
 // const std::vector<double> lambdas = {1.0};
+
+// std::map<std::string, std::map<std::string, std::string>> jecRunMap = {
+// {"Summer16",
+//    {{"B",   "BCD"},
+//     {"C",   "BCD"},
+//     {"D",   "BCD"},
+//     {"BCD", "BCD"},
+//     {"E",   "EF"},
+//     {"F",   "EF"},
+//     {"EF",  "EF"},
+//     {"G",   "GH"},
+//     {"H",   "GH"},
+//     {"GH",  "GH"}}
+// },
+// {"Fall17",
+//    {{"B",  "B"},
+//     {"C",  "C"},
+//     {"D",  "DE"},
+//     {"E",  "DE"},
+//     {"DE", "DE"},
+//     {"F",  "F"}}
+// },
+// {"Summer19UL17",
+//    {{"B", "B"},
+//     {"C", "C"},
+//     {"D", "D"},
+//     {"E", "E"},
+//     {"F", "F"}}
+// },
+// {"Autumn18",
+//    {{"A", "A"},
+//     {"B", "B"},
+//     {"C", "C"},
+//     {"D", "D"}}
+// }};

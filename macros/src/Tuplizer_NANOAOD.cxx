@@ -105,7 +105,9 @@ int main(int argc, char* argv[]){
   if(is_mc) varname = "genWeight";
   TTreeReaderValue<float> genWeight (reader, varname);
 
-  TTreeReaderValue<float> met_pt (reader, "MET_pt");
+  TTreeReaderValue<float> rho(reader, "fixedGridRhoFastjetAll");
+
+  TTreeReaderValue<float> met_pt  (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
 
   // AK4 CHS jets
@@ -331,6 +333,10 @@ int main(int argc, char* argv[]){
     else{
       event.weight = 1.;
     }
+
+    // Do general event-based variables
+    // ================================
+    event.rho = *rho;
 
     // Do MET
     // ======

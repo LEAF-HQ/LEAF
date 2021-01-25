@@ -230,3 +230,34 @@ string getVariableValue(xmlNode* node){
   string value = (const char*)prop;
   return value;
 }
+
+// TString JERCPathString( TString dataset, TString version, TString jetCollection, TString type, bool isJEC){
+//   TString result = "";
+//   if(isJEC) result = "JEC";
+//   else      result = "JR";
+//   result += "Database/textFiles/" + version+"_"+dataset+"/"+version+"_"+dataset+"_"+type+"_"+jetCollection+".txt";
+//   return result;
+// }
+//
+//
+// TString JERPathString( TString version, TString jetCollection, TString correction, TString runName){
+//   TString dataset = "";
+//   if(runName == "MC") dataset = "MC";
+//   else if(runName == "DATA") dataset = "DATA";
+//   else throw runtime_error("In JERPathString(): invalid 'runName' (can be 'MC' or 'DATA').");
+//   return JERCPathString(dataset,version,jetCollection,correction,false);
+// }
+//
+// TString JECPathString(TString version, TString jetCollection, TString correction, TString runName){
+//   TString dataset = "MC";
+//   if(!runName.Contains("MC")) dataset = "DATA";
+//   runName = runName.ReplaceAll("Run","");
+//   TString newRunName = jecRunMap[version.split("_")[0]][runName]
+//
+//   // in 2018 they use "_RunA" instead of just "A"
+//   if ("18" in version or "UL" in version):
+//   newRunName = "_Run" +runName
+//   version = version.replace("_V", newRunName+"_V")
+//
+//   return JERCPathString(dataset,version,jetCollection,correction,true)
+// }

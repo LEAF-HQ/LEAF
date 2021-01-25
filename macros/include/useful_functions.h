@@ -49,9 +49,12 @@ TString getJobOutputpath(xmlNode* node);
 TString getJobSEDirector(xmlNode* node);
 TString getJobPostfix(xmlNode* node);
 float   getJobTargetlumi(xmlNode* node);
-string  getJobAnalysisTool(xmlNode* node);
+std::string  getJobAnalysisTool(xmlNode* node);
 int     getJobNEventsMax(xmlNode* node);
 int     getJobNEventsSkip(xmlNode* node);
 
 std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);
+
+TString JERCPathString( TString dataset, TString version, TString jetCollection, TString type, bool isJEC);
+TString JERPathString( TString version, TString jetCollection, TString correction, TString runName);
