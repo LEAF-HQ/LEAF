@@ -11,7 +11,7 @@
 ]>
 
 
-<Configuration OutputDirectory="&outfilepath;" PostFix="" TargetLumi="&TargetLumi;" AnalysisTool="$MYTOOLNAME">
+<Configuration OutputDirectory="&outfilepath;" PostFix="" SEDirector="root://t3dcachedb03.psi.ch/" TargetLumi="&TargetLumi;" AnalysisTool="$MYTOOLNAME">
 
   <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" />
 
