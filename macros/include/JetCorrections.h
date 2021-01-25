@@ -7,7 +7,6 @@
 #include "include/Config.h"
 
 
-// #include "CondFormats/JetMETObjects/interface/JetResolution.h"
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 
 

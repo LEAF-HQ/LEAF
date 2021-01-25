@@ -1,6 +1,7 @@
 #pragma once
 
 #include <TString.h>
+#include <string>
 #include <TH1F.h>
 #include <vector>
 #include "include/constants.h"
@@ -56,5 +57,7 @@ int     getJobNEventsSkip(xmlNode* node);
 std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);
 
-TString JERCPathString( TString dataset, TString version, TString jetCollection, TString type, bool isJEC);
-TString JERPathString( TString version, TString jetCollection, TString correction, TString runName);
+const TString JERCPathString(const std::string& dataset, const std::string& version, const std::string& jetCollection, const std::string& type, const bool& isJEC);
+const TString JERPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const std::string& runName);
+const TString JECPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const std::string& runName);
+std::vector<std::string> JERCFiles(const std::string& type, const std::string& runName, const std::string& version, const std::string& jetCollection);

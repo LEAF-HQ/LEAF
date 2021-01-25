@@ -162,12 +162,6 @@ TString getDatasetType(xmlNode* node){
   return type;
 }
 
-// TString getDatasetFilename(xmlNode* node){
-//   xmlChar* prop = xmlGetProp(node, (xmlChar*)"File");
-//   TString file = (const char*)prop;
-//   return file;
-// }
-
 TString getInputFileFileName(xmlNode* node){
   xmlChar* prop = xmlGetProp(node, (xmlChar*)"FileName");
   TString file = (const char*)prop;
@@ -231,33 +225,48 @@ string getVariableValue(xmlNode* node){
   return value;
 }
 
-// TString JERCPathString( TString dataset, TString version, TString jetCollection, TString type, bool isJEC){
-//   TString result = "";
-//   if(isJEC) result = "JEC";
-//   else      result = "JR";
-//   result += "Database/textFiles/" + version+"_"+dataset+"/"+version+"_"+dataset+"_"+type+"_"+jetCollection+".txt";
-//   return result;
-// }
-//
-//
-// TString JERPathString( TString version, TString jetCollection, TString correction, TString runName){
-//   TString dataset = "";
-//   if(runName == "MC") dataset = "MC";
-//   else if(runName == "DATA") dataset = "DATA";
-//   else throw runtime_error("In JERPathString(): invalid 'runName' (can be 'MC' or 'DATA').");
-//   return JERCPathString(dataset,version,jetCollection,correction,false);
-// }
-//
-// TString JECPathString(TString version, TString jetCollection, TString correction, TString runName){
-//   TString dataset = "MC";
-//   if(!runName.Contains("MC")) dataset = "DATA";
-//   runName = runName.ReplaceAll("Run","");
-//   TString newRunName = jecRunMap[version.split("_")[0]][runName]
-//
-//   // in 2018 they use "_RunA" instead of just "A"
-//   if ("18" in version or "UL" in version):
-//   newRunName = "_Run" +runName
-//   version = version.replace("_V", newRunName+"_V")
-//
-//   return JERCPathString(dataset,version,jetCollection,correction,true)
-// }
+
+const TString JERCPathString(const string& dataset, const string& version, const string& jetCollection, const string& type, const bool& isJEC) {
+  TString result = isJEC? "JEC":"JR";
+  result += "Database/textFiles/";
+  result += version+"_"+dataset+"/";
+  result += version+"_"+dataset+"_";
+  result += type+"_"+jetCollection;
+  result += ".txt";
+  return result;
+}
+
+const TString JERPathString(const string& version, const string& jetCollection, const string& correction, const string& runName) {
+  string dataset = (runName.find("MC") != string::npos)? "MC": "DATA";
+  return JERCPathString(dataset,version,jetCollection,correction,false);
+}
+
+
+const TString JECPathString(const string& version, const string& jetCollection, const string& correction, const string& runName) {
+  string dataset = "MC";
+  if (runName.find("MC") == string::npos){
+    dataset = "DATA";
+    string runName_ = TString(runName).ReplaceAll("Run","").Data();
+    TString temp = version;
+    TString tok; int from = 0;
+    temp.Tokenize(tok, from, "_");
+    // string newRunName = jecRunMap[tok.Data()][runName_];
+    string newRunName = jecRunMap.at(tok.Data()).at(runName_);
+    //in 2018 they use "_RunA" instead of just "A"
+    if (version.find("18") != string::npos ||  version.find("UL") != string::npos){
+      newRunName = "_Run" +runName_;
+    }
+    string version_ = TString(version).ReplaceAll("_V", newRunName+"_V").Data();
+    return JERCPathString(dataset,version_,jetCollection,correction,true);
+  }
+  return JERCPathString(dataset,version,jetCollection,correction,true);
+
+}
+vector<string> JERCFiles(const string& type, const string& runName, const string& version, const string& jetCollection) {
+  vector<string> results = {};
+  for (const string level: JERCLevels.at(type).at("default")){
+    if (type.find("JEC") != string::npos) results.push_back(JECPathString(version, jetCollection, level, runName).Data());
+    if (type.find("JER") != string::npos) results.push_back(JERPathString(version, jetCollection, level, runName).Data());
+  }
+  return results;
+}

@@ -6,14 +6,23 @@ using namespace std;
 
 
 
-// vector<TString> JERCFiles(TString type, TString runName, TString version, TString jetCollection){
-//   vector<TString> sequence = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
-//   vector<TString> result = {};
-//   for(size_t i=0; i<sequence.size(); i++){
-//     if(type == "JEC") result.emplace_back(JECPathString(version, jetCollection, sequence[i], runName));
-//     if(type == "JER") result.emplace_back(JERPathString(version, jetCollection, sequence[i], runName));
-//   }
-// }
+void JERCReader() {
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 JERCorrector::JERCorrector(Config cfg, TString ScaleFactorFileName, TString ResolutionFileName) {
 
@@ -31,69 +40,6 @@ JERCorrector::JERCorrector(Config cfg, TString ScaleFactorFileName, TString Reso
   res_sf = JME::JetResolutionScaleFactor("test.txt");
 
 }
-
-
-
-// JERCLevels = {
-//   'JEC': {
-//     'L1L2':      ('L1FastJet', 'L2Relative'),
-//     'L1L2L3':    ('L1FastJet', 'L2Relative', 'L3Absolute'),
-//     'L1L2Res':   ('L1FastJet', 'L2Relative', 'L2Residual'),
-//     'L1L2L3Res': ('L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'),
-//     'default':   ('L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'),
-//   },
-//   'JER': {
-//     'SF':      ('SF'),
-//     'Pt':      ('PtResolution'),
-//     'Eta':     ('EtaResolution'),
-//     'Phi':     ('PhiResolution'),
-//     'SFPt':    ('SF', 'PtResolution'),
-//     'SFPtEta': ('SF', 'PtResolution', 'EtaResolution'),
-//     'default': ('SF', 'PtResolution'),
-//   },
-// }
-
-// translate individual runs into the merged ones
-// e.g. B -> BCD for Summer16
-
-
-
-
-
-
-
-
-// # # Example
-// # yearRunMap = {
-//   #     '2016': ['B', 'C', 'D', 'E', 'F', 'G', 'H'],
-//   #     '2017': ['B', 'C', 'D', 'E', 'F'],
-//   #     '2018': ['A', 'B', 'C', 'D'],
-//   # }
-//   # JERC = {
-//     #     '2016': {
-//       #         'JEC':  'Summer16_07Aug2017_V11',
-//       #         'JER':  'Summer16_25nsV1b',
-//       #     },
-//       #     '2017': {
-//         #         'JEC':  'Fall17_17Nov2017_V32',
-//         #         'JER':  'Fall17_V3b',
-//         #     },
-//         #     '2018': {
-//           #         'JEC':  'Autumn18_V19',
-//           #         'JER':  'Autumn18_V7b',
-//           #     },
-//           # }
-//           #
-//           # for year in ['2016', '2017', '2018']:
-//           #   for run in ['MC']+yearRunMap[year]:
-//           #     for corr in ['JEC','JER']:
-//           #       for jetRadius in ['AK4', 'AK8']:
-//           #         for jetCollection in ['PFchs', 'PFPuppi']:
-//           #           JERCs = JERCFiles(corr,run,JERC[year][corr], jetRadius+jetCollection)
-//           #           print (JERCs)
-//           #           if len(JERCs)==0: print('Not found in',year,corr,jetRadius,jetCollection)
-//           #           for l,x in JERCs.items():
-//           #             if not os.path.isfile('../data/'+x): print(JERCs, x)
 
 
 

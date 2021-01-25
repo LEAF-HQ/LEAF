@@ -3,9 +3,8 @@
 
 #include <iostream>
 #include <map>
-// #include "massconfig.h"
+#include <unordered_map>
 #include <vector>
-// #include "include/Jet.h"
 
 
 // const std::vector<int> lqids = {9000008, 9000009};
@@ -16,61 +15,76 @@ const std::vector<int> psiids  = {9000009};
 const std::vector<int> chiids = {9000007};
 
 // 2016: 35920 --- 2017: 41530
-// const double  intlumi      = 35920.;
-// const TString tag          = "";
 
-// const std::vector<massconfig> mass_configurations = {
-//   //MLQ, MX , MDM following the ordering in massconfig.h
-//   {600,  220, 200},
-//   {700,  275, 250},
-//   {800,  330, 300},
-//   {900,  385, 350},
-//   {1000, 440, 400},
-//   {1100, 495, 450},
-//   {1200, 550, 500},
-//   {1300, 605, 550},
-//   {1400, 660, 600},
-//   {1500, 715, 650},
-//   {1600, 770, 700},
-//   {1700, 825, 750},
-//   {1800, 880, 800},
-//   {1900, 935, 850},
-//   {2000, 990, 900}
-// };
+const std::unordered_map<std::string, std::unordered_map<std::string, std::string> > jecRunMap = {
+  {"Summer16", {
+    {"B", "BCD"},
+    {"C", "BCD"},
+    {"D", "BCD"},
+    {"BCD", "BCD"},
+    {"E", "EF"},
+    {"F", "EF"},
+    {"EF", "EF"},
+    {"G", "GH"},
+    {"H", "GH"},
+    {"GH", "GH"}
+  }},
+  {"Fall17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "DE"},
+    {"E", "DE"},
+    {"DE", "DE"},
+    {"F", "F"}
+  }},
+  {"Summer19UL17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
+  {"Autumn18", {
+    {"A", "A"},
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"}
+  }},
+};
 
-// const std::vector<double> lambdas = {1.0};
+const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "H"};
+const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
+const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
 
-// std::map<std::string, std::map<std::string, std::string>> jecRunMap = {
-// {"Summer16",
-//    {{"B",   "BCD"},
-//     {"C",   "BCD"},
-//     {"D",   "BCD"},
-//     {"BCD", "BCD"},
-//     {"E",   "EF"},
-//     {"F",   "EF"},
-//     {"EF",  "EF"},
-//     {"G",   "GH"},
-//     {"H",   "GH"},
-//     {"GH",  "GH"}}
-// },
-// {"Fall17",
-//    {{"B",  "B"},
-//     {"C",  "C"},
-//     {"D",  "DE"},
-//     {"E",  "DE"},
-//     {"DE", "DE"},
-//     {"F",  "F"}}
-// },
-// {"Summer19UL17",
-//    {{"B", "B"},
-//     {"C", "C"},
-//     {"D", "D"},
-//     {"E", "E"},
-//     {"F", "F"}}
-// },
-// {"Autumn18",
-//    {{"A", "A"},
-//     {"B", "B"},
-//     {"C", "C"},
-//     {"D", "D"}}
-// }};
+const std::unordered_map<std::string, std::vector<std::string>> yearRunMap = {
+  {"2016", runPeriods2016},
+  {"2017", runPeriods2017},
+  {"2018", runPeriods2018},
+};
+
+const std::unordered_map<std::string, std::unordered_map<std::string, std::string> > JERC = {
+  {"2016", {
+    {"JEC", "Summer16_07Aug2017_V11"},
+    {"JER", "Summer16_25nsV1b"},
+  }},
+  {"2017", {
+    {"JEC", "Fall17_17Nov2017_V32"},
+    {"JER", "Fall17_V3b"},
+  }},
+  {"2018", {
+    {"JEC", "Autumn18_V19"},
+    {"JER", "Autumn18_V7b"},
+  }},
+};
+
+const std::vector<std::string> JEC_L1L2L3Res = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
+const std::vector<std::string> JER_SFPt = {"SF", "PtResolution"};
+
+const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>> > JERCLevels = {
+  {"JEC", {
+    {"default", JEC_L1L2L3Res}
+  }},
+  {"JER", {
+    {"default", JER_SFPt}
+  }},
+};
