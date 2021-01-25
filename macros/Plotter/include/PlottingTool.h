@@ -28,6 +28,7 @@ public:
   void set_colors(std::map<TString, int> s){ colors = s;};
   void set_linestyles(std::map<TString, int> s){ linestyles = s;};
   void set_stacks(std::vector<TString> s){ stacks = s;};
+  void set_numerator(TString s){ numerator = s;};
   void set_debug(bool s){ debug = s;};
 
 
@@ -36,6 +37,7 @@ public:
 private:
   TString base_path_analysisfiles, base_path_plots;
   TString prefix_plots = "";
+  TString numerator = "";
   std::vector<TString> samples, stacks;
   std::map<TString, TString> labels;
   std::map<TString, int> colors, linestyles;

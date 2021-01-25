@@ -62,8 +62,8 @@ TPad* SetupRatioPad() {
 
   m_rp->SetTopMargin(0.0);
   m_rp->SetBottomMargin(0.35);
-  m_rp->SetLeftMargin(0.19);
-  m_rp->SetRightMargin(0.05);
+  m_rp->SetLeftMargin(0.15);
+  m_rp->SetRightMargin(0.03);
 
   return m_rp;
 }
@@ -90,10 +90,10 @@ TPad* SetupRatioPadTop() {
   TPad* m_rp_top = new TPad("pad1", "Control Plots 2", x1, y2, x2, y3);
 
 
-  m_rp_top->SetTopMargin(0.085);
+  m_rp_top->SetTopMargin(0.05);
   m_rp_top->SetBottomMargin(0.0);
-  m_rp_top->SetLeftMargin(0.19);
-  m_rp_top->SetRightMargin(0.05);
+  m_rp_top->SetLeftMargin(0.15);
+  m_rp_top->SetRightMargin(0.03);
 
   return m_rp_top;
 }
@@ -127,7 +127,7 @@ void HistCosmetics(TH1* hist, bool ratio) {
 
   if (ratio)
   {
-    hist->GetYaxis()->SetTitleOffset(1.7);
+    hist->GetYaxis()->SetTitleOffset(1.75);
     hist->GetXaxis()->SetTitleOffset(3);
     hist->GetXaxis()->SetTickSize(0.07);
     hist->GetYaxis()->SetTitleSize(15);
@@ -171,7 +171,7 @@ void HistCosmetics(TGraph* hist, bool ratio) {
 
   if (ratio)
   {
-    hist->GetYaxis()->SetTitleOffset(1.7);
+    hist->GetYaxis()->SetTitleOffset(1.75);
     hist->GetXaxis()->SetTitleOffset(3);
     hist->GetXaxis()->SetTickSize(0.07);
     hist->GetYaxis()->SetTitleSize(15);
@@ -213,7 +213,7 @@ void HistCosmetics(TMultiGraph* hist, bool ratio) {
 
   if (ratio)
   {
-    hist->GetYaxis()->SetTitleOffset(1.7);
+    hist->GetYaxis()->SetTitleOffset(1.75);
     hist->GetXaxis()->SetTitleOffset(3);
     hist->GetXaxis()->SetTickSize(0.07);
     hist->GetYaxis()->SetTitleSize(15);

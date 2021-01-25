@@ -19,12 +19,13 @@
 
 using namespace std;
 
-void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, bool debug = false);
-void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, bool debug = false);
-vector<TString> produce_infilenames(TString infolder, TString postfix, vector<TString> samples);
+// void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, TString numerator, bool debug = false);
+void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug = false);
+void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug = false);
+vector<TString> produce_infilenames(TString infolder, vector<TString> samples);
 vector<TString> get_foldernames(TFile* infile);
 vector<TString> get_histnames(TFile* infile, TString foldername);
-void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int linestyle);
+void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int linestyle, bool ratio=false);
 
 
 
@@ -35,15 +36,12 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
   cout << green << "    singlePDF : " << singlePDF << reset << endl;
 
   TString infolder = PlottingTool::base_path_analysisfiles;
-  TString infile_postfix = ".root";
-  vector<TString> samples = PlottingTool::samples;
-  // vector<TString> labels  = PlottingTool::labels;
-  // vector<int> colors  = PlottingTool::colors;
-  // vector<int> linestyles  = PlottingTool::linestyles;
+  vector<TString> samples       = PlottingTool::samples;
   map<TString, TString> labels  = PlottingTool::labels;
   map<TString, int> colors      = PlottingTool::colors;
   map<TString, int> linestyles  = PlottingTool::linestyles;
-  vector<TString> stacks  = PlottingTool::stacks;
+  vector<TString> stacks        = PlottingTool::stacks;
+  TString numerator             = PlottingTool::numerator;
   TString outfolder = PlottingTool::base_path_plots;
   TString outnameprefix = PlottingTool::prefix_plots;
 
@@ -55,14 +53,25 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
 
 
 
-  vector<TString> infilenames_all = produce_infilenames(infolder, infile_postfix, samples);
-  vector<TString> infilenames_stack = produce_infilenames(infolder, infile_postfix, stacks);
-  make_plots(infilenames_all, samples, outfolder, outnameprefix, singlePDF, normalize, logy, labels, colors, linestyles, infilenames_stack, debug);
+  // vector<TString> infilenames_all = produce_infilenames(infolder, samples);
+  // vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
+  // make_plots(infilenames_all, samples, outfolder, outnameprefix, singlePDF, normalize, logy, labels, colors, linestyles, infilenames_stack, numerator, debug);
+  make_plots(infolder, samples, stacks, numerator, outfolder, outnameprefix, singlePDF, normalize, logy, labels, colors, linestyles, debug);
 
 
 }
 
-void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, bool debug){
+// void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, TString numerator, bool debug){
+void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug){
+
+  bool do_stack = false;
+  if(numerator != "") do_stack = true;
+
+  vector<TString> infilenames_all = produce_infilenames(infolder, samples);
+  vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
+  vector<TString> infilenames_numerator = {};
+  if(do_stack) infilenames_numerator = produce_infilenames(infolder, {numerator});
+  if(infilenames_numerator.size() > 1) throw runtime_error("In make_plots(): vector of infilenames for the numerator should contain at most 1 element, but now it contains more. How did this happen?");
 
   gErrorIgnoreLevel = kError;
   gStyle->SetPadTickX(1);
@@ -71,8 +80,8 @@ void make_plots(vector<TString> infilenames_all, vector<TString> samples, TStrin
   // Reorder infilenames to get the stacking order right. Always start with stacks and then do the rest.
   vector<TString> infilenames_single, infilenames_stack_ordered = {};
   vector<TString> labels_single, labels_stack = {};
-  vector<int> colors_single, colors_stack = {};
-  vector<int> linestyles_single, linestyles_stack = {};
+  vector<int> colors_single, colors_stack, colors_numerator = {};
+  vector<int> linestyles_single, linestyles_stack, linestyles_numerator = {};
   for(size_t i=0; i<infilenames_all.size(); i++){
     if(find(infilenames_stack.begin(), infilenames_stack.end(), infilenames_all[i]) != infilenames_stack.end()) {
       infilenames_stack_ordered.emplace_back(infilenames_all[i]);
@@ -87,16 +96,24 @@ void make_plots(vector<TString> infilenames_all, vector<TString> samples, TStrin
       colors_single.emplace_back(colors[samples[i]]);
       linestyles_single.emplace_back(linestyles[samples[i]]);
     }
-    // cout << "sample: " << samples[i] << ", color: " << colors[samples[i]] << endl;
+    if (infilenames_numerator.size() > 0){
+      if(infilenames_all[i] == infilenames_numerator[0]){
+        colors_numerator.emplace_back(colors[samples[i]]);
+        linestyles_numerator.emplace_back(linestyles[samples[i]]);
+      }
+    }
   }
 
   // Get remaining infile pointers. Skip if already present in infilenames_stack
-  vector<TFile*> infiles_single, infiles_stack = {};
+  vector<TFile*> infiles_single, infiles_stack, infiles_numerator = {};
   for(size_t i=0; i<infilenames_single.size(); i++){
     infiles_single.emplace_back(new TFile(infilenames_single[i], "READ"));
   }
   for(size_t i=0; i<infilenames_stack_ordered.size(); i++){
     infiles_stack.emplace_back(new TFile(infilenames_stack_ordered[i], "READ"));
+  }
+  for(size_t i=0; i<infilenames_numerator.size(); i++){
+    infiles_numerator.emplace_back(new TFile(infilenames_numerator[i], "READ"));
   }
 
   // Get foldernames from first infile as blueprint
@@ -109,7 +126,7 @@ void make_plots(vector<TString> infilenames_all, vector<TString> samples, TStrin
   for(size_t i=0; i<foldernames.size(); i++){
 
     TString foldername = foldernames[i];
-    plot_folder(infiles_stack, infiles_single, outfolder, outnameprefix, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, debug);
+    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
   }
 
   for(size_t i=0; i<infiles_single.size(); i++){
@@ -118,14 +135,21 @@ void make_plots(vector<TString> infilenames_all, vector<TString> samples, TStrin
   for(size_t i=0; i<infiles_stack.size(); i++){
     delete infiles_stack[i];
   }
+  for(size_t i=0; i<infiles_numerator.size(); i++){
+    delete infiles_numerator[i];
+  }
   cout << green << "--> Wrote plots to folder: " << outfolder << reset << endl;
 }
 
 // Function to plot plots in a single folder
-void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, bool debug){
-
+void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug){
 
   cout << green << "    --> Folder: " << foldername << reset << endl;
+
+  // check if we need to make a ratio plot
+  bool do_ratio = false;
+  if(infiles_numerator.size() == 1) do_ratio = true;
+  else if(infiles_numerator.size() > 1) throw runtime_error("In plot_folder(): infile-list for numerator contains more than one element. This should have been caught by an earlier check, what happened?");
 
   // get names of histograms in this folder
   vector<TString> histnames = get_histnames(infiles_single[0], foldername);
@@ -137,11 +161,20 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
 
   //set up canvas
   TCanvas* c = new TCanvas("c", "c", 400, 400);
-  TPad* pad = SetupPad();
-  pad->Draw();
-  pad->cd();
+  TPad* pad_top, *pad_ratio;
+  if(do_ratio){
+    pad_top = SetupRatioPadTop();
+    pad_ratio = SetupRatioPad();
+    pad_top->Draw();
+    pad_ratio->Draw();
+  }
+  else{
+    pad_top = SetupPad();
+    pad_top->Draw();
+  }
 
-  float height_per_legitem = 0.037;
+  float height_per_legitem = 0.055;
+  if(!do_ratio) height_per_legitem *=0.66666;
   float leg_y_high = 0.9;
   float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
 
@@ -150,7 +183,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     TString histname = histnames[i];
 
 
-    TLegend* leg = new TLegend(0.5, leg_y_low, 0.9, leg_y_high);
+    TLegend* leg = new TLegend(0.6, leg_y_low, 0.9, leg_y_high);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(43);
@@ -165,10 +198,9 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     double maximum = -1.;
 
 
-    //same for stacked histograms
+    // find histograms to be stacked
     THStack* stack = new THStack("stack", "");
     for(size_t j=0; j<infiles_stack.size(); j++){
-      // cout << "j1: " << j << endl;
       TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
       hist->SetFillColor(colors_stack[j]);
@@ -207,12 +239,19 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
       if(!is_data[j])leg->AddEntry(hist, labels_single[j], "l");
     }
 
+    pad_top->Clear();
+    pad_top->cd();
+
     // first draw a histogram (if any)
     size_t nsingle = 0;
     for(size_t j=0; j<hists_single.size(); j++){
       do_cosmetics(hists_single[j], minimum, maximum*maxscale, colors_single[j], linestyles_single[j]);
       if(normalize) hists_single[j]->GetYaxis()->SetTitle("Event fraction");
-      if(is_data[j]) hists_single[j]->SetMarkerStyle(20);
+      if(is_data[j]){
+        hists_single[j]->SetMarkerStyle(20);
+        hists_single[j]->SetMarkerSize(0.75);
+
+      }
 
       TString opt = "HIST";
       if (is_data[j]) opt = "E";
@@ -223,10 +262,20 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
     }
 
     // now draw the stack (must be afterwards to get axes right)
+    TH1F* h_err;
     if(stack){
       TString opt = "HIST";
       if(nsingle > 0) opt += " SAME";
       stack->Draw(opt);
+
+      // draw uncertainty of stack
+      h_err = new TH1F(*(TH1F*)(stack->GetStack()->Last()));
+      h_err->SetFillColor(kGray+1);
+      h_err->SetLineWidth(0);
+      h_err->SetMarkerStyle(0);
+      h_err->SetMarkerSize(0);
+      h_err->SetFillStyle(3245);
+      h_err->Draw("E2 same");
     }
 
     // now draw single histograms again (so they are in the foreground)
@@ -237,9 +286,76 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
       hists_single[j]->Draw(opt);
     }
 
-    pad->RedrawAxis();
+    pad_top->RedrawAxis();
     leg->Draw();
-    if(logy) pad->SetLogy(true);
+    if(logy) pad_top->SetLogy(true);
+
+
+    // now handle all the ratio business
+
+    TH1F* h_numerator = new TH1F();
+    TH1F* h_denom = new TH1F();
+    if(do_ratio){
+      // if(false){
+
+      delete h_numerator;
+      delete h_denom;
+
+      // numerator is given, denominator will be the stack.
+      h_numerator = new TH1F(*(TH1F*)(infiles_numerator[0]->Get(foldername + "/" + histname)));
+      // ((TH1F*)(infiles_numerator[0]->Get(foldername + "/" + histname)))->Copy(*h_numerator);
+      h_denom = new TH1F(*(TH1F*)((stack->GetStack()->Last())));
+      // ((TH1F*)((stack->GetStack()->Last())))->Copy(*h_denom);
+
+      if(h_denom->GetNbinsX() != h_numerator->GetNbinsX()) throw runtime_error("Data and stack have different number of bins, ratio cannot be calculated.");
+      size_t nbins = h_denom->GetNbinsX();
+      for(size_t j=1; j<nbins+1; j++){
+        double val_n = h_numerator->GetBinContent(j);
+        double err_n = h_numerator->GetBinError(j);
+        double val_d = h_denom->GetBinContent(j);
+        double err_d = h_denom->GetBinError(j);
+
+        if(val_d > 0){
+          h_denom->SetBinContent(j, 1.);
+          h_denom->SetBinError(j, err_d/val_d);
+          h_numerator->SetBinContent(j, val_n/val_d);
+          h_numerator->SetBinError(j, err_n/val_d);
+        }
+        else{
+          h_denom->SetBinContent(j, 0.);
+          h_denom->SetBinError(j, 0.);
+          h_numerator->SetBinContent(j, 0.);
+          h_numerator->SetBinError(j, 0.);
+        }
+      }
+      h_denom->SetMarkerStyle(0);
+      h_denom->SetMarkerSize(0);
+      h_denom->SetLineColor(kGray+1);
+      h_denom->SetFillColor(kGray+1);
+      do_cosmetics(h_numerator, 0.3, 1.7, colors_numerator[0], linestyles_numerator[0], true);
+      h_numerator->GetYaxis()->SetTitle("Data / Pred.");
+      h_numerator->SetMarkerStyle(20);
+      h_numerator->SetMarkerSize(0.75);
+
+      // draw it!
+      pad_ratio->Clear();
+      pad_ratio->cd();
+      pad_ratio->SetLogy(0);
+      pad_ratio->SetLogx(0);
+      h_numerator->Draw("AXIS");
+      h_denom->Draw("E2 SAME");
+      h_numerator->Draw("SAME");
+
+      double xmin = h_numerator->GetBinLowEdge(1);
+      double xmax = h_numerator->GetBinLowEdge(h_numerator->GetNbinsX()+1);
+      TLine* l_unity = new TLine(xmin, 1, xmax, 1);
+      l_unity->SetLineColor(kBlack);
+      l_unity->SetLineWidth(2);
+      l_unity->SetLineStyle(2);
+      l_unity->Draw("SAME");
+      pad_ratio->RedrawAxis();
+
+    }
 
     TString outfilename = "";
     if(singlePDF){
@@ -258,6 +374,15 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
       c->Print(outfilename, "pdf");
     }
 
+    if(do_ratio){
+      delete h_numerator;
+      delete h_denom;
+    }
+
+    if(stack){
+      delete h_err;
+    }
+
 
   }
   delete c;
@@ -270,10 +395,10 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, TS
 // Utility functions
 // =================
 
-vector<TString> produce_infilenames(TString infolder, TString postfix, vector<TString> samples){
+vector<TString> produce_infilenames(TString infolder, vector<TString> samples){
   vector<TString> result = {};
   for(size_t i=0; i<samples.size(); i++){
-    result.emplace_back(infolder + samples[i] + postfix);
+    result.emplace_back(infolder + samples[i] + ".root");
   }
   return result;
 }
@@ -317,11 +442,13 @@ vector<TString> get_histnames(TFile* infile, TString foldername){
 }
 
 
-void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int linestyle){
+void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int linestyle, bool ratio){
 
-  HistCosmetics(hist);
-  hist->SetMinimum(minimum);
-  hist->SetMaximum(maximum);
+  HistCosmetics(hist, ratio);
+  if(!ratio){
+    hist->SetMinimum(minimum);
+    hist->SetMaximum(maximum);
+  }
   hist->SetLineColor(color);
   hist->SetMarkerColor(color);
   hist->SetLineStyle(linestyle);

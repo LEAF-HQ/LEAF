@@ -149,6 +149,7 @@ int main(){
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
   Plotter_Recolevel.set_stacks({"MC__ST", "MC__DYJetsToLL", "MC__TT", "MC__WJetsToLNu"});
+  Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
 
   // Plotter_Recolevel.Plot(normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(false, true, false);       // usual
