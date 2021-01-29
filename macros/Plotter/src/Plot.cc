@@ -65,7 +65,7 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
 void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug){
 
   bool do_stack = false;
-  if(numerator != "") do_stack = true;
+  if(stacks.size() > 0) do_stack = true;
 
   vector<TString> infilenames_all = produce_infilenames(infolder, samples);
   vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
@@ -147,6 +147,8 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
   cout << green << "    --> Folder: " << foldername << reset << endl;
 
   // check if we need to make a ratio plot
+  bool do_stack = false;
+  if(infiles_stack.size() > 0) do_stack = true;
   bool do_ratio = false;
   if(infiles_numerator.size() == 1) do_ratio = true;
   else if(infiles_numerator.size() > 1) throw runtime_error("In plot_folder(): infile-list for numerator contains more than one element. This should have been caught by an earlier check, what happened?");
@@ -263,7 +265,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
 
     // now draw the stack (must be afterwards to get axes right)
     TH1F* h_err;
-    if(stack){
+    if(do_stack){
       TString opt = "HIST";
       if(nsingle > 0) opt += " SAME";
       stack->Draw(opt);
@@ -379,7 +381,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       delete h_denom;
     }
 
-    if(stack){
+    if(do_stack){
       delete h_err;
     }
 
