@@ -42,7 +42,7 @@ config_per_year = {
 
 
 # all
-# samplenames = samples.keys()
+samplenames = sorted(samples.keys())
 
 # data + bkg
 # samplenames = ['DATA_Tau_B', 'DATA_Tau_C', 'DATA_Tau_D', 'DATA_Tau_E', 'DATA_Tau_F', 'TTToSemiLeptonic', 'TTTo2L2Nu', 'TTToHadronic', 'WJetsToLNu', 'DYJetsToLNu', 'ST_tch_top', 'ST_tch_antitop', 'ST_sch', 'ST_tW_top', 'ST_tW_antitop']
@@ -51,19 +51,21 @@ config_per_year = {
 # samplenames = ['DATA_Tau_B', 'DATA_Tau_C', 'DATA_Tau_D', 'DATA_Tau_E', 'DATA_Tau_F']
 
 # signals
-samplenames = sorted(signals.keys())
+# samplenames = sorted(signals.keys())
 # samplenames = ['LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest', 'LQLQToPsiChi_MLQ1360_MPS513_MC1457_Lbest', 'PsiPsiToLQChi_MLQ7030_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0', 'LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ1000_MPS117_MC1100_Lbest', 'LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0', 'LQLQToBTau_MLQ2620_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ1360_MPS513_MC1457_Lbest', 'LQLQToBTauPsiChi_MLQ2170_MPS507_MC1457_Lbest', 'LQLQToBTau_MLQ1000_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ1810_MPS508_MC1457_Lbest', 'LQLQToBTauPsiChi_MLQ2170_MPS507_MC1457_L1p0', 'PsiPsiToLQChi_MLQ3970_MPS505_MC1457_L1p0', 'LQLQToPsiChi_MLQ1810_MPS508_MC1457_L1p0', 'LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest', 'PsiPsiToLQChi_MLQ10000_MPS1052_MC1977_L1p0', 'PsiPsiToLQChi_MLQ7030_MPS2445_MC12089_L1p0', 'LQLQToPsiChi_MLQ1360_MPS513_MC1457_L1p0', 'PsiPsiToLQChi_MLQ3970_MPS117_MC1100_L1p0', 'LQLQToBTau_MLQ2170_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest', 'PsiPsiToLQChi_MLQ3970_MPS2551_MC12089_L1p0', 'PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0', 'PsiPsiToLQChi_MLQ10000_MPS504_MC1457_L1p0', 'LQLQToBTau_MLQ1810_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ2620_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ2170_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ2170_MPS507_MC1457_L1p0', 'LQLQToBTauPsiChi_MLQ2620_MPS506_MC1457_Lbest', 'LQLQToBTau_MLQ1360_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_L1p0', 'LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ2620_MPS506_MC1457_Lbest', 'LQLQToPsiChi_MLQ1810_MPS508_MC1457_Lbest', 'LQLQToPsiChi_MLQ2620_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ2620_MPS506_MC1457_L1p0', 'LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_Lbest', 'LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ1360_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ3970_MPS244_MC1214_L1p0', 'PsiPsiToLQChi_MLQ3970_MPS1106_MC1977_L1p0', 'PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0', 'PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0', 'PsiPsiToLQChi_MLQ10000_MPS117_MC1100_L1p0', 'LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ2170_MPS507_MC1457_Lbest', 'LQLQToPsiChi_MLQ1360_MPS117_MC1100_Lbest', 'PsiPsiToLQChi_MLQ7030_MPS504_MC1457_L1p0', 'LQLQToBTauPsiChi_MLQ1360_MPS513_MC1457_L1p0', 'LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0', 'LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_Lbest', 'LQLQToPsiChi_MLQ2620_MPS506_MC1457_L1p0', 'PsiPsiToLQChi_MLQ7030_MPS1071_MC1977_L1p0', 'LQLQToBTauPsiChi_MLQ1810_MPS508_MC1457_L1p0', 'LQLQToPsiChi_MLQ1810_MPS117_MC1100_Lbest', 'LQLQToBTau_MLQ2170_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ7030_MPS244_MC1214_L1p0', 'LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_L1p0', 'LQLQToPsiChi_MLQ1810_MPS117_MC1100_L1p0', 'PsiPsiToLQChi_MLQ10000_MPS244_MC1214_L1p0']
 
 
+year = '2017'
 submit = True
 
 def main():
     for samplename in samplenames:
         s = samples[samplename]
-        Tuplizer = TuplizeRunner(sample=s, year='2017', config=config_per_year, workarea=workarea, basefolder=basefolder, gensimfolder=gensimfolder, macrofolder=macrofolder, submit=submit)
+        Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, gensimfolder=gensimfolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile()
+        Tuplizer.GetDASCrossSection(sample=s, year=year)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 

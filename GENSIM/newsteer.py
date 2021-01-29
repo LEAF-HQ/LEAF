@@ -28,7 +28,7 @@ from GensimRunner import *
 processes_lqlq_sm = ['LQLQToBTau']
 mlqs_lqlq_sm     = [1000, 1400, 1800, 2200, 2600]
 # mchs_exp_lqlq_sm = [2.0, 2.33, 2.66, 3.0, 3.33, 3.66, 4.0, 4.33]
-mchs_exp_lqlq_sm = [2.0, 2.66, 3.33, 4.0, 4.33]
+# mchs_exp_lqlq_sm = [2.0, 2.66, 3.33, 4.0, 4.33]
 mchs_exp_lqlq_sm = [2.0] # to reasonable precision, the LQ->btau decay kinematics do not depend on DM/Psi masses
 lambdas_lqlq_sm  = [1.0, 'best']
 

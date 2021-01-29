@@ -24,6 +24,7 @@ from tdrstyle_all import *
 import tdrstyle_all as TDR
 
 from samples.Sample import *
+from samples.Storage import *
 
 
 
@@ -132,4 +133,15 @@ class TuplizeRunner:
                 print yellow('Couldn\'t open file, skip this one.')
         out.write('<!-- Weighted number of events: %d -->\n' % nevents)
         out.close()
-        print green('    --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %f' % (self.sample.name, self.year, nevents))
+        print green('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %f' % (self.sample.name, self.year, nevents))
+
+
+    def GetDASCrossSection(self, sample, year):
+        result = None
+        if not isinstance(sample.nanopaths[year], Storage_DAS):
+            print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
+            return result
+        else:
+            print green('--> Sample \'%s\' in year %s is a dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
+
+        
