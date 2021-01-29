@@ -103,4 +103,154 @@ backgrounds = {
         xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/ST_tW_antitop.xml'}),
         nevents=YearDependentContainer({'2017': 9191369})
     ),
+
+    'QCD_Pt_15to30': Sample(
+        type='MC',
+        name='QCD_Pt_15to30',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_15to30')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_15to30.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_30to50': Sample(
+        type='MC',
+        name='QCD_Pt_30to50',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_30to50')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_30to50.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_50to80': Sample(
+        type='MC',
+        name='QCD_Pt_50to80',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_50to80')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_50to80.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_80to120': Sample(
+        type='MC',
+        name='QCD_Pt_80to120',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_80to120')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_80to120.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_120to170': Sample(
+        type='MC',
+        name='QCD_Pt_120to170',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_120to170')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_120to170.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_170to300': Sample(
+        type='MC',
+        name='QCD_Pt_170to300',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_170to300')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_170to300.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_300to470': Sample(
+        type='MC',
+        name='QCD_Pt_300to470',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_300to470')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_300to470.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_470to600': Sample(
+        type='MC',
+        name='QCD_Pt_470to600',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_470to600')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_470to600.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_600to800': Sample(
+        type='MC',
+        name='QCD_Pt_600to800',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_600to800')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_600to800.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_800to1000': Sample(
+        type='MC',
+        name='QCD_Pt_800to1000',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_800to1000')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_800to1000.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_1000to1400': Sample(
+        type='MC',
+        name='QCD_Pt_1000to1400',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_1000to1400')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_1000to1400.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_1400to1800': Sample(
+        type='MC',
+        name='QCD_Pt_1400to1800',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_1400to1800')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_1400to1800.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_1800to2400': Sample(
+        type='MC',
+        name='QCD_Pt_1800to2400',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_1800to2400')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_1800to2400.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_2400to3200': Sample(
+        type='MC',
+        name='QCD_Pt_2400to3200',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_2400to3200')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_2400to3200.xml'}),
+        nevents=YearDependentContainer()
+    ),
+
+    'QCD_Pt_3200toInf': Sample(
+        type='MC',
+        name='QCD_Pt_3200toInf',
+        nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_NANOAOD/QCD_Pt_3200toInf')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Recolevel/QCD_Pt_3200toInf.xml'}),
+        nevents=YearDependentContainer()
+    ),
 }
