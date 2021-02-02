@@ -16,7 +16,7 @@
   <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" />
 
   <InputDatasets>
-    <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" >
+    <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" Year="2017" >
       &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
     </Dataset>
   </InputDatasets>
