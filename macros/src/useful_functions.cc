@@ -53,6 +53,9 @@ bool path_exists(const TString &s){
   return (stat(s, &buffer) == 0);
 }
 
+
+
+
 /// distance in phi, with the convention -phi < deltaPhi <= phi
 // T and U have to have a 'phi()' method, e.g. Particle, LorentzVector, etc.
 template<typename T, typename U>
@@ -162,6 +165,12 @@ TString getDatasetType(xmlNode* node){
   return type;
 }
 
+TString getDatasetYear(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"Year");
+  TString type = (const char*)prop;
+  return type;
+}
+
 TString getInputFileFileName(xmlNode* node){
   xmlChar* prop = xmlGetProp(node, (xmlChar*)"FileName");
   TString file = (const char*)prop;
@@ -236,23 +245,23 @@ const TString JERCPathString(const string& dataset, const string& version, const
   return result;
 }
 
-const TString JERPathString(const string& version, const string& jetCollection, const string& correction, const string& runName) {
-  string dataset = (runName.find("MC") != string::npos)? "MC": "DATA";
+const TString JERPathString(const string& version, const string& jetCollection, const string& correction, const TString& runName) {
+  string dataset = (runName.Contains("MC"))? "MC": "DATA";
   return JERCPathString(dataset,version,jetCollection,correction,false);
 }
 
 
-const TString JECPathString(const string& version, const string& jetCollection, const string& correction, const string& runName) {
+const TString JECPathString(const string& version, const string& jetCollection, const string& correction, const TString& runName) {
   string dataset = "MC";
-  if (runName.find("MC") == string::npos){
+  if (!runName.Contains("MC")){
     dataset = "DATA";
     string runName_ = TString(runName).ReplaceAll("Run","").Data();
     TString temp = version;
     TString tok; int from = 0;
     temp.Tokenize(tok, from, "_");
-    // string newRunName = jecRunMap[tok.Data()][runName_];
     string newRunName = jecRunMap.at(tok.Data()).at(runName_);
-    //in 2018 they use "_RunA" instead of just "A"
+
+    //in 2018 and UL, they use "_RunX" instead of just "X"
     if (version.find("18") != string::npos ||  version.find("UL") != string::npos){
       newRunName = "_Run" +runName_;
     }
@@ -262,7 +271,7 @@ const TString JECPathString(const string& version, const string& jetCollection, 
   return JERCPathString(dataset,version,jetCollection,correction,true);
 
 }
-vector<string> JERCFiles(const string& type, const string& runName, const string& version, const string& jetCollection) {
+vector<string> JERCFiles(const string& type, const TString& runName, const string& version, const string& jetCollection) {
   vector<string> results = {};
   for (const string level: JERCLevels.at(type).at("default")){
     if (type.find("JEC") != string::npos) results.push_back(JECPathString(version, jetCollection, level, runName).Data());

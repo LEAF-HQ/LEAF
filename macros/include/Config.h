@@ -14,6 +14,7 @@
 struct dataset{
   TString name                = "";
   TString type                = "";
+  TString year                = "";
   vector<TString> infilenames = {};
   double lumi                  = -1.;
 };
@@ -34,7 +35,7 @@ public:
   void add_dataset(dataset d){m_datasets.emplace_back(d);};
 
   const bool    has(const string s) const {auto it = m_additionalvariables.find(s); return (it != m_additionalvariables.end());};
-  const string  get(const string s) {return m_additionalvariables[s];};
+  const string  get(const string s) const {if(Config::has(s)){return m_additionalvariables.at(s);} else{throw runtime_error("Trying to get non-existent variable '" + s + "' from Config.");}};
   const TString output_directory() const {return m_output_directory;};
   const TString se_director() const {return m_se_director;};
   const TString postfix() const {return m_postfix;};
@@ -44,6 +45,7 @@ public:
   const int     nevt_skip() const {return m_nevt_skip;};
   const TString dataset_name() const {return m_datasets[m_idx].name;};
   const TString dataset_type() const {return m_datasets[m_idx].type;};
+  const TString dataset_year() const {return m_datasets[m_idx].year;};
   const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
   const double  dataset_lumi() const {return m_datasets[m_idx].lumi;};
   const size_t  n_datasets()   const {return m_datasets.size();};

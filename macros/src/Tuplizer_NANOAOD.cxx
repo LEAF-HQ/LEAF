@@ -106,6 +106,14 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> genWeight (reader, varname);
 
   TTreeReaderValue<float> rho(reader, "fixedGridRhoFastjetAll");
+  TTreeReaderValue<unsigned int> run(reader, "run");
+
+
+  TTreeReaderValue<bool> hlt_isomu24(reader, "HLT_IsoMu24");
+  TTreeReaderValue<bool> hlt_isomu27(reader, "HLT_IsoMu27");
+  TTreeReaderValue<bool> hlt_mu50(reader, "HLT_Mu50");
+  TTreeReaderValue<bool> hlt_tkmu100(reader, "HLT_TkMu100");
+  TTreeReaderValue<bool> hlt_oldmu100(reader, "HLT_OldMu100");
 
   TTreeReaderValue<float> met_pt  (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
@@ -337,6 +345,18 @@ int main(int argc, char* argv[]){
     // Do general event-based variables
     // ================================
     event.rho = *rho;
+    event.run = *run;
+
+    // Do HLT flags
+    // ============
+
+
+
+    // TTreeReaderValue<bool> hlt_isomu24(reader, "HLT_IsoMu24");
+    // TTreeReaderValue<bool> hlt_isomu27(reader, "HLT_IsoMu27");
+    // TTreeReaderValue<bool> hlt_mu50(reader, "HLT_Mu50");
+    // TTreeReaderValue<bool> hlt_tkmu100(reader, "HLT_TkMu100");
+    // TTreeReaderValue<bool> hlt_oldmu100(reader, "HLT_OldMu100");
 
     // Do MET
     // ======
@@ -358,7 +378,7 @@ int main(int argc, char* argv[]){
       j.set_mu_efrac(jet_mu_efrac[i]);
       j.set_jet_id(jet_jet_id[i]);
       j.set_pu_id(jet_pu_id[i]);
-      j.set_raw_factor(jet_raw_factor[i]);
+      j.set_raw_factor(1 - jet_raw_factor[i]); // NanoAOD: raw_factor = 1 - (factor_to_get_back_to_raw) <--> custom tuples: raw_factor = (factor_to_get_back_to_raw)
       j.set_muon_sub_raw_factor(jet_muon_sub_raw_factor[i]);
       if(is_mc){
         j.set_parton_flavor(jet_parton_flavor[i]);

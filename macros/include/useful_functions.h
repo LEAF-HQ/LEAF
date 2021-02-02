@@ -31,6 +31,21 @@ double deltaEta(const T & p1, const U & p2);
 // double deltaR(const T & p1, const U & p2);
 double deltaR(const Particle & p1, const Particle & p2);
 
+template<typename T>
+const T * closestParticle(const Particle  & p, const std::vector<T> & particles){
+    double deltarmin = std::numeric_limits<double>::infinity();
+    const T* next=0;
+    for(unsigned int i=0; i<particles.size(); ++i) {
+        const T & pi = particles[i];
+        double dr = deltaR(pi, p);
+        if(dr < deltarmin && &pi != &p) {
+            deltarmin = dr;
+            next = &pi;
+        }
+    }
+    return next;
+}
+
 template<typename P>
 inline void sort_by_pt(std::vector<P> & particles){
     std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
@@ -42,7 +57,7 @@ xmlNode* findNodeByName(xmlNode* rootnode, TString name);
 float getDatasetLumi(xmlNode* node);
 TString getDatasetName(xmlNode* node);
 TString getDatasetType(xmlNode* node);
-// TString getDatasetFilename(xmlNode* node);
+TString getDatasetYear(xmlNode* node);
 TString getInputFileFileName(xmlNode* node);
 
 
@@ -58,6 +73,6 @@ std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);
 
 const TString JERCPathString(const std::string& dataset, const std::string& version, const std::string& jetCollection, const std::string& type, const bool& isJEC);
-const TString JERPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const std::string& runName);
-const TString JECPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const std::string& runName);
-std::vector<std::string> JERCFiles(const std::string& type, const std::string& runName, const std::string& version, const std::string& jetCollection);
+const TString JERPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
+const TString JECPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
+std::vector<std::string> JERCFiles(const std::string& type, const TString& runName, const std::string& version, const std::string& jetCollection);

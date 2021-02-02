@@ -25,8 +25,11 @@ public:
 
   void clear();
   void reset();
+  TString get_runperiod(TString year);
+
 
   bool is_data;
+  unsigned int run = 297020;
   Met* met;
   vector<Jet>* jets;
   vector<Tau>* taus;

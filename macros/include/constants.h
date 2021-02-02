@@ -62,19 +62,49 @@ const std::unordered_map<std::string, std::vector<std::string>> yearRunMap = {
   {"2018", runPeriods2018},
 };
 
+// All pairs for a run period are inclusive of both lower & upper numbers
+const std::map<TString, std::map<std::pair<unsigned int, unsigned int>, TString>>
+  run_number_map = {
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2016Analysis
+    { "2016", {
+        {std::pair(272007, 275376), "B" },
+        {std::pair(275657, 276283), "C" },
+        {std::pair(276315, 276811), "D" },
+        {std::pair(276831, 277420), "E" },
+        {std::pair(277772, 278808), "F" },
+        {std::pair(278820, 280385), "G" },
+        {std::pair(280919, 284044), "H" },
+    }},
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2017Analysis
+    { "2017", {
+        {std::pair(297020, 299329), "B" },
+        {std::pair(299337, 302029), "C" },
+        {std::pair(302030, 303434), "D" },
+        {std::pair(303435, 304826), "E" },
+        {std::pair(304911, 306462), "F" },
+    }},
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
+    { "2018", {
+        {std::pair(315252, 316995), "A" },
+        {std::pair(316998, 319312), "B" },
+        {std::pair(319313, 320393), "C" },
+        {std::pair(320394, 325273), "D" },
+    }},
+};
+
 const std::unordered_map<std::string, std::unordered_map<std::string, std::string> > JERC = {
-  {"2016", {
-    {"JEC", "Summer16_07Aug2017_V11"},
-    {"JER", "Summer16_25nsV1b"},
-  }},
+  // {"2016", {
+  //   {"JEC", "Summer16_07Aug2017_V11"},
+  //   {"JER", "Summer16_25nsV1b"},
+  // }},
   {"2017", {
-    {"JEC", "Fall17_17Nov2017_V32"},
-    {"JER", "Fall17_V3b"},
+    {"JEC", "Summer19UL17_V5"},
+    {"JER", "Summer19UL17_JRV2"},
   }},
-  {"2018", {
-    {"JEC", "Autumn18_V19"},
-    {"JER", "Autumn18_V7b"},
-  }},
+  // {"2018", {
+  //   {"JEC", "Autumn18_V19"},
+  //   {"JER", "Autumn18_V7b"},
+  // }},
 };
 
 const std::vector<std::string> JEC_L1L2L3Res = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};

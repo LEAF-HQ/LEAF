@@ -35,6 +35,14 @@ RecoEvent::~RecoEvent(){
   delete electrons;
 }
 
+TString RecoEvent::get_runperiod(TString year){
+  if(!RecoEvent::is_data) return "MC";
+  for (const auto& [numbers, period] : run_number_map.at(year)){
+    if(RecoEvent::run >= numbers.first && RecoEvent::run <= numbers.second) return period;
+  }
+  throw runtime_error("Event has invalid run number (not in run_number_map in constants.h) and therefore cannot be assigned a run-period");
+}
+
 void RecoEvent::clear(){
   GenEvent::clear();
   delete met;

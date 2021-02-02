@@ -46,6 +46,7 @@ Config::Config(TString configfilename){
       dataset ds;
       ds.name     = getDatasetName(current_node);
       ds.type     = getDatasetType(current_node);
+      ds.year     = getDatasetYear(current_node);
       ds.lumi     = getDatasetLumi(current_node);
 
       // loop over infiles of this dataset
@@ -141,10 +142,10 @@ void Config::process_datasets(){
     TString outfilename_final = outfilename_target;
     outfilename_final.ReplaceAll("_tmp.root", ".root");
 
-    string command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + (string)outfilename_tmp + " " + (string)se_director() + (string)outfilename_final;// + " > /dev/null";
-    cout << "copy command: " << command << endl;
+    string command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + (string)outfilename_tmp + " " + (string)se_director() + (string)outfilename_final + (string)" > /dev/null";
+    // cout << "copy command: " << command << endl;
     system(command.c_str());
-    command = (string)"LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + (string)outfilename_tmp;// + " > /dev/null";
+    command = (string)"LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + (string)outfilename_tmp + (string)" > /dev/null";
     system(command.c_str());
     cout << green << "--> Wrote histograms and tree to file: " << outfilename_final << reset << endl << endl;
 
