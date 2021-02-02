@@ -20,3 +20,4 @@ GENSIM/exampleAnalysis.py
 macros/obj/*
 macros/lib/*
 macros/bin/*
+*.log
