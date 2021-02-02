@@ -136,12 +136,62 @@ class TuplizeRunner:
         print green('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %f' % (self.sample.name, self.year, nevents))
 
 
-    def GetDASCrossSection(self, sample, year):
-        result = None
-        if not isinstance(sample.nanopaths[year], Storage_DAS):
-            print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
-            return result
-        else:
+    def PrintDASCrossSection(self, sample, year, recalculate=False):
+        xsec = None
+        if not recalculate and sample.xsecs[year] is not None:
+            print yellow('--> Sample \'%s\' in year %s already has a cross section filled in. Because \'recalculate\' is not set, skip.' % (sample.name, year))
+            return
+        if isinstance(sample.nanopaths[year], Storage_DAS):
             print green('--> Sample \'%s\' in year %s is a dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
 
-        
+            (minipath, primary_name, campaigntag, tiertag) = get_mini_parts_from_nano_name(sample.nanopaths[year].path)
+            cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=sample.nanopaths[year].director)
+
+        else:
+            print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
+            return
+
+        # print cmsrun_command
+        # cmsrun_output = subprocess.check_output(cmsrun_command, shell=True, stderr=subprocess.STDOUT).split('\n') #
+        cmsrun_output = subprocess.check_output(cmsrun_command, shell=True).split('\n') #
+        for l in cmsrun_output:
+            if l.startswith('After filter: final cross section'):
+                xsec = float(l.split('=')[1].split(' ')[1])
+                break
+        print green('  --> Final cross section: \'%s\': %f' % (year, xsec))
+
+
+
+
+
+
+
+
+
+
+
+def get_mini_parts_from_nano_name(nanopath):
+    primary_name = nanopath.split('/')[1]
+    campaigntag  = nanopath.split('/')[2].split('-')[0].replace('Nano', 'Mini')
+    tiertag      = nanopath.split('/')[3].replace('NANO', 'MINI')
+    dasgocommand = 'dasgoclient --limit=0 -query="dataset dataset=/%s/*%s*/%s"' % (primary_name, campaigntag, tiertag)
+    output = subprocess.check_output(dasgocommand, shell=True).split('\n')
+    minipath = [x.strip() for x in output][0]
+    return (minipath, primary_name, campaigntag, tiertag)
+
+
+
+def get_dasxsec_cmsrun_command(minipath, director):
+    dasgocommand = 'dasgoclient --limit=100 -query="file dataset=%s"' % (minipath)
+    # files = subprocess.check_output(dasgocommand, shell=True).split("\n")
+    files = "/store"+subprocess.check_output(dasgocommand, shell=True).replace("\n",",").split("/store",1)[1]
+    files = files.strip(',')
+    # files = subprocess.check_output(dasgocommand, shell=True).split("\n")
+    # filelist = [director+f for f in files if f is not '']
+    # filelist = [f for f in files if f is not '']
+    # filestring = ','.join(filelist)
+    # result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i ' % (filestring, 5e5)
+    result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i  2>&1 | tee xsec_%s.log' % (files, 1e6, minipath.split('/')[1])
+    print result
+
+    return result

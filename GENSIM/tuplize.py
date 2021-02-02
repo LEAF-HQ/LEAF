@@ -42,7 +42,10 @@ config_per_year = {
 
 
 # all
-samplenames = sorted(samples.keys())
+# samplenames = sorted(samples.keys())
+
+# backgrounds
+samplenames = sorted(backgrounds.keys())
 
 # data + bkg
 # samplenames = ['DATA_Tau_B', 'DATA_Tau_C', 'DATA_Tau_D', 'DATA_Tau_E', 'DATA_Tau_F', 'TTToSemiLeptonic', 'TTTo2L2Nu', 'TTToHadronic', 'WJetsToLNu', 'DYJetsToLNu', 'ST_tch_top', 'ST_tch_antitop', 'ST_sch', 'ST_tW_top', 'ST_tW_antitop']
@@ -65,7 +68,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=200000, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile()
-        Tuplizer.GetDASCrossSection(sample=s, year=year)
+        Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
