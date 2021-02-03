@@ -7,10 +7,9 @@ using namespace std;
 
 unique_ptr<JetCorrectionUncertainty> corrector_uncertainty(const Config & cfg, const vector<string> & filenames, const int& direction){
 
-
-
   //initialize JetCorrectionUncertainty if shift direction is not "nominal", else return NULL pointer
   if(direction!=0){
+
     //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "UncertaintySources" to get the proper name of the uncertainty file
     TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
     TString unc_file = (TString)(macropath + "/" + filenames[0]);
@@ -26,7 +25,7 @@ unique_ptr<JetCorrectionUncertainty> corrector_uncertainty(const Config & cfg, c
     return unique_ptr<JetCorrectionUncertainty>(new JetCorrectionUncertainty(*(new JetCorrectorParameters(unc_file.Data(), "Total"))));
     // return jec_uncertainty;
   }
-  return NULL;
+  return nullptr;
 
 }
 
@@ -40,51 +39,51 @@ unique_ptr<FactorizedJetCorrector> build_corrector(const vector<string>& filenam
   return make_unique<FactorizedJetCorrector>(pars);
 }
 
-void correct_jet(FactorizedJetCorrector& corrector, Jet & jet, const Event & event, JetCorrectionUncertainty& jec_unc, int jec_unc_direction){
-  cout << "would correct jet " << endl;
-  // auto factor_raw = jet.JEC_factor_raw();
-  // corrector.setJetPt(jet.pt() * factor_raw);
-  // corrector.setJetEta(jet.eta());
-  // corrector.setJetE(jet.energy() * factor_raw);
-  // corrector.setJetA(jet.jetArea());
-  // corrector.setJetPhi(jet.phi());
-  // corrector.setRho(event.rho);
-  // auto correctionfactors = corrector.getSubCorrections();
-  // auto correctionfactor_L1  = correctionfactors.front();
-  // auto correctionfactor = correctionfactors.back();
-  //
-  // LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-  //
-  // if(jec_unc_direction!=0){
-  //   if (jec_unc==NULL){
-  //     std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
-  //     exit(EXIT_FAILURE);
-  //   }
-  //   // ignore jets with very low pt or high eta, avoiding a crash from the JESUncertainty tool
-  //   double pt = jet_v4_corrected.Pt();
-  //   double eta = jet_v4_corrected.Eta();
-  //   if (!(pt<5. || fabs(eta)>5.)) {
-  //
-  //     jec_unc->setJetEta(eta);
-  //     jec_unc->setJetPt(pt);
-  //
-  //     double unc = 0.;
-  //     if (jec_unc_direction == 1){
-  //       unc = jec_unc->getUncertainty(true);
-  //       correctionfactor *= (1 + fabs(unc));
-  //     } else if (jec_unc_direction == -1){
-  //       unc = jec_unc->getUncertainty(false);
-  //       correctionfactor *= (1 - fabs(unc));
-  //     }
-  //     jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-  //   }
-  // }
-  //
-  //
-  // jet.set_v4(jet_v4_corrected);
-  // jet.set_JEC_factor_raw(1. / correctionfactor);
-  // jet.set_JEC_L1factor_raw(correctionfactor_L1);
+void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const RecoEvent & event, JetCorrectionUncertainty & jec_unc, int jec_unc_direction){
+  double raw_factor = jet.raw_factor();
 
+  corrector.setJetPt(jet.pt() * raw_factor);
+  corrector.setJetEta(jet.eta());
+  corrector.setJetE(jet.e() * raw_factor);
+  corrector.setJetPhi(jet.phi());
+  corrector.setJetA(jet.area());
+  corrector.setRho(event.rho);
+  auto correctionfactors = corrector.getSubCorrections();
+  auto correctionfactor = correctionfactors.back();
+
+  // un-correct and the re-correct the jet with chosen JECs
+  TLorentzVector jet_p4_corrected = jet.p4() * (raw_factor * correctionfactor);
+
+  // check if correction needs to be shifted up or down
+  if(jec_unc_direction != 0){
+
+    // ignore jets with very low pt or high eta, avoiding a crash from the JESUncertainty tool
+    double pt = jet_p4_corrected.Pt();
+    double eta = jet_p4_corrected.Eta();
+    if (!(pt<5. || fabs(eta)>5.)) {
+
+      jec_unc.setJetEta(eta);
+      jec_unc.setJetPt(pt);
+
+      double unc = 0.;
+      if (jec_unc_direction == 1){ // shift up
+        unc = jec_unc.getUncertainty(true);
+        correctionfactor *= (1 + fabs(unc));
+      }
+      else if (jec_unc_direction == -1){ // shift down
+        unc = jec_unc.getUncertainty(false);
+        correctionfactor *= (1 - fabs(unc));
+      }
+      else throw runtime_error("JEC 'direction' is != 0, but not 1 or -1. Other values should not happen. Abort.");
+
+      // overwrite corrected jet p4
+      jet_p4_corrected = jet.p4() * (raw_factor * correctionfactor);
+    }
+  }
+
+  // set corrected jet p4
+  jet.set_p4(jet_p4_corrected);
+  jet.set_raw_factor(1. / correctionfactor);
 }
 
 
@@ -104,19 +103,19 @@ JECCorrector::JECCorrector(const Config& cfg, const TString & year_, const TStri
   correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection));
   jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
 
-
-
 }
+
+
 
 bool JECCorrector::process(RecoEvent& event){
 
   // Find correct run-period of event using event.run, either 'MC' or 'A' or 'B' or ....
   TString runperiod = event.get_runperiod(year);
+  if(direction != 0 && jec_uncertainties.at(runperiod) == nullptr) throw runtime_error("JEC variation should be applied, but JEC uncertainty object is NULL. Abort.");
 
   //apply jet corrections
   for(Jet & jet : *event.jets){
     correct_jet(*correctors.at(runperiod), jet, event, *jec_uncertainties.at(runperiod), direction);
-    // cout << "correcting another jet with pt: " << jet.pt() << endl;
   }
 
   return true;
@@ -234,11 +233,11 @@ void JERCorrector::apply_JER_smearing(std::vector<Jet>& rec_jets, const std::vec
     TLorentzVector jet_p4 = jet.p4();
     jet_p4 *= new_pt / recopt;
 
-    // Update JEC_factor_raw needed for smearing MET
-    float factor_raw = jet.raw_factor();
-    factor_raw *= recopt/new_pt;
+    // Update JEC_raw_factor needed for smearing MET
+    float raw_factor = jet.raw_factor();
+    raw_factor *= recopt/new_pt;
 
-    jet.set_raw_factor(factor_raw);
+    jet.set_raw_factor(raw_factor);
     jet.set_p4(jet_p4);
   }
 
