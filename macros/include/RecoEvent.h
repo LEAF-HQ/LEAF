@@ -7,11 +7,14 @@
 #include <TTreeReaderValue.h>
 
 #include "include/GenEvent.h"
+#include "include/GenInfo.h"
+#include "include/Flags.h"
 #include "include/Met.h"
 #include "include/Jet.h"
 #include "include/Tau.h"
 #include "include/Muon.h"
 #include "include/Electron.h"
+#include "include/TriggerObject.h"
 
 using namespace std;
 
@@ -27,13 +30,18 @@ public:
   void reset();
   TString get_runperiod(TString year);
 
-
-  bool is_data;
-  unsigned int run = 297020;
+  GenInfo* geninfo;
+  Flags* flags;
   Met* met;
+  Met* rawmet;
+  vector<TriggerObject>* triggerobjects;
   vector<Jet>* jets;
   vector<Tau>* taus;
   vector<Muon>* muons;
   vector<Electron>* electrons;
-  float rho;
+  bool is_data;
+  unsigned int run, lumiblock;
+  int npv, npv_good, npu;
+  float rho, ntrueint, weight_prefiring, weight_prefiring_up, weight_prefiring_down;
+  ULong64_t number;
 };

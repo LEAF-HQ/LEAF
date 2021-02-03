@@ -54,6 +54,7 @@ public:
   }
 
   uint64_t selector_bits(){return m_selector_bits;};
+  int jetidx(){return m_jetidx;};
   int charge(){return m_charge;};
   int id_bitmap(){return m_id_bitmap;};
   int lost_hits(){return m_lost_hits;};
@@ -70,6 +71,7 @@ public:
   float sigma_ietaieta(){return m_sigma_ietaieta;};
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
+  void set_jetidx(int x){m_jetidx = x;};
   void set_charge(int x){m_charge = x;};
   void set_id_bitmap(int x){m_id_bitmap = x;};
   void set_lost_hits(int x){m_lost_hits = x;};
@@ -87,6 +89,7 @@ public:
 
 protected:
   uint64_t m_selector_bits;
+  int m_jetidx;
   int m_charge;
   int m_id_bitmap;
   int m_lost_hits;

@@ -91,6 +91,7 @@ public:
   bool is_pf(){return m_is_pf;};
   bool is_tracker(){return m_is_tracker;};
   int charge(){return m_charge;};
+  int jetidx(){return m_jetidx;};
   float dxy(){return m_dxy;};
   float dz(){return m_dz;};
   float iso_mini(){return m_iso_mini;};
@@ -108,6 +109,7 @@ public:
   void set_is_pf(bool x){m_is_pf = x;};
   void set_is_tracker(bool x){m_is_tracker = x;};
   void set_charge(int x){m_charge = x;};
+  void set_jetidx(int x){m_jetidx = x;};
   void set_dxy(float x){m_dxy = x;};
   void set_dz(float x){m_dz = x;};
   void set_iso_mini(float x){m_iso_mini = x;};
@@ -126,6 +128,7 @@ protected:
   bool m_is_pf;
   bool m_is_tracker;
   int m_charge;
+  int m_jetidx;
   float m_dxy;
   float m_dz;
   float m_iso_mini;

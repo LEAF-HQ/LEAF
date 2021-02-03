@@ -51,6 +51,7 @@ public:
   const int n_constituents() const {return m_n_constituents;};
   const int n_muons() const {return m_n_muons;};
   const int n_electrons() const {return m_n_electrons;};
+  const int identifier() const {return m_identifier;};
 
   void set_area(float x){m_area = x;};
   void set_score_CSVv2(float x){m_score_CSVv2 = x;};
@@ -70,6 +71,7 @@ public:
   void set_n_constituents(int x){m_n_constituents = x;};
   void set_n_muons(int x){m_n_muons = x;};
   void set_n_electrons(int x){m_n_electrons = x;};
+  void set_identifier(int x){m_identifier = x;};
 
 
 
@@ -92,6 +94,7 @@ protected:
   int m_n_constituents;
   int m_n_muons;
   int m_n_electrons;
+  int m_identifier;
 
 
 

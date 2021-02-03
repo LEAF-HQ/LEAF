@@ -19,16 +19,34 @@
 using namespace std;
 
 RecoEvent::RecoEvent(){
+  geninfo = new GenInfo;
+  flags = new Flags;
   met = new Met;
+  rawmet = new Met;
+  triggerobjects = new vector<TriggerObject>;
   jets = new vector<Jet>;
   taus = new vector<Tau>;
   muons = new vector<Muon>;
   electrons = new vector<Electron>;
   is_data = false;
+  run = -1;
+  lumiblock = -1;
+  npv = -1;
+  npv_good = -1;
+  npu = -1;
+  ntrueint = -1.;
+  number = -1;
+  weight_prefiring = -1.;
+  weight_prefiring_up = -1.;
+  weight_prefiring_down = -1.;
 }
 
 RecoEvent::~RecoEvent(){
+  delete geninfo;
+  delete flags;
   delete met;
+  delete rawmet;
+  delete triggerobjects;
   delete jets;
   delete taus;
   delete muons;
@@ -45,12 +63,20 @@ TString RecoEvent::get_runperiod(TString year){
 
 void RecoEvent::clear(){
   GenEvent::clear();
+  delete geninfo;
+  delete flags;
   delete met;
+  delete rawmet;
+  delete triggerobjects;
   delete jets;
   delete taus;
   delete muons;
   delete electrons;
+  geninfo = 0;
+  flags = 0;
   met = 0;
+  rawmet = 0;
+  triggerobjects = 0;
   jets = 0;
   taus = 0;
   muons = 0;
@@ -59,16 +85,34 @@ void RecoEvent::clear(){
 
 void RecoEvent::reset(){
   GenEvent::reset();
+  delete geninfo;
+  delete flags;
   delete met;
+  delete rawmet;
+  delete triggerobjects;
   delete jets;
   delete taus;
   delete muons;
   delete electrons;
+  geninfo = new GenInfo;
+  flags = new Flags;
   met = new Met;
+  rawmet = new Met;
+  triggerobjects = new vector<TriggerObject>;
   jets = new vector<Jet>;
   taus = new vector<Tau>;
   muons = new vector<Muon>;
   electrons = new vector<Electron>;
   is_data = false;
+  run = -1;
+  lumiblock = -1;
+  npv = -1;
+  npv_good = -1;
+  npu = -1;
+  ntrueint = -1.;
+  number = -1;
+  weight_prefiring = -1.;
+  weight_prefiring_up = -1.;
+  weight_prefiring_down = -1.;
 
 }

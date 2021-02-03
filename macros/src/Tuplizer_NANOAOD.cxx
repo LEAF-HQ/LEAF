@@ -7,7 +7,10 @@
 #include <TLorentzVector.h>
 
 #include "include/RecoEvent.h"
+#include "include/GenInfo.h"
+#include "include/Flags.h"
 #include "include/Met.h"
+#include "include/TriggerObject.h"
 #include "include/Particle.h"
 #include "include/GenParticle.h"
 #include "include/GenJet.h"
@@ -106,17 +109,138 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> genWeight (reader, varname);
 
   TTreeReaderValue<float> rho(reader, "fixedGridRhoFastjetAll");
+  TTreeReaderValue<float> weight_prefiring(reader, "L1PreFiringWeight_Nom");
+  TTreeReaderValue<float> weight_prefiring_up(reader, "L1PreFiringWeight_Up");
+  TTreeReaderValue<float> weight_prefiring_down(reader, "L1PreFiringWeight_Dn");
   TTreeReaderValue<unsigned int> run(reader, "run");
+  TTreeReaderValue<unsigned int> lumiblock(reader, "luminosityBlock");
+  TTreeReaderValue<ULong64_t> number(reader, "event");
+  TTreeReaderValue<int> npv(reader, "PV_npvs");
+  TTreeReaderValue<int> npv_good(reader, "PV_npvsGood");
+  varname = "PV_npvs";
+  if(is_mc) varname = "Pileup_nPU";
+  TTreeReaderValue<int> npu(reader, varname);
+  if(is_mc) varname = "Pileup_nTrueInt";
+  TTreeReaderValue<float> ntrueint(reader, varname);
 
+  // GenInfo
+  TTreeReaderArray<float> geninfo_systweights_pdf(reader, "LHEPdfWeight");
+  TTreeReaderValue<unsigned int> geninfo_n_systweights_pdf(reader, "nLHEPdfWeight");
+  TTreeReaderArray<float> geninfo_systweights_scale(reader, "LHEScaleWeight");
+  TTreeReaderValue<unsigned int> geninfo_n_systweights_scale(reader, "nLHEScaleWeight");
+  TTreeReaderValue<float> geninfo_originalXWGTUP(reader, "LHEWeight_originalXWGTUP");
+  TTreeReaderValue<float> geninfo_binvar(reader, "Generator_binvar");
+  TTreeReaderValue<int>   geninfo_id1(reader, "Generator_id1");
+  TTreeReaderValue<int>   geninfo_id2(reader, "Generator_id2");
+  TTreeReaderValue<float> geninfo_scale_pdf(reader, "Generator_scalePDF");
+  TTreeReaderValue<float> geninfo_weight(reader, "Generator_weight");
+  TTreeReaderValue<float> geninfo_x1(reader, "Generator_x1");
+  TTreeReaderValue<float> geninfo_x2(reader, "Generator_x2");
+  TTreeReaderValue<float> geninfo_xpdf1(reader, "Generator_xpdf1");
+  TTreeReaderValue<float> geninfo_xpdf2(reader, "Generator_xpdf2");
 
-  TTreeReaderValue<bool> hlt_isomu24(reader, "HLT_IsoMu24");
-  TTreeReaderValue<bool> hlt_isomu27(reader, "HLT_IsoMu27");
-  TTreeReaderValue<bool> hlt_mu50(reader, "HLT_Mu50");
-  TTreeReaderValue<bool> hlt_tkmu100(reader, "HLT_TkMu100");
-  TTreeReaderValue<bool> hlt_oldmu100(reader, "HLT_OldMu100");
+  // Flags
+  TTreeReaderValue<bool> Flag_BadChargedCandidateFilter(reader, "Flag_BadChargedCandidateFilter");
+  TTreeReaderValue<bool> Flag_BadChargedCandidateSummer16Filter(reader, "Flag_BadChargedCandidateSummer16Filter");
+  TTreeReaderValue<bool> Flag_BadPFMuonFilter(reader, "Flag_BadPFMuonFilter");
+  TTreeReaderValue<bool> Flag_BadPFMuonSummer16Filter(reader, "Flag_BadPFMuonSummer16Filter");
+  TTreeReaderValue<bool> Flag_CSCTightHalo2015Filter(reader, "Flag_CSCTightHalo2015Filter");
+  TTreeReaderValue<bool> Flag_CSCTightHaloFilter(reader, "Flag_CSCTightHaloFilter");
+  TTreeReaderValue<bool> Flag_CSCTightHaloTrkMuUnvetoFilter(reader, "Flag_CSCTightHaloTrkMuUnvetoFilter");
+  TTreeReaderValue<bool> Flag_EcalDeadCellBoundaryEnergyFilter(reader, "Flag_EcalDeadCellBoundaryEnergyFilter");
+  TTreeReaderValue<bool> Flag_EcalDeadCellTriggerPrimitiveFilter(reader, "Flag_EcalDeadCellTriggerPrimitiveFilter");
+  TTreeReaderValue<bool> Flag_HBHENoiseFilter(reader, "Flag_HBHENoiseFilter");
+  TTreeReaderValue<bool> Flag_HBHENoiseIsoFilter(reader, "Flag_HBHENoiseIsoFilter");
+  TTreeReaderValue<bool> Flag_HcalStripHaloFilter(reader, "Flag_HcalStripHaloFilter");
+  TTreeReaderValue<bool> Flag_METFilters(reader, "Flag_METFilters");
+  TTreeReaderValue<bool> Flag_chargedHadronTrackResolutionFilter(reader, "Flag_chargedHadronTrackResolutionFilter");
+  TTreeReaderValue<bool> Flag_ecalBadCalibFilter(reader, "Flag_ecalBadCalibFilter");
+  TTreeReaderValue<bool> Flag_ecalLaserCorrFilter(reader, "Flag_ecalLaserCorrFilter");
+  TTreeReaderValue<bool> Flag_eeBadScFilter(reader, "Flag_eeBadScFilter");
+  TTreeReaderValue<bool> Flag_globalSuperTightHalo2016Filter(reader, "Flag_globalSuperTightHalo2016Filter");
+  TTreeReaderValue<bool> Flag_globalTightHalo2016Filter(reader, "Flag_globalTightHalo2016Filter");
+  TTreeReaderValue<bool> Flag_goodVertices(reader, "Flag_goodVertices");
+  TTreeReaderValue<bool> Flag_hcalLaserEventFilter(reader, "Flag_hcalLaserEventFilter");
+  TTreeReaderValue<bool> Flag_muonBadTrackFilter(reader, "Flag_muonBadTrackFilter");
+  TTreeReaderValue<bool> Flag_trkPOGFilters(reader, "Flag_trkPOGFilters");
+  TTreeReaderValue<bool> Flag_trkPOG_logErrorTooManyClusters(reader, "Flag_trkPOG_logErrorTooManyClusters");
+  TTreeReaderValue<bool> Flag_trkPOG_manystripclus53X(reader, "Flag_trkPOG_manystripclus53X");
+  TTreeReaderValue<bool> Flag_trkPOG_toomanystripclus53X(reader, "Flag_trkPOG_toomanystripclus53X");
 
+  // HLT
+  TTreeReaderValue<bool> HLT_Ele27_WPTight_Gsf(reader, "HLT_Ele27_WPTight_Gsf");
+  TTreeReaderValue<bool> HLT_Ele32_WPTight_Gsf(reader, "HLT_Ele32_WPTight_Gsf");
+  TTreeReaderValue<bool> HLT_Ele35_WPTight_Gsf(reader, "HLT_Ele35_WPTight_Gsf");
+  TTreeReaderValue<bool> HLT_Ele115_CaloIdVT_GsfTrkIdT(reader, "HLT_Ele115_CaloIdVT_GsfTrkIdT");
+  TTreeReaderValue<bool> HLT_Photon200(reader, "HLT_Photon200");
+  TTreeReaderValue<bool> HLT_Photon175(reader, "HLT_Photon175");
+  TTreeReaderValue<bool> HLT_IsoMu24(reader, "HLT_IsoMu24");
+  TTreeReaderValue<bool> HLT_IsoMu27(reader, "HLT_IsoMu27");
+  TTreeReaderValue<bool> HLT_Mu50(reader, "HLT_Mu50");
+  TTreeReaderValue<bool> HLT_TkMu100(reader, "HLT_TkMu100");
+  TTreeReaderValue<bool> HLT_OldMu100(reader, "HLT_OldMu100");
+  TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg(reader, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg(reader, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg");
+  TTreeReaderValue<bool> HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1");
+  TTreeReaderValue<bool> HLT_PFMET100_PFMHT100_IDTight_PFHT60(reader, "HLT_PFMET100_PFMHT100_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMET110_PFMHT110_IDTight(reader, "HLT_PFMET110_PFMHT110_IDTight");
+  TTreeReaderValue<bool> HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1");
+  TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight(reader, "HLT_PFMET120_PFMHT120_IDTight");
+  TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1");
+  TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight_PFHT60(reader, "HLT_PFMET120_PFMHT120_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMET130_PFMHT130_IDTight(reader, "HLT_PFMET130_PFMHT130_IDTight");
+  TTreeReaderValue<bool> HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1");
+  TTreeReaderValue<bool> HLT_PFMET140_PFMHT140_IDTight(reader, "HLT_PFMET140_PFMHT140_IDTight");
+  TTreeReaderValue<bool> HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1");
+  TTreeReaderValue<bool> HLT_PFMET200_HBHECleaned(reader, "HLT_PFMET200_HBHECleaned");
+  TTreeReaderValue<bool> HLT_PFMET200_HBHE_BeamHaloCleaned(reader, "HLT_PFMET200_HBHE_BeamHaloCleaned");
+  TTreeReaderValue<bool> HLT_PFMET200_NotCleaned(reader, "HLT_PFMET200_NotCleaned");
+  TTreeReaderValue<bool> HLT_PFMET250_HBHECleaned(reader, "HLT_PFMET250_HBHECleaned");
+  TTreeReaderValue<bool> HLT_PFMET300_HBHECleaned(reader, "HLT_PFMET300_HBHECleaned");
+  TTreeReaderValue<bool> HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60(reader, "HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMETNoMu110_PFMHTNoMu110_IDTight(reader, "HLT_PFMETNoMu110_PFMHTNoMu110_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETNoMu120_PFMHTNoMu120_IDTight(reader, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60(reader, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMETNoMu130_PFMHTNoMu130_IDTight(reader, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETNoMu140_PFMHTNoMu140_IDTight(reader, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60(reader, "HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne110_PFMHT110_IDTight(reader, "HLT_PFMETTypeOne110_PFMHT110_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne120_PFMHT120_IDTight(reader, "HLT_PFMETTypeOne120_PFMHT120_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60(reader, "HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne130_PFMHT130_IDTight(reader, "HLT_PFMETTypeOne130_PFMHT130_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne140_PFMHT140_IDTight(reader, "HLT_PFMETTypeOne140_PFMHT140_IDTight");
+  TTreeReaderValue<bool> HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned(reader, "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned");
+
+  // MET
   TTreeReaderValue<float> met_pt  (reader, "MET_pt");
   TTreeReaderValue<float> met_phi (reader, "MET_phi");
+
+  // raw MET
+  TTreeReaderValue<float> rawmet_pt  (reader, "RawMET_pt");
+  TTreeReaderValue<float> rawmet_phi (reader, "RawMET_phi");
+
+  // Trigger Objects
+  TTreeReaderValue<unsigned int> trigobj_n(reader, "nTrigObj");
+  TTreeReaderArray<int> trigobj_id(reader, "TrigObj_id");
+  TTreeReaderArray<int> trigobj_filter_bits(reader, "TrigObj_filterBits");
+  TTreeReaderArray<float> trigobj_pt(reader, "TrigObj_pt");
+  TTreeReaderArray<float> trigobj_eta(reader, "TrigObj_eta");
+  TTreeReaderArray<float> trigobj_phi(reader, "TrigObj_phi");
+  TTreeReaderArray<float> trigobj_l1pt(reader, "TrigObj_l1pt");
+  TTreeReaderArray<float> trigobj_l1pt2(reader, "TrigObj_l1pt_2");
+  TTreeReaderArray<int> trigobj_l1iso(reader, "TrigObj_l1iso");
+  TTreeReaderArray<int> trigobj_l1charge(reader, "TrigObj_l1charge");
+  TTreeReaderArray<float> trigobj_l2pt(reader, "TrigObj_l2pt");
 
   // AK4 CHS jets
   TTreeReaderValue<unsigned int> jet_n(reader, "nJet");
@@ -177,6 +301,7 @@ int main(int argc, char* argv[]){
   TTreeReaderArray<bool>  muon_is_pf(reader, "Muon_isPFcand");
   TTreeReaderArray<bool>  muon_is_tracker(reader, "Muon_isTracker");
   TTreeReaderArray<int>   muon_charge(reader, "Muon_charge");
+  TTreeReaderArray<int>   muon_jetidx(reader, "Muon_jetIdx");
   TTreeReaderArray<int>   muon_pdgid(reader, "Muon_pdgId");
   TTreeReaderArray<float> muon_dxy(reader, "Muon_dxy");
   TTreeReaderArray<float> muon_dz(reader, "Muon_dz");
@@ -214,6 +339,7 @@ int main(int argc, char* argv[]){
 
   // Electrons
   TTreeReaderValue<unsigned int> electron_n(reader, "nElectron");
+  TTreeReaderArray<int> electron_jetidx(reader, "Electron_jetIdx");
   TTreeReaderArray<int> electron_charge(reader, "Electron_charge");
   TTreeReaderArray<int> electron_id_bitmap(reader, "Electron_vidNestedWPBitmap");
   TTreeReaderArray<unsigned char> electron_lost_hits(reader, "Electron_lostHits");
@@ -346,22 +472,156 @@ int main(int argc, char* argv[]){
     // ================================
     event.rho = *rho;
     event.run = *run;
+    event.lumiblock = *lumiblock;
+    event.number = *number;
+    event.npv = *npv;
+    event.npv_good = *npv_good;
+    event.npu = *npu;
+    event.ntrueint = *ntrueint;
+
+
+    // Do GenInfo
+    // ==========
+    vector<float> vector_systweights_pdf = {};
+    cout << "number of PDF systweights: " << *geninfo_n_systweights_pdf << endl;
+    for(size_t i=0; i<*geninfo_n_systweights_pdf; i++){
+      vector_systweights_pdf.emplace_back(geninfo_systweights_pdf[i]);
+    }
+    event.geninfo->set_systweights_pdf(vector_systweights_pdf);
+
+    vector<float> vector_systweights_scale = {};
+    for(size_t i=0; i<*geninfo_n_systweights_scale; i++){
+      vector_systweights_scale.emplace_back(geninfo_systweights_scale[i]);
+    }
+    event.geninfo->set_systweights_scale(vector_systweights_scale);
+
+    event.geninfo->set_originalXWGTUP(*geninfo_originalXWGTUP);
+    event.geninfo->set_binvar(*geninfo_binvar);
+    event.geninfo->set_id1(*geninfo_id1);
+    event.geninfo->set_id2(*geninfo_id2);
+    event.geninfo->set_scale_pdf(*geninfo_scale_pdf);
+    event.geninfo->set_weight(*geninfo_weight);
+    event.geninfo->set_x1(*geninfo_x1);
+    event.geninfo->set_x2(*geninfo_x2);
+    event.geninfo->set_xpdf1(*geninfo_xpdf1);
+    event.geninfo->set_xpdf2(*geninfo_xpdf2);
+
 
     // Do HLT flags
     // ============
+    event.flags->set("Flag_BadChargedCandidateFilter", *Flag_BadChargedCandidateFilter);
+    event.flags->set("Flag_BadChargedCandidateSummer16Filter", *Flag_BadChargedCandidateSummer16Filter);
+    event.flags->set("Flag_BadPFMuonFilter", *Flag_BadPFMuonFilter);
+    event.flags->set("Flag_BadPFMuonSummer16Filter", *Flag_BadPFMuonSummer16Filter);
+    event.flags->set("Flag_CSCTightHalo2015Filter", *Flag_CSCTightHalo2015Filter);
+    event.flags->set("Flag_CSCTightHaloFilter", *Flag_CSCTightHaloFilter);
+    event.flags->set("Flag_CSCTightHaloTrkMuUnvetoFilter", *Flag_CSCTightHaloTrkMuUnvetoFilter);
+    event.flags->set("Flag_EcalDeadCellBoundaryEnergyFilter", *Flag_EcalDeadCellBoundaryEnergyFilter);
+    event.flags->set("Flag_EcalDeadCellTriggerPrimitiveFilter", *Flag_EcalDeadCellTriggerPrimitiveFilter);
+    event.flags->set("Flag_HBHENoiseFilter", *Flag_HBHENoiseFilter);
+    event.flags->set("Flag_HBHENoiseIsoFilter", *Flag_HBHENoiseIsoFilter);
+    event.flags->set("Flag_HcalStripHaloFilter", *Flag_HcalStripHaloFilter);
+    event.flags->set("Flag_METFilters", *Flag_METFilters);
+    event.flags->set("Flag_chargedHadronTrackResolutionFilter", *Flag_chargedHadronTrackResolutionFilter);
+    event.flags->set("Flag_ecalBadCalibFilter", *Flag_ecalBadCalibFilter);
+    event.flags->set("Flag_ecalLaserCorrFilter", *Flag_ecalLaserCorrFilter);
+    event.flags->set("Flag_eeBadScFilter", *Flag_eeBadScFilter);
+    event.flags->set("Flag_globalSuperTightHalo2016Filter", *Flag_globalSuperTightHalo2016Filter);
+    event.flags->set("Flag_globalTightHalo2016Filter", *Flag_globalTightHalo2016Filter);
+    event.flags->set("Flag_goodVertices", *Flag_goodVertices);
+    event.flags->set("Flag_hcalLaserEventFilter", *Flag_hcalLaserEventFilter);
+    event.flags->set("Flag_muonBadTrackFilter", *Flag_muonBadTrackFilter);
+    event.flags->set("Flag_trkPOGFilters", *Flag_trkPOGFilters);
+    event.flags->set("Flag_trkPOG_logErrorTooManyClusters", *Flag_trkPOG_logErrorTooManyClusters);
+    event.flags->set("Flag_trkPOG_manystripclus53X", *Flag_trkPOG_manystripclus53X);
+    event.flags->set("Flag_trkPOG_toomanystripclus53X", *Flag_trkPOG_toomanystripclus53X);
+
+    event.flags->set("HLT_Ele27_WPTight_Gsf", *HLT_Ele27_WPTight_Gsf);
+    event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
+    event.flags->set("HLT_Ele35_WPTight_Gsf", *HLT_Ele35_WPTight_Gsf);
+    event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", *HLT_Ele115_CaloIdVT_GsfTrkIdT);
+    event.flags->set("HLT_Photon200", *HLT_Photon200);
+    event.flags->set("HLT_Photon175", *HLT_Photon175);
+    event.flags->set("HLT_IsoMu24", *HLT_IsoMu24);
+    event.flags->set("HLT_IsoMu27", *HLT_IsoMu27);
+    event.flags->set("HLT_Mu50", *HLT_Mu50);
+    event.flags->set("HLT_TkMu100", *HLT_TkMu100);
+    event.flags->set("HLT_OldMu100", *HLT_OldMu100);
+    event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", *HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg", *HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
+    event.flags->set("HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg);
+    event.flags->set("HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1", *HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1);
+    event.flags->set("HLT_PFMET100_PFMHT100_IDTight_PFHT60", *HLT_PFMET100_PFMHT100_IDTight_PFHT60);
+    event.flags->set("HLT_PFMET110_PFMHT110_IDTight", *HLT_PFMET110_PFMHT110_IDTight);
+    event.flags->set("HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1", *HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1);
+    event.flags->set("HLT_PFMET120_PFMHT120_IDTight", *HLT_PFMET120_PFMHT120_IDTight);
+    event.flags->set("HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1", *HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1);
+    event.flags->set("HLT_PFMET120_PFMHT120_IDTight_PFHT60", *HLT_PFMET120_PFMHT120_IDTight_PFHT60);
+    event.flags->set("HLT_PFMET130_PFMHT130_IDTight", *HLT_PFMET130_PFMHT130_IDTight);
+    event.flags->set("HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1", *HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1);
+    event.flags->set("HLT_PFMET140_PFMHT140_IDTight", *HLT_PFMET140_PFMHT140_IDTight);
+    event.flags->set("HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1", *HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1);
+    event.flags->set("HLT_PFMET200_HBHECleaned", *HLT_PFMET200_HBHECleaned);
+    event.flags->set("HLT_PFMET200_HBHE_BeamHaloCleaned", *HLT_PFMET200_HBHE_BeamHaloCleaned);
+    event.flags->set("HLT_PFMET200_NotCleaned", *HLT_PFMET200_NotCleaned);
+    event.flags->set("HLT_PFMET250_HBHECleaned", *HLT_PFMET250_HBHECleaned);
+    event.flags->set("HLT_PFMET300_HBHECleaned", *HLT_PFMET300_HBHECleaned);
+    event.flags->set("HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60", *HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60);
+    event.flags->set("HLT_PFMETNoMu110_PFMHTNoMu110_IDTight", *HLT_PFMETNoMu110_PFMHTNoMu110_IDTight);
+    event.flags->set("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight", *HLT_PFMETNoMu120_PFMHTNoMu120_IDTight);
+    event.flags->set("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60", *HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60);
+    event.flags->set("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight", *HLT_PFMETNoMu130_PFMHTNoMu130_IDTight);
+    event.flags->set("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight", *HLT_PFMETNoMu140_PFMHTNoMu140_IDTight);
+    event.flags->set("HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60", *HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60);
+    event.flags->set("HLT_PFMETTypeOne110_PFMHT110_IDTight", *HLT_PFMETTypeOne110_PFMHT110_IDTight);
+    event.flags->set("HLT_PFMETTypeOne120_PFMHT120_IDTight", *HLT_PFMETTypeOne120_PFMHT120_IDTight);
+    event.flags->set("HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60", *HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60);
+    event.flags->set("HLT_PFMETTypeOne130_PFMHT130_IDTight", *HLT_PFMETTypeOne130_PFMHT130_IDTight);
+    event.flags->set("HLT_PFMETTypeOne140_PFMHT140_IDTight", *HLT_PFMETTypeOne140_PFMHT140_IDTight);
+    event.flags->set("HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned", *HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned);
 
 
 
-    // TTreeReaderValue<bool> hlt_isomu24(reader, "HLT_IsoMu24");
-    // TTreeReaderValue<bool> hlt_isomu27(reader, "HLT_IsoMu27");
-    // TTreeReaderValue<bool> hlt_mu50(reader, "HLT_Mu50");
-    // TTreeReaderValue<bool> hlt_tkmu100(reader, "HLT_TkMu100");
-    // TTreeReaderValue<bool> hlt_oldmu100(reader, "HLT_OldMu100");
+
+
 
     // Do MET
     // ======
     event.met->set_pt(*met_pt);
     event.met->set_phi(*met_phi);
+
+    // Do raw MET
+    // ======
+    event.rawmet->set_pt(*rawmet_pt);
+    event.rawmet->set_phi(*rawmet_phi);
+
+    // Do Trigger Objects
+    // ==================
+    for(size_t i=0; i<*trigobj_n; i++){
+      TriggerObject t;
+
+      t.set_id((TriggerObject::ID)trigobj_id[i]);
+      t.set_filter_bits(trigobj_filter_bits[i]);
+      t.set_pt(trigobj_pt[i]);
+      t.set_eta(trigobj_eta[i]);
+      t.set_phi(trigobj_phi[i]);
+      t.set_l1pt(trigobj_l1pt[i]);
+      t.set_l1pt2(trigobj_l1pt2[i]);
+      t.set_l1iso(trigobj_l1iso[i]);
+      t.set_l1charge(trigobj_l1charge[i]);
+      t.set_l2pt(trigobj_l2pt[i]);
+
+      event.triggerobjects->emplace_back(t);
+    }
 
     // Do Jets
     // =======
@@ -387,6 +647,7 @@ int main(int argc, char* argv[]){
       j.set_n_constituents(jet_n_constituents[i]);
       j.set_n_muons(jet_n_muons[i]);
       j.set_n_electrons(jet_n_electrons[i]);
+      j.set_identifier(i); // to keep track of leptons associated to this jet
       j.set_pt(jet_pt[i]);
       j.set_eta(jet_eta[i]);
       j.set_phi(jet_phi[i]);
@@ -451,6 +712,7 @@ int main(int argc, char* argv[]){
       m.set_is_pf(muon_is_pf[i]);
       m.set_is_tracker(muon_is_tracker[i]);
       m.set_charge(muon_charge[i]);
+      m.set_jetidx(muon_jetidx[i]);
       m.set_pdgid(muon_pdgid[i]);
       m.set_dxy(muon_dxy[i]);
       m.set_dz(muon_dz[i]);
@@ -513,6 +775,7 @@ int main(int argc, char* argv[]){
     for(size_t i=0; i<*electron_n; i++){
       Electron e;
 
+      e.set_jetidx(electron_jetidx[i]);
       e.set_charge(electron_charge[i]);
       e.set_id_bitmap(electron_id_bitmap[i]);
       e.set_lost_hits(electron_lost_hits[i]);
