@@ -13,13 +13,12 @@ from utils import *
 from functions import *
 
 import ROOT
-from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
+from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TTree, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
                  kBlack, kRed, kBlue, kAzure, kCyan, kGreen, kGreen, kYellow, kOrange, kMagenta, kViolet,\
                  kSolid, kDashed, kDotted
 from math import sqrt, log, floor, ceil
 from array import array
 
-# from preferred_configurations import *
 from tdrstyle_all import *
 import tdrstyle_all as TDR
 
@@ -52,10 +51,11 @@ class TuplizeRunner:
         if mode is 'new':        commandfilename = join(self.gensimfolder, 'commands/tuplize_%s.txt' % (self.sample.name))
         elif mode is 'resubmit': commandfilename = join(self.gensimfolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
 
-        filelist = self.sample.nanopaths[self.year].filelist
+        filelist = self.sample.nanopaths[self.year].get_file_list()
         samplename = self.sample.name
         print green('--> Working on sample \'%s\'' % (samplename))
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
+        print green('  --> Going to count events in %i files' % (len(filelist)))
 
         # split jobs such that at most nevt_per_job per job are processed
         commands = []
@@ -63,18 +63,20 @@ class TuplizeRunner:
             # get number of events
             command = 'Counter_NANOAOD %s' % (filename)
             commands.append((command, filename))
-        outputs = getoutput_commands_parallel(commands=commands, max_time=30)
+        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
         newlist = []
         for o in outputs:
-            nevt = int(o[0].split('\n')[0])
-            filename = o[1]
-            newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
+            try:
+                nevt = int(o[0].split('\n')[0])
+                filename = o[1]
+                newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
+            except Exception as e:
+                print yellow('  --> Caught exception \'%s\'. Skip this sample.' % e)
+                return
 
         commands = []
         njobs = 0
-        for tuple in newlist:
-            filename = tuple[0]
-            ns = tuple[1]
+        for filename, ns in newlist:
             for n in range(ns):
                 outfilename = 'Tuples_NANOAOD_%i.root' % (njobs+1)
                 command = '%s %s %s %s %i %i' % ('Tuplizer_NANOAOD', self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
@@ -85,7 +87,7 @@ class TuplizeRunner:
         if mode is 'new':
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
-            print green('--> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
+            print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
             missing_indices = findMissingFilesT3(filepath=self.sample.tuplepaths[self.year].path, filename_base='Tuples_NANOAOD', maxindex=len(commands), generation_step='Tuples_NANOAOD') # only the missing ones -- only works if tuplizing into a new directory
 
         njobs = 0
@@ -98,11 +100,12 @@ class TuplizeRunner:
                 f.write(command + '\n')
                 njobs += 1
                 idx += 1
-        command = 'sbatch -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_nanoaod.sh %s %s %s %s %s' % (njobs, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename)
+        command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_nanoaod.sh %s %s %s %s %s' % (njobs, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename)
         if njobs > 0:
             if self.submit:
-                os.system(command)
-                print green("  --> Submitted an array of %i jobs for name %s"%(njobs, samplename))
+                jobid = int(subprocess.check_output(command, shell=True))
+                # os.system(command)
+                print green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs, samplename, jobid))
             else:
                 print command
                 print yellow("  --> Would submit an array of %i jobs for name %s"%(njobs, samplename))
@@ -165,11 +168,6 @@ class TuplizeRunner:
 
 
 
-
-
-
-
-
 def get_mini_parts_from_nano_name(nanopath):
     primary_name = nanopath.split('/')[1]
     campaigntag  = nanopath.split('/')[2].split('-')[0].replace('Nano', 'Mini')
@@ -183,14 +181,8 @@ def get_mini_parts_from_nano_name(nanopath):
 
 def get_dasxsec_cmsrun_command(minipath, director):
     dasgocommand = 'dasgoclient --limit=100 -query="file dataset=%s"' % (minipath)
-    # files = subprocess.check_output(dasgocommand, shell=True).split("\n")
     files = "/store"+subprocess.check_output(dasgocommand, shell=True).replace("\n",",").split("/store",1)[1]
     files = files.strip(',')
-    # files = subprocess.check_output(dasgocommand, shell=True).split("\n")
-    # filelist = [director+f for f in files if f is not '']
-    # filelist = [f for f in files if f is not '']
-    # filestring = ','.join(filelist)
-    # result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i ' % (filestring, 5e5)
     result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i  2>&1 | tee xsec_%s.log' % (files, 1e6, minipath.split('/')[1])
     print result
 
