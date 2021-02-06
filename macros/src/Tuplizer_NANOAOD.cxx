@@ -109,9 +109,21 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> genWeight (reader, varname);
 
   TTreeReaderValue<float> rho(reader, "fixedGridRhoFastjetAll");
-  TTreeReaderValue<float> weight_prefiring(reader, "L1PreFiringWeight_Nom");
-  TTreeReaderValue<float> weight_prefiring_up(reader, "L1PreFiringWeight_Up");
-  TTreeReaderValue<float> weight_prefiring_down(reader, "L1PreFiringWeight_Dn");
+  TBranch* br_prefiring = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("L1PreFiringWeight_Nom");
+  bool exists_prefiringweight = true;
+  if(br_prefiring) exists_prefiringweight = true;
+  else   exists_prefiringweight = false;
+
+  // varname = "fixedGridRhoFastjetAll";
+  // if(exists_prefiringweight)
+  varname = "L1PreFiringWeight_Nom";
+  TTreeReaderValue<float> weight_prefiring(reader, varname);
+  // if(exists_prefiringweight)
+  varname = "L1PreFiringWeight_Up";
+  TTreeReaderValue<float> weight_prefiring_up(reader, varname);
+  // if(exists_prefiringweight) 
+  varname = "L1PreFiringWeight_Dn";
+  TTreeReaderValue<float> weight_prefiring_down(reader, varname);
   TTreeReaderValue<unsigned int> run(reader, "run");
   TTreeReaderValue<unsigned int> lumiblock(reader, "luminosityBlock");
   TTreeReaderValue<ULong64_t> number(reader, "event");
@@ -120,24 +132,45 @@ int main(int argc, char* argv[]){
   varname = "PV_npvs";
   if(is_mc) varname = "Pileup_nPU";
   TTreeReaderValue<int> npu(reader, varname);
+  varname = "fixedGridRhoFastjetAll";
   if(is_mc) varname = "Pileup_nTrueInt";
   TTreeReaderValue<float> ntrueint(reader, varname);
 
   // GenInfo
-  TTreeReaderArray<float> geninfo_systweights_pdf(reader, "LHEPdfWeight");
-  TTreeReaderValue<unsigned int> geninfo_n_systweights_pdf(reader, "nLHEPdfWeight");
-  TTreeReaderArray<float> geninfo_systweights_scale(reader, "LHEScaleWeight");
-  TTreeReaderValue<unsigned int> geninfo_n_systweights_scale(reader, "nLHEScaleWeight");
-  TTreeReaderValue<float> geninfo_originalXWGTUP(reader, "LHEWeight_originalXWGTUP");
-  TTreeReaderValue<float> geninfo_binvar(reader, "Generator_binvar");
-  TTreeReaderValue<int>   geninfo_id1(reader, "Generator_id1");
-  TTreeReaderValue<int>   geninfo_id2(reader, "Generator_id2");
-  TTreeReaderValue<float> geninfo_scale_pdf(reader, "Generator_scalePDF");
-  TTreeReaderValue<float> geninfo_weight(reader, "Generator_weight");
-  TTreeReaderValue<float> geninfo_x1(reader, "Generator_x1");
-  TTreeReaderValue<float> geninfo_x2(reader, "Generator_x2");
-  TTreeReaderValue<float> geninfo_xpdf1(reader, "Generator_xpdf1");
-  TTreeReaderValue<float> geninfo_xpdf2(reader, "Generator_xpdf2");
+  TBranch* br_lhe = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("LHEWeight_originalXWGTUP");
+  bool exists_lhe;
+  if(br_lhe && is_mc) exists_lhe = true;
+  else                exists_lhe = false;
+  if(exists_lhe) varname = "LHEWeight_originalXWGTUP";
+  TTreeReaderValue<float> geninfo_originalXWGTUP(reader, varname);
+  if(exists_lhe) varname = "LHEScaleWeight";
+  TTreeReaderArray<float> geninfo_systweights_scale(reader, varname);
+  if(exists_lhe) varname = "LHEPdfWeight";
+  TTreeReaderArray<float> geninfo_systweights_pdf(reader, varname);
+  if(is_mc) varname = "Generator_weight";
+  TTreeReaderValue<float> geninfo_weight(reader, varname);
+  if(is_mc) varname = "Generator_binvar";
+  TTreeReaderValue<float> geninfo_binvar(reader, varname);
+  if(is_mc) varname = "Generator_scalePDF";
+  TTreeReaderValue<float> geninfo_scale_pdf(reader, varname);
+  if(is_mc) varname = "Generator_x1";
+  TTreeReaderValue<float> geninfo_x1(reader, varname);
+  if(is_mc) varname = "Generator_x2";
+  TTreeReaderValue<float> geninfo_x2(reader, varname);
+  if(is_mc) varname = "Generator_xpdf1";
+  TTreeReaderValue<float> geninfo_xpdf1(reader, varname);
+  if(is_mc) varname = "Generator_xpdf2";
+  TTreeReaderValue<float> geninfo_xpdf2(reader, varname);
+  varname = "PV_npvs";
+  if(is_mc) varname = "Generator_id1";
+  TTreeReaderValue<int>   geninfo_id1(reader, varname);
+  if(is_mc) varname = "Generator_id2";
+  TTreeReaderValue<int>   geninfo_id2(reader, varname);
+  varname = "run";
+  if(exists_lhe) varname = "nLHEPdfWeight";
+  TTreeReaderValue<unsigned int> geninfo_n_systweights_pdf(reader, varname);
+  if(exists_lhe) varname = "nLHEScaleWeight";
+  TTreeReaderValue<unsigned int> geninfo_n_systweights_scale(reader, varname);
 
   // Flags
   TTreeReaderValue<bool> Flag_BadChargedCandidateFilter(reader, "Flag_BadChargedCandidateFilter");
@@ -169,16 +202,48 @@ int main(int argc, char* argv[]){
 
   // HLT
   TTreeReaderValue<bool> HLT_Ele27_WPTight_Gsf(reader, "HLT_Ele27_WPTight_Gsf");
-  TTreeReaderValue<bool> HLT_Ele32_WPTight_Gsf(reader, "HLT_Ele32_WPTight_Gsf");
+
+  TBranch* br1 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_Ele32_WPTight_Gsf");
+  bool exists_HLT_Ele32_WPTight_Gsf = true;
+  if(br1) exists_HLT_Ele32_WPTight_Gsf = true;
+  else   exists_HLT_Ele32_WPTight_Gsf = false;
+  varname = "HLT_Ele32_WPTight_Gsf";
+  if(!exists_HLT_Ele32_WPTight_Gsf) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_Ele32_WPTight_Gsf(reader, varname);
+
   TTreeReaderValue<bool> HLT_Ele35_WPTight_Gsf(reader, "HLT_Ele35_WPTight_Gsf");
-  TTreeReaderValue<bool> HLT_Ele115_CaloIdVT_GsfTrkIdT(reader, "HLT_Ele115_CaloIdVT_GsfTrkIdT");
+
+  TBranch* br2 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_Ele115_CaloIdVT_GsfTrkIdT");
+  bool exists_HLT_Ele115_CaloIdVT_GsfTrkIdT = true;
+  if(br2) exists_HLT_Ele115_CaloIdVT_GsfTrkIdT = true;
+  else   exists_HLT_Ele115_CaloIdVT_GsfTrkIdT = false;
+  varname = "HLT_Ele115_CaloIdVT_GsfTrkIdT";
+  if(!exists_HLT_Ele115_CaloIdVT_GsfTrkIdT) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_Ele115_CaloIdVT_GsfTrkIdT(reader, varname);
+
   TTreeReaderValue<bool> HLT_Photon200(reader, "HLT_Photon200");
   TTreeReaderValue<bool> HLT_Photon175(reader, "HLT_Photon175");
   TTreeReaderValue<bool> HLT_IsoMu24(reader, "HLT_IsoMu24");
   TTreeReaderValue<bool> HLT_IsoMu27(reader, "HLT_IsoMu27");
   TTreeReaderValue<bool> HLT_Mu50(reader, "HLT_Mu50");
-  TTreeReaderValue<bool> HLT_TkMu100(reader, "HLT_TkMu100");
-  TTreeReaderValue<bool> HLT_OldMu100(reader, "HLT_OldMu100");
+
+  TBranch* br3 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_TkMu100");
+  bool exists_HLT_TkMu100 = true;
+  if(br3) exists_HLT_TkMu100 = true;
+  else   exists_HLT_TkMu100 = false;
+  varname = "HLT_TkMu100";
+  if(!exists_HLT_TkMu100) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_TkMu100(reader, varname);
+
+
+
+  TBranch* br4 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_OldMu100");
+  bool exists_HLT_OldMu100 = true;
+  if(br4) exists_HLT_OldMu100 = true;
+  else    exists_HLT_OldMu100 = false;
+  if(!exists_HLT_OldMu100) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_OldMu100(reader, varname);
+
   TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg");
   TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg");
   TTreeReaderValue<bool> HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg");
@@ -191,35 +256,33 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg");
   TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg");
   TTreeReaderValue<bool> HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg(reader, "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg");
-  TTreeReaderValue<bool> HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1");
-  TTreeReaderValue<bool> HLT_PFMET100_PFMHT100_IDTight_PFHT60(reader, "HLT_PFMET100_PFMHT100_IDTight_PFHT60");
   TTreeReaderValue<bool> HLT_PFMET110_PFMHT110_IDTight(reader, "HLT_PFMET110_PFMHT110_IDTight");
-  TTreeReaderValue<bool> HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1");
   TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight(reader, "HLT_PFMET120_PFMHT120_IDTight");
-  TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1");
-  TTreeReaderValue<bool> HLT_PFMET120_PFMHT120_IDTight_PFHT60(reader, "HLT_PFMET120_PFMHT120_IDTight_PFHT60");
   TTreeReaderValue<bool> HLT_PFMET130_PFMHT130_IDTight(reader, "HLT_PFMET130_PFMHT130_IDTight");
-  TTreeReaderValue<bool> HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1");
   TTreeReaderValue<bool> HLT_PFMET140_PFMHT140_IDTight(reader, "HLT_PFMET140_PFMHT140_IDTight");
-  TTreeReaderValue<bool> HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1(reader, "HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1");
-  TTreeReaderValue<bool> HLT_PFMET200_HBHECleaned(reader, "HLT_PFMET200_HBHECleaned");
-  TTreeReaderValue<bool> HLT_PFMET200_HBHE_BeamHaloCleaned(reader, "HLT_PFMET200_HBHE_BeamHaloCleaned");
-  TTreeReaderValue<bool> HLT_PFMET200_NotCleaned(reader, "HLT_PFMET200_NotCleaned");
-  TTreeReaderValue<bool> HLT_PFMET250_HBHECleaned(reader, "HLT_PFMET250_HBHECleaned");
-  TTreeReaderValue<bool> HLT_PFMET300_HBHECleaned(reader, "HLT_PFMET300_HBHECleaned");
-  TTreeReaderValue<bool> HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60(reader, "HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60");
   TTreeReaderValue<bool> HLT_PFMETNoMu110_PFMHTNoMu110_IDTight(reader, "HLT_PFMETNoMu110_PFMHTNoMu110_IDTight");
   TTreeReaderValue<bool> HLT_PFMETNoMu120_PFMHTNoMu120_IDTight(reader, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight");
-  TTreeReaderValue<bool> HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60(reader, "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60");
-  TTreeReaderValue<bool> HLT_PFMETNoMu130_PFMHTNoMu130_IDTight(reader, "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight");
-  TTreeReaderValue<bool> HLT_PFMETNoMu140_PFMHTNoMu140_IDTight(reader, "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight");
-  TTreeReaderValue<bool> HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60(reader, "HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60");
+
+  TBranch* br5 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight");
+  bool exists_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight = true;
+  if(br5) exists_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight = true;
+  else   exists_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight = false;
+  varname = "HLT_PFMETNoMu130_PFMHTNoMu130_IDTight";
+  if(!exists_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_PFMETNoMu130_PFMHTNoMu130_IDTight(reader, varname);
+
+  TBranch* br6 = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight");
+  bool exists_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight = true;
+  if(br6) exists_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight = true;
+  else   exists_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight = false;
+  varname = "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight";
+  if(!exists_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight) varname = "Flag_BadChargedCandidateFilter";
+  TTreeReaderValue<bool> HLT_PFMETNoMu140_PFMHTNoMu140_IDTight(reader, varname);
+
   TTreeReaderValue<bool> HLT_PFMETTypeOne110_PFMHT110_IDTight(reader, "HLT_PFMETTypeOne110_PFMHT110_IDTight");
   TTreeReaderValue<bool> HLT_PFMETTypeOne120_PFMHT120_IDTight(reader, "HLT_PFMETTypeOne120_PFMHT120_IDTight");
-  TTreeReaderValue<bool> HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60(reader, "HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60");
   TTreeReaderValue<bool> HLT_PFMETTypeOne130_PFMHT130_IDTight(reader, "HLT_PFMETTypeOne130_PFMHT130_IDTight");
   TTreeReaderValue<bool> HLT_PFMETTypeOne140_PFMHT140_IDTight(reader, "HLT_PFMETTypeOne140_PFMHT140_IDTight");
-  TTreeReaderValue<bool> HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned(reader, "HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned");
 
   // MET
   TTreeReaderValue<float> met_pt  (reader, "MET_pt");
@@ -476,35 +539,45 @@ int main(int argc, char* argv[]){
     event.number = *number;
     event.npv = *npv;
     event.npv_good = *npv_good;
-    event.npu = *npu;
-    event.ntrueint = *ntrueint;
+    // if(exists_prefiringweight){
+    event.weight_prefiring = *weight_prefiring;
+    event.weight_prefiring_up = *weight_prefiring_up;
+    event.weight_prefiring_down = *weight_prefiring_down;
+    // }
+    if(is_mc){
+      event.npu = *npu;
+      event.ntrueint = *ntrueint;
+    }
 
 
     // Do GenInfo
     // ==========
-    vector<float> vector_systweights_pdf = {};
-    cout << "number of PDF systweights: " << *geninfo_n_systweights_pdf << endl;
-    for(size_t i=0; i<*geninfo_n_systweights_pdf; i++){
-      vector_systweights_pdf.emplace_back(geninfo_systweights_pdf[i]);
-    }
-    event.geninfo->set_systweights_pdf(vector_systweights_pdf);
+    if(is_mc){
+      if(exists_lhe){
+        vector<float> vector_systweights_pdf = {};
+        for(size_t i=0; i<*geninfo_n_systweights_pdf; i++){
+          vector_systweights_pdf.emplace_back(geninfo_systweights_pdf[i]);
+        }
+        event.geninfo->set_systweights_pdf(vector_systweights_pdf);
 
-    vector<float> vector_systweights_scale = {};
-    for(size_t i=0; i<*geninfo_n_systweights_scale; i++){
-      vector_systweights_scale.emplace_back(geninfo_systweights_scale[i]);
-    }
-    event.geninfo->set_systweights_scale(vector_systweights_scale);
+        vector<float> vector_systweights_scale = {};
+        for(size_t i=0; i<*geninfo_n_systweights_scale; i++){
+          vector_systweights_scale.emplace_back(geninfo_systweights_scale[i]);
+        }
+        event.geninfo->set_systweights_scale(vector_systweights_scale);
+        event.geninfo->set_originalXWGTUP(*geninfo_originalXWGTUP);
+      }
 
-    event.geninfo->set_originalXWGTUP(*geninfo_originalXWGTUP);
-    event.geninfo->set_binvar(*geninfo_binvar);
-    event.geninfo->set_id1(*geninfo_id1);
-    event.geninfo->set_id2(*geninfo_id2);
-    event.geninfo->set_scale_pdf(*geninfo_scale_pdf);
-    event.geninfo->set_weight(*geninfo_weight);
-    event.geninfo->set_x1(*geninfo_x1);
-    event.geninfo->set_x2(*geninfo_x2);
-    event.geninfo->set_xpdf1(*geninfo_xpdf1);
-    event.geninfo->set_xpdf2(*geninfo_xpdf2);
+      event.geninfo->set_binvar(*geninfo_binvar);
+      event.geninfo->set_id1(*geninfo_id1);
+      event.geninfo->set_id2(*geninfo_id2);
+      event.geninfo->set_scale_pdf(*geninfo_scale_pdf);
+      event.geninfo->set_weight(*geninfo_weight);
+      event.geninfo->set_x1(*geninfo_x1);
+      event.geninfo->set_x2(*geninfo_x2);
+      event.geninfo->set_xpdf1(*geninfo_xpdf1);
+      event.geninfo->set_xpdf2(*geninfo_xpdf2);
+    }
 
 
     // Do HLT flags
@@ -537,16 +610,41 @@ int main(int argc, char* argv[]){
     event.flags->set("Flag_trkPOG_toomanystripclus53X", *Flag_trkPOG_toomanystripclus53X);
 
     event.flags->set("HLT_Ele27_WPTight_Gsf", *HLT_Ele27_WPTight_Gsf);
-    event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
+    if(exists_HLT_Ele32_WPTight_Gsf){
+      event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
+    }
+    // else{
+    //   event.flags->set("HLT_Ele32_WPTight_Gsf", false);
+    // }
+
     event.flags->set("HLT_Ele35_WPTight_Gsf", *HLT_Ele35_WPTight_Gsf);
-    event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", *HLT_Ele115_CaloIdVT_GsfTrkIdT);
+
+    // event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
+    if(exists_HLT_Ele115_CaloIdVT_GsfTrkIdT){
+      event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", *HLT_Ele115_CaloIdVT_GsfTrkIdT);
+    }
+    // else{
+    //   event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", false);
+    // }
     event.flags->set("HLT_Photon200", *HLT_Photon200);
     event.flags->set("HLT_Photon175", *HLT_Photon175);
     event.flags->set("HLT_IsoMu24", *HLT_IsoMu24);
     event.flags->set("HLT_IsoMu27", *HLT_IsoMu27);
     event.flags->set("HLT_Mu50", *HLT_Mu50);
-    event.flags->set("HLT_TkMu100", *HLT_TkMu100);
-    event.flags->set("HLT_OldMu100", *HLT_OldMu100);
+
+    if(exists_HLT_TkMu100){
+      event.flags->set("HLT_TkMu100", *HLT_TkMu100);
+    }
+    // else{
+    //   event.flags->set("HLT_TkMu100", false);
+    // }
+
+    if(exists_HLT_OldMu100){
+      event.flags->set("HLT_OldMu100", *HLT_OldMu100);
+    }
+    // else{
+    //   event.flags->set("HLT_OldMu100", false);
+    // }
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg);
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg);
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
@@ -559,35 +657,24 @@ int main(int argc, char* argv[]){
     event.flags->set("HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg);
     event.flags->set("HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
     event.flags->set("HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg", *HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg);
-    event.flags->set("HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1", *HLT_PFMET100_PFMHT100_IDTight_CaloBTagCSV_3p1);
-    event.flags->set("HLT_PFMET100_PFMHT100_IDTight_PFHT60", *HLT_PFMET100_PFMHT100_IDTight_PFHT60);
     event.flags->set("HLT_PFMET110_PFMHT110_IDTight", *HLT_PFMET110_PFMHT110_IDTight);
-    event.flags->set("HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1", *HLT_PFMET110_PFMHT110_IDTight_CaloBTagCSV_3p1);
     event.flags->set("HLT_PFMET120_PFMHT120_IDTight", *HLT_PFMET120_PFMHT120_IDTight);
-    event.flags->set("HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1", *HLT_PFMET120_PFMHT120_IDTight_CaloBTagCSV_3p1);
-    event.flags->set("HLT_PFMET120_PFMHT120_IDTight_PFHT60", *HLT_PFMET120_PFMHT120_IDTight_PFHT60);
     event.flags->set("HLT_PFMET130_PFMHT130_IDTight", *HLT_PFMET130_PFMHT130_IDTight);
-    event.flags->set("HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1", *HLT_PFMET130_PFMHT130_IDTight_CaloBTagCSV_3p1);
     event.flags->set("HLT_PFMET140_PFMHT140_IDTight", *HLT_PFMET140_PFMHT140_IDTight);
-    event.flags->set("HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1", *HLT_PFMET140_PFMHT140_IDTight_CaloBTagCSV_3p1);
-    event.flags->set("HLT_PFMET200_HBHECleaned", *HLT_PFMET200_HBHECleaned);
-    event.flags->set("HLT_PFMET200_HBHE_BeamHaloCleaned", *HLT_PFMET200_HBHE_BeamHaloCleaned);
-    event.flags->set("HLT_PFMET200_NotCleaned", *HLT_PFMET200_NotCleaned);
-    event.flags->set("HLT_PFMET250_HBHECleaned", *HLT_PFMET250_HBHECleaned);
-    event.flags->set("HLT_PFMET300_HBHECleaned", *HLT_PFMET300_HBHECleaned);
-    event.flags->set("HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60", *HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60);
     event.flags->set("HLT_PFMETNoMu110_PFMHTNoMu110_IDTight", *HLT_PFMETNoMu110_PFMHTNoMu110_IDTight);
     event.flags->set("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight", *HLT_PFMETNoMu120_PFMHTNoMu120_IDTight);
-    event.flags->set("HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60", *HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60);
-    event.flags->set("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight", *HLT_PFMETNoMu130_PFMHTNoMu130_IDTight);
-    event.flags->set("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight", *HLT_PFMETNoMu140_PFMHTNoMu140_IDTight);
-    event.flags->set("HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60", *HLT_PFMETTypeOne100_PFMHT100_IDTight_PFHT60);
+
+    if(exists_HLT_PFMETNoMu130_PFMHTNoMu130_IDTight){
+      event.flags->set("HLT_PFMETNoMu130_PFMHTNoMu130_IDTight", *HLT_PFMETNoMu130_PFMHTNoMu130_IDTight);
+    }
+
+    if(exists_HLT_PFMETNoMu140_PFMHTNoMu140_IDTight){
+      event.flags->set("HLT_PFMETNoMu140_PFMHTNoMu140_IDTight", *HLT_PFMETNoMu140_PFMHTNoMu140_IDTight);
+    }
     event.flags->set("HLT_PFMETTypeOne110_PFMHT110_IDTight", *HLT_PFMETTypeOne110_PFMHT110_IDTight);
     event.flags->set("HLT_PFMETTypeOne120_PFMHT120_IDTight", *HLT_PFMETTypeOne120_PFMHT120_IDTight);
-    event.flags->set("HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60", *HLT_PFMETTypeOne120_PFMHT120_IDTight_PFHT60);
     event.flags->set("HLT_PFMETTypeOne130_PFMHT130_IDTight", *HLT_PFMETTypeOne130_PFMHT130_IDTight);
     event.flags->set("HLT_PFMETTypeOne140_PFMHT140_IDTight", *HLT_PFMETTypeOne140_PFMHT140_IDTight);
-    event.flags->set("HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned", *HLT_PFMETTypeOne200_HBHE_BeamHaloCleaned);
 
 
 
