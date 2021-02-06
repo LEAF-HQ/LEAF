@@ -1,7 +1,7 @@
 import os, sys, math
 from ROOT import TFile
 
-def get_number_events(dataset, treename='AnalysisTree'):
+def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
     nevents = 0
     infiles_filled = []
     for infile in dataset.infiles:

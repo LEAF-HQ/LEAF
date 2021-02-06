@@ -240,7 +240,7 @@ class Submitter:
                 datasetname = str(dataset.settings.Name)
                 print green('    --> Dividing sample %s' % (datasetname))
                 njobs_this_dataset = 0
-                nevents = get_number_events(dataset=dataset)
+                nevents = get_number_events_in_dataset(dataset=dataset)
                 njobs = int(math.ceil(nevents/float(nevents_per_job)))
                 for i in range(njobs):
                     self.write_single_xml(datasetname=datasetname, index=i+1, nevents_per_job=nevents_per_job)
