@@ -51,33 +51,44 @@ class TuplizeRunner:
         if mode is 'new':        commandfilename = join(self.gensimfolder, 'commands/tuplize_%s.txt' % (self.sample.name))
         elif mode is 'resubmit': commandfilename = join(self.gensimfolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
 
-        filelist = self.sample.nanopaths[self.year].get_file_list()
         samplename = self.sample.name
         print green('--> Working on sample \'%s\'' % (samplename))
+        # filelist = self.sample.nanopaths[self.year].get_file_list()
+        # filelist = self.sample.get_filelist_nano(year=self.year)
+        filedict = self.sample.get_filedict_nano(year=self.year)
+        if filedict is False:
+            return
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
-        print green('  --> Going to count events in %i files' % (len(filelist)))
+        # print green('  --> Going to count events in %i files' % (len(filedict)))
+
 
         # split jobs such that at most nevt_per_job per job are processed
-        commands = []
-        for i, filename in enumerate(filelist):
-            # get number of events
-            command = 'Counter_NANOAOD %s' % (filename)
-            commands.append((command, filename))
-        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
-        newlist = []
-        for o in outputs:
-            try:
-                nevt = int(o[0].split('\n')[0])
-                filename = o[1]
-                newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
-            except Exception as e:
-                print yellow('  --> Caught exception \'%s\'. Skip this sample.' % e)
-                return
+        # commands = []
+        # for i, filename in enumerate(filelist):
+        #     # get number of events
+        #     command = 'Counter_NANOAOD %s' % (filename)
+        #     commands.append((command, filename))
+        # outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
+        #
+        # newlist = []
+        # for o in outputs:
+        #     try:
+        #         nevt = int(o[0].split('\n')[0])
+        #         filename = o[1]
+        #         newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
+        #     except Exception as e:
+        #         print yellow('  --> Caught exception \'%s\'. Skip this sample.' % e)
+        #         return
+
 
         commands = []
         njobs = 0
-        for filename, ns in newlist:
-            for n in range(ns):
+        # for filename, ns in newlist:
+        #     for n in range(ns):
+        for filename in filedict:
+            nevt_thisfile = filedict[filename]
+            njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
+            for n in range(njobs_thisfile):
                 outfilename = 'Tuples_NANOAOD_%i.root' % (njobs+1)
                 command = '%s %s %s %s %i %i' % ('Tuplizer_NANOAOD', self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
                 commands.append(command)

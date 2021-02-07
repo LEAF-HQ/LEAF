@@ -9,6 +9,8 @@ from operator import itemgetter
 import importlib
 from utils import *
 from functions import *
+import json
+from yaml import safe_load
 
 import ROOT
 from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
@@ -80,3 +82,86 @@ class Sample:
             return getattr(self, varname)[year].path
         else:
             return getattr(self, varname)[year]
+
+    def get_filedict_nano(self, year, force_update=False):
+
+        # first try to read it from the json
+        filedict = self.get_filedict_nano_from_json(year=year)
+        if filedict is not False:
+            if not force_update:
+                return filedict
+            else:
+                pass
+
+        # if it wasn't found, call the function to find the list, update the json, and return the list then
+        filelist = self.nanopaths[year].get_file_list()
+        filedict = self.count_events_in_files(filelist)
+        if filedict is False:
+            return False
+        self.update_filedict_nano_in_json(year=year, filedict=filedict)
+
+        # get from json to make sure it's always ordered in the same way
+        filedict = self.get_filedict_nano_from_json(year=year)
+        if filedict is not False:
+            return filedict
+        else:
+            raise ValueError('Unable to get filedict for sample %s.' % (self.name))
+
+    def get_filedict_nano_from_json(self, year):
+        jsonname = 'samples/filelist_%s.json' % (year)
+
+        dict_in_json = {}
+
+        if not os.path.exists(jsonname):
+            return False
+        with open(jsonname, 'r') as j:
+            dict_in_json = safe_load(j)
+
+        if not self.name in dict_in_json.keys():
+            return False
+        return dict_in_json[self.name]
+
+
+    def update_filedict_nano_in_json(self, year, filedict):
+
+        jsonname = 'samples/filelist_%s.json' % (year)
+        dict_in_json = {}
+        if os.path.exists(jsonname):
+            with open(jsonname, 'r') as j:
+                dict_in_json = safe_load(j)
+
+        # print dict_in_json
+        dict_in_json[self.name] = filedict
+
+        # person_dict = {'name': 'Bob', 'age': 15, 'children': None}
+        # person_json = json.dumps(person_dict)
+
+        # Output: {"name": "Bob", "age": 12, "children": null}
+        with open(jsonname, 'w') as j:
+            json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
+
+
+    def count_events_in_files(self, filelist):
+        print green('  --> Going to count events in %i files' % (len(filelist)))
+        commands = []
+        for i, filename in enumerate(filelist):
+            # get number of events
+            command = 'Counter_NANOAOD %s' % (filename)
+            commands.append((command, filename))
+        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
+
+        # newlist = []
+        newdict = {}
+        for o in outputs:
+            try:
+                nevt = int(o[0].split('\n')[0])
+                filename = o[1]
+                # newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
+                newdict[filename] = nevt
+            except Exception as e:
+                print yellow('  --> Caught exception \'%s\'. Skip sample \'%s\'.' % (e, self.name))
+                return False
+                # continue
+
+        print green('  --> Successfully counted events in %i files' % (len(newdict)))
+        return newdict

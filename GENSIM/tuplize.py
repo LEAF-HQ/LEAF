@@ -42,13 +42,14 @@ config_per_year = {
 
 
 # all
-samplenames = sorted(samples.keys())
-# samplenames = ['DATA_Tau_C']
+samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
+# samplenames = sorted(samples.keys())
+# samplenames = ['ST_tW_top']
 # samplenames = ['DATA_Tau_C', 'ST_sch', 'ST_tW_antitop', 'ST_tch_top']
 
 # backgrounds
 # samplenames = sorted(backgrounds.keys())
-# samplenames = ['ST_tch_top']
+# samplenames = ['ST_tch_top', 'LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest']
 
 # data + bkg
 # samplenames = sorted(backgrounds.keys()) + sorted(data.keys())
@@ -67,7 +68,8 @@ def main():
         Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, gensimfolder=gensimfolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
-        Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
+        Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile()
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
