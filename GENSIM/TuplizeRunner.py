@@ -53,38 +53,14 @@ class TuplizeRunner:
 
         samplename = self.sample.name
         print green('--> Working on sample \'%s\'' % (samplename))
-        # filelist = self.sample.nanopaths[self.year].get_file_list()
-        # filelist = self.sample.get_filelist_nano(year=self.year)
         filedict = self.sample.get_filedict_nano(year=self.year)
         if filedict is False:
             return
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
-        # print green('  --> Going to count events in %i files' % (len(filedict)))
-
-
-        # split jobs such that at most nevt_per_job per job are processed
-        # commands = []
-        # for i, filename in enumerate(filelist):
-        #     # get number of events
-        #     command = 'Counter_NANOAOD %s' % (filename)
-        #     commands.append((command, filename))
-        # outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
-        #
-        # newlist = []
-        # for o in outputs:
-        #     try:
-        #         nevt = int(o[0].split('\n')[0])
-        #         filename = o[1]
-        #         newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
-        #     except Exception as e:
-        #         print yellow('  --> Caught exception \'%s\'. Skip this sample.' % e)
-        #         return
 
 
         commands = []
         njobs = 0
-        # for filename, ns in newlist:
-        #     for n in range(ns):
         for filename in filedict:
             nevt_thisfile = filedict[filename]
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
@@ -115,7 +91,6 @@ class TuplizeRunner:
         if njobs > 0:
             if self.submit:
                 jobid = int(subprocess.check_output(command, shell=True))
-                # os.system(command)
                 print green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs, samplename, jobid))
             else:
                 print command
