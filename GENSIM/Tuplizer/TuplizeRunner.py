@@ -32,14 +32,15 @@ from samples.Storage import *
 
 
 class TuplizeRunner:
-    def __init__(self, year, sample, config, workarea, basefolder, gensimfolder, macrofolder, submit=False):
+    def __init__(self, year, sample, config, workarea, basefolder, tuplizefolder, sampleinfofolder, macrofolder, submit=False):
         self.sample = sample
         self.submit = submit
         self.year   = year
         self.config = config[year]
         self.workarea = workarea
         self.basefolder = basefolder
-        self.gensimfolder = gensimfolder
+        self.tuplizefolder = tuplizefolder
+        self.sampleinfofolder = sampleinfofolder
         self.macrofolder = macrofolder
 
     def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new'):
@@ -49,12 +50,12 @@ class TuplizeRunner:
         queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
         runtime_str = '%02i:%02i:00' % runtime
         commandfilename = ''
-        if mode is 'new':        commandfilename = join(self.gensimfolder, 'commands/tuplize_%s.txt' % (self.sample.name))
-        elif mode is 'resubmit': commandfilename = join(self.gensimfolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
+        if mode is 'new':        commandfilename = join(self.tuplizefolder, 'commands/tuplize_%s.txt' % (self.sample.name))
+        elif mode is 'resubmit': commandfilename = join(self.tuplizefolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
 
         samplename = self.sample.name
-        print green('--> Working on sample \'%s\'' % (samplename))
-        filedict = self.sample.get_filedict_nano(year=self.year)
+        # print green('--> Working on sample \'%s\'' % (samplename))
+        filedict = self.sample.get_filedict_nano(sampleinfofolder=self.sampleinfofolder, year=self.year)
         if filedict is False:
             return
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
@@ -102,7 +103,7 @@ class TuplizeRunner:
             else:
                 print green('  --> No jobs to submit for job %s.' % (samplename))
 
-    def CreateDatasetXMLFile(self, count_weights):
+    def CreateDatasetXMLFile(self, update_nevt, count_weights=True):
         # print self.year, self.sample.nevents.has_year(self.year)
         # print self.sample.nevents[self.year]
         xmlfilename = join(self.macrofolder, self.sample.xmlfiles[self.year])
@@ -131,23 +132,42 @@ class TuplizeRunner:
                 except:
                     print yellow('  --> Couldn\'t read number of weighted events in file, skip this one. Will not appear in XML file, so it\'s safe.')
 
-
-        if count_weights:
-            results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
-            nevents = sum(float(r[0]) for r in results)
-            # print '\n\n ', nevents, '%d'%nevents, '%s'%str(nevents)
+        # if self.sample.nevents.has_year(self.year) :
+        if self.sample.nevents.has_year(self.year) and not update_nevt:
+            nevents = self.sample.nevents[self.year]
             out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
-            if self.sample.nevents.has_year(self.year):
-                rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
-                if rel_diff < 0.01:
-                    print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
-                else:
-                    print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
-            else:
-                print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
-            # print green('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s' % (self.sample.name, self.year, str(nevents)))
+            print green('  --> Used stored number of events for sample \'%s\' in year %s: %s.' % (self.sample.name, self.year, str(nevents)))
         else:
-            print green('  --> Sample is data and does not need weighted events. Simply wrote the XML file.')
+            if count_weights:
+                results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
+                nevents = sum(float(r[0]) for r in results)
+                out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
+                if self.sample.nevents.has_year(self.year):
+                    rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
+                    if rel_diff < 0.01:
+                        print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
+                    else:
+                        print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
+                else:
+                    print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
+            else:
+                print green('  --> Did not count events. Simply wrote the XML file with number of generated/recorded events in sample.')
+
+            # else:
+            #     if count_weights:
+            #         results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
+            #         nevents = sum(float(r[0]) for r in results)
+            #         out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
+            #         if self.sample.nevents.has_year(self.year):
+            #             rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
+            #             if rel_diff < 0.01:
+            #                 print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
+            #             else:
+            #                 print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
+            #         else:
+            #             print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
+            #     else:
+            #         print green('  --> Did not count events. Simply wrote the XML file with number of generated/recorded events in sample.')
         out.close()
 
 

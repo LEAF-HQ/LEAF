@@ -83,10 +83,10 @@ class Sample:
         else:
             return getattr(self, varname)[year]
 
-    def get_filedict_nano(self, year, force_update=False):
+    def get_filedict_nano(self, sampleinfofolder, year, force_update=False):
 
         # first try to read it from the json
-        filedict = self.get_filedict_nano_from_json(year=year)
+        filedict = self.get_filedict_nano_from_json(sampleinfofolder=sampleinfofolder, year=year)
         if filedict is not False:
             if not force_update:
                 return filedict
@@ -98,17 +98,17 @@ class Sample:
         filedict = self.count_events_in_files(filelist)
         if filedict is False:
             return False
-        self.update_filedict_nano_in_json(year=year, filedict=filedict)
+        self.update_filedict_nano_in_json(sampleinfofolder=sampleinfofolder, year=year, filedict=filedict)
 
         # get from json to make sure it's always ordered in the same way
-        filedict = self.get_filedict_nano_from_json(year=year)
+        filedict = self.get_filedict_nano_from_json(sampleinfofolder=sampleinfofolder, year=year)
         if filedict is not False:
             return filedict
         else:
             raise ValueError('Unable to get filedict for sample %s.' % (self.name))
 
-    def get_filedict_nano_from_json(self, year):
-        jsonname = 'samples/filelist_%s.json' % (year)
+    def get_filedict_nano_from_json(self, sampleinfofolder, year):
+        jsonname = os.path.join(sampleinfofolder, 'filelist_%s.json' % (year))
 
         dict_in_json = {}
 
@@ -122,9 +122,9 @@ class Sample:
         return dict_in_json[self.name]
 
 
-    def update_filedict_nano_in_json(self, year, filedict):
+    def update_filedict_nano_in_json(self, sampleinfofolder, year, filedict):
 
-        jsonname = 'samples/filelist_%s.json' % (year)
+        jsonname = os.path.join(sampleinfofolder, 'filelist_%s.json' % (year))
         dict_in_json = {}
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
@@ -132,11 +132,6 @@ class Sample:
 
         # print dict_in_json
         dict_in_json[self.name] = filedict
-
-        # person_dict = {'name': 'Bob', 'age': 15, 'children': None}
-        # person_json = json.dumps(person_dict)
-
-        # Output: {"name": "Bob", "age": 12, "children": null}
         with open(jsonname, 'w') as j:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
@@ -145,23 +140,21 @@ class Sample:
         print green('  --> Going to count events in %i files' % (len(filelist)))
         commands = []
         for i, filename in enumerate(filelist):
+
             # get number of events
             command = 'Counter_NANOAOD %s' % (filename)
             commands.append((command, filename))
         outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
 
-        # newlist = []
         newdict = {}
         for o in outputs:
             try:
                 nevt = int(o[0].split('\n')[0])
                 filename = o[1]
-                # newlist.append((filename, int(math.ceil(float(nevt)/nevt_per_job))))
                 newdict[filename] = nevt
             except Exception as e:
                 print yellow('  --> Caught exception \'%s\'. Skip sample \'%s\'.' % (e, self.name))
                 return False
-                # continue
 
         print green('  --> Successfully counted events in %i files' % (len(newdict)))
         return newdict

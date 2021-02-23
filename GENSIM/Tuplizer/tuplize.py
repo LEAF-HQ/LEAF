@@ -27,10 +27,11 @@ from samples.Backgrounds import *
 from samples.Data import *
 
 
-username = 'areimers'
+username = os.environ['USER']
 workarea = '/work/%s' % (username)
 basefolder = join(workarea, 'LQDM')
-gensimfolder = join(basefolder, 'GENSIM')
+tuplizefolder = join(basefolder, 'GENSIM', 'Tuplizer')
+sampleinfofolder = join(basefolder, 'GENSIM', 'samples')
 macrofolder = join(basefolder, 'macros')
 
 config_per_year = {
@@ -44,10 +45,10 @@ config_per_year = {
 # all
 # samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
 # samplenames = sorted(sorted(backgrounds.keys()) + sorted(signals.keys()))
-# samplenames = sorted(sorted(signals.keys()))
+samplenames = sorted(sorted(signals.keys()))
 
 # backgrounds
-samplenames = sorted(backgrounds.keys())
+# samplenames = sorted(backgrounds.keys())
 # samplenames = backgrounds.keys()
 
 # data + bkg
@@ -64,13 +65,12 @@ def main():
     for samplename in samplenames:
         print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
-        Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, gensimfolder=gensimfolder, macrofolder=macrofolder, submit=submit)
+        Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
-        count_weights = False if samplename in data.keys() else True
-        Tuplizer.CreateDatasetXMLFile(count_weights=count_weights)
+        Tuplizer.CreateDatasetXMLFile(update_nevt=False)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
