@@ -30,7 +30,7 @@ public:
   virtual ~JECCorrector() = default;
 
   virtual bool process(RecoEvent & event) override;
-  // virtual bool correct_met(RecoEvent & event, const bool & isCHSmet = false, double pt_thresh = 15., double eta_thresh_low=0., double eta_thresh_high=5.5);
+  virtual bool correct_met(RecoEvent & event, double pt_thresh = 15.);
 
 protected:
   std::map<TString, std::unique_ptr<FactorizedJetCorrector>> correctors;
@@ -38,6 +38,24 @@ protected:
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   TString year, jetcollection;
 };
+
+
+
+class JetLeptonCleaner: public AnalysisModule<RecoEvent> {
+
+public:
+  explicit JetLeptonCleaner(const Config& cfg, const TString& year, const TString& jetcollection);
+  virtual ~JetLeptonCleaner() = default;
+
+  virtual bool process(RecoEvent & event) override;
+
+protected:
+  std::map<TString, std::unique_ptr<FactorizedJetCorrector>> correctors;
+  std::map<TString, std::unique_ptr<JetCorrectionUncertainty>> jec_uncertainties;
+  int direction = 0; // -1 = down, +1 = up, 0 = nominal
+  TString year, jetcollection;
+};
+
 
 
 class JERCorrector : public AnalysisModule<RecoEvent> {

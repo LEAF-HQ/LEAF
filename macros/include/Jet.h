@@ -25,6 +25,7 @@ public:
     m_jet_id = -1;
     m_pu_id = -1;
     m_raw_factor = -1.;
+    m_L1_factor = -1.;
     m_muon_sub_raw_factor = -1.;
     m_parton_flavor = 0;
     m_hadron_flavor = 0;
@@ -45,6 +46,7 @@ public:
   const int jet_id() const {return m_jet_id;};
   const int pu_id() const {return m_pu_id;};
   const float raw_factor() const {return m_raw_factor;};
+  const float L1_factor() const {return m_L1_factor;};
   const float muon_sub_raw_factor() const {return m_muon_sub_raw_factor;};
   const int parton_flavor() const {return m_parton_flavor;};
   const int hadron_flavor() const {return m_hadron_flavor;};
@@ -64,6 +66,7 @@ public:
   void set_mu_efrac(float x){m_mu_efrac = x;};
   void set_jet_id(int x){m_jet_id = x;};
   void set_pu_id(int x){m_pu_id = x;};
+  void set_L1_factor(float x){m_L1_factor = x;};
   void set_raw_factor(float x){m_raw_factor = x;};
   void set_muon_sub_raw_factor(float x){m_muon_sub_raw_factor = x;};
   void set_parton_flavor(int x){m_parton_flavor = x;};
@@ -87,7 +90,8 @@ protected:
   float m_mu_efrac;
   int   m_jet_id;
   int   m_pu_id; // 80X (2016) training
-  float m_raw_factor; // = 1 - (Factor to get to raw pT) = 1 - (raw pt)/(corr pt)
+  float m_raw_factor; // = Factor to get to raw pT = (raw pt)/(corr pt)
+  float m_L1_factor; // = Factor to get from raw to L1
   float m_muon_sub_raw_factor; // = 1 - (muon-subtracted raw pt)/(raw pt)
   int m_parton_flavor;
   int m_hadron_flavor;

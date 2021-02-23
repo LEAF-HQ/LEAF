@@ -1,5 +1,6 @@
 #pragma once
 
+#include <TLorentzVector.h>
 
 
 
@@ -15,6 +16,11 @@ public:
 
   double pt()  const {return m_pt;};
   double phi() const {return m_phi;};
+  TLorentzVector p4(){
+   TLorentzVector met;
+   met.SetPtEtaPhiM(m_pt, 0, m_phi, 0);
+   return met;
+}
 
   void set_pt(double x) {m_pt = x;};
   void set_phi(double x){m_phi = x;};

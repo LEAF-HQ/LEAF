@@ -23,7 +23,6 @@ unique_ptr<JetCorrectionUncertainty> corrector_uncertainty(const Config & cfg, c
       throw runtime_error("WARNING No JEC Uncertainty File found!");
     }
     return unique_ptr<JetCorrectionUncertainty>(new JetCorrectionUncertainty(*(new JetCorrectorParameters(unc_file.Data(), "Total"))));
-    // return jec_uncertainty;
   }
   return nullptr;
 
@@ -48,8 +47,9 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const RecoEvent 
   corrector.setJetPhi(jet.phi());
   corrector.setJetA(jet.area());
   corrector.setRho(event.rho);
-  auto correctionfactors = corrector.getSubCorrections();
-  auto correctionfactor = correctionfactors.back();
+  auto correctionfactors    = corrector.getSubCorrections();
+  auto correctionfactor     = correctionfactors.back();
+  auto correctionfactor_L1  = correctionfactors.front();
 
   // un-correct and the re-correct the jet with chosen JECs
   TLorentzVector jet_p4_corrected = jet.p4() * (raw_factor * correctionfactor);
@@ -84,6 +84,7 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const RecoEvent 
   // set corrected jet p4
   jet.set_p4(jet_p4_corrected);
   jet.set_raw_factor(1. / correctionfactor);
+  jet.set_L1_factor(correctionfactor_L1); // does not exist in NanoAOD
 }
 
 
@@ -107,6 +108,28 @@ JECCorrector::JECCorrector(const Config& cfg, const TString & year_, const TStri
 
 
 
+//propagate JEC to MET (L123 - L1 scheme) = type-1 correction
+bool JECCorrector::correct_met(RecoEvent & event, double pt_thresh){
+
+  // we start from raw MET
+  TLorentzVector rawmet_p4 = event.rawmet->p4();
+  for(Jet & jet : *event.jets){
+
+    //thresholds on the corrected jets: pt > 15 EM fraction < 0.9
+    if((jet.pt() > pt_thresh) && ((jet.ne_em_efrac() + jet.ch_em_efrac()) < 0.9)){
+
+      // subtracting something from the p4 is actually adding it to MET, which is defined as the negative vectorial sum of everything
+      rawmet_p4 -= jet.p4();
+      rawmet_p4 += (jet.raw_factor() * jet.L1_factor()) * jet.p4();
+    }
+  }
+  event.met->set_pt(rawmet_p4.Pt());
+  event.met->set_phi(rawmet_p4.Phi());
+  return true;
+}
+
+
+
 bool JECCorrector::process(RecoEvent& event){
 
   // Find correct run-period of event using event.run, either 'MC' or 'A' or 'B' or ....
@@ -120,6 +143,82 @@ bool JECCorrector::process(RecoEvent& event){
 
   return true;
 }
+
+
+
+
+
+
+
+
+
+
+JetLeptonCleaner::JetLeptonCleaner(const Config& cfg, const TString& year, const TString& jetcollection){
+
+  direction = 0;
+  TString dir = (TString) cfg.get("JECDirection");
+  if     (dir == "nominal") direction =  0;
+  else if(dir == "up")      direction =  1;
+  else if(dir == "down")    direction = -1;
+  else throw std::runtime_error("JECCorrector::JECCorrector -- invalid value in config: JECDirection='"+dir+"' (valid: 'nominal', 'up', 'down')");
+
+  for (const TString run: yearRunMap.at((string)year)) {
+    correctors[run] = build_corrector(JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection));
+    jec_uncertainties[run] = corrector_uncertainty(cfg, JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+  }
+  correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection));
+  jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+
+}
+
+
+bool JetLeptonCleaner::process(RecoEvent& event) {
+
+  TString runperiod = event.get_runperiod(year);
+  for(Jet & jet : *event.jets){
+    bool correct_p4 = false;
+    TLorentzVector jet_p4_raw = jet.p4() * jet.raw_factor();
+
+    // muons
+    if(jet.n_muons() > 0 && event.muons->size() > 0){
+
+      // find muon(s) and remove
+      for(Muon & muo : *event.muons){
+        if(jet.identifier() != muo.jetidx()) continue;
+        correct_p4 = true;
+        jet_p4_raw -= muo.p4();
+        jet.set_n_muons(jet.n_muons() - 1);
+        jet.set_mu_efrac(max(0., (jet.e() * jet.mu_efrac() - muo.e()) / jet.e()));
+      }
+    }
+
+    // electrons
+    if(jet.n_electrons() > 0 && event.electrons->size() > 0){
+
+      // find electron(s) and remove
+      for(Electron & ele : *event.electrons){
+        if(jet.identifier() != ele.jetidx()) continue;
+        correct_p4 = true;
+        jet_p4_raw -= ele.p4();
+        jet.set_n_electrons(jet.n_electrons() - 1);
+        jet.set_ch_em_efrac(max(0., (jet.e() * jet.ch_em_efrac() - ele.e()) / jet.e()));
+      }
+    }
+
+    // jet-p4 correction with JEC
+    if(correct_p4){
+      jet.set_raw_factor(1.);
+      jet.set_p4(jet_p4_raw);
+      correct_jet(*correctors.at(runperiod), jet, event, *jec_uncertainties.at(runperiod), direction);
+    }
+  }
+
+  return true;
+}
+
+
+
+
 
 
 
@@ -210,7 +309,7 @@ void JERCorrector::apply_JER_smearing(std::vector<Jet>& rec_jets, const std::vec
     // Get the scale factor for this jet
     float c = getScaleFactor(recopt, recoeta);
     if (c < 0) {
-      cout << "WARNING: GenericJetResolutionSmearer: no scale factor found for this jet with pt : eta = " << recopt << " : " << recoeta << endl;
+      cout << "WARNING: JERCorrector: no scale factor found for this jet with pt : eta = " << recopt << " : " << recoeta << endl;
       cout << "         No JER smearing will be applied." << endl;
     }
 
