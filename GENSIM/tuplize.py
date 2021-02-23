@@ -42,35 +42,35 @@ config_per_year = {
 
 
 # all
-samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
-# samplenames = sorted(samples.keys())
-# samplenames = ['ST_tW_top']
-# samplenames = ['DATA_Tau_C', 'ST_sch', 'ST_tW_antitop', 'ST_tch_top']
+# samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
+# samplenames = sorted(sorted(backgrounds.keys()) + sorted(signals.keys()))
+# samplenames = sorted(sorted(signals.keys()))
 
 # backgrounds
-# samplenames = sorted(backgrounds.keys())
-# samplenames = ['ST_tch_top', 'LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest']
+samplenames = sorted(backgrounds.keys())
+# samplenames = backgrounds.keys()
 
 # data + bkg
 # samplenames = sorted(backgrounds.keys()) + sorted(data.keys())
 
 # signals
 # samplenames = sorted(signals.keys())
-# samplenames = ['LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest']
 
 
 year = '2017'
-submit = True
+submit = False
 
 def main():
     for samplename in samplenames:
+        print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
         Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, gensimfolder=gensimfolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
-        Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.CreateDatasetXMLFile()
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
+        count_weights = False if samplename in data.keys() else True
+        Tuplizer.CreateDatasetXMLFile(count_weights=count_weights)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 

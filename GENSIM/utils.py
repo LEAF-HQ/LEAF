@@ -87,26 +87,31 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
         b_wait = (n_completed < n_jobs)
     DEVNULL.close()
 
-def getoutput_commands_parallel(commands=[], ncores=10, niceness=10, max_time=10):
+def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=True, niceness=10):
     n_running = 0
     n_completed = 0
     n_jobs = len(commands)
+    outputs = []
     processes = []
     commands_resub = []
+    n_completed = 0
     for tuple in commands:
         c = tuple[0]
         info = tuple[1]
-        c = 'nice -n %i %s' % (niceness, c)
+        if do_nice: c = 'nice -n %i %s' % (niceness, c)
         b_wait = (n_running >= ncores)
         while b_wait:
             n_running = 0
-            n_completed = 0
+            # n_completed = 0
             for tuple in processes:
                 proc = tuple[0]
                 if proc.poll() == None:
                     n_running += 1
                 else:
                     n_completed += 1
+                    outputs.append((tuple[0].communicate()[0], tuple[1]))
+                    proc.stdout.close()
+                    processes.remove(tuple)
             percent = round(float(n_completed)/float(n_jobs)*100, 1)
             sys.stdout.write( '{0:d} of {1:d} ({2:4.2f}%) jobs done.\r'.format(n_completed, n_jobs, percent))
             sys.stdout.flush()
@@ -124,20 +129,23 @@ def getoutput_commands_parallel(commands=[], ncores=10, niceness=10, max_time=10
     time_gone = 0
     while b_wait:
         n_running = 0
-        n_completed = 0
+        # n_completed = 0
         for tuple in processes:
             proc = tuple[0]
-            if proc.poll() == None: n_running += 1
-            else:                   n_completed += 1
+            if proc.poll() == None:
+                n_running += 1
+            else:
+                n_completed += 1
+                outputs.append((tuple[0].communicate()[0], tuple[1]))
+                proc.stdout.close()
+                processes.remove(tuple)
         percent = float(n_completed)/float(n_jobs)*100
         sys.stdout.write( '{0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(n_completed, n_jobs, percent))
         sys.stdout.flush()
         timestep = 2
-        time.sleep(2)
+        time.sleep(timestep)
         time_gone += timestep
         b_wait = (n_completed < n_jobs) and (time_gone < max_time)
-    outputs = []
-    # commands_resub = []
     resub_outputs = []
     for tuple in processes:
         if tuple[0].poll() is not None:
@@ -145,6 +153,7 @@ def getoutput_commands_parallel(commands=[], ncores=10, niceness=10, max_time=10
         else:
             tuple[0].kill()
             commands_resub.append((tuple[2].split('nice -n %i ' % (niceness))[1], tuple[1]))
+            # tuple[0].stdout.close()
     if len(commands_resub) > 0:
         resub_outputs = getoutput_commands_parallel(commands_resub, max_time=max_time)
         for o in resub_outputs:

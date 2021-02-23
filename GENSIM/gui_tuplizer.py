@@ -43,7 +43,7 @@ config_per_year = {
 }
 
 
-samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
+# samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
 
 
 
@@ -51,6 +51,9 @@ def run_function():
     year = var_year.get()
     action = var_action.get()
     submit = (var_submit.get() == 1)
+    do_data = (var_data.get() == 1)
+    do_sig = (var_sig.get() == 1)
+    do_bkg = (var_bkg.get() == 1)
 
     if year is '' or action is '':
         print '\'year\' or \'action\' not specified, please do so.'
@@ -59,6 +62,16 @@ def run_function():
     print 'action is: %s' % action
     if submit: print 'submit is True'
     else:      print 'submit is False'
+
+    samplenames = []
+    if do_data: samplenames += sorted(data.keys())
+    if do_bkg: samplenames += sorted(backgrounds.keys())
+    if do_sig: samplenames += sorted(signals.keys())
+    # samplenames = ['DATA_Tau_C']
+    if samplenames is []:
+        print 'no samples specified, please do so.'
+        return
+
 
     # options_action = ['', 'submit new', 'resubmit 1h', 'resubmit 5h', 'resubmit 23h', 'Create dataset XML file', 'Print DAS cross section', 'Create default config file from samples']
     if action == 'submit new':
@@ -158,7 +171,7 @@ def create_default_config(samplenames, year, configoutname='default_config.xml')
 
 if  __name__ == '__main__':
 
-    options_year = ['', '2017']
+    options_year = ['2017']
     options_action = ['', 'submit new', 'resubmit 1h', 'resubmit 5h', 'resubmit 23h', 'Create dataset XML file', 'Print DAS cross section', 'Create default config file from samples']
 
 
@@ -166,9 +179,10 @@ if  __name__ == '__main__':
     window.title('Tuplizer GUI')
     # window.resizable(width=False, height=False)
 
-    window.rowconfigure(0, minsize=100, weight=1)
+    window.rowconfigure(0, minsize=60, weight=1)
     window.rowconfigure(1, minsize=40, weight=0)
-    window.rowconfigure(2, minsize=100, weight=1)
+    window.rowconfigure(2, minsize=100, weight=0)
+    window.rowconfigure(3, minsize=100, weight=1)
     window.columnconfigure(0, minsize=500, weight=1)
     window.columnconfigure(1, minsize=500, weight=1)
     window.columnconfigure(2, minsize=200, weight=1)
@@ -179,22 +193,47 @@ if  __name__ == '__main__':
     var_action.set(options_action[0]) # default value
     var_submit = IntVar()
     var_submit.set(False)
+    var_data = IntVar()
+    var_data.set(False)
+    var_bkg = IntVar()
+    var_bkg.set(False)
+    var_sig = IntVar()
+    var_sig.set(False)
 
     lbl_year = Label(master=window, text='Choose the year to run')
     lbl_year.grid(row=0, column=0, sticky="s")
+
     lbl_action = Label(master=window, text='Choose the step to run')
     lbl_action.grid(row=0, column=1, sticky="s")
+
     menu_year = OptionMenu(window, var_year, *options_year)
     menu_year.grid(row=1, column=0, padx=10, pady=10, sticky='ew')
+
     menu_action = OptionMenu(window, var_action, *options_action)
     menu_action.grid(row=1, column=1, padx=10, pady=10, sticky='ew')
 
     box_submit = Checkbutton(window, text="submit", variable=var_submit).grid(row=1, column=2)
 
+    frame_tobesplit_col0 = Frame(master=window)
+    frame_tobesplit_col0.grid(row=2, column=0, sticky='nswe')
+    frame_tobesplit_col0.rowconfigure(0, minsize=40, weight=1)
+    frame_tobesplit_col0.columnconfigure(0, minsize=250, weight=1)
+    frame_tobesplit_col0.columnconfigure(1, minsize=250, weight=1)
+
+    frame_tobesplit_col1 = Frame(master=window)
+    frame_tobesplit_col1.grid(row=2, column=1, sticky='nswe')
+    frame_tobesplit_col1.rowconfigure(0, minsize=40, weight=1)
+    frame_tobesplit_col1.columnconfigure(0, minsize=250, weight=1)
+    frame_tobesplit_col1.columnconfigure(1, minsize=250, weight=1)
+
+    box_data = Checkbutton(frame_tobesplit_col0, text="data", variable=var_data).grid(row=0, column=0)
+    box_bkg = Checkbutton(frame_tobesplit_col0, text="background", variable=var_bkg).grid(row=0, column=1)
+    box_sig = Checkbutton(frame_tobesplit_col1, text="signals", variable=var_sig).grid(row=0, column=0)
+
     button_run = Button(window, text="Run", command=run_function)
-    button_run.grid(row=2, column=0, columnspan=2, padx=20, pady=20, sticky='nsew')
+    button_run.grid(row=3, column=0, columnspan=2, padx=20, pady=20, sticky='nsew')
     button_exit = Button(window, text="Exit", command=window.destroy)
-    button_exit.grid(row=2, column=2, padx=20, pady=20, sticky='nsew')
+    button_exit.grid(row=3, column=2, padx=20, pady=20, sticky='nsew')
 
     mainloop()
 

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os, sys, math
+import numpy as np
 from os.path import isfile, join
 import subprocess
 import time
@@ -101,28 +102,53 @@ class TuplizeRunner:
             else:
                 print green('  --> No jobs to submit for job %s.' % (samplename))
 
-    def CreateDatasetXMLFile(self):
+    def CreateDatasetXMLFile(self, count_weights):
+        # print self.year, self.sample.nevents.has_year(self.year)
+        # print self.sample.nevents[self.year]
         xmlfilename = join(self.macrofolder, self.sample.xmlfiles[self.year])
         inputfilepattern = join(self.macrofolder, self.sample.tuplepaths[self.year].path, '*.root')
         out = open(xmlfilename, 'w')
         l = glob.glob(inputfilepattern)
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(l), self.sample.name))
         l.sort()
-        nevents = 0
+        commands = []
+        idx = 0
         for filename in l:
-            f = ROOT.TFile(filename)
+            # print filename
+            idx += 1
+            f = ROOT.TFile.Open(filename)
+            n_genevents = 0
             try:
-                if f.Get('AnalysisTree').GetEntriesFast() > 0:
-                    out.write('<InputFile FileName="%s"/>\n' % filename)
-                    nevents += f.Get('AnalysisTree').GetEntries()
-                else:
-                    print yellow('    --> No events found in file \'%s\'.' % filename)
-                f.Close()
+                n_genevents = f.Get('AnalysisTree').GetEntriesFast()
             except AttributeError:
-                print yellow('Couldn\'t open file, skip this one.')
-        out.write('<!-- Weighted number of events: %d -->\n' % nevents)
+                print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
+            f.Close()
+            del f
+            if n_genevents > 0:
+                try:
+                    if count_weights: commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
+                    out.write('<InputFile FileName="%s"/>\n' % filename)
+                except:
+                    print yellow('  --> Couldn\'t read number of weighted events in file, skip this one. Will not appear in XML file, so it\'s safe.')
+
+
+        if count_weights:
+            results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
+            nevents = sum(float(r[0]) for r in results)
+            # print '\n\n ', nevents, '%d'%nevents, '%s'%str(nevents)
+            out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
+            if self.sample.nevents.has_year(self.year):
+                rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
+                if rel_diff < 0.01:
+                    print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
+                else:
+                    print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
+            else:
+                print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
+            # print green('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s' % (self.sample.name, self.year, str(nevents)))
+        else:
+            print green('  --> Sample is data and does not need weighted events. Simply wrote the XML file.')
         out.close()
-        print green('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %f' % (self.sample.name, self.year, nevents))
 
 
     def PrintDASCrossSection(self, sample, year, recalculate=False):
@@ -148,8 +174,6 @@ class TuplizeRunner:
                 xsec = float(l.split('=')[1].split(' ')[1])
                 break
         print green('  --> Final cross section: \'%s\': %f' % (year, xsec))
-
-
 
 
 

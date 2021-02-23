@@ -109,19 +109,10 @@ int main(int argc, char* argv[]){
   TTreeReaderValue<float> genWeight (reader, varname);
 
   TTreeReaderValue<float> rho(reader, "fixedGridRhoFastjetAll");
-  TBranch* br_prefiring = (TBranch*)((TTree*)infile->Get("Events"))->GetListOfBranches()->FindObject("L1PreFiringWeight_Nom");
-  bool exists_prefiringweight = true;
-  if(br_prefiring) exists_prefiringweight = true;
-  else   exists_prefiringweight = false;
-
-  // varname = "fixedGridRhoFastjetAll";
-  // if(exists_prefiringweight)
   varname = "L1PreFiringWeight_Nom";
   TTreeReaderValue<float> weight_prefiring(reader, varname);
-  // if(exists_prefiringweight)
   varname = "L1PreFiringWeight_Up";
   TTreeReaderValue<float> weight_prefiring_up(reader, varname);
-  // if(exists_prefiringweight) 
   varname = "L1PreFiringWeight_Dn";
   TTreeReaderValue<float> weight_prefiring_down(reader, varname);
   TTreeReaderValue<unsigned int> run(reader, "run");
@@ -539,11 +530,9 @@ int main(int argc, char* argv[]){
     event.number = *number;
     event.npv = *npv;
     event.npv_good = *npv_good;
-    // if(exists_prefiringweight){
     event.weight_prefiring = *weight_prefiring;
     event.weight_prefiring_up = *weight_prefiring_up;
     event.weight_prefiring_down = *weight_prefiring_down;
-    // }
     if(is_mc){
       event.npu = *npu;
       event.ntrueint = *ntrueint;

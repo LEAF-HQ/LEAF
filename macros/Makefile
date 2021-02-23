@@ -7,7 +7,7 @@ CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
 
 
 
-all: Tuplizer Tuplizer_NANOAOD Counter_NANOAOD Analyzer
+all: Tuplizer Tuplizer_NANOAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
@@ -26,6 +26,10 @@ Tuplizer_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer_NANOAOD.
 Counter_NANOAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Counter_NANOAOD.o
 	@echo "--> Creating Counter_NANOAOD"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Counter_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+
+Counter_NANOAOD_weights: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Counter_NANOAOD_weights.o
+	@echo "--> Creating Counter_NANOAOD_weights"
+	@$(CC) $(OBJECTS) $(OBJDIR)/Counter_NANOAOD_weights.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"
