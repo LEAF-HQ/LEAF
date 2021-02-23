@@ -21,10 +21,10 @@ from array import array
 from TuplizeRunner import *
 from samples.Storage import *
 from samples.Sample import *
-from samples.samples import *
 from samples.Signals import *
 from samples.Backgrounds import *
 from samples.Data import *
+from collections import OrderedDict
 
 
 username = os.environ['USER']
@@ -34,6 +34,19 @@ tuplizefolder = join(basefolder, 'GENSIM', 'Tuplizer')
 sampleinfofolder = join(basefolder, 'GENSIM', 'samples')
 macrofolder = join(basefolder, 'macros')
 
+samples = OrderedDict()
+data = OrderedDict()
+data.update(tup for tup in datalist)
+samples.update(tup for tup in datalist)
+
+backgrounds = OrderedDict()
+backgrounds.update(tup for tup in backgroundlist)
+samples.update(tup for tup in backgroundlist)
+
+signals = OrderedDict()
+signals.update(tup for tup in signallist)
+samples.update(tup for tup in signallist)
+
 config_per_year = {
     '2017': {
         'arch_tag': 'slc7_amd64_gcc700',
@@ -42,10 +55,18 @@ config_per_year = {
 }
 
 
+
+
+year = '2017'
+submit = False
+
+
 # all
+# samplenames = ['LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest']
+samplenames = data.keys() + backgrounds.keys() + signals.keys()
 # samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
 # samplenames = sorted(sorted(backgrounds.keys()) + sorted(signals.keys()))
-samplenames = sorted(sorted(signals.keys()))
+# samplenames = sorted(sorted(signals.keys()))
 
 # backgrounds
 # samplenames = sorted(backgrounds.keys())
@@ -58,21 +79,19 @@ samplenames = sorted(sorted(signals.keys()))
 # samplenames = sorted(signals.keys())
 
 
-year = '2017'
-submit = False
 
 def main():
     for samplename in samplenames:
         print green('--> Working on sample: \'%s\'' % (samplename))
-        s = samples[samplename]
-        Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
+    #     s = samples[samplename]
+    #     Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
+    #     # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
-        Tuplizer.CreateDatasetXMLFile(update_nevt=False)
+        # Tuplizer.CreateDatasetXMLFile(update_nevt=False)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
-    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
@@ -115,8 +134,15 @@ def create_default_config(samplenames, year, configoutname='default_config.xml')
                 found_dataset_start = True
                 for samplename in samplenames:
                     s = samples[samplename]
-                    samplelumi = float(s.nevents[year]) / float(s.xsecs[year]) if s.xsecs[year] is not None else float(s.nevents[year])
-                    newline = '        <Dataset Name="%s" Lumi="%.1f"  Type="%s" >\n' % (s.name, samplelumi, s.type)
+                    if s.type is 'DATA':
+                        samplelumi = 1.
+                    elif s.xsecs[year] is not None:
+                        samplelumi = float(s.nevents[year]) / float(s.xsecs[year])
+                    elif s.nevents[year] is not None:
+                        samplelumi = float(s.nevents[year]) # normalize to 1 pb
+                    else:
+                        raise ValueError('Cannot assign lumiweight for sample \'%s\', please check. Abort.')
+                    newline = '        <Dataset Name="%s" Lumi="%.10g"  Year="%s" Type="%s" >\n' % (s.name, samplelumi, year, s.type)
                     newlines.append(newline)
                     newline2 = '            &%s;\n' % (s.name)
                     newlines.append(newline2)
