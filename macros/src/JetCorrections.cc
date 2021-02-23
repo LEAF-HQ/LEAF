@@ -184,7 +184,7 @@ bool JetLeptonCleaner::process(RecoEvent& event) {
 
       // find muon(s) and remove
       for(Muon & muo : *event.muons){
-        if(jet.identifier() != muo.jetidx()) continue;
+        if((m_mu_id && !m_mu_id(muo, event)) || (jet.identifier() != muo.jetidx())) continue;
         correct_p4 = true;
         jet_p4_raw -= muo.p4();
         jet.set_n_muons(jet.n_muons() - 1);
@@ -197,7 +197,7 @@ bool JetLeptonCleaner::process(RecoEvent& event) {
 
       // find electron(s) and remove
       for(Electron & ele : *event.electrons){
-        if(jet.identifier() != ele.jetidx()) continue;
+        if((m_ele_id && !m_ele_id(ele, event)) || (jet.identifier() != ele.jetidx())) continue;
         correct_p4 = true;
         jet_p4_raw -= ele.p4();
         jet.set_n_electrons(jet.n_electrons() - 1);

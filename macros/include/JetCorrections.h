@@ -2,6 +2,7 @@
 #include "include/AnalysisModule.h"
 #include "include/useful_functions.h"
 #include "include/constants.h"
+#include "include/ObjectIdUtils.h"
 #include "include/Jet.h"
 #include "include/GenJet.h"
 #include "include/Config.h"
@@ -20,12 +21,10 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #pragma GCC diagnostic pop
 
-// class FactorizedJetCorrector;
 
 
 class JECCorrector: public AnalysisModule<RecoEvent> {
 public:
-  // explicit JECCorrector(const Config& cfg, const std::vector<std::string>& filenames);
   explicit JECCorrector(const Config& cfg, const TString& year, const TString& jetcollection);
   virtual ~JECCorrector() = default;
 
@@ -48,12 +47,16 @@ public:
   virtual ~JetLeptonCleaner() = default;
 
   virtual bool process(RecoEvent & event) override;
+  void set_muon_id(const ID<Muon> & mu_id){m_mu_id = mu_id;}
+  void set_electron_id(const ID<Electron> & ele_id){m_ele_id = ele_id;}
 
 protected:
   std::map<TString, std::unique_ptr<FactorizedJetCorrector>> correctors;
   std::map<TString, std::unique_ptr<JetCorrectionUncertainty>> jec_uncertainties;
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   TString year, jetcollection;
+  ID<Muon> m_mu_id;
+  ID<Electron> m_ele_id;
 };
 
 
