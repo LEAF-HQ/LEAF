@@ -31,9 +31,6 @@ LumiblockSelection::LumiblockSelection(const Config & cfg){
   for(int i=0; i<tree->GetEntries(); i++){
     tree->GetEntry(i);
     runs_and_lbs[run].emplace_back(make_pair(lbs.first, lbs.second));
-    cout << "run: " << run << ", lbs: [" << lbs.first << ", " << lbs.second << "]" << endl;
-    cout << "new vector: " << endl;
-    for(size_t j=0; j<runs_and_lbs[run].size(); j++) cout << runs_and_lbs[run].at(j).first << ", " << runs_and_lbs[run].at(j).second << endl;
   }
 
 }
@@ -45,13 +42,10 @@ bool LumiblockSelection::passes(RecoEvent & event){
   map<unsigned int, vector<pair<unsigned int, unsigned int>>>::iterator it = runs_and_lbs.find(event.run);
   if(it != runs_and_lbs.end()){
     for (const auto [lb_low, lb_high] : runs_and_lbs[event.run]){
-      // cout << "lb low, high: " << lb_low << ", " << lb_high << endl;
       if(event.lumiblock >= lb_low && event.lumiblock <= lb_high){
-        // cout << "returning true for lb " << event.lumiblock << endl;
         return true;
       }
     }
   }
-  cout << "going to return false" << endl;
   return false;
 }

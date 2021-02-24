@@ -31,7 +31,7 @@ public:
  PtEtaId(float min_pt_, float max_eta_, float max_pt_ =-1, float min_eta_=-1): min_pt(min_pt_), max_eta(max_eta_), max_pt(max_pt_),min_eta(min_eta_){}
 
     bool operator()(const Particle & p, const Event & ) const{
-      return p.pt() > min_pt && (p.pt() < max_pt || max_pt == -1) && std::fabs(p.eta()) < max_eta && std::fabs(p.eta()) > min_eta ;
+      return p.pt() > min_pt && (p.pt() < max_pt || max_pt == -1) && (std::fabs(p.eta()) < max_eta || max_eta == -1) && std::fabs(p.eta()) > min_eta ;
     }
 
 private:
