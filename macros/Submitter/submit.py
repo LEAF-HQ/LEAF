@@ -24,7 +24,7 @@ def main():
 
     args = parser.parse_args()
     xmlfilename = os.path.abspath(args.xmlfilename[0])
-    if not xmlfilename[-4:] == '.xml':
+    if not xmlfilename.endswith('.xml'):
         raise ValueError(red('The name of the xml-file does not end with \'.xml\'. I don\'t believe you...'))
     divide = args.divide
     output = args.output
