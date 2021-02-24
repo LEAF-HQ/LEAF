@@ -28,19 +28,26 @@ def main():
 
     outfile = TFile(outfilename, 'RECREATE')
     outtree = TTree("LumiTree","LumiTree")
-    t_run  = array('i',[0])
-    t_lb   = array('i',[0])
+    t_run     = array('i',[0])
+    t_lb_low  = array('i',[0])
+    t_lb_high = array('i',[0])
 
-    outtree.Branch("run", t_run,  'run number/i')
-    outtree.Branch("lb",  t_lb,   'lumi block/i')
+    outtree.Branch("run",     t_run,     'run number/i')
+    outtree.Branch("lb_low",  t_lb_low,  'lumi block low number (including this one)/i')
+    outtree.Branch("lb_high", t_lb_high, 'lumi block high number (including this one)/i')
     runs = dict_in_json.keys()
     for run in dict_in_json:
         parts = dict_in_json[run]
+        # print parts
         for lumiblocks in parts:
-            for lb in range(lumiblocks[0], lumiblocks[1]+1):
-                t_run[0] = int(run)
-                t_lb[0]  = int(lb)
-                outtree.Fill()
+            t_run[0]     = int(run)
+            t_lb_low[0]  = int(lumiblocks[0])
+            t_lb_high[0] = int(lumiblocks[1])
+            outtree.Fill()
+            # for lb in range(lumiblocks[0], lumiblocks[1]+1):
+            #     t_run[0] = int(run)
+            #     t_lb[0]  = int(lb)
+            #     outtree.Fill()
                 # print 'filled: (%i, %i)' % (int(run), int(lb))
 
     outfile.Write()

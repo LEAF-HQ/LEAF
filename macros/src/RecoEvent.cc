@@ -55,7 +55,7 @@ RecoEvent::~RecoEvent(){
 
 TString RecoEvent::get_runperiod(TString year){
   if(!RecoEvent::is_data) return "MC";
-  for (const auto& [numbers, period] : run_number_map.at(year)){
+  for (const auto [numbers, period] : run_number_map.at(year)){
     if(RecoEvent::run >= numbers.first && RecoEvent::run <= numbers.second) return period;
   }
   throw runtime_error("Event has invalid run number (not in run_number_map in constants.h) and therefore cannot be assigned a run-period");

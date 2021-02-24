@@ -153,7 +153,7 @@ bool JECCorrector::process(RecoEvent& event){
 
 
 
-JetLeptonCleaner::JetLeptonCleaner(const Config& cfg, const TString& year, const TString& jetcollection){
+JetLeptonCleaner::JetLeptonCleaner(const Config& cfg, const TString& year_, const TString & jetcollection_) : year(year_), jetcollection(jetcollection_){
 
   direction = 0;
   TString dir = (TString) cfg.get("JECDirection");

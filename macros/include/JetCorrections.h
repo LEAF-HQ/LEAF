@@ -25,7 +25,7 @@
 
 class JECCorrector: public AnalysisModule<RecoEvent> {
 public:
-  explicit JECCorrector(const Config& cfg, const TString& year, const TString& jetcollection);
+  explicit JECCorrector(const Config& cfg, const TString& year_, const TString& jetcollection_);
   virtual ~JECCorrector() = default;
 
   virtual bool process(RecoEvent & event) override;
@@ -43,7 +43,7 @@ protected:
 class JetLeptonCleaner: public AnalysisModule<RecoEvent> {
 
 public:
-  explicit JetLeptonCleaner(const Config& cfg, const TString& year, const TString& jetcollection);
+  explicit JetLeptonCleaner(const Config& cfg, const TString& year_, const TString& jetcollection_);
   virtual ~JetLeptonCleaner() = default;
 
   virtual bool process(RecoEvent & event) override;
