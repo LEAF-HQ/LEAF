@@ -19,7 +19,8 @@ def main():
     parser.add_argument('--submit', '-s', action='store_true', default=False, dest='submit', help='Submit split jobs to cluster')
     parser.add_argument('--output', '-o', action='store_true', default=False, dest='output', help='Check the status of the expected output files')
     parser.add_argument('--add', '-a', action='store_true', default=False, dest='add', help='Add split files back together for samples that are fully processed. Incomplete samples are not added.')
-    parser.add_argument('--forceadd', '-f', action='store_true', default=False, dest='forceadd', help='Force hadding with hadd\'s \'-f\' flag. Also has an effect if used without \'--add\'')
+    parser.add_argument('--forceadd', '-f', action='store_true', default=False, dest='forceadd', help='Force hadding with hadd\'s \'-f\' flag. Also has an effect if used without \'--add\'.')
+    parser.add_argument('--plothadd', '-p', action='store_true', default=False, dest='hadd', help='Hadd files to groups used for plotting and further analysis. Will always force.')
     parser.add_argument('--clean', '-c', action='store_true', default=False, dest='clean', help='Clean up: remove the local and the remote workdir')
 
     args = parser.parse_args()
@@ -31,6 +32,7 @@ def main():
     submit = args.submit
     add    = args.add
     forceadd = args.forceadd
+    hadd = args.hadd
     clean = args.clean
     nargs = sum([1 for x in vars(args) if vars(args)[x] is True])
 
@@ -50,6 +52,7 @@ def main():
     if output:          submitter.Output()
     if submit:          submitter.Submit()
     if add or forceadd: submitter.Add(force=forceadd)
+    if hadd:            submitter.Hadd()
 
 
 

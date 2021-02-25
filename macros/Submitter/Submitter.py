@@ -160,9 +160,36 @@ class Submitter:
 
 
 
+    def Hadd(self):
+        print green('--> Hadding samples into groups. Assuming all samples have been processed entirely.')
 
+        # update list of missing files
+        # self.Output()
 
+        datasets_per_group = OrderedDict()
+        for ds in self.xmlinfo.datasets:
+            datasetname = str(ds.settings.Name)
+            group = str(ds.settings.Group)
+            datasettype = str(ds.settings.Type)
+            if group in datasets_per_group:
+                datasets_per_group[group][1].append(datasetname)
+            else:
+                datasets_per_group[group] = (datasettype, [datasetname])
 
+        commands = []
+        for group in datasets_per_group:
+            if group == 'None': continue # don't hadd if files are not part of a group
+            grouptype = datasets_per_group[group][0]
+            outfilename = '%s__%s.root' % (grouptype, group)
+            outpath_parts = self.workdir_remote.split('/')[:-1]
+            outpath = str(os.path.join('/', *outpath_parts))
+            outfilepath_and_name = os.path.join(outpath, outfilename)
+            sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
+
+            command = 'hadd -f %s %s' % (outfilepath_and_name, sourcestring)
+            commands.append(command)
+        execute_commands_parallel(commands)
+        print green('--> Added %i datasets into groups.' % (len(commands)))
 
 
 

@@ -142,7 +142,7 @@ def create_default_config(samplenames, year, configoutname='default_config.xml')
                         samplelumi = float(s.nevents[year]) # normalize to 1 pb
                     else:
                         raise ValueError('Cannot assign lumiweight for sample \'%s\', please check. Abort.')
-                    newline = '        <Dataset Name="%s"                Lumi="%.10g"  Year="%s" Type="%s" Group="%s" >               &%s; </Dataset>\n' % (s.name, samplelumi, year, s.type, str(s.group[year]), s.name)
+                    newline = '        <Dataset Name="%s"                Lumi="%.10g"  Year="%s" Type="%s" Group="%s" >                 &%s;                </Dataset>\n' % (s.name, samplelumi, year, s.type, str(s.group[year]), s.name)
                     newlines.append(newline)
             elif '</Dataset>' in line:
                 found_dataset_end = True #don't append a newline, was already handeled
