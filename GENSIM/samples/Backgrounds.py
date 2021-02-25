@@ -13,6 +13,7 @@ backgroundlist = [
     ('TTToSemiLeptonic', Sample(
         type='MC',
         name='TTToSemiLeptonic',
+        group=YearDependentContainer({'2017': 'TT'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/TTToSemiLeptonic')}),
         xsecs=YearDependentContainer({'2017': 364.31, '2018': 364.33}),
@@ -23,6 +24,7 @@ backgroundlist = [
     ('TTTo2L2Nu', Sample(
         type='MC',
         name='TTTo2L2Nu',
+        group=YearDependentContainer({'2017': 'TT'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/TTTo2L2Nu')}),
         xsecs=YearDependentContainer({'2017': 87.33, '2018': 87.33}),
@@ -33,6 +35,7 @@ backgroundlist = [
     ('TTToHadronic', Sample(
         type='MC',
         name='TTToHadronic',
+        group=YearDependentContainer({'2017': 'TT'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v4/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/TTToHadronic')}),
         xsecs=YearDependentContainer({'2017': 380.11, '2018': 380.11}),
@@ -43,6 +46,7 @@ backgroundlist = [
     ('WJetsToLNu', Sample(
         type='MC',
         name='WJetsToLNu',
+        group=YearDependentContainer({'2017': 'WJets'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/WJetsToLNu')}),
         xsecs=YearDependentContainer({'2016': 61526.7, '2017': 61526.7, '2018': 61526.7}),
@@ -53,6 +57,7 @@ backgroundlist = [
     ('DYJetsToLL', Sample(
         type='MC',
         name='DYJetsToLL',
+        group=YearDependentContainer({'2017': 'DYJets'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v2/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DYJetsToLL')}),
         xsecs=YearDependentContainer({'2016': 6077.22, '2017': 6077.22, '2018': 6077.22}),
@@ -63,6 +68,7 @@ backgroundlist = [
     ('ST_tch_top', Sample(
         type='MC',
         name='ST_tch_top',
+        group=YearDependentContainer({'2017': 'ST'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/ST_tch_top')}),
         xsecs=YearDependentContainer({'2017': 136.02}),
@@ -73,6 +79,7 @@ backgroundlist = [
     ('ST_tch_antitop', Sample(
         type='MC',
         name='ST_tch_antitop',
+        group=YearDependentContainer({'2017': 'ST'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/ST_tch_antitop')}),
         xsecs=YearDependentContainer({'2017': 80.95}),
@@ -83,6 +90,7 @@ backgroundlist = [
     ('ST_sch', Sample(
         type='MC',
         name='ST_sch',
+        group=YearDependentContainer({'2017': 'ST'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/ST_sch')}),
         xsecs=YearDependentContainer({'2017': 3.36}),
@@ -93,6 +101,7 @@ backgroundlist = [
     ('ST_tW_top', Sample(
         type='MC',
         name='ST_tW_top',
+        group=YearDependentContainer({'2017': 'ST'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/ST_tW_top')}),
         xsecs=YearDependentContainer({'2016': 71.7*0.5*0.546, '2017': 71.7*0.5*0.546, '2018': 71.7*0.5*0.546}),
@@ -103,6 +112,7 @@ backgroundlist = [
     ('ST_tW_antitop', Sample(
         type='MC',
         name='ST_tW_antitop',
+        group=YearDependentContainer({'2017': 'ST'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAOD-106X_mc2017_realistic_v6-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/ST_tW_antitop')}),
         xsecs=YearDependentContainer({'2016': 71.7*0.5*0.546, '2017': 71.7*0.5*0.546, '2018': 71.7*0.5*0.546}),
@@ -113,6 +123,7 @@ backgroundlist = [
     ('QCD_Pt_15to30', Sample(
         type='MC',
         name='QCD_Pt_15to30',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_15to30')}),
         xsecs=YearDependentContainer({'2017': 1234000000.000000}),
@@ -123,6 +134,7 @@ backgroundlist = [
     ('QCD_Pt_30to50', Sample(
         type='MC',
         name='QCD_Pt_30to50',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_30to50')}),
         xsecs=YearDependentContainer({'2017': 105800000.000000}),
@@ -133,6 +145,7 @@ backgroundlist = [
     ('QCD_Pt_50to80', Sample(
         type='MC',
         name='QCD_Pt_50to80',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_50to80')}),
         xsecs=YearDependentContainer({'2017': 15560000.000000}),
@@ -143,6 +156,7 @@ backgroundlist = [
     ('QCD_Pt_80to120', Sample(
         type='MC',
         name='QCD_Pt_80to120',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_80to120')}),
         xsecs=YearDependentContainer({'2017': 2317000.000000}),
@@ -153,6 +167,7 @@ backgroundlist = [
     ('QCD_Pt_120to170', Sample(
         type='MC',
         name='QCD_Pt_120to170',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_120to170')}),
         xsecs=YearDependentContainer({'2017': 403700.000000}),
@@ -163,6 +178,7 @@ backgroundlist = [
     ('QCD_Pt_170to300', Sample(
         type='MC',
         name='QCD_Pt_170to300',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_170to300')}),
         xsecs=YearDependentContainer({'2017': 103700}),
@@ -173,6 +189,7 @@ backgroundlist = [
     ('QCD_Pt_300to470', Sample(
         type='MC',
         name='QCD_Pt_300to470',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_300to470')}),
         xsecs=YearDependentContainer({'2017': 6764}),
@@ -183,6 +200,7 @@ backgroundlist = [
     ('QCD_Pt_470to600', Sample(
         type='MC',
         name='QCD_Pt_470to600',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_470to600')}),
         xsecs=YearDependentContainer({'2017': 546.100000}),
@@ -193,6 +211,7 @@ backgroundlist = [
     ('QCD_Pt_600to800', Sample(
         type='MC',
         name='QCD_Pt_600to800',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_600to800')}),
         xsecs=YearDependentContainer({'2017': 154.900000}),
@@ -203,6 +222,7 @@ backgroundlist = [
     ('QCD_Pt_800to1000', Sample(
         type='MC',
         name='QCD_Pt_800to1000',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_800to1000')}),
         xsecs=YearDependentContainer({'2017': 25.970000}),
@@ -213,6 +233,7 @@ backgroundlist = [
     ('QCD_Pt_1000to1400', Sample(
         type='MC',
         name='QCD_Pt_1000to1400',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_1000to1400')}),
         xsecs=YearDependentContainer({'2017': 7.398000}),
@@ -223,6 +244,7 @@ backgroundlist = [
     ('QCD_Pt_1400to1800', Sample(
         type='MC',
         name='QCD_Pt_1400to1800',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_1400to1800')}),
         xsecs=YearDependentContainer({'2017': 0.6502}),
@@ -233,6 +255,7 @@ backgroundlist = [
     ('QCD_Pt_1800to2400', Sample(
         type='MC',
         name='QCD_Pt_1800to2400',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_1800to2400')}),
         xsecs=YearDependentContainer({'2017': 0.086710}),
@@ -243,6 +266,7 @@ backgroundlist = [
     ('QCD_Pt_2400to3200', Sample(
         type='MC',
         name='QCD_Pt_2400to3200',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_2400to3200')}),
         xsecs=YearDependentContainer({'2017': 0.005193}),
@@ -253,6 +277,7 @@ backgroundlist = [
     ('QCD_Pt_3200toInf', Sample(
         type='MC',
         name='QCD_Pt_3200toInf',
+        group=YearDependentContainer({'2017': 'QCD_Had'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/QCD_Pt_3200toInf')}),
         xsecs=YearDependentContainer({'2017': 0.000134}),

@@ -7,6 +7,7 @@ datalist = [
     ('DATA_Tau_B', Sample(
         type='DATA',
         name='DATA_Tau_B',
+        group=YearDependentContainer({'2017': 'DATA_Tau'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/Tau/Run2017B-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_Tau_B')}),
         xsecs=YearDependentContainer(),
@@ -17,6 +18,7 @@ datalist = [
     ('DATA_Tau_C', Sample(
         type='DATA',
         name='DATA_Tau_C',
+        group=YearDependentContainer({'2017': 'DATA_Tau'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/Tau/Run2017C-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_Tau_C')}),
         xsecs=YearDependentContainer(),
@@ -27,6 +29,7 @@ datalist = [
     ('DATA_Tau_D', Sample(
         type='DATA',
         name='DATA_Tau_D',
+        group=YearDependentContainer({'2017': 'DATA_Tau'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/Tau/Run2017D-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_Tau_D')}),
         xsecs=YearDependentContainer(),
@@ -37,6 +40,7 @@ datalist = [
     ('DATA_Tau_E', Sample(
         type='DATA',
         name='DATA_Tau_E',
+        group=YearDependentContainer({'2017': 'DATA_Tau'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/Tau/Run2017E-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_Tau_E')}),
         xsecs=YearDependentContainer(),
@@ -47,6 +51,7 @@ datalist = [
     ('DATA_Tau_F', Sample(
         type='DATA',
         name='DATA_Tau_F',
+        group=YearDependentContainer({'2017': 'DATA_Tau'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/Tau/Run2017F-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_Tau_F')}),
         xsecs=YearDependentContainer(),
@@ -57,6 +62,7 @@ datalist = [
     ('DATA_SingleMuon_B', Sample(
         type='DATA',
         name='DATA_SingleMuon_B',
+        group=YearDependentContainer({'2017': 'DATA_SingleMuon'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleMuon/Run2017B-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleMuon_B')}),
         xsecs=YearDependentContainer(),
@@ -67,6 +73,7 @@ datalist = [
     ('DATA_SingleMuon_C', Sample(
         type='DATA',
         name='DATA_SingleMuon_C',
+        group=YearDependentContainer({'2017': 'DATA_SingleMuon'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleMuon/Run2017C-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleMuon_C')}),
         xsecs=YearDependentContainer(),
@@ -77,6 +84,7 @@ datalist = [
     ('DATA_SingleMuon_D', Sample(
         type='DATA',
         name='DATA_SingleMuon_D',
+        group=YearDependentContainer({'2017': 'DATA_SingleMuon'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleMuon/Run2017D-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleMuon_D')}),
         xsecs=YearDependentContainer(),
@@ -87,6 +95,7 @@ datalist = [
     ('DATA_SingleMuon_E', Sample(
         type='DATA',
         name='DATA_SingleMuon_E',
+        group=YearDependentContainer({'2017': 'DATA_SingleMuon'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleMuon/Run2017E-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleMuon_E')}),
         xsecs=YearDependentContainer(),
@@ -97,6 +106,7 @@ datalist = [
     ('DATA_SingleMuon_F', Sample(
         type='DATA',
         name='DATA_SingleMuon_F',
+        group=YearDependentContainer({'2017': 'DATA_SingleMuon'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleMuon/Run2017F-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleMuon_F')}),
         xsecs=YearDependentContainer(),
@@ -107,6 +117,7 @@ datalist = [
     ('DATA_SingleElectron_B', Sample(
         type='DATA',
         name='DATA_SingleElectron_B',
+        group=YearDependentContainer({'2017': 'DATA_SingleElectron'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleElectron/Run2017B-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleElectron_B')}),
         xsecs=YearDependentContainer(),
@@ -117,6 +128,7 @@ datalist = [
     ('DATA_SingleElectron_C', Sample(
         type='DATA',
         name='DATA_SingleElectron_C',
+        group=YearDependentContainer({'2017': 'DATA_SingleElectron'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleElectron/Run2017C-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleElectron_C')}),
         xsecs=YearDependentContainer(),
@@ -127,6 +139,7 @@ datalist = [
     ('DATA_SingleElectron_D', Sample(
         type='DATA',
         name='DATA_SingleElectron_D',
+        group=YearDependentContainer({'2017': 'DATA_SingleElectron'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleElectron/Run2017D-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleElectron_D')}),
         xsecs=YearDependentContainer(),
@@ -137,6 +150,7 @@ datalist = [
     ('DATA_SingleElectron_E', Sample(
         type='DATA',
         name='DATA_SingleElectron_E',
+        group=YearDependentContainer({'2017': 'DATA_SingleElectron'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleElectron/Run2017E-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleElectron_E')}),
         xsecs=YearDependentContainer(),
@@ -147,6 +161,7 @@ datalist = [
     ('DATA_SingleElectron_F', Sample(
         type='DATA',
         name='DATA_SingleElectron_F',
+        group=YearDependentContainer({'2017': 'DATA_SingleElectron'}),
         nanopaths=YearDependentContainer({'2017': Storage_DAS('/SingleElectron/Run2017F-UL2017_02Dec2019-v1/NANOAOD')}),
         tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_NANOAOD/DATA_SingleElectron_F')}),
         xsecs=YearDependentContainer(),

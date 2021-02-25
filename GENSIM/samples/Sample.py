@@ -56,9 +56,10 @@ class YearDependentContainer():
 
 
 class Sample:
-    def __init__(self, type, name, nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents=YearDependentContainer()):
+    def __init__(self, type, name, group=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents=YearDependentContainer()):
         self.type = type
         self.name = name
+        self.group = group
         self.nanopaths = nanopaths
         self.tuplepaths = tuplepaths
         self.xsecs = xsecs
@@ -69,6 +70,7 @@ class Sample:
         print '--> Info on sample \'%s\' for year %s:' % (self.name, str(year))
         print '  --> type: %s' % (str(self.type))
         print '  --> name: %s' % (str(self.name))
+        print '  --> group: %s' % (str(self.group[year]))
         print '  --> nanopath: %s' % (str(self.nanopaths[year].path))
         print '  --> tuplepath: %s' % (str(self.tuplepaths[year].path))
         print '  --> xsec: %s' % (str(self.xsecs[year]))
