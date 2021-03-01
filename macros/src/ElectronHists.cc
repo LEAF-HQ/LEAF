@@ -22,31 +22,31 @@ using namespace std;
 ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   hnelectrons = book<TH1D>("nelectrons", ";N_{e}; Events / bin", 11, -0.5, 10.5);
-  helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 150, 0, 3000);
+  helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 1500);
   helectroneta = book<TH1D>("electroneta", ";#eta^{e};Events / bin", 100, -5., 5.);
   helectronphi = book<TH1D>("electronphi", ";#phi^{e};Events / bin", 70, -3.5, 3.5);
-  helectronmass = book<TH1D>("electronmass", ";m^{e} [GeV];Events / bin", 150, 0, 3000);
-  helectronenergy = book<TH1D>("electronenergy", ";E^{e} [GeV];Events / bin", 150, 0, 3000);
-  helectron1pt = book<TH1D>("electron1pt", ";p_{T}^{e 1} [GeV]; Events / bin", 150, 0, 3000);
+  helectronmass = book<TH1D>("electronmass", ";m^{e} [GeV];Events / bin", 50, 0, 1500);
+  helectronenergy = book<TH1D>("electronenergy", ";E^{e} [GeV];Events / bin", 50, 0, 1500);
+  helectron1pt = book<TH1D>("electron1pt", ";p_{T}^{e 1} [GeV]; Events / bin", 50, 0, 1500);
   helectron1eta = book<TH1D>("electron1eta", ";#eta^{e 1};Events / bin", 100, -5., 5.);
   helectron1phi = book<TH1D>("electron1phi", ";#phi^{e 1};Events / bin", 70, -3.5, 3.5);
-  helectron1mass = book<TH1D>("electron1mass", ";m^{e 1} [GeV];Events / bin", 150, 0, 3000);
-  helectron1energy = book<TH1D>("electron1energy", ";E^{e 1} [GeV];Events / bin", 150, 0, 3000);
-  helectron2pt = book<TH1D>("electron2pt", ";p_{T}^{e 2} [GeV]; Events / bin", 150, 0, 3000);
+  helectron1mass = book<TH1D>("electron1mass", ";m^{e 1} [GeV];Events / bin", 50, 0, 1500);
+  helectron1energy = book<TH1D>("electron1energy", ";E^{e 1} [GeV];Events / bin", 50, 0, 1500);
+  helectron2pt = book<TH1D>("electron2pt", ";p_{T}^{e 2} [GeV]; Events / bin", 50, 0, 1500);
   helectron2eta = book<TH1D>("electron2eta", ";#eta^{e 2};Events / bin", 100, -5., 5.);
   helectron2phi = book<TH1D>("electron2phi", ";#phi^{e 2};Events / bin", 70, -3.5, 3.5);
-  helectron2mass = book<TH1D>("electron2mass", ";m^{e 2} [GeV];Events / bin", 150, 0, 3000);
-  helectron2energy = book<TH1D>("electron2energy", ";E^{e 2} [GeV];Events / bin", 150, 0, 3000);
-  helectron3pt = book<TH1D>("electron3pt", ";p_{T}^{e 3} [GeV]; Events / bin", 150, 0, 3000);
+  helectron2mass = book<TH1D>("electron2mass", ";m^{e 2} [GeV];Events / bin", 50, 0, 1500);
+  helectron2energy = book<TH1D>("electron2energy", ";E^{e 2} [GeV];Events / bin", 50, 0, 1500);
+  helectron3pt = book<TH1D>("electron3pt", ";p_{T}^{e 3} [GeV]; Events / bin", 50, 0, 1500);
   helectron3eta = book<TH1D>("electron3eta", ";#eta^{e 3};Events / bin", 100, -5., 5.);
   helectron3phi = book<TH1D>("electron3phi", ";#phi^{e 3};Events / bin", 70, -3.5, 3.5);
-  helectron3mass = book<TH1D>("electron3mass", ";m^{e 3} [GeV];Events / bin", 150, 0, 3000);
-  helectron3energy = book<TH1D>("electron3energy", ";E^{e 3} [GeV];Events / bin", 150, 0, 3000);
-  helectron4pt = book<TH1D>("electron4pt", ";p_{T}^{e 4} [GeV]; Events / bin", 150, 0, 3000);
+  helectron3mass = book<TH1D>("electron3mass", ";m^{e 3} [GeV];Events / bin", 50, 0, 1500);
+  helectron3energy = book<TH1D>("electron3energy", ";E^{e 3} [GeV];Events / bin", 50, 0, 1500);
+  helectron4pt = book<TH1D>("electron4pt", ";p_{T}^{e 4} [GeV]; Events / bin", 50, 0, 1500);
   helectron4eta = book<TH1D>("electron4eta", ";#eta^{e 4};Events / bin", 100, -5., 5.);
   helectron4phi = book<TH1D>("electron4phi", ";#phi^{e 4};Events / bin", 70, -3.5, 3.5);
-  helectron4mass = book<TH1D>("electron4mass", ";m^{e 4} [GeV];Events / bin", 150, 0, 3000);
-  helectron4energy = book<TH1D>("electron4energy", ";E^{e 4} [GeV];Events / bin", 150, 0, 3000);
+  helectron4mass = book<TH1D>("electron4mass", ";m^{e 4} [GeV];Events / bin", 50, 0, 1500);
+  helectron4energy = book<TH1D>("electron4energy", ";E^{e 4} [GeV];Events / bin", 50, 0, 1500);
 
 }
 
@@ -96,7 +96,6 @@ void ElectronHists::fill(const RecoEvent & event){
       helectron4mass->Fill(e.m(), weight);
       helectron4energy->Fill(e.e(), weight);
     }
-    else break;
   }
   hnelectrons->Fill(nelectrons, weight);
 }
