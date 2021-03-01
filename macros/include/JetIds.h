@@ -24,6 +24,16 @@ private:
   wp m_wp;
 };
 
+
+class JetBTag {
+public:
+  enum wp {DeepCSV_Loose, DeepCSV_Medium, DeepCSV_Tight};
+  explicit JetBTag(wp working_point);
+  bool operator()(const Jet&, const RecoEvent&) const;
+private:
+  wp m_wp;
+};
+
 class JetTauOverlapID {
 public:
   explicit JetTauOverlapID(double dr);

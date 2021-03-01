@@ -32,6 +32,19 @@ bool JetPUID::operator()(const Jet & jet, const RecoEvent & ev) const{
   return pass;
 }
 
+
+JetBTag::JetBTag(wp wp_) : m_wp(wp_){}
+
+bool JetBTag::operator()(const Jet & jet, const RecoEvent & ev) const{
+  bool pass = false;
+  if(m_wp == JetBTag::DeepCSV_Loose) pass = (jet.score_DeepB() > 0.1355);
+  else if(m_wp == JetBTag::DeepCSV_Medium) pass = (jet.score_DeepB() > 0.4506);
+  else if(m_wp == JetBTag::DeepCSV_Tight) pass = (jet.score_DeepB() > 0.7738);
+  else throw runtime_error("In JetBTag::operator(): Invalid WP specified.");
+
+  return pass;
+}
+
 JetTauOverlapID::JetTauOverlapID(double dr_) : m_dr(dr_){}
 
 bool JetTauOverlapID::operator()(const Jet & jet, const RecoEvent & ev) const{
