@@ -110,8 +110,8 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
     cfg.event_chain->GetEntry(i);
 
     // weight must be: target_lumi / dataset_lumi or 1 for data
-    if(cfg.dataset_type() == "DATA") event->weight = 1.;
-    else event->weight *= (double)cfg.target_lumi() / (double)cfg.dataset_lumi();
+    // if(cfg.dataset_type() == "DATA") event->weight = 1.;
+    // else event->weight *= (double)cfg.target_lumi() / (double)cfg.dataset_lumi();
 
     // call Process() for each event, main part of this function!
     bool keep_event = tool.Process();
