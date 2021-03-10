@@ -21,4 +21,5 @@ GENSIM/exampleAnalysis.py
 macros/obj/*
 macros/lib/*
 macros/bin/*
+macros/LQDM
 *.log
