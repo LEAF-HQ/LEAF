@@ -12,7 +12,7 @@ int main(){
 
   // PlottingTool Plotter_Genlevel;
   // Plotter_Genlevel.set_inpath("/work/areimers/LQDM/GENSIM/analysisfiles/");
-  // Plotter_Genlevel.set_outpath("/work/areimers/LQDM/GENSIM/plots/");
+  // Plotter_Genlevel.set_outpath("/work/areimers/LEAF/GENSIM/plots/");
   // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0", "MC__LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0", "MC__LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0", "MC__PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0"});
   // Plotter_Genlevel.set_legends({"LQLQ#rightarrow b#tau b#tau", "LQLQ#rightarrow b#tau #psi#chi_{1}", "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}", "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"});
   // Plotter_Genlevel.set_colors({kRed+4, kRed+1, kAzure-2, kGreen-2});
@@ -29,7 +29,7 @@ int main(){
 
   // PlottingTool Plotter_Genlevel;
   // Plotter_Genlevel.set_inpath("/work/areimers/LQDM/UL17/Genlevel/");
-  // Plotter_Genlevel.set_outpath("/work/areimers/LQDM/UL17/Genlevel/plots/");
+  // Plotter_Genlevel.set_outpath("/work/areimers/LEAF/UL17/Genlevel/plots/");
   // Plotter_Genlevel.set_outnameprefix("LQLQToBTau_MC1214_L1p0_");
   // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ1360_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ1810_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ2170_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ2620_MPS244_MC1214_L1p0"});
   // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = 1.0", "M_{LQ} = 1360 GeV, #lambda = 1.0", "M_{LQ} = 1810 GeV, #lambda = 1.0", "M_{LQ} = 2170 GeV, #lambda = 1.0", "M_{LQ} = 2620 GeV, #lambda = 1.0"});
@@ -152,10 +152,10 @@ int main(){
 
   PlottingTool Plotter_Recolevel;
   // Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Preselection/EleMuJet/");
-  // Plotter_Recolevel.set_outpath("/work/areimers/LQDM/UL17/Preselection/EleMuJet/plots/");
+  // Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Preselection/EleMuJet/plots/");
   Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Fullselection/ElTau_MuTau_ElMu/");
-  Plotter_Recolevel.set_outpath("/work/areimers/LQDM/UL17/Fullselection/ElTau_MuTau_ElMu/");
-  Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__ST", "MC__QCD_Had", "MC__TT", "MC__DYJets", "MC__WJets", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Fullselection/ElTau_MuTau_ElMu/");
+  Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);

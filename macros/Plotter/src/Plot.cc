@@ -193,8 +193,8 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
 
     //defaults fo cosmetics
     double minimum = 0.;
-    if(normalize) minimum = 5E-5;
-    else if(logy) minimum = 5E-6;
+    if(normalize) minimum = 5E-1;
+    else if(logy) minimum = 5E-2;
     double maxscale = 1.5;
     if(logy) maxscale = 100;
     double maximum = -1.;
