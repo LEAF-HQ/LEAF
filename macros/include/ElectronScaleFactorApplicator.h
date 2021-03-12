@@ -13,6 +13,7 @@ public:
   virtual ~ElectronScaleFactorApplicator() = default;
 
   virtual bool process(RecoEvent & event) override;
+  bool process_trigger(RecoEvent & event);
 
 
 };

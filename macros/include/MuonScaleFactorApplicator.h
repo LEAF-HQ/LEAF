@@ -13,6 +13,7 @@ public:
   virtual ~MuonScaleFactorApplicator() = default;
 
   virtual bool process(RecoEvent & event) override;
+  bool process_trigger(RecoEvent & event);
 
 
 };

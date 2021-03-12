@@ -67,12 +67,14 @@ int ScaleFactorApplicator::find_bin(double val, TAxis* axis){
 
 void ScaleFactorApplicator::set_bin(double val){
   if(m_is_2d) throw runtime_error("In ScaleFactorApplicator::set_bin(double val)): called 1-d function using 2-d histogram.");
+  reset();
 
   m_bin_x = find_bin(val, m_hist_1d->GetXaxis());
 }
 
 void ScaleFactorApplicator::set_bin(double valx, double valy){
   if(!m_is_2d) throw runtime_error("In ScaleFactorApplicator::set_bin(double valx, double valy): called 2-d function using 1-d histogram.");
+  reset();
 
   m_bin_x = find_bin(valx, m_hist_2d->GetXaxis());
   m_bin_y = find_bin(valy, m_hist_2d->GetYaxis());
