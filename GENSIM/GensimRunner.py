@@ -159,7 +159,8 @@ class GensimRunner:
                     commandfilename = commandfilebase + jobname + '.txt'
                     f = open(commandfilename, 'w')
                     indices = -1
-                    if mode is 'new':        indices = range(self.maxindex)
+                    if mode is 'new':
+                        indices = range(self.maxindex)
                     elif mode is 'resubmit':
                         print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
                         indices = missing_indices = findMissingFilesT2(filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, gensimfolder=self.gensimfolder, generation_step=generation_step)
