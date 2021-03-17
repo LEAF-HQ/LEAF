@@ -30,6 +30,7 @@ public:
   enum wp {DeepCSV_Loose, DeepCSV_Medium, DeepCSV_Tight};
   explicit JetBTag(wp working_point);
   bool operator()(const Jet&, const RecoEvent&) const;
+  int get_wp(){return (int)m_wp;};
 private:
   wp m_wp;
 };
