@@ -37,3 +37,13 @@ private:
   double mmin, mmax;
 
 };
+
+class MtautauSelection: public Selection<RecoEvent>{
+public:
+  explicit MtautauSelection(const Config & cfg, int mmin_, int mmax_);
+  virtual bool passes(RecoEvent & event) override;
+
+private:
+  double mmin, mmax;
+
+};
