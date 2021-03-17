@@ -19,9 +19,8 @@
 
 using namespace std;
 
-// void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, TString numerator, bool debug = false);
-void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug = false);
-void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug = false);
+void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug = false);
+void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug = false);
 vector<TString> produce_infilenames(TString infolder, vector<TString> samples);
 vector<TString> get_foldernames(TFile* infile);
 vector<TString> get_histnames(TFile* infile, TString foldername);
@@ -44,6 +43,7 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
   TString numerator             = PlottingTool::numerator;
   TString outfolder = PlottingTool::base_path_plots;
   TString outnameprefix = PlottingTool::prefix_plots;
+  TString lumitext = PlottingTool::lumitext;
 
   TString mkdircommand = "mkdir -p " + outfolder;
   system((const char*)mkdircommand);
@@ -53,16 +53,12 @@ void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
 
 
 
-  // vector<TString> infilenames_all = produce_infilenames(infolder, samples);
-  // vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
-  // make_plots(infilenames_all, samples, outfolder, outnameprefix, singlePDF, normalize, logy, labels, colors, linestyles, infilenames_stack, numerator, debug);
-  make_plots(infolder, samples, stacks, numerator, outfolder, outnameprefix, singlePDF, normalize, logy, labels, colors, linestyles, debug);
+  make_plots(infolder, samples, stacks, numerator, outfolder, outnameprefix, lumitext, singlePDF, normalize, logy, labels, colors, linestyles, debug);
 
 
 }
 
-// void make_plots(vector<TString> infilenames_all, vector<TString> samples, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, vector<TString> infilenames_stack, TString numerator, bool debug){
-void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug){
+void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug){
 
   bool do_stack = false;
   if(stacks.size() > 0) do_stack = true;
@@ -126,8 +122,10 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   for(size_t i=0; i<foldernames.size(); i++){
 
     TString foldername = foldernames[i];
-    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
+    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
   }
+
+  cout << green << "--> Wrote plots to folder: " << outfolder << reset << endl;
 
   for(size_t i=0; i<infiles_single.size(); i++){
     delete infiles_single[i];
@@ -138,11 +136,11 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   for(size_t i=0; i<infiles_numerator.size(); i++){
     delete infiles_numerator[i];
   }
-  cout << green << "--> Wrote plots to folder: " << outfolder << reset << endl;
+  cout << green << "--> Cleaning up..." << reset << endl;
 }
 
 // Function to plot plots in a single folder
-void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug){
+void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug){
 
   cout << green << "    --> Folder: " << foldername << reset << endl;
 
@@ -222,7 +220,6 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     }
 
     for(int j=infiles_stack.size()-1; j>=0; j--){
-      // cout << "j2: " << j << endl;
       TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
       hist->SetFillColor(colors_stack[j]);
       leg->AddEntry(hist, labels_stack[j], "f");
@@ -292,6 +289,17 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     leg->Draw();
     if(logy) pad_top->SetLogy(true);
 
+    // write texts, like the lumi, CMS tags, etc.
+    TLatex *latex_lumitext = new TLatex(1, 1, lumitext);
+    latex_lumitext->SetNDC();
+    latex_lumitext->SetTextAlign(33);
+    latex_lumitext->SetX(0.95);
+    latex_lumitext->SetTextFont(42);
+    latex_lumitext->SetTextSize(0.06);
+    latex_lumitext->SetY(1.);
+    latex_lumitext->Draw();
+
+
 
     // now handle all the ratio business
 
@@ -338,6 +346,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       h_numerator->GetYaxis()->SetTitle("Data / Pred.");
       h_numerator->SetMarkerStyle(20);
       h_numerator->SetMarkerSize(0.75);
+
 
       // draw it!
       pad_ratio->Clear();

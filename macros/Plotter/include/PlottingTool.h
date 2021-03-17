@@ -23,6 +23,7 @@ public:
   void set_inpath(TString s){ base_path_analysisfiles = s;};
   void set_outpath(TString s){ base_path_plots = s;};
   void set_outnameprefix(TString s){ prefix_plots = s;};
+  void set_lumitext(TString s){ lumitext = s;};
   void set_samplenames(std::vector<TString> s){ samples = s;};
   void set_legends(std::map<TString, TString> s){ labels = s;};
   void set_colors(std::map<TString, int> s){ colors = s;};
@@ -37,6 +38,7 @@ public:
 private:
   TString base_path_analysisfiles, base_path_plots;
   TString prefix_plots = "";
+  TString lumitext = "";
   TString numerator = "";
   std::vector<TString> samples, stacks;
   std::map<TString, TString> labels;

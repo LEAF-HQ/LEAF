@@ -153,9 +153,13 @@ int main(){
   PlottingTool Plotter_Recolevel;
   // Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Preselection/EleMuJet/");
   // Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Preselection/EleMuJet/plots/");
-  Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Fullselection/ElTau_MuTau_ElMu/");
-  Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Fullselection/ElTau_MuTau_ElMu/");
+  Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu/");
+  Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu/");
+  Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
+  Plotter_Recolevel.set_outnameprefix("DataMuon_");
   Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  // Plotter_Recolevel.set_outnameprefix("DataMuon_unblind");
+  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
@@ -165,6 +169,18 @@ int main(){
   // Plotter_Recolevel.Plot(normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(false, true, false);       // usual
   // Plotter_Recolevel.Plot(false, true, true);        // SinglePDF
+
+
+
+  // Plotter_Recolevel.set_outnameprefix("DataElectron_");
+  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleElectron", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  // Plotter_Recolevel.set_numerator("DATA__DATA_SingleElectron");
+  // Plotter_Recolevel.Plot(false, true, false);       // usual
+  //
+  // Plotter_Recolevel.set_outnameprefix("DataTau_");
+  // Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  // Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
+  // Plotter_Recolevel.Plot(false, true, false);       // usual
 
 
 

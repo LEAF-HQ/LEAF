@@ -63,7 +63,7 @@ TPad* SetupRatioPad() {
   m_rp->SetTopMargin(0.0);
   m_rp->SetBottomMargin(0.35);
   m_rp->SetLeftMargin(0.15);
-  m_rp->SetRightMargin(0.03);
+  m_rp->SetRightMargin(0.05);
 
   return m_rp;
 }
@@ -90,10 +90,10 @@ TPad* SetupRatioPadTop() {
   TPad* m_rp_top = new TPad("pad1", "Control Plots 2", x1, y2, x2, y3);
 
 
-  m_rp_top->SetTopMargin(0.05);
+  m_rp_top->SetTopMargin(0.07);
   m_rp_top->SetBottomMargin(0.0);
   m_rp_top->SetLeftMargin(0.15);
-  m_rp_top->SetRightMargin(0.03);
+  m_rp_top->SetRightMargin(0.05);
 
   return m_rp_top;
 }
