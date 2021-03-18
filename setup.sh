@@ -5,8 +5,8 @@
 export MACROPATH=$(readlink -f macros)
 export MACROLIBPATH=${MACROPATH}/lib
 export MACROBINPATH=${MACROPATH}/bin
-export SUBMITTERPATH=${MACROPATH}/Submitter
-export PLOTTERPATH=${MACROPATH}/Plotter
+export SUBMITTERPATH=$(readlink -f Submitter)
+export PLOTTERPATH=$(readlink -f Plotter)
 export PLOTTERBINPATH=${PLOTTERPATH}/bin
 export GENSIMPATH=$(readlink -f GENSIM)
 export NANOAODTOOLS_BASE=${GENSIMPATH}/NanoAODTools
