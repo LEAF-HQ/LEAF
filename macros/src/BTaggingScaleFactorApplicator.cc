@@ -35,7 +35,8 @@ BTaggingScaleFactorApplicator::BTaggingScaleFactorApplicator(const Config& cfg, 
 // bool BTaggingScaleFactorApplicator::process(RecoEvent & event) {}
 bool BTaggingScaleFactorApplicator::process(RecoEvent & event) {
 
-  if (!m_calib_nominal) return true;
+  if(event.is_data) return true;
+  if(!m_calib_nominal) return true;
 
   double weight, weightErrBC, weightErrUDSG;
   tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(*event.jets, event);
