@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "Plotter/include/PlottingTool.h"
-#include "include/useful_functions.h"
+#include "Analyzer/include/useful_functions.h"
 
 using namespace std;
 

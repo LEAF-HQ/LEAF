@@ -1,0 +1,28 @@
+CC = g++
+
+#This assumes the last element of CMSSW_FWLITE_INCLUDE_PATH is the path to the external boost include directory
+BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
+LIBINCLUDES := $(subst :, -L,$(ANALYZERLIBPATH))
+
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I${LEAFPATH} `xml2-config --cflags`
+CFLAGSDICT = -std=c++17 -fPIC -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${BOOSTINC} -I. -I${LEAFPATH} `xml2-config --cflags`
+# `xml2-config --cflags`
+LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} -L./lib `xml2-config --libs`
+ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
+CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2
+LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
+
+INCDIR   = include
+SRCDIR   = src
+OBJDIR   = obj
+LIBDIR   = lib
+BINDIR   = bin
+
+SOURCES     := $(wildcard $(SRCDIR)/*.cc)
+INCLUDES    := $(wildcard $(INCDIR)/*.h)
+OBJECTS     := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
+LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm $(LIBDIR)/*.cxx_tmp*)
+
+SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
+OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
