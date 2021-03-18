@@ -125,7 +125,7 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
     plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
   }
 
-  cout << green << "--> Wrote plots to folder: " << outfolder << reset << endl;
+  cout << green << "--> Wrote plots to folder: " << outfolder << ", now cleaning up..." << reset << endl;
 
   for(size_t i=0; i<infiles_single.size(); i++){
     delete infiles_single[i];
@@ -136,7 +136,7 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   for(size_t i=0; i<infiles_numerator.size(); i++){
     delete infiles_numerator[i];
   }
-  cout << green << "--> Cleaning up..." << reset << endl;
+  cout << green << "--> Cleaned up!" << reset << endl;
 }
 
 // Function to plot plots in a single folder
@@ -426,6 +426,7 @@ vector<TString> get_foldernames(TFile* infile){
     TClass *cl = gROOT->GetClass(key->GetClassName());
     if(cl->InheritsFrom("TDirectoryFile") && !cl->InheritsFrom("TH1")){
       TString name = key->ReadObj()->GetName();
+      if(name == "BTaggingMCEfficiencies") continue; // ignore BTagging histograms, these are 2-d
       result.emplace_back(name);
     }
   }

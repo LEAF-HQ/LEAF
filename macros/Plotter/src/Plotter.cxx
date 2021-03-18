@@ -107,7 +107,10 @@ int main(){
     make_pair("DATA__DATA_Tau",                                  "Data (#tau)"),
     make_pair("DATA__DATA_SingleMuon",                           "Data (#mu)"),
     make_pair("DATA__DATA_SingleElectron",                       "Data (e)"),
-    make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau"),
+    make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau (1 TeV)"),
+    make_pair("MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau (1.36 TeV)"),
+    make_pair("MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau (1.81 TeV)"),
+    make_pair("MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0",       "LQLQ#rightarrow b#tau b#tau (2.62 TeV)"),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "LQLQ#rightarrow b#tau #psi#chi_{1}"),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}"),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"),
@@ -123,6 +126,9 @@ int main(){
     make_pair("DATA__DATA_SingleMuon",                           kBlack),
     make_pair("DATA__DATA_SingleElectron",                       kBlack),
     make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       kBlack),
+    make_pair("MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0",       kBlack),
+    make_pair("MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0",       kBlack),
+    make_pair("MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0",       kBlack),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", kBlack),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     kBlack),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    kBlack),
@@ -138,6 +144,9 @@ int main(){
     make_pair("DATA__DATA_SingleMuon",                           0),
     make_pair("DATA__DATA_SingleElectron",                       0),
     make_pair("MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0",       1),
+    make_pair("MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0",       2),
+    make_pair("MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0",       3),
+    make_pair("MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0",       4),
     make_pair("MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", 2),
     make_pair("MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0",     3),
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",    4),
@@ -153,11 +162,12 @@ int main(){
   PlottingTool Plotter_Recolevel;
   // Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Preselection/EleMuJet/");
   // Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Preselection/EleMuJet/plots/");
-  Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu/");
-  Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu/");
+  Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/LQDM/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/");
+  Plotter_Recolevel.set_outpath("/work/areimers/LEAF/UL17/Fullselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/");
   Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
   Plotter_Recolevel.set_outnameprefix("DataMuon_");
-  Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
   // Plotter_Recolevel.set_outnameprefix("DataMuon_unblind");
   // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT"});
   Plotter_Recolevel.set_legends(legends);
@@ -172,15 +182,17 @@ int main(){
 
 
 
-  // Plotter_Recolevel.set_outnameprefix("DataElectron_");
-  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleElectron", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.set_numerator("DATA__DATA_SingleElectron");
-  // Plotter_Recolevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Recolevel.set_outnameprefix("DataTau_");
-  // Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
-  // Plotter_Recolevel.Plot(false, true, false);       // usual
+  Plotter_Recolevel.set_outnameprefix("DataElectron_");
+  Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleElectron", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_numerator("DATA__DATA_SingleElectron");
+  Plotter_Recolevel.Plot(false, true, false);       // usual
+
+
+
+  Plotter_Recolevel.set_outnameprefix("DataTau_");
+  Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
+  Plotter_Recolevel.Plot(false, true, false);       // usual
 
 
 
