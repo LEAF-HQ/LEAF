@@ -1,1 +1,6 @@
 site_name: LEAF
+theme: cinder
+
+nav:
+    - Home: README.md
+    - Installation: installation.md
