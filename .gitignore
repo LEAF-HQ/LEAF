@@ -24,4 +24,5 @@ macros/bin/*
 macros/LQDM
 macros/JECDatabase
 macros/JRDatabase
-*.log
+*.logsite/
+site/
