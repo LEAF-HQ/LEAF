@@ -1,7 +1,6 @@
-#include "$MYANALYSISNAME/include/$MYHISTNAME.h"
-#include "include/cosmetics.h"
-#include "include/constants.h"
-#include "include/useful_functions.h"
+#include "Analyzer/$MYANALYSISNAME/include/$MYHISTNAME.h"
+#include "Analyzer/include/constants.h"
+#include "Analyzer/include/useful_functions.h"
 #include <TH1F.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>

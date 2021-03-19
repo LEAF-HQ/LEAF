@@ -1,6 +1,5 @@
-#include "$MYANALYSISNAME/include/$MYEVENTCLASS.h"
-#include "include/cosmetics.h"
-#include "include/constants.h"
+#include "Analyzer/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
+#include "Analyzer/include/constants.h"
 #include <TH1D.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>

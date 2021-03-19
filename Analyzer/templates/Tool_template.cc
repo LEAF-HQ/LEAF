@@ -3,22 +3,22 @@
 #include <TChain.h>
 #include <iostream>
 
-#include "include/BaseTool.h"
-#include "include/useful_functions.h"
+#include "Analyzer/include/BaseTool.h"
+#include "Analyzer/include/useful_functions.h"
 #include <sys/stat.h>
-#include "include/Registry.h"
-#include "include/JetHists.h"
-#include "include/MuonHists.h"
-#include "include/ElectronHists.h"
-#include "include/TauHists.h"
-#include "include/JetIds.h"
-#include "include/MuonIds.h"
-#include "include/ElectronIds.h"
-#include "include/TauIds.h"
+#include "Analyzer/include/Registry.h"
+#include "Analyzer/include/JetHists.h"
+#include "Analyzer/include/MuonHists.h"
+#include "Analyzer/include/ElectronHists.h"
+#include "Analyzer/include/TauHists.h"
+#include "Analyzer/include/JetIds.h"
+#include "Analyzer/include/MuonIds.h"
+#include "Analyzer/include/ElectronIds.h"
+#include "Analyzer/include/TauIds.h"
 
 
-#include "$MYANALYSISNAME/include/$MYEVENTCLASS.h"
-#include "$MYANALYSISNAME/include/$MYHISTNAME.h"
+#include "Analyzer/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
+#include "Analyzer/$MYANALYSISNAME/include/$MYHISTNAME.h"
 
 using namespace std;
 

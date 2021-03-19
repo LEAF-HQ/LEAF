@@ -17,12 +17,12 @@ def main():
 
 
     # create main folder
-    makeNewDirectory(name)
+    ensureDirectory(name)
 
     # create necessary subfolders
     subfolders = ['include', 'src', 'lib', 'obj', 'config']
     for folder in subfolders:
-        makeNewDirectory('%s/%s' % (name, folder))
+        ensureDirectory('%s/%s' % (name, folder))
 
     # define placeholders and desired replacements
     placeholder_dict = {
@@ -47,13 +47,14 @@ def main():
     # update Makefile.local
     need_to_update = True
     newlines = []
-    with open('Makefile.local', 'r') as f:
-        lines = f.readlines()
-        for l in lines:
-            if 'subdirs := %s' % (placeholder_dict['$MYANALYSISNAME']) in l or 'subdirs += %s' % (placeholder_dict['$MYANALYSISNAME']) in l:
-                need_to_update = False
-            newlines.append(l)
-    print need_to_update
+    if os.path.isfile('Makefile.local'):
+        with open('Makefile.local', 'r') as f:
+            lines = f.readlines()
+            for l in lines:
+                if 'subdirs := %s' % (placeholder_dict['$MYANALYSISNAME']) in l or 'subdirs += %s' % (placeholder_dict['$MYANALYSISNAME']) in l:
+                    need_to_update = False
+                newlines.append(l)
+    # print need_to_update
     if need_to_update:
         if len(newlines) is 0:
             newline = 'subdirs := %s' % (placeholder_dict['$MYANALYSISNAME'])
