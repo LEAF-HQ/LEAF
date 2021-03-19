@@ -26,3 +26,5 @@ Analyzer/JECDatabase
 Analyzer/JRDatabase
 *.logsite/
 site/
+HiggsAnalysis/
+Plotter/bin/*
