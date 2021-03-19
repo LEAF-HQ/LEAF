@@ -13,7 +13,7 @@ ScaleFactorApplicator::ScaleFactorApplicator(const Config& cfg, TString year, TS
 
 void ScaleFactorApplicator::load_histogram(TString year, TString infilename, TString histname){
 
-  TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
+  TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
   TString infilepath = macropath + "/data/" + year + "/" + infilename;
 
   m_infile.reset(new TFile(infilepath, "READ"));

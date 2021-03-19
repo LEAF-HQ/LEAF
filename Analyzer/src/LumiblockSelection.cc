@@ -8,8 +8,8 @@ using namespace std;
 
 LumiblockSelection::LumiblockSelection(const Config & cfg){
 
-  TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
-  TString dir = (TString) cfg.get("LumiblockFile"); // relative path starting from $MACROPATH
+  TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
+  TString dir = (TString) cfg.get("LumiblockFile"); // relative path starting from $ANALYZERPATH
   TString infilename = macropath + "/" + dir;
   std::unique_ptr<TFile> file(TFile::Open(infilename, "READ"));
 

@@ -5,7 +5,7 @@ using namespace std;
 BTaggingScaleFactorApplicator::BTaggingScaleFactorApplicator(const Config& cfg, JetBTag::wp wp, const TString & sysType, const std::string & measType_bc, const std::string & measType_udsg) : m_btagid(wp), m_sysType(sysType) {
 
 
-  TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
+  TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
   TString infilename_mceff = macropath + "/" + cfg.get("BTaggingMCEfficiencies");
   m_f_efficiencies.reset(new TFile(infilename_mceff, "READ"));
   m_eff_b.reset((TH2D*) m_f_efficiencies->Get("b_efficiency"));

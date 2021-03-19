@@ -11,7 +11,7 @@ unique_ptr<JetCorrectionUncertainty> corrector_uncertainty(const Config & cfg, c
   if(direction!=0){
 
     //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "UncertaintySources" to get the proper name of the uncertainty file
-    TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
+    TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
     TString unc_file = (TString)(macropath + "/" + filenames[0]);
     if (unc_file.Contains("L1FastJet")) {
       unc_file.ReplaceAll("L1FastJet","UncertaintySources");
@@ -29,7 +29,7 @@ unique_ptr<JetCorrectionUncertainty> corrector_uncertainty(const Config & cfg, c
 }
 
 unique_ptr<FactorizedJetCorrector> build_corrector(const vector<string>& filenames){
-  string macropath = (string)getenv("MACROPATH"); // set up by setup.sh
+  string macropath = (string)getenv("ANALYZERPATH"); // set up by setup.sh
 
   vector<JetCorrectorParameters> pars;
   for(const auto & filename : filenames){
@@ -239,7 +239,7 @@ JERCorrector::JERCorrector(Config cfg, TString ScaleFactorFileName, TString Reso
   else throw std::runtime_error("JERCorrector::JERCorrector -- invalid value in config: JERDirection='"+dir+"' (valid: 'nominal', 'up', 'down')");
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  TString macropath = (TString)getenv("MACROPATH"); // set up by setup.sh
+  TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
   res = JME::JetResolution((string)(macropath + "/" + ResolutionFileName));
   res_sf = JME::JetResolutionScaleFactor((string)(macropath + "/" + ScaleFactorFileName));
 

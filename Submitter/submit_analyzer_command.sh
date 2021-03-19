@@ -5,7 +5,7 @@
 #SBATCH --account=t3
 #SBATCH -e %x-%A-%a.err
 #SBATCH -o %x-%A-%a.out
-#SBATCH --export SCRAM_ARCH,CMSSW_BASE,MACROPATH
+#SBATCH --export SCRAM_ARCH,CMSSW_BASE,ANALYZERPATH
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user arne.reimers@physik.uzh.ch
 

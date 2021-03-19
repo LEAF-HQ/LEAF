@@ -33,7 +33,7 @@ basefolder = os.environ['LEAFPATH']
 generatorpath = os.environ['GENERATORPATH']
 tuplizefolder = join(generatorpath, 'Tuplizer')
 sampleinfofolder = join(generatorpath, 'samples')
-macrofolder = os.environ['MACROPATH']
+macrofolder = os.environ['ANALYZERPATH']
 
 samples = OrderedDict()
 data = OrderedDict()
