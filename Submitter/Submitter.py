@@ -133,11 +133,14 @@ class Submitter:
         for datasetname in datasetnames_complete:
 
             # get list of expected files
-            expected_files_string = ' '.join(expected_files[datasetname])
+            if len(expected_files[datasetname]) < 1: continue
 
+            # order expected files such that the first has an AnalysisTree (if any of the files has one).
+            expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=expected_files[datasetname]))
+            expected_files_string = ' '.join(expected_files_ordered)
 
             # get outfilename
-            outfilename_parts = expected_files[datasetname][0].split('/')[-1].split('_')[:-1]
+            outfilename_parts = expected_files_ordered[0].split('/')[-1].split('_')[:-1]
             outfilename = '_'.join(outfilename_parts) + '.root'
             outpath_parts = self.workdir_remote.split('/')[:-1]
             outpath = str(os.path.join('/', *outpath_parts))
@@ -185,9 +188,15 @@ class Submitter:
             outpath_parts = self.workdir_remote.split('/')[:-1]
             outpath = str(os.path.join('/', *outpath_parts))
             outfilepath_and_name = os.path.join(outpath, outfilename)
-            sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
+            files_to_add = []
+            for filename in datasets_per_group[group][1]:
+                files_to_add.append(os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)))
+            files_to_add_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=files_to_add))
+            sourcestring = ' '.join( files_to_add_ordered )
+            # sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
 
             command = 'hadd -f %s %s' % (outfilepath_and_name, sourcestring)
+            # print command
             commands.append(command)
         execute_commands_parallel(commands)
         print green('--> Added %i datasets into groups.' % (len(commands)))
@@ -397,7 +406,6 @@ class Submitter:
 
 
     def get_command_for_file(self, filename_expected):
-
         datasetname = filename_expected.split('/')[-2]
         xmlfilename = filename_expected.split('/')[-1].split('__')[1].replace('.root', '.xml')
         fullxmlfilename = os.path.join(self.workdir_local, datasetname, xmlfilename)
