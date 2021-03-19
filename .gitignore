@@ -22,6 +22,7 @@ Analyzer/obj/*
 Analyzer/lib/*
 Analyzer/bin/*
 Analyzer/LQDM
+Analyzer/Makefile.local
 Analyzer/JECDatabase
 Analyzer/JRDatabase
 *.logsite/
