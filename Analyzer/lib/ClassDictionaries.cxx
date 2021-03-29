@@ -53,6 +53,7 @@ namespace std {} using namespace std;
 #include "include/TauIds.h"
 #include "include/Met.h"
 #include "include/GenInfo.h"
+#include "include/GenParticleHists.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
 #include "include/Tau.h"
@@ -2172,6 +2173,7 @@ namespace {
 "include/TauIds.h",
 "include/Met.h",
 "include/GenInfo.h",
+"include/GenParticleHists.h",
 "include/GenJet.h",
 "include/NJetSelection.h",
 "include/Tau.h",
@@ -2263,6 +2265,7 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/TauIds.h"
 #include "include/Met.h"
 #include "include/GenInfo.h"
+#include "include/GenParticleHists.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
 #include "include/Tau.h"

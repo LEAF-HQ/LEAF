@@ -464,8 +464,9 @@ int main(int argc, char* argv[]){
         bool is_final = ((flag_isfinal&status_flag) == flag_isfinal);
         bool keepfinal = false;
         GenParticle gp;
-        gp.set_p4(genjet_pt[i], genjet_eta[i], genjet_phi[i], genjet_mass[i]);
+        gp.set_p4(genparticle_pt[i], genparticle_eta[i], genparticle_phi[i], genparticle_mass[i]);
         gp.set_pdgid(genparticle_pdgId[i]);
+        gp.set_mother_pdgid(genparticle_pdgId[genparticle_idxmother[i]]);
 
         if(is_final){
           //keep, if final particle is b, t, tau, or nutau
@@ -509,6 +510,7 @@ int main(int argc, char* argv[]){
           GenParticle taudau_vis;
           taudau_vis.set_p4(p4_vis);
           taudau_vis.set_pdgid(genparticle_pdgId[i]);
+          taudau_vis.set_mother_pdgid(genparticle_pdgId[genparticle_idxmother[i]]);
           event.genparticles_visibletaus->emplace_back(taudau_vis);
         }
 
