@@ -231,7 +231,7 @@ EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, c
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
-EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 
@@ -253,7 +253,7 @@ EventGenerator_lqlq_dark = GensimRunner(processnames=processes_lqlq_dark, tag=ta
 # EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
 # EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
 # EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
-EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
+# EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, configs=mass_configurations_psipsi, lambdas=lambdas_psipsi, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, gensimfolder=gensimfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
@@ -274,7 +274,7 @@ EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, con
 # EventGenerator_psipsi.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='new')
 # EventGenerator_psipsi.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00), mode='resubmit')
 # EventGenerator_psipsi.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='new')
-EventGenerator_psipsi.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
+# EventGenerator_psipsi.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
 

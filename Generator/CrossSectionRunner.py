@@ -552,7 +552,8 @@ class CrossSectionRunner:
             else:
                 rootfilename_brs = ''
             rootfilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
-            infile = TFile(rootfilename, 'READ');
+            infile = TFile(rootfilename, 'READ')
+            print rootfilename
             for lamb in self.lambdas:
                 ymin = 2E-15 #if 'LQLQ' in processname else 2E-15
                 ymax = 1 if 'LQLQ' in processname else 1E5
