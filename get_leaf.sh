@@ -13,7 +13,7 @@ else
   cmsrel CMSSW_10_2_13
 fi
 
-# get CMSSW_10_6_12
+# get CMSSW_10_6_12 for UL
 if [ -r CMSSW_10_6_12/src ] ; then
  echo "Release CMSSW_10_6_12 already exists, using that."
 else

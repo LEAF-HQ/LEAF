@@ -84,7 +84,7 @@ maxindex        = 100   # Number of samples per configuration
 nevents         = 1000  # Events per sample
 
 
-username       = 'areimers'
+username       = os.environ['USER']
 arch_tag       = 'slc7_amd64_gcc700'
 cmssw_tag_gp   = 'CMSSW_10_6_0'
 cmssw_tag_sim  = 'CMSSW_10_6_12'
@@ -97,18 +97,16 @@ workdir_slurm  = workarea + '/workdir_slurm'
 mgfolder       = workarea + '/' + cmssw_tag_sim + '/src/genproductions/bin/MadGraph5_aMCatNLO'
 mgfolder_local = workarea + '/' + 'MG5_aMC_v2_7_2'
 basefolder     = workarea + '/LEAF'
-macrofolder    = basefolder + '/macros'
-gensimfolder   = basefolder + '/GENSIM'
-gridpackfolder = gensimfolder + '/gridpacks/ChiPsi'
-cardfolder     = gensimfolder + '/cards/ChiPsi'
-crosssecfolder = gensimfolder + '/crosssections/ChiPsi'
-psetfolder     = gensimfolder + '/PSets/' + campaign
+generatorfolder= basefolder + '/Generator'
+gridpackfolder = generatorfolder + '/gridpacks/ChiPsi'
+cardfolder     = generatorfolder + '/cards/ChiPsi'
+crosssecfolder = generatorfolder + '/crosssections/ChiPsi'
+psetfolder     = generatorfolder + '/PSets/' + campaign
 T2_director      = 'gsiftp://storage01.lcg.cscs.ch/'
 T2_director_root = 'root://storage01.lcg.cscs.ch/'
 T3_director      = 'root://t3dcachedb03.psi.ch/'
 T2_path          = '/pnfs/lcg.cscs.ch/cms/trivcat/store/user/'+ username
 T3_path          = '/pnfs/psi.ch/cms/trivcat/store/user/'+ username
-tuple_path       = workarea + '/Tuples/' + campaign + '/GENSIM/ChiPsi'
 
 
 
@@ -202,7 +200,7 @@ ensureDirectory(workdir_slurm)
 submit = True
 
 
-CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, gensimfolder=gensimfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
+CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
@@ -213,11 +211,11 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas
 
 
 
-EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, configs=mass_configurations_lqlq_sm, lambdas=lambdas_lqlq_sm, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, gensimfolder=gensimfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
+EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, configs=mass_configurations_lqlq_sm, lambdas=lambdas_lqlq_sm, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
 # EventGenerator_lqlq_sm.ProduceCards()
 # EventGenerator_lqlq_sm.SubmitGridpacks()
 # EventGenerator_lqlq_sm.MoveGridpacks()
-# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='new')
+EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='new')
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=8, runtime=(3,00), mode='resubmit')
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='new')
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='resubmit')
@@ -235,7 +233,7 @@ EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, c
 
 
 
-EventGenerator_lqlq_dark = GensimRunner(processnames=processes_lqlq_dark, tag=tag, configs=mass_configurations_lqlq_dark, lambdas=lambdas_lqlq_dark, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, gensimfolder=gensimfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
+EventGenerator_lqlq_dark = GensimRunner(processnames=processes_lqlq_dark, tag=tag, configs=mass_configurations_lqlq_dark, lambdas=lambdas_lqlq_dark, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
 # EventGenerator_lqlq_dark.ProduceCards()
 # EventGenerator_lqlq_dark.SubmitGridpacks()
 # EventGenerator_lqlq_dark.MoveGridpacks()
@@ -256,7 +254,7 @@ EventGenerator_lqlq_dark = GensimRunner(processnames=processes_lqlq_dark, tag=ta
 # EventGenerator_lqlq_dark.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00), mode='resubmit')
 
 
-EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, configs=mass_configurations_psipsi, lambdas=lambdas_psipsi, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, gensimfolder=gensimfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
+EventGenerator_psipsi = GensimRunner(processnames=processes_psipsi, tag=tag, configs=mass_configurations_psipsi, lambdas=lambdas_psipsi, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
 # EventGenerator_psipsi.ProduceCards()
 # EventGenerator_psipsi.SubmitGridpacks()
 # EventGenerator_psipsi.MoveGridpacks()

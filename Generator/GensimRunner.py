@@ -23,7 +23,7 @@ import tdrstyle_all as TDR
 
 
 class GensimRunner:
-    def __init__(self, processnames, tag, configs, lambdas, preferred_configurations, workdir_slurm, workarea, basefolder, cardfolder, mgfolder, gensimfolder, gridpackfolder, arch_tag, cmssw_tag_gp, T2_director, T2_path, T2_director_root, T3_director, T3_path, campaign, folderstructure, maxindex=100, nevents=1000, submit=False):
+    def __init__(self, processnames, tag, configs, lambdas, preferred_configurations, workdir_slurm, workarea, basefolder, cardfolder, mgfolder, generatorfolder, gridpackfolder, arch_tag, cmssw_tag_gp, T2_director, T2_path, T2_director_root, T3_director, T3_path, campaign, folderstructure, maxindex=100, nevents=1000, submit=False):
         self.processnames = processnames
         self.tag = tag
         self.configs = configs
@@ -34,7 +34,7 @@ class GensimRunner:
         self.basefolder = basefolder
         self.cardfolder = cardfolder
         self.mgfolder = mgfolder
-        self.gensimfolder = gensimfolder
+        self.generatorfolder = generatorfolder
         self.gridpackfolder = gridpackfolder
         self.arch_tag = arch_tag
         self.cmssw_tag_gp = cmssw_tag_gp
@@ -136,8 +136,8 @@ class GensimRunner:
         queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
 
         commandfilebase = ''
-        if mode is 'new':        commandfilebase = self.gensimfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
-        elif mode is 'resubmit': commandfilebase = self.gensimfolder + '/commands/resubmit_%s_' % (self.folderstructure[generation_step]['jobnametag'])
+        if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
+        elif mode is 'resubmit': commandfilebase = self.generatorfolder + '/commands/resubmit_%s_' % (self.folderstructure[generation_step]['jobnametag'])
 
         # Create command file for array of jobs
         for processname in self.processnames:
@@ -163,7 +163,7 @@ class GensimRunner:
                         indices = range(self.maxindex)
                     elif mode is 'resubmit':
                         print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
-                        indices = missing_indices = findMissingFilesT2(filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, gensimfolder=self.gensimfolder, generation_step=generation_step)
+                        indices = missing_indices = findMissingFilesT2(filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
 
                     njobs = 0
                     for i in indices:
@@ -184,7 +184,7 @@ class GensimRunner:
                     if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
                     elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
                     # jobs_per_sample_string = '%10' if mode == 'new' else ''
-                    command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.gensimfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+                    command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
                     if njobs > 0:
                         if self.submit:
                             # print command
@@ -210,8 +210,8 @@ class GensimRunner:
         queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
         runtime_str = '%02i:%02i:00' % runtime
         commandfilebase = ''
-        if mode is 'new':        commandfilebase = self.gensimfolder + '/commands/tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
-        elif mode is 'resubmit': commandfilebase = self.gensimfolder + '/commands/resubmit_tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
+        if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
+        elif mode is 'resubmit': commandfilebase = self.generatorfolder + '/commands/resubmit_tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
 
         # Create command file for array of jobs
         for processname in self.processnames:
@@ -233,7 +233,7 @@ class GensimRunner:
                     f = open(commandfilename, 'w')
                     indices = -1
                     if mode is 'new':        indices = range(self.maxindex)
-                    # elif mode is 'resubmit': indices = missing_indices = findMissingFilesT3(outfoldername, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, gensimfolder=self.gensimfolder, generation_step=generation_step)
+                    # elif mode is 'resubmit': indices = missing_indices = findMissingFilesT3(outfoldername, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
                     elif mode is 'resubmit':
                         print green('--> Now checking for missing files on T3 for job \'%s\'...' % (jobname))
                         indices = missing_indices = findMissingFilesT3(self.T3_path + '/' + self.campaign + '/' + self.folderstructure[generation_step]['pathtag'] + '/' + jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generation_step=generation_step)

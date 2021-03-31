@@ -22,13 +22,13 @@ from tdrstyle_all import *
 import tdrstyle_all as TDR
 
 class CrossSectionRunner:
-    def __init__(self, processnames, tag, lambdas, cardfolder, crosssecfolder, gensimfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
+    def __init__(self, processnames, tag, lambdas, cardfolder, crosssecfolder, generatorfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
         self.processnames = processnames
         self.tag = tag
         self.lambdas = lambdas
         self.cardfolder = cardfolder
         self.crosssecfolder = crosssecfolder
-        self.gensimfolder = gensimfolder
+        self.generatorfolder = generatorfolder
         self.mgfolder_local = mgfolder_local
         self.workarea = workarea
         self.cmssw_tag_sim = cmssw_tag_sim
@@ -60,7 +60,7 @@ class CrossSectionRunner:
             if only_resubmit:
                 shortfilelist = get_filelist_crossbr(filepath=self.crosssecfolder+'/'+processname, short=True, tag=self.tag)
             njobs = 0
-            commandfilename = self.gensimfolder + '/commands/CrossBR_%s.txt' % (processname)
+            commandfilename = self.generatorfolder + '/commands/CrossBR_%s.txt' % (processname)
             f = open(commandfilename, 'w')
             configs = get_config_list(preferred_configurations=preferred_configurations, processname=processname)
             for config in configs:
@@ -79,7 +79,7 @@ class CrossSectionRunner:
                             if (not (param_card_shortname in shortfilelist) or not (crosssection_shortname in shortfilelist)):
                                 write_command = True
                     # write to a command file the shell command: 'source run_crossbr.sh  .....' %
-                    command = 'source %s %s %s %s %s %s %s %s %i' % (self.gensimfolder+'/run_crossbr.sh', self.mgfolder_local, jobname, self.cardfolder+'/CrossBR/%s' % (processname), self.workarea + '/' + self.cmssw_tag_sim, self.workdir_slurm, self.crosssecfolder, processname, ncores)
+                    command = 'source %s %s %s %s %s %s %s %s %i' % (self.generatorfolder+'/run_crossbr.sh', self.mgfolder_local, jobname, self.cardfolder+'/CrossBR/%s' % (processname), self.workarea + '/' + self.cmssw_tag_sim, self.workdir_slurm, self.crosssecfolder, processname, ncores)
                     if write_command:
                         f.write(command + '\n')
                         njobs += 1

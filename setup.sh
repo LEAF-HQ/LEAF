@@ -27,7 +27,7 @@ export PYTHONPATH=$PYTHONPATH:$GENERATORPATH
 
 export CMSSW_COMBINE_BASE=$(readlink -f $LEAFPATH/../CMSSW_10_2_13)
 
-export COMBINEPATH=${CMSSW_BASE}/HiggsAnalysis/CombinedLimit
+export COMBINEPATH=$(readlink -f HiggsAnalysis/CombinedLimit)
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:
 export PYTHONPATH=${PYTHONPATH}:${COMBINEPATH}/lib/python:${COMBINEPATH}/lib
