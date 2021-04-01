@@ -31,3 +31,5 @@ export COMBINEPATH=$(readlink -f HiggsAnalysis/CombinedLimit)
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:
 export PYTHONPATH=${PYTHONPATH}:${COMBINEPATH}/lib/python:${COMBINEPATH}/lib
+
+# now add /cvmfs things necessary to compile the Tuplizer_MINIAOD
