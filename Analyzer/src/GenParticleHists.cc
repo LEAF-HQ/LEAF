@@ -103,6 +103,15 @@ GenParticleHists::GenParticleHists(TString dir_) : BaseHists(dir_){
   hptgenmufromtaumatched_rebin = book<TH1D>("ptgenmufromtaumatched_rebin", ";p_{T}^{gen and matched #mu from #tau} [GeV]; Events / bin", 50, 0, 200);
   hptgenmufromtaumatched_rebin2 = book<TH1D>("ptgenmufromtaumatched_rebin2", ";p_{T}^{gen and matched #mu from #tau} [GeV]; Events / bin", 50, 0, 50);
 
+  hgenmusfromhadtotal = book<TH1D>("genmusfromhadtotal", ";binc = N_{gen #mu from had}; Events / bin", 1, -0.5, 0.5);
+  hgenmusfromhadmatched = book<TH1D>("genmusfromhadmatched", ";binc = N_{matched gen #mu from had}; Events / bin", 1, -0.5, 0.5);
+  hptgenmufromhad = book<TH1D>("ptgenmufromhad", ";p_{T}^{gen #mu from had} [GeV]; Events / bin", 40, 0, 1200);
+  hptgenmufromhad_rebin = book<TH1D>("ptgenmufromhad_rebin", ";p_{T}^{gen #mu from had} [GeV]; Events / bin", 50, 0, 200);
+  hptgenmufromhad_rebin2 = book<TH1D>("ptgenmufromhad_rebin2", ";p_{T}^{gen #mu from had} [GeV]; Events / bin", 50, 0, 50);
+  hptgenmufromhadmatched = book<TH1D>("ptgenmufromhadmatched", ";p_{T}^{gen and matched #mu from had} [GeV]; Events / bin", 40, 0, 1200);
+  hptgenmufromhadmatched_rebin = book<TH1D>("ptgenmufromhadmatched_rebin", ";p_{T}^{gen and matched #mu from had} [GeV]; Events / bin", 50, 0, 200);
+  hptgenmufromhadmatched_rebin2 = book<TH1D>("ptgenmufromhadmatched_rebin2", ";p_{T}^{gen and matched #mu from had} [GeV]; Events / bin", 50, 0, 50);
+
 
 
 
@@ -143,6 +152,15 @@ GenParticleHists::GenParticleHists(TString dir_) : BaseHists(dir_){
   hptgenelfromtaumatched = book<TH1D>("ptgenelfromtaumatched", ";p_{T}^{gen and matched e from #tau} [GeV]; Events / bin", 40, 0, 1200);
   hptgenelfromtaumatched_rebin = book<TH1D>("ptgenelfromtaumatched_rebin", ";p_{T}^{gen e from #tau} [GeV]; Events / bin", 50, 0, 200);
   hptgenelfromtaumatched_rebin2 = book<TH1D>("ptgenelfromtaumatched_rebin2", ";p_{T}^{gen e from #tau} [GeV]; Events / bin", 50, 0, 50);
+
+  hgenelsfromhadtotal = book<TH1D>("genelsfromhadtotal", ";binc = total N_{gen e from had}; Events / bin", 1, -0.5, 0.5);
+  hgenelsfromhadmatched = book<TH1D>("genelsfromhadmatched", ";binc = total N_{matched gen e from had}; Events / bin", 1, -0.5, 0.5);
+  hptgenelfromhad = book<TH1D>("ptgenelfromhad", ";p_{T}^{gen e from had} [GeV]; Events / bin", 40, 0, 1200);
+  hptgenelfromhad_rebin = book<TH1D>("ptgenelfromhad_rebin", ";p_{T}^{gen e from had} [GeV]; Events / bin", 50, 0, 200);
+  hptgenelfromhad_rebin2 = book<TH1D>("ptgenelfromhad_rebin2", ";p_{T}^{gen e from had} [GeV]; Events / bin", 50, 0, 50);
+  hptgenelfromhadmatched = book<TH1D>("ptgenelfromhadmatched", ";p_{T}^{gen and matched e from had} [GeV]; Events / bin", 40, 0, 1200);
+  hptgenelfromhadmatched_rebin = book<TH1D>("ptgenelfromhadmatched_rebin", ";p_{T}^{gen e from had} [GeV]; Events / bin", 50, 0, 200);
+  hptgenelfromhadmatched_rebin2 = book<TH1D>("ptgenelfromhadmatched_rebin2", ";p_{T}^{gen e from had} [GeV]; Events / bin", 50, 0, 50);
 
 }
 
@@ -248,6 +266,18 @@ void GenParticleHists::fill(const RecoEvent & event){
           hptgenmufromtaumatched_rebin2->Fill(gp.pt(), weight);
         }
       }
+      else if(gp.get_statusflag(GenParticle::isDirectHadronDecayProduct)){
+        hgenmusfromhadtotal->Fill(0., weight);
+        hptgenmufromhad->Fill(gp.pt(), weight);
+        hptgenmufromhad_rebin->Fill(gp.pt(), weight);
+        hptgenmufromhad_rebin2->Fill(gp.pt(), weight);
+        if(dr_min < 0.1 && dr_min > 0.){
+          hgenmusfromhadmatched->Fill(0., weight);
+          hptgenmufromhadmatched->Fill(gp.pt(), weight);
+          hptgenmufromhadmatched_rebin->Fill(gp.pt(), weight);
+          hptgenmufromhadmatched_rebin2->Fill(gp.pt(), weight);
+        }
+      }
 
       hptgenmu->Fill(gp.pt(), weight);
       hptgenmu_rebin->Fill(gp.pt(), weight);
@@ -308,6 +338,18 @@ void GenParticleHists::fill(const RecoEvent & event){
           hptgenelfromtaumatched->Fill(gp.pt(), weight);
           hptgenelfromtaumatched_rebin->Fill(gp.pt(), weight);
           hptgenelfromtaumatched_rebin2->Fill(gp.pt(), weight);
+        }
+      }
+      else if(gp.get_statusflag(GenParticle::isDirectHadronDecayProduct)){
+        hgenelsfromhadtotal->Fill(0., weight);
+        hptgenelfromhad->Fill(gp.pt(), weight);
+        hptgenelfromhad_rebin->Fill(gp.pt(), weight);
+        hptgenelfromhad_rebin2->Fill(gp.pt(), weight);
+        if(dr_min < 0.1 && dr_min > 0.){
+          hgenelsfromhadmatched->Fill(0., weight);
+          hptgenelfromhadmatched->Fill(gp.pt(), weight);
+          hptgenelfromhadmatched_rebin->Fill(gp.pt(), weight);
+          hptgenelfromhadmatched_rebin2->Fill(gp.pt(), weight);
         }
       }
 

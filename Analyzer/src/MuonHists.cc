@@ -61,20 +61,35 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuonfromtau_dxy_vs_dz = book<TH2D>("muonfromtau_dxy_vs_dz", ";#mu from #tau d_{xy} wrt. PV [cm];#mu from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
   hmuonfromtaugendrmin = book<TH1D>("muonfromtaugendrmin", ";#DeltaR(#mu from #tau, closest gen #mu);Events / bin", 60, 0, 3);
 
-  hnmuonsnotfromtau = book<TH1D>("nmuonsnotfromtau", ";N_{#mu not from #tau}; Events / bin", 11, -0.5, 10.5);
-  hmuonnotfromtaupt = book<TH1D>("muonnotfromtaupt", ";p_{T}^{#mu not from #tau} [GeV]; Events / bin", 50, 0, 1500);
-  hmuonnotfromtaupt_rebin = book<TH1D>("muonnotfromtaupt_rebin", ";p_{T}^{#mu not from #tau} [GeV]; Events / bin", 50, 0, 200);
-  hmuonnotfromtaueta = book<TH1D>("muonnotfromtaueta", ";#eta^{#mu not from #tau};Events / bin", 100, -5., 5.);
-  hmuonnotfromtauphi = book<TH1D>("muonnotfromtauphi", ";#phi^{#mu not from #tau};Events / bin", 70, -3.5, 3.5);
-  hmuonnotfromtaumass = book<TH1D>("muonnotfromtaumass", ";m^{#mu not from #tau} [GeV];Events / bin", 50, 0, 1500);
-  hmuonnotfromtauenergy = book<TH1D>("muonnotfromtauenergy", ";E^{#mu not from #tau} [GeV];Events / bin", 50, 0, 1500);
-  hmuonnotfromtaupfiso = book<TH1D>("muonnotfromtaupfiso", ";Iso_{PF}^{#mu no from #tau};Events / bin", 100, 0, 1);
-  hmuonnotfromtauminiiso = book<TH1D>("muonnotfromtauminiiso", ";Iso_{mini}^{#mu no from #tau};Events / bin", 100, 0, 1);
-  hmuonnotfromtaudxy = book<TH1D>("muonnotfromtaudxy", ";#mu not from #tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  hmuonnotfromtaudz = book<TH1D>("muonnotfromtaudz", ";#mu not from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  hmuonnotfromtaud = book<TH1D>("muonnotfromtaud", ";#mu not from #tau d wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  hmuonnotfromtau_dxy_vs_dz = book<TH2D>("muonnotfromtau_dxy_vs_dz", ";#mu not from #tau d_{xy} wrt. PV [cm];#mu not from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
-  hmuonnotfromtaugendrmin = book<TH1D>("muonnotfromtaugendrmin", ";#DeltaR(#mu not from #tau, closest gen #mu);Events / bin", 60, 0, 3);
+  hnmuonsfromhad = book<TH1D>("nmuonsfromhad", ";N_{#mu from had.}; Events / bin", 11, -0.5, 10.5);
+  hmuonfromhadpt = book<TH1D>("muonfromhadpt", ";p_{T}^{#mu from had.} [GeV]; Events / bin", 50, 0, 1500);
+  hmuonfromhadpt_rebin = book<TH1D>("muonfromhadpt_rebin", ";p_{T}^{#mu from had.} [GeV]; Events / bin", 50, 0, 200);
+  hmuonfromhadeta = book<TH1D>("muonfromhadeta", ";#eta^{#mu from had.};Events / bin", 100, -5., 5.);
+  hmuonfromhadphi = book<TH1D>("muonfromhadphi", ";#phi^{#mu from had.};Events / bin", 70, -3.5, 3.5);
+  hmuonfromhadmass = book<TH1D>("muonfromhadmass", ";m^{#mu from had.} [GeV];Events / bin", 50, 0, 1500);
+  hmuonfromhadenergy = book<TH1D>("muonfromhadenergy", ";E^{#mu from had.} [GeV];Events / bin", 50, 0, 1500);
+  hmuonfromhadpfiso = book<TH1D>("muonfromhadpfiso", ";Iso_{PF}^{#mu not from #tau};Events / bin", 100, 0, 1);
+  hmuonfromhadminiiso = book<TH1D>("muonfromhadminiiso", ";Iso_{mini}^{#mu not from #tau};Events / bin", 100, 0, 1);
+  hmuonfromhaddxy = book<TH1D>("muonfromhaddxy", ";#mu from had. d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonfromhaddz = book<TH1D>("muonfromhaddz", ";#mu from had. d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonfromhadd = book<TH1D>("muonfromhadd", ";#mu from had. d wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonfromhad_dxy_vs_dz = book<TH2D>("muonfromhad_dxy_vs_dz", ";#mu from had. d_{xy} wrt. PV [cm];#mu from had. d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
+  hmuonfromhadgendrmin = book<TH1D>("muonfromhadgendrmin", ";#DeltaR(#mu from had., closest gen #mu);Events / bin", 60, 0, 3);
+
+  hnmuonsunmatched = book<TH1D>("nmuonsunmatched", ";N_{#mu unmatched}; Events / bin", 11, -0.5, 10.5);
+  hmuonunmatchedpt = book<TH1D>("muonunmatchedpt", ";p_{T}^{#mu unmatched} [GeV]; Events / bin", 50, 0, 1500);
+  hmuonunmatchedpt_rebin = book<TH1D>("muonunmatchedpt_rebin", ";p_{T}^{#mu unmatched} [GeV]; Events / bin", 50, 0, 200);
+  hmuonunmatchedeta = book<TH1D>("muonunmatchedeta", ";#eta^{#mu unmatched};Events / bin", 100, -5., 5.);
+  hmuonunmatchedphi = book<TH1D>("muonunmatchedphi", ";#phi^{#mu unmatched};Events / bin", 70, -3.5, 3.5);
+  hmuonunmatchedmass = book<TH1D>("muonunmatchedmass", ";m^{#mu unmatched} [GeV];Events / bin", 50, 0, 1500);
+  hmuonunmatchedenergy = book<TH1D>("muonunmatchedenergy", ";E^{#mu unmatched} [GeV];Events / bin", 50, 0, 1500);
+  hmuonunmatchedpfiso = book<TH1D>("muonunmatchedpfiso", ";Iso_{PF}^{#mu unmatched};Events / bin", 100, 0, 1);
+  hmuonunmatchedminiiso = book<TH1D>("muonunmatchedminiiso", ";Iso_{mini}^{#mu unmatched};Events / bin", 100, 0, 1);
+  hmuonunmatcheddxy = book<TH1D>("muonunmatcheddxy", ";#mu unmatched d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonunmatcheddz = book<TH1D>("muonunmatcheddz", ";#mu unmatched d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonunmatchedd = book<TH1D>("muonunmatchedd", ";#mu unmatched d wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  hmuonunmatched_dxy_vs_dz = book<TH2D>("muonunmatched_dxy_vs_dz", ";#mu unmatched d_{xy} wrt. PV [cm];#mu unmatched d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
+  hmuonunmatchedgendrmin = book<TH1D>("muonunmatchedgendrmin", ";#DeltaR(#mu unmatched, closest gen #mu);Events / bin", 60, 0, 3);
 
   hmuon1pt = book<TH1D>("muon1pt", ";p_{T}^{#mu 1} [GeV]; Events / bin", 50, 0, 1500);
   hmuon1pt_rebin = book<TH1D>("muon1pt_rebin", ";p_{T}^{#mu 1} [GeV]; Events / bin", 50, 0, 200);
@@ -215,20 +230,35 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonfromtau_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
       hmuonfromtaugendrmin->Fill(gendr_min, weight);
     }
-    else{
-      hmuonnotfromtaupt->Fill(m.pt(), weight);
-      hmuonnotfromtaupt_rebin->Fill(m.pt(), weight);
-      hmuonnotfromtaueta->Fill(m.eta(), weight);
-      hmuonnotfromtauphi->Fill(m.phi(), weight);
-      hmuonnotfromtaumass->Fill(m.m(), weight);
-      hmuonnotfromtauenergy->Fill(m.e(), weight);
-      hmuonnotfromtaupfiso->Fill(m.iso_rel_04(), weight);
-      hmuonnotfromtauminiiso->Fill(m.iso_mini(), weight);
-      hmuonnotfromtaudxy->Fill(m.dxy(), weight);
-      hmuonnotfromtaudz->Fill(m.dz(), weight);
-      hmuonnotfromtaud->Fill(d_pv, weight);
-      hmuonnotfromtau_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
-      hmuonnotfromtaugendrmin->Fill(gendr_min, weight);
+    else if(gen_origin == 2){
+      hmuonfromhadpt->Fill(m.pt(), weight);
+      hmuonfromhadpt_rebin->Fill(m.pt(), weight);
+      hmuonfromhadeta->Fill(m.eta(), weight);
+      hmuonfromhadphi->Fill(m.phi(), weight);
+      hmuonfromhadmass->Fill(m.m(), weight);
+      hmuonfromhadenergy->Fill(m.e(), weight);
+      hmuonfromhadpfiso->Fill(m.iso_rel_04(), weight);
+      hmuonfromhadminiiso->Fill(m.iso_mini(), weight);
+      hmuonfromhaddxy->Fill(m.dxy(), weight);
+      hmuonfromhaddz->Fill(m.dz(), weight);
+      hmuonfromhadd->Fill(d_pv, weight);
+      hmuonfromhad_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
+      hmuonfromhadgendrmin->Fill(gendr_min, weight);
+    }
+    else if(gen_origin == -1){
+      hmuonunmatchedpt->Fill(m.pt(), weight);
+      hmuonunmatchedpt_rebin->Fill(m.pt(), weight);
+      hmuonunmatchedeta->Fill(m.eta(), weight);
+      hmuonunmatchedphi->Fill(m.phi(), weight);
+      hmuonunmatchedmass->Fill(m.m(), weight);
+      hmuonunmatchedenergy->Fill(m.e(), weight);
+      hmuonunmatchedpfiso->Fill(m.iso_rel_04(), weight);
+      hmuonunmatchedminiiso->Fill(m.iso_mini(), weight);
+      hmuonunmatcheddxy->Fill(m.dxy(), weight);
+      hmuonunmatcheddz->Fill(m.dz(), weight);
+      hmuonunmatchedd->Fill(d_pv, weight);
+      hmuonunmatched_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
+      hmuonunmatchedgendrmin->Fill(gendr_min, weight);
     }
 
     if(i==0){
@@ -298,7 +328,8 @@ void MuonHists::fill(const RecoEvent & event){
   }
   hnmuons->Fill(nmuons, weight);
   hnmuonsfromtau->Fill(nfromtau, weight);
-  hnmuonsnotfromtau->Fill(nmuons - nfromtau, weight);
+  hnmuonsfromhad->Fill(nfromhadron, weight);
+  hnmuonsunmatched->Fill(nunmatched, weight);
   hnmuonsgenfromtau->Fill(nfromtau, weight);
   hnmuonsgenfromhadron->Fill(nfromhadron, weight);
   hnmuonsgenfromelse->Fill(nfromelse, weight);

@@ -52,19 +52,33 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
   helectronfromtau_dxy_vs_dz = book<TH2D>("electronfromtau_dxy_vs_dz", ";e from #tau d_{xy} wrt. PV [cm];e from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
   helectronfromtaugendrmin = book<TH1D>("electronfromtaugendrmin", ";#DeltaR(e from #tau, closest gen e);Events / bin", 60, 0, 3);
 
-  hnelectronsnotfromtau = book<TH1D>("nelectronsnotfromtau", ";N_{e not from #tau}; Events / bin", 11, -0.5, 10.5);
-  helectronnotfromtaupt = book<TH1D>("electronnotfromtaupt", ";p_{T}^{e not from #tau} [GeV]; Events / bin", 50, 0, 1500);
-  helectronnotfromtaupt_rebin = book<TH1D>("electronnotfromtaupt_rebin", ";p_{T}^{e not from #tau} [GeV]; Events / bin", 50, 0, 200);
-  helectronnotfromtaueta = book<TH1D>("electronnotfromtaueta", ";#eta^{e not from #tau};Events / bin", 100, -5., 5.);
-  helectronnotfromtauphi = book<TH1D>("electronnotfromtauphi", ";#phi^{e not from #tau};Events / bin", 70, -3.5, 3.5);
-  helectronnotfromtaumass = book<TH1D>("electronnotfromtaumass", ";m^{e not from #tau} [GeV];Events / bin", 50, 0, 1500);
-  helectronnotfromtauenergy = book<TH1D>("electronnotfromtauenergy", ";E^{e not from #tau} [GeV];Events / bin", 50, 0, 1500);
-  helectronnotfromtaupfiso = book<TH1D>("electronnotfromtaupfiso", ";Iso_{PF}^{e not from #tau};Events / bin", 100, 0, 1);
-  helectronnotfromtaudxy = book<TH1D>("electronnotfromtaudxy", ";e not from #tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  helectronnotfromtaudz = book<TH1D>("electronnotfromtaudz", ";e not from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  helectronnotfromtaud = book<TH1D>("electronnotfromtaud", ";e not from #tau d wrt. PV [cm];Events / bin", 250, 0, 0.5);
-  helectronnotfromtau_dxy_vs_dz = book<TH2D>("electronnotfromtau_dxy_vs_dz", ";e not from #tau d_{xy} wrt. PV [cm];e not from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
-  helectronnotfromtaugendrmin = book<TH1D>("electronnotfromtaugendrmin", ";#DeltaR(e not from #tau, closest gen e);Events / bin", 60, 0, 3);
+  hnelectronsfromhad = book<TH1D>("nelectronsfromhad", ";N_{e from had.}; Events / bin", 11, -0.5, 10.5);
+  helectronfromhadpt = book<TH1D>("electronfromhadpt", ";p_{T}^{e from had.} [GeV]; Events / bin", 50, 0, 1500);
+  helectronfromhadpt_rebin = book<TH1D>("electronfromhadpt_rebin", ";p_{T}^{e from had.} [GeV]; Events / bin", 50, 0, 200);
+  helectronfromhadeta = book<TH1D>("electronfromhadeta", ";#eta^{e from had.};Events / bin", 100, -5., 5.);
+  helectronfromhadphi = book<TH1D>("electronfromhadphi", ";#phi^{e from had.};Events / bin", 70, -3.5, 3.5);
+  helectronfromhadmass = book<TH1D>("electronfromhadmass", ";m^{e from had.} [GeV];Events / bin", 50, 0, 1500);
+  helectronfromhadenergy = book<TH1D>("electronfromhadenergy", ";E^{e from had.} [GeV];Events / bin", 50, 0, 1500);
+  helectronfromhadpfiso = book<TH1D>("electronfromhadpfiso", ";Iso_{PF}^{e from had.};Events / bin", 100, 0, 1);
+  helectronfromhaddxy = book<TH1D>("electronfromhaddxy", ";e from had. d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronfromhaddz = book<TH1D>("electronfromhaddz", ";e from had. d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronfromhadd = book<TH1D>("electronfromhadd", ";e from had. d wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronfromhad_dxy_vs_dz = book<TH2D>("electronfromhad_dxy_vs_dz", ";e from had. d_{xy} wrt. PV [cm];e from had. d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
+  helectronfromhadgendrmin = book<TH1D>("electronfromhadgendrmin", ";#DeltaR(e from had., closest gen e);Events / bin", 60, 0, 3);
+
+  hnelectronsunmatched = book<TH1D>("nelectronsunmatched", ";N_{e unmatched}; Events / bin", 11, -0.5, 10.5);
+  helectronunmatchedpt = book<TH1D>("electronunmatchedpt", ";p_{T}^{e unmatched} [GeV]; Events / bin", 50, 0, 1500);
+  helectronunmatchedpt_rebin = book<TH1D>("electronunmatchedpt_rebin", ";p_{T}^{e unmatched} [GeV]; Events / bin", 50, 0, 200);
+  helectronunmatchedeta = book<TH1D>("electronunmatchedeta", ";#eta^{e unmatched};Events / bin", 100, -5., 5.);
+  helectronunmatchedphi = book<TH1D>("electronunmatchedphi", ";#phi^{e unmatched};Events / bin", 70, -3.5, 3.5);
+  helectronunmatchedmass = book<TH1D>("electronunmatchedmass", ";m^{e unmatched} [GeV];Events / bin", 50, 0, 1500);
+  helectronunmatchedenergy = book<TH1D>("electronunmatchedenergy", ";E^{e unmatched} [GeV];Events / bin", 50, 0, 1500);
+  helectronunmatchedpfiso = book<TH1D>("electronunmatchedpfiso", ";Iso_{PF}^{e unmatched};Events / bin", 100, 0, 1);
+  helectronunmatcheddxy = book<TH1D>("electronunmatcheddxy", ";e unmatched d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronunmatcheddz = book<TH1D>("electronunmatcheddz", ";e unmatched d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronunmatchedd = book<TH1D>("electronunmatchedd", ";e unmatched d wrt. PV [cm];Events / bin", 250, 0, 0.5);
+  helectronunmatched_dxy_vs_dz = book<TH2D>("electronunmatched_dxy_vs_dz", ";e unmatched d_{xy} wrt. PV [cm];e unmatched d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5, 250, 0, 0.5);
+  helectronunmatchedgendrmin = book<TH1D>("electronunmatchedgendrmin", ";#DeltaR(e unmatched, closest gen e);Events / bin", 60, 0, 3);
 
   helectrongenorigin = book<TH1D>("electrongenorigin", ";e -- 1: from hard #tau, 2: from hadron, 0: else, -1: unmatched; Events / bin", 4, -1.5, 2.5);
   hnelectronsgenfromtau = book<TH1D>("nelectronsgenfromtau", ";Number of e from #tau decay; Events / bin", 11, -0.5, 10.5);
@@ -200,19 +214,33 @@ void ElectronHists::fill(const RecoEvent & event){
       helectronfromtau_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
       helectronfromtaugendrmin->Fill(gendr_min, weight);
     }
-    else{
-      helectronnotfromtaupt->Fill(e.pt(), weight);
-      helectronnotfromtaupt_rebin->Fill(e.pt(), weight);
-      helectronnotfromtaueta->Fill(e.eta(), weight);
-      helectronnotfromtauphi->Fill(e.phi(), weight);
-      helectronnotfromtaumass->Fill(e.m(), weight);
-      helectronnotfromtauenergy->Fill(e.e(), weight);
-      helectronnotfromtaupfiso->Fill(e.iso_rel_03(), weight);
-      helectronnotfromtaudxy->Fill(e.dxy(), weight);
-      helectronnotfromtaudz->Fill(e.dz(), weight);
-      helectronnotfromtaud->Fill(d_pv, weight);
-      helectronnotfromtau_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
-      helectronnotfromtaugendrmin->Fill(gendr_min, weight);
+    if(gen_origin == 1){
+      helectronfromhadpt->Fill(e.pt(), weight);
+      helectronfromhadpt_rebin->Fill(e.pt(), weight);
+      helectronfromhadeta->Fill(e.eta(), weight);
+      helectronfromhadphi->Fill(e.phi(), weight);
+      helectronfromhadmass->Fill(e.m(), weight);
+      helectronfromhadenergy->Fill(e.e(), weight);
+      helectronfromhadpfiso->Fill(e.iso_rel_03(), weight);
+      helectronfromhaddxy->Fill(e.dxy(), weight);
+      helectronfromhaddz->Fill(e.dz(), weight);
+      helectronfromhadd->Fill(d_pv, weight);
+      helectronfromhad_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
+      helectronfromhadgendrmin->Fill(gendr_min, weight);
+    }
+    else if(gen_origin==-1){
+      helectronunmatchedpt->Fill(e.pt(), weight);
+      helectronunmatchedpt_rebin->Fill(e.pt(), weight);
+      helectronunmatchedeta->Fill(e.eta(), weight);
+      helectronunmatchedphi->Fill(e.phi(), weight);
+      helectronunmatchedmass->Fill(e.m(), weight);
+      helectronunmatchedenergy->Fill(e.e(), weight);
+      helectronunmatchedpfiso->Fill(e.iso_rel_03(), weight);
+      helectronunmatcheddxy->Fill(e.dxy(), weight);
+      helectronunmatcheddz->Fill(e.dz(), weight);
+      helectronunmatchedd->Fill(d_pv, weight);
+      helectronunmatched_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
+      helectronunmatchedgendrmin->Fill(gendr_min, weight);
     }
 
     if(i==0){
@@ -274,7 +302,8 @@ void ElectronHists::fill(const RecoEvent & event){
   }
   hnelectrons->Fill(nelectrons, weight);
   hnelectronsfromtau->Fill(nfromtau, weight);
-  hnelectronsnotfromtau->Fill(nelectrons - nfromtau, weight);
+  hnelectronsunmatched->Fill(nunmatched, weight);
+  hnelectronsfromhad->Fill(nfromhadron, weight);
   hnelectronsgenfromtau->Fill(nfromtau, weight);
   hnelectronsgenfromhadron->Fill(nfromhadron, weight);
   hnelectronsgenfromelse->Fill(nfromelse, weight);
