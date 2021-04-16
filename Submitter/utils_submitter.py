@@ -25,7 +25,7 @@ def order_haddlist(haddlist):
 
     for idx, file in enumerate(haddlist):
         if file_contains_tree(filename=file, treename='AnalysisTree'):
-            print 'will move element no. %i to the front. ' % (idx)
+            # print 'will move element no. %i to the front. ' % (idx)
             result.insert(0, result.pop(idx))
             break
     return result
