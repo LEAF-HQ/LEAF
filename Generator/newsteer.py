@@ -215,7 +215,7 @@ EventGenerator_lqlq_sm = GensimRunner(processnames=processes_lqlq_sm, tag=tag, c
 # EventGenerator_lqlq_sm.ProduceCards()
 # EventGenerator_lqlq_sm.SubmitGridpacks()
 # EventGenerator_lqlq_sm.MoveGridpacks()
-EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='new')
+# EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='new')
 # EventGenerator_lqlq_sm.SubmitGenerationStep(generation_step='GENSIM', ncores=8, runtime=(3,00), mode='resubmit')
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='new')
 # EventGenerator_lqlq_sm.SubmitTuplize(generation_step='Tuples_GENSIM', ncores=1, runtime=(00,10), mode='resubmit')
