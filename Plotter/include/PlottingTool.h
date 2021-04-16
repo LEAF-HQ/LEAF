@@ -18,7 +18,7 @@ public:
   ~PlottingTool() = default;
 
   // Main functions
-  void Plot(bool normalize = false, bool logy = true, bool singlePDF = false);
+  void Plot(bool blind = true, bool normalize = false, bool logy = true, bool singlePDF = false);
 
   void set_inpath(TString s){ base_path_analysisfiles = s;};
   void set_outpath(TString s){ base_path_plots = s;};

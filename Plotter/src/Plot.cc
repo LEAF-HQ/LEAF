@@ -28,25 +28,34 @@ void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int lin
 
 
 
-void PlottingTool::Plot(bool normalize, bool logy, bool singlePDF){
+void PlottingTool::Plot(bool blind, bool normalize, bool logy, bool singlePDF){
   cout << endl << endl << green << "--> Now plotting with settings:" << reset << endl;
+  cout << green << "    blind :     " << blind << reset << endl;
   cout << green << "    normalize : " << normalize << reset << endl;
   cout << green << "    logy :      " << logy << reset << endl;
   cout << green << "    singlePDF : " << singlePDF << reset << endl;
 
   TString infolder = PlottingTool::base_path_analysisfiles;
-  vector<TString> samples       = PlottingTool::samples;
+  vector<TString> samples       = {};
+  for(const auto & s : PlottingTool::samples){
+    if(blind && s.Contains("DATA")) continue;
+    samples.emplace_back(s);
+  }
+
   map<TString, TString> labels  = PlottingTool::labels;
   map<TString, int> colors      = PlottingTool::colors;
   map<TString, int> linestyles  = PlottingTool::linestyles;
   vector<TString> stacks        = PlottingTool::stacks;
   TString numerator             = PlottingTool::numerator;
-  TString outfolder = PlottingTool::base_path_plots;
-  TString outnameprefix = PlottingTool::prefix_plots;
-  TString lumitext = PlottingTool::lumitext;
+  if(blind && numerator.Contains("DATA")) numerator = "";
+  TString outfolder             = PlottingTool::base_path_plots;
+  TString outnameprefix         = PlottingTool::prefix_plots;
+  if(blind) outnameprefix += "blind_";
+  TString lumitext              = PlottingTool::lumitext;
 
   TString mkdircommand = "mkdir -p " + outfolder;
   system((const char*)mkdircommand);
+
 
 
 
@@ -66,7 +75,7 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   vector<TString> infilenames_all = produce_infilenames(infolder, samples);
   vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
   vector<TString> infilenames_numerator = {};
-  if(do_stack) infilenames_numerator = produce_infilenames(infolder, {numerator});
+  if(do_stack && numerator != "") infilenames_numerator = produce_infilenames(infolder, {numerator});
   if(infilenames_numerator.size() > 1) throw runtime_error("In make_plots(): vector of infilenames for the numerator should contain at most 1 element, but now it contains more. How did this happen?");
 
   gErrorIgnoreLevel = kError;
@@ -295,7 +304,9 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     latex_lumitext->SetTextAlign(33);
     latex_lumitext->SetX(0.95);
     latex_lumitext->SetTextFont(42);
-    latex_lumitext->SetTextSize(0.06);
+    float lumitextsize = 0.06;
+    if(!do_ratio) lumitextsize *= 0.66666;
+    latex_lumitext->SetTextSize(lumitextsize);
     latex_lumitext->SetY(1.);
     latex_lumitext->Draw();
 
