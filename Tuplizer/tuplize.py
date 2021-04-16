@@ -31,7 +31,7 @@ username = os.environ['USER']
 workarea = '/work/%s' % (username)
 basefolder = os.environ['LEAFPATH']
 generatorpath = os.environ['GENERATORPATH']
-tuplizefolder = join(generatorpath, 'Tuplizer')
+tuplizefolder = join(basefolder, 'Tuplizer')
 sampleinfofolder = join(generatorpath, 'samples')
 macrofolder = os.environ['ANALYZERPATH']
 
@@ -87,7 +87,7 @@ def main():
         print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
         Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
+        Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
