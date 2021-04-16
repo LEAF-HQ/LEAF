@@ -26,6 +26,7 @@ GenEvent::GenEvent(){
   genparticles_hard        = new vector<GenParticle>;
   genparticles_final       = new vector<GenParticle>;
   genparticles_visibletaus = new vector<GenParticle>;
+  genparticles_all         = new vector<GenParticle>;
   genjets                  = new vector<GenJet>;
 }
 
@@ -35,6 +36,7 @@ GenEvent::~GenEvent(){
   delete genparticles_hard;
   delete genparticles_final;
   delete genparticles_visibletaus;
+  delete genparticles_all;
   delete genjets;
 }
 
@@ -45,12 +47,14 @@ void GenEvent::clear(){
   delete genparticles_hard;
   delete genparticles_final;
   delete genparticles_visibletaus;
+  delete genparticles_all;
   delete genjets;
   genmet = 0;
   genmet_invis = 0;
   genparticles_hard = 0;
   genparticles_final = 0;
   genparticles_visibletaus = 0;
+  genparticles_all = 0;
   genjets = 0;
 }
 
@@ -61,6 +65,7 @@ void GenEvent::reset(){
   delete genparticles_hard;
   delete genparticles_final;
   delete genparticles_visibletaus;
+  delete genparticles_all;
   delete genjets;
   GenParticle p;
   genmet                   = new Met;
@@ -68,5 +73,6 @@ void GenEvent::reset(){
   genparticles_hard        = new vector<GenParticle>;
   genparticles_final       = new vector<GenParticle>;
   genparticles_visibletaus = new vector<GenParticle>;
+  genparticles_all         = new vector<GenParticle>;
   genjets                  = new vector<GenJet>;
 }

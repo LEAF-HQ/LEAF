@@ -104,6 +104,31 @@ int main(int argc, char* argv[]){
   if(is_mc) varname = "GenPart_genPartIdxMother";
   TTreeReaderArray<int> genparticle_idxmother(reader, varname);
 
+
+  varname = "nJet"; //dummy
+  if(is_mc) varname = "nGenVisTau";
+  TTreeReaderValue<unsigned int> genvistau_n(reader, varname);
+  varname = "MET_pt"; //dummy
+  if(is_mc) varname = "GenVisTau_pt";
+  TTreeReaderArray<float> genvistau_pt(reader, varname);
+  if(is_mc) varname = "GenVisTau_eta";
+  TTreeReaderArray<float> genvistau_eta(reader, varname);
+  if(is_mc) varname = "GenVisTau_phi";
+  TTreeReaderArray<float> genvistau_phi(reader, varname);
+  if(is_mc) varname = "GenVisTau_mass";
+  TTreeReaderArray<float> genvistau_mass(reader, varname);
+  varname = "Jet_jetId"; //dummys
+  if(is_mc) varname = "GenVisTau_genPartIdxMother";
+  TTreeReaderArray<int> genvistau_idxmother(reader, varname);
+  if(is_mc) varname = "GenVisTau_status";
+  TTreeReaderArray<int> genvistau_status(reader, varname);
+  if(is_mc) varname = "GenVisTau_charge";
+  TTreeReaderArray<int> genvistau_charge(reader, varname);
+
+
+
+
+
   varname = "MET_pt"; //dummy for data
   if(is_mc) varname = "genWeight";
   TTreeReaderValue<float> genWeight (reader, varname);
@@ -452,8 +477,21 @@ int main(int argc, char* argv[]){
         event.genjets->emplace_back(gj);
       }
 
-      // Do GenParticles
-      // ===============
+      // Do GenVisTaus
+      // =============
+      for(size_t i=0; i<*genvistau_n; i++){
+        GenParticle gvt;
+        gvt.set_p4(genvistau_pt[i], genvistau_eta[i], genvistau_phi[i], genvistau_mass[i]);
+        int pdgid = 15;
+        if(genvistau_charge[i] < 0.) pdgid = -15.;
+        gvt.set_pdgid(pdgid);
+        gvt.set_mother_identifier(genvistau_idxmother[i]);
+        gvt.set_status(genvistau_status[i]);
+        event.genparticles_visibletaus->emplace_back(gvt);
+      }
+
+      // Do normal GenParticles
+      // ======================
       int flag_ishard = pow(2, 7);
       int flag_isfinal = pow(2, 13);
       int flag_isfromhardtau = pow(2, 9); //isHardProcessTauDecayProduct in https://github.com/cms-sw/cmssw/blob/master/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
@@ -466,14 +504,33 @@ int main(int argc, char* argv[]){
         GenParticle gp;
         gp.set_p4(genparticle_pt[i], genparticle_eta[i], genparticle_phi[i], genparticle_mass[i]);
         gp.set_pdgid(genparticle_pdgId[i]);
-        gp.set_mother_pdgid(genparticle_pdgId[genparticle_idxmother[i]]);
+        gp.set_mother_identifier(genparticle_idxmother[i]);
+        gp.set_identifier(i);
+        gp.set_statusflag(GenParticle::isPrompt, (((int)pow(2, 0)&status_flag) == (int)pow(2, 0)));
+        gp.set_statusflag(GenParticle::isDecayedLeptonHadron, (((int)pow(2, 1)&status_flag) == (int)pow(2, 1)));
+        gp.set_statusflag(GenParticle::isTauDecayProduct, (((int)pow(2, 2)&status_flag) == (int)pow(2, 2)));
+        gp.set_statusflag(GenParticle::isPromptTauDecayProduct, (((int)pow(2, 3)&status_flag) == (int)pow(2, 3)));
+        gp.set_statusflag(GenParticle::isDirectTauDecayProduct, (((int)pow(2, 4)&status_flag) == (int)pow(2, 4)));
+        gp.set_statusflag(GenParticle::isDirectPromptTauDecayProduct, (((int)pow(2, 5)&status_flag) == (int)pow(2, 5)));
+        gp.set_statusflag(GenParticle::isDirectHadronDecayProduct, (((int)pow(2, 6)&status_flag) == (int)pow(2, 6)));
+        gp.set_statusflag(GenParticle::isHardProcess, (((int)pow(2, 7)&status_flag) == (int)pow(2, 7)));
+        gp.set_statusflag(GenParticle::fromHardProcess, (((int)pow(2, 8)&status_flag) == (int)pow(2, 8)));
+        gp.set_statusflag(GenParticle::isHardProcessTauDecayProduct, (((int)pow(2, 9)&status_flag) == (int)pow(2, 9)));
+        gp.set_statusflag(GenParticle::isDirectHardProcessTauDecayProduct, (((int)pow(2, 10)&status_flag) == (int)pow(2, 10)));
+        gp.set_statusflag(GenParticle::fromHardProcessBeforeFSR, (((int)pow(2, 11)&status_flag) == (int)pow(2, 11)));
+        gp.set_statusflag(GenParticle::isFirstCopy, (((int)pow(2, 12)&status_flag) == (int)pow(2, 12)));
+        gp.set_statusflag(GenParticle::isLastCopy, (((int)pow(2, 13)&status_flag) == (int)pow(2, 13)));
+        gp.set_statusflag(GenParticle::isLastCopyBeforeFSR, (((int)pow(2, 14)&status_flag) == (int)pow(2, 14)));
+        gp.set_status(genparticle_status[i]);
+        event.genparticles_all->emplace_back(gp);
 
         if(is_final){
           //keep, if final particle is b, t, tau, or nutau
           for(size_t j=0; j<npids.size(); j++){
             if(id == npids[j]) keepfinal = true;
           }
-          if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
+          // if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
+          if(id <= 25) keepfinal = true;
         }
         if(keepfinal){
           event.genparticles_final->emplace_back(gp);
@@ -485,34 +542,34 @@ int main(int argc, char* argv[]){
         }
 
         // find the visible parts of the taus from the hard process
-        if (id == 15 && is_final){
-          TLorentzVector p4_vis;
-          for(size_t j=0; j<*genparticle_n; j++){
-            if(fabs(genparticle_pdgId[j]) == 12 || fabs(genparticle_pdgId[j]) == 14 || fabs(genparticle_pdgId[j]) == 16) continue;
-            int thisstatusflag = genparticle_statusFlags[j];
-            //                  is_fromhardtau                             &&        is_finalstate
-            if(((flag_isfromhardtau&thisstatusflag) == flag_isfromhardtau) && (genparticle_status[j] == 1)){
-
-              // check if this stable particle comes from this tau or another one. Go backwards in the chain.
-              unsigned int checkidx = genparticle_idxmother[j];
-              while(fabs(genparticle_pdgId[checkidx]) != 15){
-                checkidx = genparticle_idxmother[checkidx];
-              }
-              // if arriving here, particle j indeed comes from this tau.
-              if(checkidx == i){
-                TLorentzVector v;
-                v.SetPtEtaPhiM(genparticle_pt[j], genparticle_eta[j], genparticle_phi[j], genparticle_mass[j]);
-                p4_vis += v;
-              }
-
-            }
-          }
-          GenParticle taudau_vis;
-          taudau_vis.set_p4(p4_vis);
-          taudau_vis.set_pdgid(genparticle_pdgId[i]);
-          taudau_vis.set_mother_pdgid(genparticle_pdgId[genparticle_idxmother[i]]);
-          event.genparticles_visibletaus->emplace_back(taudau_vis);
-        }
+        // if (id == 15 && is_final){
+        //   TLorentzVector p4_vis;
+        //   for(size_t j=0; j<*genparticle_n; j++){
+        //     if(fabs(genparticle_pdgId[j]) == 12 || fabs(genparticle_pdgId[j]) == 14 || fabs(genparticle_pdgId[j]) == 16) continue;
+        //     int thisstatusflag = genparticle_statusFlags[j];
+        //     //                  is_fromhardtau                             &&        is_finalstate
+        //     if(((flag_isfromhardtau&thisstatusflag) == flag_isfromhardtau) && (genparticle_status[j] == 1)){
+        //
+        //       // check if this stable particle comes from this tau or another one. Go backwards in the chain.
+        //       unsigned int checkidx = genparticle_idxmother[j];
+        //       while(fabs(genparticle_pdgId[checkidx]) != 15){
+        //         checkidx = genparticle_idxmother[checkidx];
+        //       }
+        //       // if arriving here, particle j indeed comes from this tau.
+        //       if(checkidx == i){
+        //         TLorentzVector v;
+        //         v.SetPtEtaPhiM(genparticle_pt[j], genparticle_eta[j], genparticle_phi[j], genparticle_mass[j]);
+        //         p4_vis += v;
+        //       }
+        //
+        //     }
+        //   }
+        //   GenParticle taudau_vis;
+        //   taudau_vis.set_p4(p4_vis);
+        //   taudau_vis.set_pdgid(genparticle_pdgId[i]);
+        //   taudau_vis.set_mother_identifier(genparticle_idxmother[i]);
+        //   event.genparticles_visibletaus->emplace_back(taudau_vis);
+        // }
 
       }
 

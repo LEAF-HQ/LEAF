@@ -21,31 +21,42 @@ using namespace std;
 TauHists::TauHists(TString dir_) : BaseHists(dir_){
 
   hntaus = book<TH1D>("ntaus", ";N_{#tau}; Events / bin", 11, -0.5, 10.5);
+  hnmatchedtaus = book<TH1D>("nmatchedtaus", ";N_{gen-matched #tau}; Events / bin", 11, -0.5, 10.5);
   htaupt = book<TH1D>("taupt", ";p_{T}^{#tau} [GeV]; Events / bin", 50, 0, 1500);
   htaueta = book<TH1D>("taueta", ";#eta^{#tau};Events / bin", 100, -5., 5.);
   htauphi = book<TH1D>("tauphi", ";#phi^{#tau};Events / bin", 70, -3.5, 3.5);
   htaumass = book<TH1D>("taumass", ";m^{#tau} [GeV];Events / bin", 50, 0, 1500);
   htauenergy = book<TH1D>("tauenergy", ";E^{#tau 1} [GeV];Events / bin", 50, 0, 1500);
+  htaugendrmin = book<TH1D>("taugendrmin", ";#DeltaR(#tau_{h}, closest vis. gen #tau_{h});Events / bin", 60, 0, 3);
+  htaugenstatus = book<TH1D>("taugenstatus", ";Status of matched vis. gen. #tau_{h};Events / bin", 16, -0.5, 15.5);
   htau1pt = book<TH1D>("tau1pt", ";p_{T}^{#tau 1} [GeV]; Events / bin", 50, 0, 1500);
   htau1eta = book<TH1D>("tau1eta", ";#eta^{#tau 1};Events / bin", 100, -5., 5.);
   htau1phi = book<TH1D>("tau1phi", ";#phi^{#tau 1};Events / bin", 70, -3.5, 3.5);
   htau1mass = book<TH1D>("tau1mass", ";m^{#tau 1} [GeV];Events / bin", 50, 0, 1500);
   htau1energy = book<TH1D>("tau1energy", ";E^{#tau 1} [GeV];Events / bin", 50, 0, 1500);
+  htau1gendrmin = book<TH1D>("tau1gendrmin", ";#DeltaR(#tau_{h} 1, closest vis. gen #tau_{h});Events / bin", 60, 0, 3);
+  htau1genstatus = book<TH1D>("tau1genstatus", ";Status of matched vis. gen. #tau_{h} 1;Events / bin", 16, -0.5, 15.5);
   htau2pt = book<TH1D>("tau2pt", ";p_{T}^{#tau 2} [GeV]; Events / bin", 50, 0, 1500);
   htau2eta = book<TH1D>("tau2eta", ";#eta^{#tau 2};Events / bin", 100, -5., 5.);
   htau2phi = book<TH1D>("tau2phi", ";#phi^{#tau 2};Events / bin", 70, -3.5, 3.5);
   htau2mass = book<TH1D>("tau2mass", ";m^{#tau 2} [GeV];Events / bin", 50, 0, 1500);
   htau2energy = book<TH1D>("tau2energy", ";E^{#tau 2} [GeV];Events / bin", 50, 0, 1500);
+  htau2gendrmin = book<TH1D>("tau2gendrmin", ";#DeltaR(#tau_{h} 2, closest vis. gen #tau_{h});Events / bin", 60, 0, 3);
+  htau2genstatus = book<TH1D>("tau2genstatus", ";Status of matched vis. gen. #tau_{h} 2;Events / bin", 16, -0.5, 15.5);
   htau3pt = book<TH1D>("tau3pt", ";p_{T}^{#tau 3} [GeV]; Events / bin", 50, 0, 1500);
   htau3eta = book<TH1D>("tau3eta", ";#eta^{#tau 3};Events / bin", 100, -5., 5.);
   htau3phi = book<TH1D>("tau3phi", ";#phi^{#tau 3};Events / bin", 70, -3.5, 3.5);
   htau3mass = book<TH1D>("tau3mass", ";m^{#tau 3} [GeV];Events / bin", 50, 0, 1500);
   htau3energy = book<TH1D>("tau3energy", ";E^{#tau 3} [GeV];Events / bin", 50, 0, 1500);
+  htau3gendrmin = book<TH1D>("tau3gendrmin", ";#DeltaR(#tau_{h} 3, closest vis. gen #tau_{h});Events / bin", 60, 0, 3);
+  htau3genstatus = book<TH1D>("tau3genstatus", ";Status of matched vis. gen. #tau_{h} 3;Events / bin", 16, -0.5, 15.5);
   htau4pt = book<TH1D>("tau4pt", ";p_{T}^{#tau 4} [GeV]; Events / bin", 50, 0, 1500);
   htau4eta = book<TH1D>("tau4eta", ";#eta^{#tau 4};Events / bin", 100, -5., 5.);
   htau4phi = book<TH1D>("tau4phi", ";#phi^{#tau 4};Events / bin", 70, -3.5, 3.5);
   htau4mass = book<TH1D>("tau4mass", ";m^{#tau 4} [GeV];Events / bin", 50, 0, 1500);
   htau4energy = book<TH1D>("tau4energy", ";E^{#tau 4} [GeV];Events / bin", 50, 0, 1500);
+  htau4gendrmin = book<TH1D>("tau4gendrmin", ";#DeltaR(#tau_{h} 4, closest vis. gen #tau_{h});Events / bin", 60, 0, 3);
+  htau4genstatus = book<TH1D>("tau4genstatus", ";Status of matched vis. gen. #tau_{h} 4;Events / bin", 16, -0.5, 15.5);
 
 }
 
@@ -58,14 +69,27 @@ void TauHists::fill(const RecoEvent & event){
   // ====================
 
   size_t ntaus = event.taus->size();
+  size_t nmatched = 0;
   for(size_t i=0; i<ntaus; i++){
     Tau t = event.taus->at(i);
+    float gendr_min = 99999.;
+    int gen_status = false;
+    for(const auto & gp : *event.genparticles_visibletaus){
+      float dr = deltaR(t, gp);
+      if(dr < gendr_min){
+        gendr_min = dr;
+        if(gendr_min < 0.2) gen_status = gp.status();
+      }
+    }
+    if(gendr_min < 0.2) nmatched++;
 
     htaupt->Fill(t.pt(), weight);
     htaueta->Fill(t.eta(), weight);
     htauphi->Fill(t.phi(), weight);
     htaumass->Fill(t.m(), weight);
     htauenergy->Fill(t.e(), weight);
+    htaugendrmin->Fill(gendr_min, weight);
+    htaugenstatus->Fill(gen_status, weight);
 
     if(i==0){
       htau1pt->Fill(t.pt(), weight);
@@ -73,6 +97,8 @@ void TauHists::fill(const RecoEvent & event){
       htau1phi->Fill(t.phi(), weight);
       htau1mass->Fill(t.m(), weight);
       htau1energy->Fill(t.e(), weight);
+      htau1gendrmin->Fill(gendr_min, weight);
+      htau1genstatus->Fill(gen_status, weight);
     }
     else if(i==1){
       htau2pt->Fill(t.pt(), weight);
@@ -80,6 +106,8 @@ void TauHists::fill(const RecoEvent & event){
       htau2phi->Fill(t.phi(), weight);
       htau2mass->Fill(t.m(), weight);
       htau2energy->Fill(t.e(), weight);
+      htau2gendrmin->Fill(gendr_min, weight);
+      htau2genstatus->Fill(gen_status, weight);
     }
     else if(i==2){
       htau3pt->Fill(t.pt(), weight);
@@ -87,6 +115,8 @@ void TauHists::fill(const RecoEvent & event){
       htau3phi->Fill(t.phi(), weight);
       htau3mass->Fill(t.m(), weight);
       htau3energy->Fill(t.e(), weight);
+      htau3gendrmin->Fill(gendr_min, weight);
+      htau3genstatus->Fill(gen_status, weight);
     }
     else if(i==3){
       htau4pt->Fill(t.pt(), weight);
@@ -94,7 +124,10 @@ void TauHists::fill(const RecoEvent & event){
       htau4phi->Fill(t.phi(), weight);
       htau4mass->Fill(t.m(), weight);
       htau4energy->Fill(t.e(), weight);
+      htau4gendrmin->Fill(gendr_min, weight);
+      htau4genstatus->Fill(gen_status, weight);
     }
   }
   hntaus->Fill(ntaus, weight);
+  hnmatchedtaus->Fill(nmatched, weight);
 }
