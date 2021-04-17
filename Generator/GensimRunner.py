@@ -171,7 +171,7 @@ class GensimRunner:
                         command = ''
                         if generation_step is not 'GENSIM':
                             infilename   = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['infilepathtag']+'/'+jobname+'/%s_%i.root' % (self.folderstructure[generation_step]['infilenamebase'], i+1)
-                            command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=self.nevents, ncores=ncores)
+                            command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=-1, ncores=ncores)
                         else:
                             infilename   = self.gridpackfolder + '/' + processname + '/' + jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
                             command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=self.nevents, ncores=ncores)

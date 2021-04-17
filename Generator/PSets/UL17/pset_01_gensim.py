@@ -12,7 +12,7 @@ from Configuration.Eras.Era_Run2_2017_cff import Run2_2017
 
 gridpack    = ''
 outfilename = ''
-nevents     = -1
+nevents     = -99
 nThreads    = -1
 
 
@@ -30,7 +30,7 @@ outfilename = 'file:' + os.path.abspath(options.outfilename)
 outfile_LHE = outfilename.replace('.root', '_LHE.root')
 
 
-if gridpack is '' or outfilename is '' or nevents is -1 or nThreads is -1:
+if gridpack is '' or outfilename is '' or nevents is -99 or nThreads is -1:
     raise ValueError('At least one of the 4 mandatory options is not set, please give all 4 options.')
 
 
