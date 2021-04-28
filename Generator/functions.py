@@ -7,6 +7,7 @@ import time
 import math
 from math import sqrt, log, floor, ceil
 from bisect import bisect_left
+from ROOT import TFile
 from utils import *
 from constants import *
 
@@ -40,7 +41,6 @@ def lambstr_to_float(lambstr):
     return result
 
 def get_mlq_mps_mch(preferred_configurations, config):
-    # return (config['mlq'], config['mps'], config['mch'])
     return (config['mlq'], preferred_configurations[config['mlq']][config['mch']][0], config['mch'])
 
 def is_config_excluded(excluded_configurations, config, processname):
@@ -264,17 +264,26 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
         min_size = 1E5
     for idx in range(maxindex):
         filename = filename_base + '_' + str(idx+1) + '.root'
-        result = subprocess.Popen(['ls', '-lrt', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = result.communicate()
-        returncode = result.returncode
-        if returncode > 0: # opening failed
-            print 'opening failed for index %i' % (idx+1)
+        # have to check if there is an 'AnalysisTree' in the file, not just 'ls' the file. If not accessible, remove file so that later step will add it to list of missing files
+        f = TFile.Open(filename)
+        n_genevents = 0
+        try:
+            n_genevents = f.Get('AnalysisTree').GetEntriesFast()
+        except AttributeError:
+            print yellow('  --> Couldn\'t open file, adding it to list of missing indices: %s.' % (filename))
             missing_indices.append(idx)
-        else:
-            size = int(output.split()[4])
-            if size < min_size: # file too small.
-                print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
-                missing_indices.append(idx)
+        f.Close()
+        # result = subprocess.Popen(['ls', '-lrt', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # output, error = result.communicate()
+        # returncode = result.returncode
+        # if returncode > 0: # opening failed
+        #     print 'opening failed for index %i' % (idx+1)
+        #     missing_indices.append(idx)
+        # else:
+        #     size = int(output.split()[4])
+        #     if size < min_size: # file too small.
+        #         print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
+        #         missing_indices.append(idx)
     return missing_indices
 
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
