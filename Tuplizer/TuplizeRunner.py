@@ -103,7 +103,7 @@ class TuplizeRunner:
             else:
                 print green('  --> No jobs to submit for job %s.' % (samplename))
 
-    def CreateDatasetXMLFile(self, update_nevt, count_weights=True):
+    def CreateDatasetXMLFile(self, force_counting, count_weights=True):
         # print self.year, self.sample.nevents.has_year(self.year)
         # print self.sample.nevents[self.year]
         xmlfilename = join(self.macrofolder, self.sample.xmlfiles[self.year])
@@ -133,10 +133,13 @@ class TuplizeRunner:
                     print yellow('  --> Couldn\'t read number of weighted events in file, skip this one. Will not appear in XML file, so it\'s safe.')
 
         # if self.sample.nevents.has_year(self.year) :
-        if self.sample.nevents.has_year(self.year) and not update_nevt:
-            nevents = self.sample.nevents[self.year]
-            out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
-            print green('  --> Used stored number of events for sample \'%s\' in year %s: %s.' % (self.sample.name, self.year, str(nevents)))
+        if not force_counting:
+            if self.sample.nevents.has_year(self.year):
+                nevents = self.sample.nevents[self.year]
+                out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
+                print green('  --> Used stored number of events for sample \'%s\' in year %s: %s.' % (self.sample.name, self.year, str(nevents)))
+            else:
+                pass
         else:
             if count_weights:
                 results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
