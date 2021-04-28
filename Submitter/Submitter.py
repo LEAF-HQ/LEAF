@@ -113,7 +113,7 @@ class Submitter:
         print green('--> Cleaned up (removed) local and remote workdir')
 
 
-    def Add(self, force=False):
+    def Add(self, force=False, ignoretree=False):
         print green('--> Adding finished samples')
 
         # update list of missing files
@@ -151,6 +151,7 @@ class Submitter:
 
             command = 'hadd'
             if force: command += ' -f'
+            if ignoretree: command += ' -T'
             command += ' %s' % (outfilepath_and_name)
             command += ' ' + expected_files_string
             commands.append(command)
