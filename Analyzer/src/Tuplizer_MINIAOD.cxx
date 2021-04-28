@@ -9,6 +9,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/RecoCandidate/interface/RecoCandidate.h"
@@ -22,8 +23,18 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "FWCore/FWLite/interface/FWLiteEnabler.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/Run.h"
+
 #pragma GCC diagnostic pop
 
 #include "Analyzer/include/RecoEvent.h"
@@ -88,8 +99,9 @@ int main(int argc, char* argv[]){
   fwlite::Handle<std::vector<pat::Electron>> handle_electrons;
   fwlite::Handle<std::vector<pat::Tau>> handle_taus;
   fwlite::Handle<std::vector<pat::MET>> handle_met;
-  fwlite::Handle<double> handle_rho;
+  fwlite::Handle<double> handle_rho, handle_l1prefiring, handle_l1prefiring_up, handle_l1prefiring_down;
   fwlite::Handle< std::vector<reco::Vertex> > handle_pvs;
+  fwlite::Handle< std::vector<PileupSummaryInfo> > handle_pus;
 
 
   fwlite::Event ev(infile);
@@ -105,6 +117,17 @@ int main(int argc, char* argv[]){
     handle_met      .getByLabel(ev, "slimmedMETs");
     handle_rho      .getByLabel(ev, "fixedGridRhoFastjetAll");
     handle_pvs      .getByLabel(ev, "offlineSlimmedPrimaryVertices");
+    handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
+
+    // edm::EDGetTokenT<double> prefweight_token = consumes<double>(edm::InputTag("prefiringweight", "nonPrefiringProb"));
+    // edm::EDGetTokenT<double> prefweight_up_token = consumes<double>(edm::InputTag("prefiringweight", "nonPrefiringProbUp"));
+    // edm::EDGetTokenT<double> prefweight_down_token = consumes<double>(edm::InputTag("prefiringweight", "nonPrefiringProbDown"));
+    // ev.getByToken(prefweight_token, handle_l1prefiring);
+    // ev.getByToken(prefweight_up_token, handle_l1prefiring_up);
+    // ev.getByToken(prefweight_down_token, handle_l1prefiring_down);
+    handle_l1prefiring.getByLabel(ev, "prefiringweight", "nonPrefiringProb");
+    handle_l1prefiring_up.getByLabel(ev, "prefiringweight", "nonPrefiringProbUp");
+    handle_l1prefiring_down.getByLabel(ev, "prefiringweight", "nonPrefiringProbDown");
 
     const std::vector<pat::Jet, std::allocator<pat::Jet>>*           jets       = handle_jets.product();
     const std::vector<pat::Muon, std::allocator<pat::Muon>>*         muons      = handle_muons.product();
@@ -113,6 +136,10 @@ int main(int argc, char* argv[]){
     const std::vector<pat::MET, std::allocator<pat::MET>>*           mets       = handle_met.product();
     const double*                                                    rho        = handle_rho.product();
     const std::vector<reco::Vertex, std::allocator<reco::Vertex>>*   pvs        = handle_pvs.product();
+    const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus= handle_pus.product();
+    const double*                                                   l1prefiring = handle_l1prefiring.product();
+    const double*                                                l1prefiring_up = handle_l1prefiring_up.product();
+    const double*                                              l1prefiring_down = handle_l1prefiring_down.product();
     if(idx < idx_start){
       idx++;
       continue;
@@ -138,8 +165,18 @@ int main(int argc, char* argv[]){
       if(!pv.isFake() && pv.ndof() > 4 && fabs(pv.z()) < 24 && pv.position().rho() <= 2) n_goodpvs++;
     }
     event.npv_good = n_goodpvs;
+    event.weight_prefiring = *l1prefiring;
+    event.weight_prefiring_up = *l1prefiring_up;
+    event.weight_prefiring_down = *l1prefiring_down;
 
     if(is_mc){
+      event.ntrueint = pus->at(0).getTrueNumInteractions();
+      event.npu = 0;
+      for(size_t i=0; i<pus->size(); ++i){
+        if(pus->at(i).getBunchCrossing() == 0){ // intime pileup
+          event.npu += pus->at(i).getPU_NumInteractions();
+        }
+      }
 
       // event.weight = genweight;
     }
@@ -161,7 +198,6 @@ int main(int argc, char* argv[]){
 
     // Do Jets
     // =======
-
     for(size_t i=0; i<jets->size(); i++){
       pat::Jet patjet = jets->at(i);
       Jet j;

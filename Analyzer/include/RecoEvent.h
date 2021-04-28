@@ -32,16 +32,18 @@ public:
 
   GenInfo* geninfo;
   Flags* flags;
-  Met* met;
-  Met* rawmet;
+  Met* met; //
+  Met* rawmet; //
   vector<TriggerObject>* triggerobjects;
-  vector<Jet>* jets;
+  vector<Jet>* jets;//
   vector<Tau>* taus;
   vector<Muon>* muons;
   vector<Electron>* electrons;
-  bool is_data;
-  unsigned int run, lumiblock;
-  int npv, npv_good, npu;
-  float rho, ntrueint, weight_prefiring, weight_prefiring_up, weight_prefiring_down;
-  ULong64_t number;
+  bool is_data;//
+  unsigned int run, lumiblock;//
+  int npv, npv_good; //
+  int npu; //
+  float rho; //
+  float ntrueint, weight_prefiring, weight_prefiring_up, weight_prefiring_down; //
+  ULong64_t number;//
 };

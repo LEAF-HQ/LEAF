@@ -6,7 +6,6 @@ BINARIES    := $(wildcard $(BINDIR)/*)
 CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
 
 
-
 all: Tuplizer Tuplizer_NANOAOD Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
