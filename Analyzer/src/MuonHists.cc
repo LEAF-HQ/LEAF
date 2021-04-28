@@ -24,6 +24,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hnmuons = book<TH1D>("nmuons", ";N_{#mu}; Events / bin", 11, -0.5, 10.5);
   hmuonpt = book<TH1D>("muonpt", ";p_{T}^{#mu} [GeV]; Events / bin", 50, 0, 1500);
   hmuonpt_rebin = book<TH1D>("muonpt_rebin", ";p_{T}^{#mu} [GeV]; Events / bin", 50, 0, 200);
+  hmuonpt_rebin2 = book<TH1D>("muonpt_rebin2", ";p_{T}^{#mu} [GeV]; Events / bin", 50, 0, 50);
   hmuoneta = book<TH1D>("muoneta", ";#eta^{#mu};Events / bin", 100, -5., 5.);
   hmuonphi = book<TH1D>("muonphi", ";#phi^{#mu};Events / bin", 70, -3.5, 3.5);
   hmuonmass = book<TH1D>("muonmass", ";m^{#mu} [GeV];Events / bin", 50, 0, 1500);
@@ -49,6 +50,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hnmuonsfromtau = book<TH1D>("nmuonsfromtau", ";N_{#mu from #tau}; Events / bin", 11, -0.5, 10.5);
   hmuonfromtaupt = book<TH1D>("muonfromtaupt", ";p_{T}^{#mu from #tau} [GeV]; Events / bin", 50, 0, 1500);
   hmuonfromtaupt_rebin = book<TH1D>("muonfromtaupt_rebin", ";p_{T}^{#mu from #tau} [GeV]; Events / bin", 50, 0, 200);
+  hmuonfromtaupt_rebin2 = book<TH1D>("muonfromtaupt_rebin2", ";p_{T}^{#mu from #tau} [GeV]; Events / bin", 50, 0, 50);
   hmuonfromtaueta = book<TH1D>("muonfromtaueta", ";#eta^{#mu from #tau};Events / bin", 100, -5., 5.);
   hmuonfromtauphi = book<TH1D>("muonfromtauphi", ";#phi^{#mu from #tau};Events / bin", 70, -3.5, 3.5);
   hmuonfromtaumass = book<TH1D>("muonfromtaumass", ";m^{#mu from #tau} [GeV];Events / bin", 50, 0, 1500);
@@ -64,6 +66,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hnmuonsfromhad = book<TH1D>("nmuonsfromhad", ";N_{#mu from had.}; Events / bin", 11, -0.5, 10.5);
   hmuonfromhadpt = book<TH1D>("muonfromhadpt", ";p_{T}^{#mu from had.} [GeV]; Events / bin", 50, 0, 1500);
   hmuonfromhadpt_rebin = book<TH1D>("muonfromhadpt_rebin", ";p_{T}^{#mu from had.} [GeV]; Events / bin", 50, 0, 200);
+  hmuonfromhadpt_rebin2 = book<TH1D>("muonfromhadpt_rebin2", ";p_{T}^{#mu from had.} [GeV]; Events / bin", 50, 0, 50);
   hmuonfromhadeta = book<TH1D>("muonfromhadeta", ";#eta^{#mu from had.};Events / bin", 100, -5., 5.);
   hmuonfromhadphi = book<TH1D>("muonfromhadphi", ";#phi^{#mu from had.};Events / bin", 70, -3.5, 3.5);
   hmuonfromhadmass = book<TH1D>("muonfromhadmass", ";m^{#mu from had.} [GeV];Events / bin", 50, 0, 1500);
@@ -79,6 +82,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hnmuonsunmatched = book<TH1D>("nmuonsunmatched", ";N_{#mu unmatched}; Events / bin", 11, -0.5, 10.5);
   hmuonunmatchedpt = book<TH1D>("muonunmatchedpt", ";p_{T}^{#mu unmatched} [GeV]; Events / bin", 50, 0, 1500);
   hmuonunmatchedpt_rebin = book<TH1D>("muonunmatchedpt_rebin", ";p_{T}^{#mu unmatched} [GeV]; Events / bin", 50, 0, 200);
+  hmuonunmatchedpt_rebin2 = book<TH1D>("muonunmatchedpt_rebin2", ";p_{T}^{#mu unmatched} [GeV]; Events / bin", 50, 0, 50);
   hmuonunmatchedeta = book<TH1D>("muonunmatchedeta", ";#eta^{#mu unmatched};Events / bin", 100, -5., 5.);
   hmuonunmatchedphi = book<TH1D>("muonunmatchedphi", ";#phi^{#mu unmatched};Events / bin", 70, -3.5, 3.5);
   hmuonunmatchedmass = book<TH1D>("muonunmatchedmass", ";m^{#mu unmatched} [GeV];Events / bin", 50, 0, 1500);
@@ -93,6 +97,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 
   hmuon1pt = book<TH1D>("muon1pt", ";p_{T}^{#mu 1} [GeV]; Events / bin", 50, 0, 1500);
   hmuon1pt_rebin = book<TH1D>("muon1pt_rebin", ";p_{T}^{#mu 1} [GeV]; Events / bin", 50, 0, 200);
+  hmuon1pt_rebin2 = book<TH1D>("muon1pt_rebin2", ";p_{T}^{#mu 1} [GeV]; Events / bin", 50, 0, 50);
   hmuon1eta = book<TH1D>("muon1eta", ";#eta^{#mu 1};Events / bin", 100, -5., 5.);
   hmuon1phi = book<TH1D>("muon1phi", ";#phi^{#mu 1};Events / bin", 70, -3.5, 3.5);
   hmuon1mass = book<TH1D>("muon1mass", ";m^{#mu 1} [GeV];Events / bin", 50, 0, 1500);
@@ -108,6 +113,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 
   hmuon2pt = book<TH1D>("muon2pt", ";p_{T}^{#mu 2} [GeV]; Events / bin", 50, 0, 1500);
   hmuon2pt_rebin = book<TH1D>("muon2pt_rebin", ";p_{T}^{#mu 2} [GeV]; Events / bin", 50, 0, 200);
+  hmuon2pt_rebin2 = book<TH1D>("muon2pt_rebin2", ";p_{T}^{#mu 2} [GeV]; Events / bin", 50, 0, 50);
   hmuon2eta = book<TH1D>("muon2eta", ";#eta^{#mu 2};Events / bin", 100, -5., 5.);
   hmuon2phi = book<TH1D>("muon2phi", ";#phi^{#mu 2};Events / bin", 70, -3.5, 3.5);
   hmuon2mass = book<TH1D>("muon2mass", ";m^{#mu 2} [GeV];Events / bin", 50, 0, 1500);
@@ -123,6 +129,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 
   hmuon3pt = book<TH1D>("muon3pt", ";p_{T}^{#mu 3} [GeV]; Events / bin", 50, 0, 1500);
   hmuon3pt_rebin = book<TH1D>("muon3pt_rebin", ";p_{T}^{#mu 3} [GeV]; Events / bin", 50, 0, 200);
+  hmuon3pt_rebin2 = book<TH1D>("muon3pt_rebin2", ";p_{T}^{#mu 3} [GeV]; Events / bin", 50, 0, 50);
   hmuon3eta = book<TH1D>("muon3eta", ";#eta^{#mu 3};Events / bin", 100, -5., 5.);
   hmuon3phi = book<TH1D>("muon3phi", ";#phi^{#mu 3};Events / bin", 70, -3.5, 3.5);
   hmuon3mass = book<TH1D>("muon3mass", ";m^{#mu 3} [GeV];Events / bin", 50, 0, 1500);
@@ -138,6 +145,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 
   hmuon4pt = book<TH1D>("muon4pt", ";p_{T}^{#mu 4} [GeV]; Events / bin", 50, 0, 1500);
   hmuon4pt_rebin = book<TH1D>("muon4pt_rebin", ";p_{T}^{#mu 4} [GeV]; Events / bin", 50, 0, 200);
+  hmuon4pt_rebin2 = book<TH1D>("muon4pt_rebin2", ";p_{T}^{#mu 4} [GeV]; Events / bin", 50, 0, 50);
   hmuon4eta = book<TH1D>("muon4eta", ";#eta^{#mu 4};Events / bin", 100, -5., 5.);
   hmuon4phi = book<TH1D>("muon4phi", ";#phi^{#mu 4};Events / bin", 70, -3.5, 3.5);
   hmuon4mass = book<TH1D>("muon4mass", ";m^{#mu 4} [GeV];Events / bin", 50, 0, 1500);
@@ -201,6 +209,7 @@ void MuonHists::fill(const RecoEvent & event){
 
     hmuonpt->Fill(m.pt(), weight);
     hmuonpt_rebin->Fill(m.pt(), weight);
+    hmuonpt_rebin2->Fill(m.pt(), weight);
     hmuoneta->Fill(m.eta(), weight);
     hmuonphi->Fill(m.phi(), weight);
     hmuonmass->Fill(m.m(), weight);
@@ -218,6 +227,7 @@ void MuonHists::fill(const RecoEvent & event){
     if(gen_origin == 1){
       hmuonfromtaupt->Fill(m.pt(), weight);
       hmuonfromtaupt_rebin->Fill(m.pt(), weight);
+      hmuonfromtaupt_rebin2->Fill(m.pt(), weight);
       hmuonfromtaueta->Fill(m.eta(), weight);
       hmuonfromtauphi->Fill(m.phi(), weight);
       hmuonfromtaumass->Fill(m.m(), weight);
@@ -233,6 +243,7 @@ void MuonHists::fill(const RecoEvent & event){
     else if(gen_origin == 2){
       hmuonfromhadpt->Fill(m.pt(), weight);
       hmuonfromhadpt_rebin->Fill(m.pt(), weight);
+      hmuonfromhadpt_rebin2->Fill(m.pt(), weight);
       hmuonfromhadeta->Fill(m.eta(), weight);
       hmuonfromhadphi->Fill(m.phi(), weight);
       hmuonfromhadmass->Fill(m.m(), weight);
@@ -248,6 +259,7 @@ void MuonHists::fill(const RecoEvent & event){
     else if(gen_origin == -1){
       hmuonunmatchedpt->Fill(m.pt(), weight);
       hmuonunmatchedpt_rebin->Fill(m.pt(), weight);
+      hmuonunmatchedpt_rebin2->Fill(m.pt(), weight);
       hmuonunmatchedeta->Fill(m.eta(), weight);
       hmuonunmatchedphi->Fill(m.phi(), weight);
       hmuonunmatchedmass->Fill(m.m(), weight);
@@ -264,6 +276,7 @@ void MuonHists::fill(const RecoEvent & event){
     if(i==0){
       hmuon1pt->Fill(m.pt(), weight);
       hmuon1pt_rebin->Fill(m.pt(), weight);
+      hmuon1pt_rebin2->Fill(m.pt(), weight);
       hmuon1eta->Fill(m.eta(), weight);
       hmuon1phi->Fill(m.phi(), weight);
       hmuon1mass->Fill(m.m(), weight);
@@ -280,6 +293,7 @@ void MuonHists::fill(const RecoEvent & event){
     else if(i==1){
       hmuon2pt->Fill(m.pt(), weight);
       hmuon2pt_rebin->Fill(m.pt(), weight);
+      hmuon2pt_rebin2->Fill(m.pt(), weight);
       hmuon2eta->Fill(m.eta(), weight);
       hmuon2phi->Fill(m.phi(), weight);
       hmuon2mass->Fill(m.m(), weight);
@@ -296,6 +310,7 @@ void MuonHists::fill(const RecoEvent & event){
     else if(i==2){
       hmuon3pt->Fill(m.pt(), weight);
       hmuon3pt_rebin->Fill(m.pt(), weight);
+      hmuon3pt_rebin2->Fill(m.pt(), weight);
       hmuon3eta->Fill(m.eta(), weight);
       hmuon3phi->Fill(m.phi(), weight);
       hmuon3mass->Fill(m.m(), weight);
@@ -312,6 +327,7 @@ void MuonHists::fill(const RecoEvent & event){
     else if(i==3){
       hmuon4pt->Fill(m.pt(), weight);
       hmuon4pt_rebin->Fill(m.pt(), weight);
+      hmuon4pt_rebin2->Fill(m.pt(), weight);
       hmuon4eta->Fill(m.eta(), weight);
       hmuon4phi->Fill(m.phi(), weight);
       hmuon4mass->Fill(m.m(), weight);

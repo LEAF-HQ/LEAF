@@ -24,6 +24,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
   hnelectrons = book<TH1D>("nelectrons", ";N_{e}; Events / bin", 11, -0.5, 10.5);
   helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 1500);
   helectronpt_rebin = book<TH1D>("electronpt_rebin", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 200);
+  helectronpt_rebin2 = book<TH1D>("electronpt_rebin2", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 50);
   helectroneta = book<TH1D>("electroneta", ";#eta^{e};Events / bin", 100, -5., 5.);
   helectronphi = book<TH1D>("electronphi", ";#phi^{e};Events / bin", 70, -3.5, 3.5);
   helectronmass = book<TH1D>("electronmass", ";m^{e} [GeV];Events / bin", 50, 0, 1500);
@@ -41,6 +42,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
   hnelectronsfromtau = book<TH1D>("nelectronsfromtau", ";N_{e from #tau}; Events / bin", 11, -0.5, 10.5);
   helectronfromtaupt = book<TH1D>("electronfromtaupt", ";p_{T}^{e from #tau} [GeV]; Events / bin", 50, 0, 1500);
   helectronfromtaupt_rebin = book<TH1D>("electronfromtaupt_rebin", ";p_{T}^{e from #tau} [GeV]; Events / bin", 50, 0, 200);
+  helectronfromtaupt_rebin2 = book<TH1D>("electronfromtaupt_rebin2", ";p_{T}^{e from #tau} [GeV]; Events / bin", 50, 0, 50);
   helectronfromtaueta = book<TH1D>("electronfromtaueta", ";#eta^{e from #tau};Events / bin", 100, -5., 5.);
   helectronfromtauphi = book<TH1D>("electronfromtauphi", ";#phi^{e from #tau};Events / bin", 70, -3.5, 3.5);
   helectronfromtaumass = book<TH1D>("electronfromtaumass", ";m^{e from #tau} [GeV];Events / bin", 50, 0, 1500);
@@ -55,6 +57,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
   hnelectronsfromhad = book<TH1D>("nelectronsfromhad", ";N_{e from had.}; Events / bin", 11, -0.5, 10.5);
   helectronfromhadpt = book<TH1D>("electronfromhadpt", ";p_{T}^{e from had.} [GeV]; Events / bin", 50, 0, 1500);
   helectronfromhadpt_rebin = book<TH1D>("electronfromhadpt_rebin", ";p_{T}^{e from had.} [GeV]; Events / bin", 50, 0, 200);
+  helectronfromhadpt_rebin2 = book<TH1D>("electronfromhadpt_rebin2", ";p_{T}^{e from had.} [GeV]; Events / bin", 50, 0, 50);
   helectronfromhadeta = book<TH1D>("electronfromhadeta", ";#eta^{e from had.};Events / bin", 100, -5., 5.);
   helectronfromhadphi = book<TH1D>("electronfromhadphi", ";#phi^{e from had.};Events / bin", 70, -3.5, 3.5);
   helectronfromhadmass = book<TH1D>("electronfromhadmass", ";m^{e from had.} [GeV];Events / bin", 50, 0, 1500);
@@ -69,6 +72,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
   hnelectronsunmatched = book<TH1D>("nelectronsunmatched", ";N_{e unmatched}; Events / bin", 11, -0.5, 10.5);
   helectronunmatchedpt = book<TH1D>("electronunmatchedpt", ";p_{T}^{e unmatched} [GeV]; Events / bin", 50, 0, 1500);
   helectronunmatchedpt_rebin = book<TH1D>("electronunmatchedpt_rebin", ";p_{T}^{e unmatched} [GeV]; Events / bin", 50, 0, 200);
+  helectronunmatchedpt_rebin2 = book<TH1D>("electronunmatchedpt_rebin2", ";p_{T}^{e unmatched} [GeV]; Events / bin", 50, 0, 50);
   helectronunmatchedeta = book<TH1D>("electronunmatchedeta", ";#eta^{e unmatched};Events / bin", 100, -5., 5.);
   helectronunmatchedphi = book<TH1D>("electronunmatchedphi", ";#phi^{e unmatched};Events / bin", 70, -3.5, 3.5);
   helectronunmatchedmass = book<TH1D>("electronunmatchedmass", ";m^{e unmatched} [GeV];Events / bin", 50, 0, 1500);
@@ -88,6 +92,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   helectron1pt = book<TH1D>("electron1pt", ";p_{T}^{e 1} [GeV]; Events / bin", 50, 0, 1500);
   helectron1pt_rebin = book<TH1D>("electron1pt_rebin", ";p_{T}^{e 1} [GeV]; Events / bin", 50, 0, 200);
+  helectron1pt_rebin2 = book<TH1D>("electron1pt_rebin2", ";p_{T}^{e 1} [GeV]; Events / bin", 50, 0, 50);
   helectron1eta = book<TH1D>("electron1eta", ";#eta^{e 1};Events / bin", 100, -5., 5.);
   helectron1phi = book<TH1D>("electron1phi", ";#phi^{e 1};Events / bin", 70, -3.5, 3.5);
   helectron1mass = book<TH1D>("electron1mass", ";m^{e 1} [GeV];Events / bin", 50, 0, 1500);
@@ -101,6 +106,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   helectron2pt = book<TH1D>("electron2pt", ";p_{T}^{e 2} [GeV]; Events / bin", 50, 0, 1500);
   helectron2pt_rebin = book<TH1D>("electron2pt_rebin", ";p_{T}^{e 2} [GeV]; Events / bin", 50, 0, 200);
+  helectron2pt_rebin2 = book<TH1D>("electron2pt_rebin2", ";p_{T}^{e 2} [GeV]; Events / bin", 50, 0, 50);
   helectron2eta = book<TH1D>("electron2eta", ";#eta^{e 2};Events / bin", 100, -5., 5.);
   helectron2phi = book<TH1D>("electron2phi", ";#phi^{e 2};Events / bin", 70, -3.5, 3.5);
   helectron2mass = book<TH1D>("electron2mass", ";m^{e 2} [GeV];Events / bin", 50, 0, 1500);
@@ -114,6 +120,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   helectron3pt = book<TH1D>("electron3pt", ";p_{T}^{e 3} [GeV]; Events / bin", 50, 0, 1500);
   helectron3pt_rebin = book<TH1D>("electron3pt_rebin", ";p_{T}^{e 3} [GeV]; Events / bin", 50, 0, 200);
+  helectron3pt_rebin2 = book<TH1D>("electron3pt_rebin2", ";p_{T}^{e 3} [GeV]; Events / bin", 50, 0, 50);
   helectron3eta = book<TH1D>("electron3eta", ";#eta^{e 3};Events / bin", 100, -5., 5.);
   helectron3phi = book<TH1D>("electron3phi", ";#phi^{e 3};Events / bin", 70, -3.5, 3.5);
   helectron3mass = book<TH1D>("electron3mass", ";m^{e 3} [GeV];Events / bin", 50, 0, 1500);
@@ -127,6 +134,7 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 
   helectron4pt = book<TH1D>("electron4pt", ";p_{T}^{e 4} [GeV]; Events / bin", 50, 0, 1500);
   helectron4pt_rebin = book<TH1D>("electron4pt_rebin", ";p_{T}^{e 4} [GeV]; Events / bin", 50, 0, 200);
+  helectron4pt_rebin2 = book<TH1D>("electron4pt_rebin2", ";p_{T}^{e 4} [GeV]; Events / bin", 50, 0, 50);
   helectron4eta = book<TH1D>("electron4eta", ";#eta^{e 4};Events / bin", 100, -5., 5.);
   helectron4phi = book<TH1D>("electron4phi", ";#phi^{e 4};Events / bin", 70, -3.5, 3.5);
   helectron4mass = book<TH1D>("electron4mass", ";m^{e 4} [GeV];Events / bin", 50, 0, 1500);
@@ -186,6 +194,7 @@ void ElectronHists::fill(const RecoEvent & event){
 
     helectronpt->Fill(e.pt(), weight);
     helectronpt_rebin->Fill(e.pt(), weight);
+    helectronpt_rebin2->Fill(e.pt(), weight);
     helectroneta->Fill(e.eta(), weight);
     helectronphi->Fill(e.phi(), weight);
     helectronmass->Fill(e.m(), weight);
@@ -203,6 +212,7 @@ void ElectronHists::fill(const RecoEvent & event){
     if(gen_origin == 1){
       helectronfromtaupt->Fill(e.pt(), weight);
       helectronfromtaupt_rebin->Fill(e.pt(), weight);
+      helectronfromtaupt_rebin2->Fill(e.pt(), weight);
       helectronfromtaueta->Fill(e.eta(), weight);
       helectronfromtauphi->Fill(e.phi(), weight);
       helectronfromtaumass->Fill(e.m(), weight);
@@ -214,9 +224,10 @@ void ElectronHists::fill(const RecoEvent & event){
       helectronfromtau_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
       helectronfromtaugendrmin->Fill(gendr_min, weight);
     }
-    if(gen_origin == 1){
+    else if(gen_origin == 2){
       helectronfromhadpt->Fill(e.pt(), weight);
       helectronfromhadpt_rebin->Fill(e.pt(), weight);
+      helectronfromhadpt_rebin2->Fill(e.pt(), weight);
       helectronfromhadeta->Fill(e.eta(), weight);
       helectronfromhadphi->Fill(e.phi(), weight);
       helectronfromhadmass->Fill(e.m(), weight);
@@ -231,6 +242,7 @@ void ElectronHists::fill(const RecoEvent & event){
     else if(gen_origin==-1){
       helectronunmatchedpt->Fill(e.pt(), weight);
       helectronunmatchedpt_rebin->Fill(e.pt(), weight);
+      helectronunmatchedpt_rebin2->Fill(e.pt(), weight);
       helectronunmatchedeta->Fill(e.eta(), weight);
       helectronunmatchedphi->Fill(e.phi(), weight);
       helectronunmatchedmass->Fill(e.m(), weight);
@@ -246,6 +258,7 @@ void ElectronHists::fill(const RecoEvent & event){
     if(i==0){
       helectron1pt->Fill(e.pt(), weight);
       helectron1pt_rebin->Fill(e.pt(), weight);
+      helectron1pt_rebin2->Fill(e.pt(), weight);
       helectron1eta->Fill(e.eta(), weight);
       helectron1phi->Fill(e.phi(), weight);
       helectron1mass->Fill(e.m(), weight);
@@ -260,6 +273,7 @@ void ElectronHists::fill(const RecoEvent & event){
     else if(i==1){
       helectron2pt->Fill(e.pt(), weight);
       helectron2pt_rebin->Fill(e.pt(), weight);
+      helectron2pt_rebin2->Fill(e.pt(), weight);
       helectron2eta->Fill(e.eta(), weight);
       helectron2phi->Fill(e.phi(), weight);
       helectron2mass->Fill(e.m(), weight);
@@ -274,6 +288,7 @@ void ElectronHists::fill(const RecoEvent & event){
     else if(i==2){
       helectron3pt->Fill(e.pt(), weight);
       helectron3pt_rebin->Fill(e.pt(), weight);
+      helectron3pt_rebin2->Fill(e.pt(), weight);
       helectron3eta->Fill(e.eta(), weight);
       helectron3phi->Fill(e.phi(), weight);
       helectron3mass->Fill(e.m(), weight);
@@ -288,6 +303,7 @@ void ElectronHists::fill(const RecoEvent & event){
     else if(i==3){
       helectron4pt->Fill(e.pt(), weight);
       helectron4pt_rebin->Fill(e.pt(), weight);
+      helectron4pt_rebin2->Fill(e.pt(), weight);
       helectron4eta->Fill(e.eta(), weight);
       helectron4phi->Fill(e.phi(), weight);
       helectron4mass->Fill(e.m(), weight);
