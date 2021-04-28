@@ -142,7 +142,7 @@ int main(){
     make_pair("MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0",  kBlack),
     make_pair("MC__QCD_Had",                                     kCyan-3),
     make_pair("MC__TT",                                          kOrange+10),
-    make_pair("MC__ST",                                          kAzure-2), // kMagenta-3
+    make_pair("MC__ST",                                          kAzure-2), 
     make_pair("MC__DYJets",                                      kOrange-2),
     make_pair("MC__WJets",                                       kSpring-6)
   };
@@ -172,10 +172,10 @@ int main(){
 
 
   PlottingTool Plotter_Recolevel;
-
-  // TString foldername = "LQDM/2017/Fullselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
-  // // TString foldername = "LQDM/2017/Finalselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
-
+  //
+  // // TString foldername = "LQDM/2017/Fullselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
+  // TString foldername = "LQDM/2017/Finalselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
+  //
   // Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   // Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
   // Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
@@ -189,44 +189,56 @@ int main(){
   // Plotter_Recolevel.set_numerator("DATA__DATA_SingleMuon");
   //
   // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  // Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  // // Plotter_Recolevel.Plot(false, true, true);        // SinglePDF
+  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // Plotter_Recolevel.Plot(true, false, true, true);       // single
   //
   //
   // Plotter_Recolevel.set_outnameprefix("DataElectron_");
   // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleElectron", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
   // Plotter_Recolevel.set_numerator("DATA__DATA_SingleElectron");
-  // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // Plotter_Recolevel.Plot(true, false, true, true);         // single
   //
   //
   //
   // Plotter_Recolevel.set_outnameprefix("DataTau_");
   // Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
   // Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
-  // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // Plotter_Recolevel.Plot(true, false, true, true);        // single
 
 
 
-
-
-  // TString foldername = "LQDM/2017/Preselection/PsiPsi_DitauEleMuJet/";
-  // TString foldername = "LQDM/2017/Preselection/PsiPsi_MuchElchNoch/";
-  TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
-
-  // TString foldername = "LQDM/2017/Fullselection/PsiPsi_TauTau_ElTau_MuTau_ElMu_None/";
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   kRed+4;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   kRed+1;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   kAzure-2;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  kOrange;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = kGreen-2;
+  //
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = 0;
+  //
+  // TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
+  TString foldername = "LQDM/2017/Preselection/PsiPsi_Initial/";
 
   Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
   Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
   Plotter_Recolevel.set_outnameprefix("PsiPsi_");
-  Plotter_Recolevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
+
+  Plotter_Recolevel.set_samplenames({"MC__ST", "MC__TT", "MC__DYJets", "MC__WJets", "MC__QCD_Had", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
+    // Plotter_Recolevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
+    Plotter_Recolevel.set_stacks({"MC__ST", "MC__QCD_Had", "MC__DYJets", "MC__TT", "MC__WJets"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
 
-  // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
+  // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  // Plotter_Recolevel.Plot(false, true, true);        // SinglePDF
+  // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
 
 
 

@@ -187,6 +187,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
   float leg_y_high = 0.9;
   float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
 
+
   // loop over histograms and plot each
   for(size_t i=0; i<histnames.size(); i++){
     TString histname = histnames[i];
@@ -454,7 +455,7 @@ vector<TString> get_histnames(TFile* infile, TString foldername){
   vector<TString> result = {};
   while ((key = (TKey*)iter())) {
     TClass *cl = gROOT->GetClass(key->GetClassName());
-    if(!cl->InheritsFrom("TDirectoryFile") && cl->InheritsFrom("TH1")){
+    if(!cl->InheritsFrom("TDirectoryFile") && cl->InheritsFrom("TH1") && !cl->InheritsFrom("TH2")){
       TString name = key->ReadObj()->GetName();
       result.emplace_back(name);
     }
