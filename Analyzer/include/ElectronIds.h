@@ -14,3 +14,12 @@ public:
 private:
   Electron::Selector sel;
 };
+
+class ElectronIPID {
+public:
+  explicit ElectronIPID(float dmin_, float dmax_ = -1.);
+  bool operator()(const Electron&, const RecoEvent&) const;
+
+private:
+  float dmin, dmax;
+};
