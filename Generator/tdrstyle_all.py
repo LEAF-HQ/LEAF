@@ -362,11 +362,8 @@ def tdrCanvas(canvName, x_min, x_max, y_min, y_max, nameXaxis, nameYaxis, square
   canv.SetRightMargin( R/W )
   canv.SetTopMargin( T/H )
   canv.SetBottomMargin( B/H )
-  # FOR JEC plots, prefer to keep ticks on both sides
-  #canv.SetTickx(0)
-  #canv.SetTicky(0)
-  #
-  # assert(h)
+
+  
   h = canv.DrawFrame(x_min,y_min,x_max,y_max)
   h.GetYaxis().SetTitleOffset(1.25 if square else 1.0)
   h.GetXaxis().SetTitleOffset(1.0  if square else 0.9)
