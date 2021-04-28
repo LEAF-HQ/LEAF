@@ -16,6 +16,7 @@ public:
     m_area = -1.;
     m_score_CSVv2 = -1.;
     m_score_DeepB = -1.;
+    m_score_DeepFlavB = -1.;
     m_score_qgl = -1.;
     m_ch_em_efrac = -1.;
     m_ch_had_efrac = -1.;
@@ -37,6 +38,7 @@ public:
   const float area() const {return m_area;};
   const float score_CSVv2() const {return m_score_CSVv2;};
   const float score_DeepB() const {return m_score_DeepB;};
+  const float score_DeepFlavB() const {return m_score_DeepFlavB;};
   const float score_qgl() const {return m_score_qgl;};
   const float ch_em_efrac() const {return m_ch_em_efrac;};
   const float ch_had_efrac() const {return m_ch_had_efrac;};
@@ -58,6 +60,7 @@ public:
   void set_area(float x){m_area = x;};
   void set_score_CSVv2(float x){m_score_CSVv2 = x;};
   void set_score_DeepB(float x){m_score_DeepB = x;};
+  void set_score_DeepFlavB(float x){m_score_DeepFlavB = x;};
   void set_score_qgl(float x){m_score_qgl = x;};
   void set_ch_em_efrac(float x){m_ch_em_efrac = x;};
   void set_ch_had_efrac(float x){m_ch_had_efrac = x;};
@@ -82,6 +85,7 @@ protected:
   float m_area;
   float m_score_CSVv2;
   float m_score_DeepB;
+  float m_score_DeepFlavB;
   float m_score_qgl;
   float m_ch_em_efrac;
   float m_ch_had_efrac;

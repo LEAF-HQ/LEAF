@@ -85,23 +85,23 @@ public:
     else      m_selector_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
-  uint64_t selector_bits(){return m_selector_bits;};
-  GenPartFlav gen_part_flav(){return m_gen_part_flav;};
-  bool is_global(){return m_is_global;};
-  bool is_pf(){return m_is_pf;};
-  bool is_tracker(){return m_is_tracker;};
-  int charge(){return m_charge;};
-  int jetidx(){return m_jetidx;};
-  float dxy(){return m_dxy;};
-  float dz(){return m_dz;};
-  float iso_mini(){return m_iso_mini;};
-  float iso_mini_charged(){return m_iso_mini_charged;};
-  float iso_rel_04(){return m_iso_rel_04;};
-  float iso_rel_03(){return m_iso_rel_03;};
-  float iso_rel_03_charged(){return m_iso_rel_03_charged;};
-  float pt_err(){return m_pt_err;};
-  float iso_tk(){return m_iso_tk;};
-  float pt_rel_tunep(){return m_pt_rel_tunep;};
+  const uint64_t selector_bits() const {return m_selector_bits;};
+  const GenPartFlav gen_part_flav() const {return m_gen_part_flav;};
+  const bool is_global() const {return m_is_global;};
+  const bool is_pf() const {return m_is_pf;};
+  const bool is_tracker() const {return m_is_tracker;};
+  const int charge() const {return m_charge;};
+  const int jetidx() const {return m_jetidx;};
+  const float dxy() const {return m_dxy;};
+  const float dz() const {return m_dz;};
+  const float iso_mini() const {return m_iso_mini;};
+  const float iso_mini_charged() const {return m_iso_mini_charged;};
+  const float iso_rel_04() const {return m_iso_rel_04;};
+  const float iso_rel_03() const {return m_iso_rel_03;};
+  const float iso_rel_03_charged() const {return m_iso_rel_03_charged;};
+  const float pt_err() const {return m_pt_err;};
+  const float iso_tk() const {return m_iso_tk;};
+  const float pt_rel_tunep() const {return m_pt_rel_tunep;};
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
   void set_gen_part_flav(GenPartFlav x){m_gen_part_flav = x;};

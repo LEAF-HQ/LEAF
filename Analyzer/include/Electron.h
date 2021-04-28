@@ -53,22 +53,22 @@ public:
     else      m_selector_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
-  uint64_t selector_bits(){return m_selector_bits;};
-  int jetidx(){return m_jetidx;};
-  int charge(){return m_charge;};
-  int id_bitmap(){return m_id_bitmap;};
-  int lost_hits(){return m_lost_hits;};
-  bool conv_veto(){return m_conv_veto;};
-  bool is_pf(){return m_is_pf;};
-  float delta_eta_sc(){return m_delta_eta_sc;};
-  float dxy(){return m_dxy;};
-  float dz(){return m_dz;};
-  float einv_minus_pinv(){return m_einv_minus_pinv;};
-  float h_over_e(){return m_h_over_e;};
-  float ip_3d(){return m_ip_3d;};
-  float iso_rel_03(){return m_iso_rel_03;};
-  float iso_rel_03_charged(){return m_iso_rel_03_charged;};
-  float sigma_ietaieta(){return m_sigma_ietaieta;};
+  const uint64_t selector_bits() const {return m_selector_bits;};
+  const int jetidx() const {return m_jetidx;};
+  const int charge() const {return m_charge;};
+  const int id_bitmap() const {return m_id_bitmap;};
+  const int lost_hits() const {return m_lost_hits;};
+  const bool conv_veto() const {return m_conv_veto;};
+  const bool is_pf() const {return m_is_pf;};
+  const float delta_eta_sc() const {return m_delta_eta_sc;};
+  const float dxy() const {return m_dxy;};
+  const float dz() const {return m_dz;};
+  const float einv_minus_pinv() const {return m_einv_minus_pinv;};
+  const float h_over_e() const {return m_h_over_e;};
+  const float ip_3d() const {return m_ip_3d;};
+  const float iso_rel_03() const {return m_iso_rel_03;};
+  const float iso_rel_03_charged() const {return m_iso_rel_03_charged;};
+  const float sigma_ietaieta() const {return m_sigma_ietaieta;};
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
   void set_jetidx(int x){m_jetidx = x;};
