@@ -661,19 +661,12 @@ int main(int argc, char* argv[]){
     if(exists_HLT_Ele32_WPTight_Gsf){
       event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
     }
-    // else{
-    //   event.flags->set("HLT_Ele32_WPTight_Gsf", false);
-    // }
 
     event.flags->set("HLT_Ele35_WPTight_Gsf", *HLT_Ele35_WPTight_Gsf);
 
-    // event.flags->set("HLT_Ele32_WPTight_Gsf", *HLT_Ele32_WPTight_Gsf);
     if(exists_HLT_Ele115_CaloIdVT_GsfTrkIdT){
       event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", *HLT_Ele115_CaloIdVT_GsfTrkIdT);
     }
-    // else{
-    //   event.flags->set("HLT_Ele115_CaloIdVT_GsfTrkIdT", false);
-    // }
     event.flags->set("HLT_Photon200", *HLT_Photon200);
     event.flags->set("HLT_Photon175", *HLT_Photon175);
     event.flags->set("HLT_IsoMu24", *HLT_IsoMu24);
@@ -683,16 +676,10 @@ int main(int argc, char* argv[]){
     if(exists_HLT_TkMu100){
       event.flags->set("HLT_TkMu100", *HLT_TkMu100);
     }
-    // else{
-    //   event.flags->set("HLT_TkMu100", false);
-    // }
 
     if(exists_HLT_OldMu100){
       event.flags->set("HLT_OldMu100", *HLT_OldMu100);
     }
-    // else{
-    //   event.flags->set("HLT_OldMu100", false);
-    // }
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg);
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg);
     event.flags->set("HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", *HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg);
