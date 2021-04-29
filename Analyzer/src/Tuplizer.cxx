@@ -59,7 +59,7 @@ int main(int argc, char* argv[]){
   tree->Branch("Events", &event);
 
   fwlite::Handle<std::vector<reco::GenParticle> > handle_gps;
-  fwlite::Handle<vector<reco::GenMET> >           handle_met;
+  // fwlite::Handle<vector<reco::GenMET> >           handle_met;
   fwlite::Handle<vector<reco::GenJet> >           handle_genjets;
   fwlite::Handle<GenEventInfoProduct>             handle_geninfo;
 
@@ -70,10 +70,10 @@ int main(int argc, char* argv[]){
     if(((idx+1) % 500 == 0) || idx == 0) cout << green << "    --> At event: " << idx+1 << reset << endl;
     // cout << "=========== NEW EVENT" << endl;
     handle_gps    .getByLabel(ev, "genParticles");
-    handle_met    .getByLabel(ev, "genMetTrue");
+    // handle_met    .getByLabel(ev, "genMetTrue");
     handle_genjets.getByLabel(ev, "ak4GenJets");
     handle_geninfo.getByLabel(ev, "generator");
-    const std::vector<reco::GenMET, std::allocator<reco::GenMET>>*           gm  = handle_met.product();
+    // const std::vector<reco::GenMET, std::allocator<reco::GenMET>>*           gm  = handle_met.product();
     const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* gps = handle_gps.product();
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>*           gjs = handle_genjets.product();
     const GenEventInfoProduct*                                               gif = handle_geninfo.product();
@@ -192,12 +192,15 @@ int main(int argc, char* argv[]){
     // Do GenMET
     // =========
 
-    event.genmet->set_pt(gm->at(0).pt());
-    event.genmet->set_phi(gm->at(0).phi());
-    // cout << "GenMET: " << gm->at(0).pt() << endl;
+    // The p4suminvis is safer than just gen-met. on gen-level, gen-met is sometimes buggy and does not recognize DM as MET.
+    // event.genmet->set_pt(gm->at(0).pt());
+    // event.genmet->set_phi(gm->at(0).phi());
+    event.genmet->set_pt(p4suminvis.pt());
+    event.genmet->set_phi(p4suminvis.phi());
 
-    event.genmet_invis->set_pt(p4suminvis.pt());
-    event.genmet_invis->set_phi(p4suminvis.phi());
+    // TODO This is commented in the GenEvent -- probably don't need a separate Gensim analyzer anymore?
+    // event.genmet_invis->set_pt(p4suminvis.pt());
+    // event.genmet_invis->set_phi(p4suminvis.phi());
     // cout << "sum invis: " << p4suminvis.pt() << endl;
 
 
