@@ -30,7 +30,7 @@ public:
   void reset();
   TString get_runperiod(TString year);
 
-  GenInfo* geninfo;
+  GenInfo* geninfo; //
   Flags* flags;
   Met* met; //
   Met* rawmet; //

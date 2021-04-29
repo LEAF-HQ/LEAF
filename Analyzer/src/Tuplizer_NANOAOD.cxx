@@ -159,14 +159,14 @@ int main(int argc, char* argv[]){
   else                exists_lhe = false;
   if(exists_lhe) varname = "LHEWeight_originalXWGTUP";
   TTreeReaderValue<float> geninfo_originalXWGTUP(reader, varname);
-  if(exists_lhe) varname = "LHEScaleWeight";
-  TTreeReaderArray<float> geninfo_systweights_scale(reader, varname);
-  if(exists_lhe) varname = "LHEPdfWeight";
-  TTreeReaderArray<float> geninfo_systweights_pdf(reader, varname);
+  // if(exists_lhe) varname = "LHEScaleWeight";
+  // TTreeReaderArray<float> geninfo_systweights_scale(reader, varname);
+  // if(exists_lhe) varname = "LHEPdfWeight";
+  // TTreeReaderArray<float> geninfo_systweights_pdf(reader, varname);
   if(is_mc) varname = "Generator_weight";
   TTreeReaderValue<float> geninfo_weight(reader, varname);
-  if(is_mc) varname = "Generator_binvar";
-  TTreeReaderValue<float> geninfo_binvar(reader, varname);
+  // if(is_mc) varname = "Generator_binvar";
+  // TTreeReaderValue<float> geninfo_binvar(reader, varname);
   if(is_mc) varname = "Generator_scalePDF";
   TTreeReaderValue<float> geninfo_scale_pdf(reader, varname);
   if(is_mc) varname = "Generator_x1";
@@ -602,21 +602,21 @@ int main(int argc, char* argv[]){
     // ==========
     if(is_mc){
       if(exists_lhe){
-        vector<float> vector_systweights_pdf = {};
-        for(size_t i=0; i<*geninfo_n_systweights_pdf; i++){
-          vector_systweights_pdf.emplace_back(geninfo_systweights_pdf[i]);
-        }
-        event.geninfo->set_systweights_pdf(vector_systweights_pdf);
-
-        vector<float> vector_systweights_scale = {};
-        for(size_t i=0; i<*geninfo_n_systweights_scale; i++){
-          vector_systweights_scale.emplace_back(geninfo_systweights_scale[i]);
-        }
-        event.geninfo->set_systweights_scale(vector_systweights_scale);
+        // vector<float> vector_systweights_pdf = {};
+        // for(size_t i=0; i<*geninfo_n_systweights_pdf; i++){
+        //   vector_systweights_pdf.emplace_back(geninfo_systweights_pdf[i]);
+        // }
+        // event.geninfo->set_systweights_pdf(vector_systweights_pdf);
+        //
+        // vector<float> vector_systweights_scale = {};
+        // for(size_t i=0; i<*geninfo_n_systweights_scale; i++){
+        //   vector_systweights_scale.emplace_back(geninfo_systweights_scale[i]);
+        // }
+        // event.geninfo->set_systweights_scale(vector_systweights_scale);
         event.geninfo->set_originalXWGTUP(*geninfo_originalXWGTUP);
       }
 
-      event.geninfo->set_binvar(*geninfo_binvar);
+      // event.geninfo->set_binvar(*geninfo_binvar);
       event.geninfo->set_id1(*geninfo_id1);
       event.geninfo->set_id2(*geninfo_id2);
       event.geninfo->set_scale_pdf(*geninfo_scale_pdf);

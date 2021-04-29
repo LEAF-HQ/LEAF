@@ -1084,67 +1084,67 @@ namespace ROOT {
 } // end of namespace ROOT for class ::RecoEvent
 
 namespace ROOT {
-   static TClass *vectorlEfloatgR_Dictionary();
-   static void vectorlEfloatgR_TClassManip(TClass*);
-   static void *new_vectorlEfloatgR(void *p = 0);
-   static void *newArray_vectorlEfloatgR(Long_t size, void *p);
-   static void delete_vectorlEfloatgR(void *p);
-   static void deleteArray_vectorlEfloatgR(void *p);
-   static void destruct_vectorlEfloatgR(void *p);
+   static TClass *vectorlEdoublegR_Dictionary();
+   static void vectorlEdoublegR_TClassManip(TClass*);
+   static void *new_vectorlEdoublegR(void *p = 0);
+   static void *newArray_vectorlEdoublegR(Long_t size, void *p);
+   static void delete_vectorlEdoublegR(void *p);
+   static void deleteArray_vectorlEdoublegR(void *p);
+   static void destruct_vectorlEdoublegR(void *p);
 
    // Function generating the singleton type initializer
-   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<float>*)
+   static TGenericClassInfo *GenerateInitInstanceLocal(const vector<double>*)
    {
-      vector<float> *ptr = 0;
-      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<float>));
+      vector<double> *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<double>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<float>", -2, "vector", 216,
-                  typeid(vector<float>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &vectorlEfloatgR_Dictionary, isa_proxy, 0,
-                  sizeof(vector<float>) );
-      instance.SetNew(&new_vectorlEfloatgR);
-      instance.SetNewArray(&newArray_vectorlEfloatgR);
-      instance.SetDelete(&delete_vectorlEfloatgR);
-      instance.SetDeleteArray(&deleteArray_vectorlEfloatgR);
-      instance.SetDestructor(&destruct_vectorlEfloatgR);
-      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<float> >()));
+         instance("vector<double>", -2, "vector", 216,
+                  typeid(vector<double>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &vectorlEdoublegR_Dictionary, isa_proxy, 0,
+                  sizeof(vector<double>) );
+      instance.SetNew(&new_vectorlEdoublegR);
+      instance.SetNewArray(&newArray_vectorlEdoublegR);
+      instance.SetDelete(&delete_vectorlEdoublegR);
+      instance.SetDeleteArray(&deleteArray_vectorlEdoublegR);
+      instance.SetDestructor(&destruct_vectorlEdoublegR);
+      instance.AdoptCollectionProxyInfo(TCollectionProxyInfo::Generate(TCollectionProxyInfo::Pushback< vector<double> >()));
       return &instance;
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<float>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const vector<double>*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
-   static TClass *vectorlEfloatgR_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<float>*)0x0)->GetClass();
-      vectorlEfloatgR_TClassManip(theClass);
+   static TClass *vectorlEdoublegR_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const vector<double>*)0x0)->GetClass();
+      vectorlEdoublegR_TClassManip(theClass);
    return theClass;
    }
 
-   static void vectorlEfloatgR_TClassManip(TClass* ){
+   static void vectorlEdoublegR_TClassManip(TClass* ){
    }
 
 } // end of namespace ROOT
 
 namespace ROOT {
    // Wrappers around operator new
-   static void *new_vectorlEfloatgR(void *p) {
-      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<float> : new vector<float>;
+   static void *new_vectorlEdoublegR(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<double> : new vector<double>;
    }
-   static void *newArray_vectorlEfloatgR(Long_t nElements, void *p) {
-      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<float>[nElements] : new vector<float>[nElements];
+   static void *newArray_vectorlEdoublegR(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) vector<double>[nElements] : new vector<double>[nElements];
    }
    // Wrapper around operator delete
-   static void delete_vectorlEfloatgR(void *p) {
-      delete ((vector<float>*)p);
+   static void delete_vectorlEdoublegR(void *p) {
+      delete ((vector<double>*)p);
    }
-   static void deleteArray_vectorlEfloatgR(void *p) {
-      delete [] ((vector<float>*)p);
+   static void deleteArray_vectorlEdoublegR(void *p) {
+      delete [] ((vector<double>*)p);
    }
-   static void destruct_vectorlEfloatgR(void *p) {
-      typedef vector<float> current_t;
+   static void destruct_vectorlEdoublegR(void *p) {
+      typedef vector<double> current_t;
       ((current_t*)p)->~current_t();
    }
-} // end of namespace ROOT for class vector<float>
+} // end of namespace ROOT for class vector<double>
 
 namespace ROOT {
    static TClass *vectorlETriggerObjectgR_Dictionary();
