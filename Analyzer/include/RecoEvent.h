@@ -34,7 +34,7 @@ public:
   Flags* flags; //
   Met* met; //
   Met* rawmet; //
-  vector<TriggerObject>* triggerobjects;
+  vector<TriggerObject>* triggerobjects; //
   vector<Jet>* jets;//
   vector<Tau>* taus;
   vector<Muon>* muons;

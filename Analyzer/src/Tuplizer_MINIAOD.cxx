@@ -423,51 +423,51 @@ int main(int argc, char* argv[]){
     }
 
 
-    // Do HLT objects
+    // Do HLT objects  (these are super heavy, add only once the need arises)
     // ==============
-    for(size_t i=0; i<triggerobjects->size(); i++){
-      pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
-      bool fired_hlt = false;
-      vector<TriggerObject::ID> ids = {};
-      for(size_t j=0; j<triggerobject.filterIds().size(); j++){
-        int id = triggerobject.filterIds()[j];
-        if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
-
-        if(id == trigger::TriggerObjectType::TriggerPhoton) ids.emplace_back(TriggerObject::Photon);
-        else if(id == trigger::TriggerObjectType::TriggerElectron) ids.emplace_back(TriggerObject::Electron);
-        else if(id == trigger::TriggerObjectType::TriggerMuon) ids.emplace_back(TriggerObject::Muon);
-        else if(id == trigger::TriggerObjectType::TriggerTau) ids.emplace_back(TriggerObject::Tau);
-        else if(id == trigger::TriggerObjectType::TriggerJet) ids.emplace_back(TriggerObject::Jet);
-        else if(id == trigger::TriggerObjectType::TriggerBJet) ids.emplace_back(TriggerObject::BJet);
-        else if(id == trigger::TriggerObjectType::TriggerMET) ids.emplace_back(TriggerObject::MET);
-        else if(id == trigger::TriggerObjectType::TriggerTET) ids.emplace_back(TriggerObject::ET);
-        else if(id == trigger::TriggerObjectType::TriggerTHT) ids.emplace_back(TriggerObject::HT);
-        else if(id == trigger::TriggerObjectType::TriggerMHT) ids.emplace_back(TriggerObject::MHT);
-        else if(id == trigger::TriggerObjectType::TriggerTrack) ids.emplace_back(TriggerObject::Track);
-        else ids.emplace_back(TriggerObject::Other);
-      }
-      if(fired_hlt){
-        TriggerObject to;
-        triggerobject.unpackPathNames(hltnames);
-        vector<string> pathNamesAll  = triggerobject.pathNames(false);
-        vector<TString> new_hltnames = {};
-        for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
-        to.set_hltnames(new_hltnames);
-
-        triggerobject.unpackFilterLabels(ev, *hltresults);
-        vector<string> filternames = triggerobject.filterLabels();
-        vector<TString> new_filternames = {};
-        for(const string & name : filternames) new_filternames.emplace_back(name);
-        to.set_filternames(new_filternames);
-
-        to.set_pt(triggerobject.pt());
-        to.set_eta(triggerobject.eta());
-        to.set_phi(triggerobject.phi());
-        to.set_m(triggerobject.mass());
-        to.set_charge(triggerobject.charge());
-        // event.triggerobjects->emplace_back(to); // these are super heavy, add only once the need arises
-      }
-    }
+    // for(size_t i=0; i<triggerobjects->size(); i++){
+    //   pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
+    //   bool fired_hlt = false;
+    //   vector<TriggerObject::ID> ids = {};
+    //   for(size_t j=0; j<triggerobject.filterIds().size(); j++){
+    //     int id = triggerobject.filterIds()[j];
+    //     if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
+    //
+    //     if(id == trigger::TriggerObjectType::TriggerPhoton) ids.emplace_back(TriggerObject::Photon);
+    //     else if(id == trigger::TriggerObjectType::TriggerElectron) ids.emplace_back(TriggerObject::Electron);
+    //     else if(id == trigger::TriggerObjectType::TriggerMuon) ids.emplace_back(TriggerObject::Muon);
+    //     else if(id == trigger::TriggerObjectType::TriggerTau) ids.emplace_back(TriggerObject::Tau);
+    //     else if(id == trigger::TriggerObjectType::TriggerJet) ids.emplace_back(TriggerObject::Jet);
+    //     else if(id == trigger::TriggerObjectType::TriggerBJet) ids.emplace_back(TriggerObject::BJet);
+    //     else if(id == trigger::TriggerObjectType::TriggerMET) ids.emplace_back(TriggerObject::MET);
+    //     else if(id == trigger::TriggerObjectType::TriggerTET) ids.emplace_back(TriggerObject::ET);
+    //     else if(id == trigger::TriggerObjectType::TriggerTHT) ids.emplace_back(TriggerObject::HT);
+    //     else if(id == trigger::TriggerObjectType::TriggerMHT) ids.emplace_back(TriggerObject::MHT);
+    //     else if(id == trigger::TriggerObjectType::TriggerTrack) ids.emplace_back(TriggerObject::Track);
+    //     else ids.emplace_back(TriggerObject::Other);
+    //   }
+    //   if(fired_hlt){
+    //     TriggerObject to;
+    //     triggerobject.unpackPathNames(hltnames);
+    //     vector<string> pathNamesAll  = triggerobject.pathNames(false);
+    //     vector<TString> new_hltnames = {};
+    //     for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
+    //     to.set_hltnames(new_hltnames);
+    //
+    //     triggerobject.unpackFilterLabels(ev, *hltresults);
+    //     vector<string> filternames = triggerobject.filterLabels();
+    //     vector<TString> new_filternames = {};
+    //     for(const string & name : filternames) new_filternames.emplace_back(name);
+    //     to.set_filternames(new_filternames);
+    //
+    //     to.set_pt(triggerobject.pt());
+    //     to.set_eta(triggerobject.eta());
+    //     to.set_phi(triggerobject.phi());
+    //     to.set_m(triggerobject.mass());
+    //     to.set_charge(triggerobject.charge());
+    //     event.triggerobjects->emplace_back(to);
+    //   }
+    // }
 
 
 
