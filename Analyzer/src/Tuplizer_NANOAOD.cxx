@@ -731,16 +731,16 @@ int main(int argc, char* argv[]){
     for(size_t i=0; i<*trigobj_n; i++){
       TriggerObject t;
 
-      t.set_id((TriggerObject::ID)trigobj_id[i]);
-      t.set_filter_bits(trigobj_filter_bits[i]);
+      // t.set_id((TriggerObject::ID)trigobj_id[i]);
+      // t.set_filter_bits(trigobj_filter_bits[i]);
       t.set_pt(trigobj_pt[i]);
       t.set_eta(trigobj_eta[i]);
       t.set_phi(trigobj_phi[i]);
-      t.set_l1pt(trigobj_l1pt[i]);
-      t.set_l1pt2(trigobj_l1pt2[i]);
-      t.set_l1iso(trigobj_l1iso[i]);
-      t.set_l1charge(trigobj_l1charge[i]);
-      t.set_l2pt(trigobj_l2pt[i]);
+      // t.set_l1pt(trigobj_l1pt[i]);
+      // t.set_l1pt2(trigobj_l1pt2[i]);
+      // t.set_l1iso(trigobj_l1iso[i]);
+      // t.set_l1charge(trigobj_l1charge[i]);
+      // t.set_l2pt(trigobj_l2pt[i]);
 
       event.triggerobjects->emplace_back(t);
     }

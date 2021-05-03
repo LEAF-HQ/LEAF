@@ -31,7 +31,7 @@ public:
   TString get_runperiod(TString year);
 
   GenInfo* geninfo; //
-  Flags* flags;
+  Flags* flags; //
   Met* met; //
   Met* rawmet; //
   vector<TriggerObject>* triggerobjects;

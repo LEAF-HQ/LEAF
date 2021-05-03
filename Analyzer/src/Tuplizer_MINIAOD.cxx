@@ -23,6 +23,10 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
+
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "FWCore/FWLite/interface/FWLiteEnabler.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
@@ -118,6 +122,9 @@ int main(int argc, char* argv[]){
   fwlite::Handle< std::vector<reco::GenParticle> > handle_genparticles;
   fwlite::Handle< GenEventInfoProduct > handle_geninfo;
   fwlite::Handle< LHEEventProduct > handle_lhe;
+  fwlite::Handle< edm::TriggerResults > handle_hltresults;
+  fwlite::Handle< edm::TriggerResults > handle_metfilterresults;
+  fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
 
 
 
@@ -142,6 +149,13 @@ int main(int argc, char* argv[]){
     handle_genparticles.getByLabel(ev, "prunedGenParticles");
     handle_geninfo.getByLabel(ev, "generator");
     handle_lhe.getByLabel(ev, "externalLHEProducer");
+    handle_hltresults.getByLabel(ev, "TriggerResults", "", "HLT");
+    TString metfilterstep = "PAT";
+    if(!is_mc) metfilterstep = "RECO";
+    handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
+    handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
+
+
 
 
     const std::vector<pat::Jet, std::allocator<pat::Jet>>*           jets       = handle_jets.product();
@@ -159,8 +173,13 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* genparticles = handle_genparticles.product();
     const GenEventInfoProduct* geninfo = handle_geninfo.product();
     const LHEEventProduct* lhe = handle_lhe.product();
-    // std::vector<reco::GenParticle>*
-    // GenParticlesHelper::findParticles(
+    const edm::TriggerResults* hltresults = handle_hltresults.product();
+    const edm::TriggerNames &hltnames = ev.triggerNames(*hltresults);
+    const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
+    const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
+    const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
+
+
     if(idx < idx_start){
       idx++;
       continue;
@@ -371,11 +390,11 @@ int main(int argc, char* argv[]){
       }
 
       event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
-      cout << "orig: " << lhe->originalXWGTUP() << endl;
+      // cout << "orig: " << lhe->originalXWGTUP() << endl;
       vector<double> systweights = {};
       for(unsigned int i=0; i<lhe->weights().size(); i++){
         systweights.emplace_back(lhe->weights().at(i).wgt);
-        cout << "weight " << i << ": " <<lhe->weights().at(i).wgt << endl;
+        // cout << "weight " << i << ": " <<lhe->weights().at(i).wgt << endl;
       }
       event.geninfo->set_systweights(systweights);
 
@@ -386,6 +405,70 @@ int main(int argc, char* argv[]){
     else{
       event.weight = 1.;
     }
+
+
+    // Do MetfilterFlags
+    // =================
+    for(size_t i=0; i<metfilterresults->size(); ++i){
+      event.flags->set(metfilternames.triggerName(i), metfilterresults->accept(i));
+      // cout << "trigger name: " << metfilternames.triggerName(i) << ": " << metfilterresults->accept(i) << endl;
+    }
+
+
+    // Do HLT flags
+    // ============
+    for(size_t i=0; i<hltresults->size(); ++i){
+      event.flags->set(hltnames.triggerName(i), hltresults->accept(i));
+      // cout << "trigger name: " << hltnames.triggerName(i) << ": " << hltresults->accept(i) << endl;
+    }
+
+
+    // Do HLT objects
+    // ==============
+    for(size_t i=0; i<triggerobjects->size(); i++){
+      pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
+      bool fired_hlt = false;
+      vector<TriggerObject::ID> ids = {};
+      for(size_t j=0; j<triggerobject.filterIds().size(); j++){
+        int id = triggerobject.filterIds()[j];
+        if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
+
+        if(id == trigger::TriggerObjectType::TriggerPhoton) ids.emplace_back(TriggerObject::Photon);
+        else if(id == trigger::TriggerObjectType::TriggerElectron) ids.emplace_back(TriggerObject::Electron);
+        else if(id == trigger::TriggerObjectType::TriggerMuon) ids.emplace_back(TriggerObject::Muon);
+        else if(id == trigger::TriggerObjectType::TriggerTau) ids.emplace_back(TriggerObject::Tau);
+        else if(id == trigger::TriggerObjectType::TriggerJet) ids.emplace_back(TriggerObject::Jet);
+        else if(id == trigger::TriggerObjectType::TriggerBJet) ids.emplace_back(TriggerObject::BJet);
+        else if(id == trigger::TriggerObjectType::TriggerMET) ids.emplace_back(TriggerObject::MET);
+        else if(id == trigger::TriggerObjectType::TriggerTET) ids.emplace_back(TriggerObject::ET);
+        else if(id == trigger::TriggerObjectType::TriggerTHT) ids.emplace_back(TriggerObject::HT);
+        else if(id == trigger::TriggerObjectType::TriggerMHT) ids.emplace_back(TriggerObject::MHT);
+        else if(id == trigger::TriggerObjectType::TriggerTrack) ids.emplace_back(TriggerObject::Track);
+        else ids.emplace_back(TriggerObject::Other);
+      }
+      if(fired_hlt){
+        TriggerObject to;
+        triggerobject.unpackPathNames(hltnames);
+        vector<string> pathNamesAll  = triggerobject.pathNames(false);
+        vector<TString> new_hltnames = {};
+        for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
+        to.set_hltnames(new_hltnames);
+
+        triggerobject.unpackFilterLabels(ev, *hltresults);
+        vector<string> filternames = triggerobject.filterLabels();
+        vector<TString> new_filternames = {};
+        for(const string & name : filternames) new_filternames.emplace_back(name);
+        to.set_filternames(new_filternames);
+
+        to.set_pt(triggerobject.pt());
+        to.set_eta(triggerobject.eta());
+        to.set_phi(triggerobject.phi());
+        to.set_m(triggerobject.mass());
+        to.set_charge(triggerobject.charge());
+        // event.triggerobjects->emplace_back(to); // these are super heavy, add only once the need arises
+      }
+    }
+
 
 
     // Do MET
