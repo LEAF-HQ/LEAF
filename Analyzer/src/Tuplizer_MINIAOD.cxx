@@ -50,6 +50,7 @@
 #include "PhysicsTools/HepMCCandAlgos/interface/GenParticlesHelper.h"
 
 #include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"
+#include "PhysicsTools/NanoAOD/interface/MatchingUtils.h"
 
 #pragma GCC diagnostic pop
 
@@ -547,6 +548,143 @@ int main(int argc, char* argv[]){
       j.set_jet_id(pass_tight*2 + pass_tight_lepveto*4);
       event.jets->emplace_back(j);
     }
+
+
+    // Do Muons
+    // =======
+    for(size_t i=0; i<muons->size(); i++){
+      pat::Muon patmu = muons->at(i);
+      Muon m;
+
+      m.set_charge(patmu.charge());
+      m.set_pt(patmu.pt());
+      m.set_eta(patmu.eta());
+      m.set_phi(patmu.phi());
+      m.set_m(patmu.mass());
+      m.set_selector(Muon::Global    , patmu.isGlobalMuon());
+      m.set_selector(Muon::PF        , patmu.isPFMuon());
+      m.set_selector(Muon::Tracker   , patmu.isTrackerMuon());
+      m.set_selector(Muon::Standalone, patmu.isStandAloneMuon());
+      m.set_selector(Muon::Good, muon::isGoodMuon(patmu, muon::TMOneStationTight));
+      int jetidx = -1;
+
+      for (unsigned int j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = jets->at(j);
+        if (matchByCommonSourceCandidatePtr(patmu, jet)) {
+          jetidx = j;
+          break;
+        }
+      }
+      m.set_jetidx(jetidx);
+      m.set_pdgid(patmu.pdgId());
+      m.set_dxy(fabs(patmu.dB(pat::Muon::PV2D)));
+      m.set_dz(fabs(patmu.dB(pat::Muon::PVDZ)));
+      m.set_d0(fabs(patmu.dB(pat::Muon::PV3D)));
+      m.set_edxy(patmu.edB(pat::Muon::PV2D));
+      m.set_edz(patmu.edB(pat::Muon::PVDZ));
+      m.set_ed0(patmu.edB(pat::Muon::PV3D));
+
+      if(patmu.tunePMuonBestTrack().isNonnull()){
+        edm::Ref<std::vector<reco::Track> > tunePtrack = patmu.tunePMuonBestTrack();
+        m.set_tunep_pt(tunePtrack->pt());
+        m.set_tunep_pt_err(tunePtrack->ptError());
+        m.set_tunep_eta(tunePtrack->eta());
+        m.set_tunep_phi(tunePtrack->phi());
+        m.set_tunep_numberOfValidMuonHits(tunePtrack->hitPattern().numberOfValidMuonHits());
+        m.set_iso_tk(patmu.isolationR03().sumPt/tunePtrack->pt());
+      }
+      m.set_pt_err(patmu.bestTrack()->ptError());
+
+      // m.set_iso_mini(muon_iso_mini[i]);
+      // m.set_iso_mini_charged(muon_iso_mini_charged[i]);
+      m.set_iso_rel_03(patmu.pfIsolationR03().sumChargedHadronPt + max(patmu.pfIsolationR03().sumNeutralHadronEt + patmu.pfIsolationR03().sumPhotonEt - patmu.pfIsolationR03().sumPUPt/2,float(0.0))/patmu.pt());
+      m.set_iso_rel_04(patmu.pfIsolationR04().sumChargedHadronPt + max(patmu.pfIsolationR04().sumNeutralHadronEt + patmu.pfIsolationR04().sumPhotonEt - patmu.pfIsolationR04().sumPUPt/2,float(0.0))/patmu.pt());
+      m.set_iso_rel_03_charged(patmu.pfIsolationR03().sumChargedHadronPt/patmu.pt());
+      m.set_sumchpt(patmu.pfIsolationR04().sumChargedHadronPt);
+      m.set_sumnhet(patmu.pfIsolationR04().sumNeutralHadronEt);
+      m.set_sumphpt(patmu.pfIsolationR04().sumPhotonEt);
+      m.set_sumpupt(patmu.pfIsolationR04().sumPUPt);
+      //
+      // //set ID bits
+      m.set_selector(Muon::IDCutBasedLoose, patmu.passed(reco::Muon::CutBasedIdLoose));
+      m.set_selector(Muon::IDCutBasedMedium, patmu.passed(reco::Muon::CutBasedIdMedium));
+      m.set_selector(Muon::IDCutBasedMediumPrompt, patmu.passed(reco::Muon::CutBasedIdMediumPrompt));
+      m.set_selector(Muon::IDCutBasedTight, patmu.passed(reco::Muon::CutBasedIdTight));
+      m.set_selector(Muon::IDCutBasedGlobalHighPt, patmu.passed(reco::Muon::CutBasedIdGlobalHighPt));
+      m.set_selector(Muon::IDCutBasedTrackerHighPt, patmu.passed(reco::Muon::CutBasedIdTrkHighPt));
+      m.set_selector(Muon::IDCutBasedSoft, patmu.passed(reco::Muon::SoftCutBasedId));
+      m.set_selector(Muon::IDMvaSoft, patmu.passed(reco::Muon::SoftMvaId));
+      m.set_selector(Muon::IDMvaLoose, patmu.passed(reco::Muon::MvaLoose));
+      m.set_selector(Muon::IDMvaMedium, patmu.passed(reco::Muon::MvaMedium));
+      m.set_selector(Muon::IDMvaTight, patmu.passed(reco::Muon::MvaTight));
+      m.set_selector(Muon::IDMvaVTight, patmu.passed(reco::Muon::MvaVTight));
+      m.set_selector(Muon::IDMvaVVTight, patmu.passed(reco::Muon::MvaVVTight));
+      m.set_selector(Muon::IDMvaLowPtLoose, patmu.passed(reco::Muon::LowPtMvaLoose));
+      m.set_selector(Muon::IDMvaLowPtMedium, patmu.passed(reco::Muon::LowPtMvaMedium));
+      m.set_selector(Muon::IDTriggerLoose, patmu.passed(reco::Muon::TriggerIdLoose));
+
+      m.set_selector(Muon::IsoMultiLoose  , patmu.passed(reco::Muon::MultiIsoLoose));
+      m.set_selector(Muon::IsoMultiMedium      , patmu.passed(reco::Muon::MultiIsoMedium));
+      m.set_selector(Muon::IsoPFVLoose  , patmu.passed(reco::Muon::PFIsoVeryLoose));
+      m.set_selector(Muon::IsoPFLoose      , patmu.passed(reco::Muon::PFIsoLoose));
+      m.set_selector(Muon::IsoPFMedium     , patmu.passed(reco::Muon::PFIsoMedium));
+      m.set_selector(Muon::IsoPFTight      , patmu.passed(reco::Muon::PFIsoTight));
+      m.set_selector(Muon::IsoPFVTight  , patmu.passed(reco::Muon::PFIsoVeryTight));
+      m.set_selector(Muon::IsoPFVVTight  , patmu.passed(reco::Muon::PFIsoVeryVeryTight));
+      m.set_selector(Muon::IsoTkLoose      , patmu.passed(reco::Muon::TkIsoLoose));
+      m.set_selector(Muon::IsoTkTight      , patmu.passed(reco::Muon::TkIsoTight));
+      m.set_selector(Muon::IsoMiniLoose    , patmu.passed(reco::Muon::MiniIsoLoose));
+      m.set_selector(Muon::IsoMiniMedium   , patmu.passed(reco::Muon::MiniIsoMedium));
+      m.set_selector(Muon::IsoMiniTight    , patmu.passed(reco::Muon::MiniIsoTight));
+      m.set_selector(Muon::IsoMiniVTight, patmu.passed(reco::Muon::MiniIsoVeryTight));
+      m.set_selector(Muon::IsoPuppiLoose   , patmu.passed(reco::Muon::PuppiIsoLoose));
+      m.set_selector(Muon::IsoPuppiMedium    , patmu.passed(reco::Muon::PuppiIsoMedium));
+      m.set_selector(Muon::IsoPuppiTight, patmu.passed(reco::Muon::PuppiIsoTight));
+
+      m.set_globalTrack_normalizedChi2       ( patmu.globalTrack().isNonnull() ? patmu.globalTrack()->normalizedChi2() : -999.);
+      m.set_globalTrack_numberOfValidMuonHits( patmu.globalTrack().isNonnull() ? patmu.globalTrack()->hitPattern().numberOfValidMuonHits() : -1);
+      m.set_numberOfMatchedStations(patmu.numberOfMatchedStations());
+      m.set_expectedNnumberOfMatchedStations(patmu.expectedNnumberOfMatchedStations());
+      m.set_numberOfMatchedRPCLayers(patmu.numberOfMatchedRPCLayers());
+      m.set_innerTrack_trackerLayersWithMeasurement(patmu.innerTrack().isNonnull() ? patmu.innerTrack()->hitPattern().trackerLayersWithMeasurement() : -1);
+      m.set_innerTrack_numberOfValidPixelHits      (patmu.innerTrack().isNonnull() ? patmu.innerTrack()->hitPattern().numberOfValidPixelHits() : -1);
+      m.set_innerTrack_validFraction               (patmu.innerTrack().isNonnull() ? patmu.innerTrack()->validFraction() : -999.);
+      m.set_combinedQuality_chi2LocalPosition(patmu.combinedQuality().chi2LocalPosition);
+      m.set_combinedQuality_trkKink          (patmu.combinedQuality().trkKink);
+      m.set_segmentCompatibility(muon::segmentCompatibility(patmu));
+      m.set_innerTrack_isHighQuality(patmu.innerTrack().isNonnull() ? patmu.innerTrack()->quality(reco::TrackBase::highPurity) : false);
+      m.set_stationMask(patmu.stationMask());
+
+      Muon::GenPartFlav genpartflav = (Muon::GenPartFlav)patmu.simFlavour();
+      if(genpartflav == 13) genpartflav = Muon::GenPartFlav::Prompt;
+      m.set_gen_part_flav(genpartflav);
+
+      if(patmu.simType() == reco::NotMatched)                       m.set_sim_type(Muon::SimType::NotMatched);
+      else if(patmu.simType() == reco::MatchedPunchthrough)         m.set_sim_type(Muon::SimType::MatchedPunchthrough);
+      else if(patmu.simType() == reco::MatchedElectron)             m.set_sim_type(Muon::SimType::MatchedElectron);
+      else if(patmu.simType() == reco::MatchedPrimaryMuon)          m.set_sim_type(Muon::SimType::MatchedPrimaryMuon);
+      else if(patmu.simType() == reco::MatchedMuonFromLightFlavour) m.set_sim_type(Muon::SimType::MatchedLightQuark);
+      else if(patmu.simType() == reco::GhostPunchthrough)           m.set_sim_type(Muon::SimType::GhostPunchthrough);
+      else if(patmu.simType() == reco::GhostElectron)               m.set_sim_type(Muon::SimType::GhostElectron);
+      else if(patmu.simType() == reco::GhostPrimaryMuon)            m.set_sim_type(Muon::SimType::GhostPrimaryMuon);
+      else if(patmu.simType() == reco::GhostMuonFromLightFlavour)   m.set_sim_type(Muon::SimType::GhostLightQuark);
+      else if(patmu.simType() == reco::MatchedMuonFromHeavyFlavour){
+        if(patmu.simExtType() == reco::MatchedMuonFromTau)          m.set_sim_type(Muon::SimType::MatchedTau);
+        else                                                         m.set_sim_type(Muon::SimType::MatchedHeavyQuark);
+      }
+      else if(patmu.simType() == reco::GhostMuonFromHeavyFlavour){
+        if(patmu.simExtType() == reco::GhostMuonFromTau)            m.set_sim_type(Muon::SimType::GhostTau);
+        else                                                         m.set_sim_type(Muon::SimType::GhostHeavyQuark);
+      }
+      else                                                           m.set_sim_type(Muon::SimType::Unknown);
+
+     m.set_sim_pdgid(patmu.simPdgId());
+     m.set_sim_mother_pdgid(patmu.simMotherPdgId());
+     m.set_sim_heaviestmother_flav(patmu.simHeaviestMotherFlavour());
+
+      event.muons->emplace_back(m);
+    }
+
 
 
 

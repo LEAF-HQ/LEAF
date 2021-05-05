@@ -30,7 +30,7 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuonmass = book<TH1D>("muonmass", ";m^{#mu} [GeV];Events / bin", 50, 0, 1500);
   hmuonenergy = book<TH1D>("muonenergy", ";E^{#mu} [GeV];Events / bin", 50, 0, 1500);
   hmuonpfiso = book<TH1D>("muonpfiso", ";Iso_{PF}^{#mu};Events / bin", 100, 0, 1);
-  hmuonminiiso = book<TH1D>("muonminiiso", ";Iso_{mini}^{#mu};Events / bin", 100, 0, 1);
+  // hmuonminiiso = book<TH1D>("muonminiiso", ";Iso_{mini}^{#mu};Events / bin", 100, 0, 1);
   hmuondxy = book<TH1D>("muondxy", ";#mu d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuondz = book<TH1D>("muondz", ";#mu d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuond = book<TH1D>("muond", ";#mu d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -56,7 +56,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuonfromtaumass = book<TH1D>("muonfromtaumass", ";m^{#mu from #tau} [GeV];Events / bin", 50, 0, 1500);
   hmuonfromtauenergy = book<TH1D>("muonfromtauenergy", ";E^{#mu from #tau} [GeV];Events / bin", 50, 0, 1500);
   hmuonfromtaupfiso = book<TH1D>("muonfromtaupfiso", ";Iso_{PF}^{#mu from #tau};Events / bin", 100, 0, 1);
-  hmuonfromtauminiiso = book<TH1D>("muonfromtauminiiso", ";Iso_{mini}^{#mu from #tau};Events / bin", 100, 0, 1);
   hmuonfromtaudxy = book<TH1D>("muonfromtaudxy", ";#mu from #tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonfromtaudz = book<TH1D>("muonfromtaudz", ";#mu from #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonfromtaud = book<TH1D>("muonfromtaud", ";#mu from #tau d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -72,7 +71,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuonfromhadmass = book<TH1D>("muonfromhadmass", ";m^{#mu from had.} [GeV];Events / bin", 50, 0, 1500);
   hmuonfromhadenergy = book<TH1D>("muonfromhadenergy", ";E^{#mu from had.} [GeV];Events / bin", 50, 0, 1500);
   hmuonfromhadpfiso = book<TH1D>("muonfromhadpfiso", ";Iso_{PF}^{#mu not from #tau};Events / bin", 100, 0, 1);
-  hmuonfromhadminiiso = book<TH1D>("muonfromhadminiiso", ";Iso_{mini}^{#mu not from #tau};Events / bin", 100, 0, 1);
   hmuonfromhaddxy = book<TH1D>("muonfromhaddxy", ";#mu from had. d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonfromhaddz = book<TH1D>("muonfromhaddz", ";#mu from had. d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonfromhadd = book<TH1D>("muonfromhadd", ";#mu from had. d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -88,7 +86,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuonunmatchedmass = book<TH1D>("muonunmatchedmass", ";m^{#mu unmatched} [GeV];Events / bin", 50, 0, 1500);
   hmuonunmatchedenergy = book<TH1D>("muonunmatchedenergy", ";E^{#mu unmatched} [GeV];Events / bin", 50, 0, 1500);
   hmuonunmatchedpfiso = book<TH1D>("muonunmatchedpfiso", ";Iso_{PF}^{#mu unmatched};Events / bin", 100, 0, 1);
-  hmuonunmatchedminiiso = book<TH1D>("muonunmatchedminiiso", ";Iso_{mini}^{#mu unmatched};Events / bin", 100, 0, 1);
   hmuonunmatcheddxy = book<TH1D>("muonunmatcheddxy", ";#mu unmatched d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonunmatcheddz = book<TH1D>("muonunmatcheddz", ";#mu unmatched d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuonunmatchedd = book<TH1D>("muonunmatchedd", ";#mu unmatched d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -103,7 +100,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuon1mass = book<TH1D>("muon1mass", ";m^{#mu 1} [GeV];Events / bin", 50, 0, 1500);
   hmuon1energy = book<TH1D>("muon1energy", ";E^{#mu 1} [GeV];Events / bin", 50, 0, 1500);
   hmuon1pfiso = book<TH1D>("muon1pfiso", ";Iso_{PF}^{#mu 1};Events / bin", 100, 0, 1);
-  hmuon1miniiso = book<TH1D>("muon1miniiso", ";Iso_{mini}^{#mu 1};Events / bin", 100, 0, 1);
   hmuon1dxy = book<TH1D>("muon1dxy", ";#mu 1 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon1dz = book<TH1D>("muon1dz", ";#mu 1 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon1d = book<TH1D>("muon1d", ";#mu 1 d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -119,7 +115,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuon2mass = book<TH1D>("muon2mass", ";m^{#mu 2} [GeV];Events / bin", 50, 0, 1500);
   hmuon2energy = book<TH1D>("muon2energy", ";E^{#mu 2} [GeV];Events / bin", 50, 0, 1500);
   hmuon2pfiso = book<TH1D>("muon2pfiso", ";Iso_{PF}^{#mu 2};Events / bin", 100, 0, 1);
-  hmuon2miniiso = book<TH1D>("muon2miniiso", ";Iso_{mini}^{#mu 2};Events / bin", 100, 0, 1);
   hmuon2dxy = book<TH1D>("muon2dxy", ";#mu 2 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon2dz = book<TH1D>("muon2dz", ";#mu 2 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon2d = book<TH1D>("muon2d", ";#mu 2 d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -135,7 +130,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuon3mass = book<TH1D>("muon3mass", ";m^{#mu 3} [GeV];Events / bin", 50, 0, 1500);
   hmuon3energy = book<TH1D>("muon3energy", ";E^{#mu 3} [GeV];Events / bin", 50, 0, 1500);
   hmuon3pfiso = book<TH1D>("muon3pfiso", ";Iso_{PF}^{#mu 3};Events / bin", 100, 0, 1);
-  hmuon3miniiso = book<TH1D>("muon3miniiso", ";Iso_{mini}^{#mu 3};Events / bin", 100, 0, 1);
   hmuon3dxy = book<TH1D>("muon3dxy", ";#mu 3 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon3dz = book<TH1D>("muon3dz", ";#mu 3 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon3d = book<TH1D>("muon3d", ";#mu 3 d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -151,7 +145,6 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
   hmuon4mass = book<TH1D>("muon4mass", ";m^{#mu 4} [GeV];Events / bin", 50, 0, 1500);
   hmuon4energy = book<TH1D>("muon4energy", ";E^{#mu 4} [GeV];Events / bin", 50, 0, 1500);
   hmuon4pfiso = book<TH1D>("muon4pfiso", ";Iso_{PF}^{#mu 4};Events / bin", 100, 0, 1);
-  hmuon4miniiso = book<TH1D>("muon4miniiso", ";Iso_{mini}^{#mu 4};Events / bin", 100, 0, 1);
   hmuon4dxy = book<TH1D>("muon4dxy", ";#mu 4 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon4dz = book<TH1D>("muon4dz", ";#mu 4 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   hmuon4d = book<TH1D>("muon4d", ";#mu 4 d wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -215,7 +208,6 @@ void MuonHists::fill(const RecoEvent & event){
     hmuonmass->Fill(m.m(), weight);
     hmuonenergy->Fill(m.e(), weight);
     hmuonpfiso->Fill(m.iso_rel_04(), weight);
-    hmuonminiiso->Fill(m.iso_mini(), weight);
     hmuondxy->Fill(m.dxy(), weight);
     hmuondz->Fill(m.dz(), weight);
     hmuond->Fill(d_pv, weight);
@@ -233,7 +225,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonfromtaumass->Fill(m.m(), weight);
       hmuonfromtauenergy->Fill(m.e(), weight);
       hmuonfromtaupfiso->Fill(m.iso_rel_04(), weight);
-      hmuonfromtauminiiso->Fill(m.iso_mini(), weight);
       hmuonfromtaudxy->Fill(m.dxy(), weight);
       hmuonfromtaudz->Fill(m.dz(), weight);
       hmuonfromtaud->Fill(d_pv, weight);
@@ -249,7 +240,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonfromhadmass->Fill(m.m(), weight);
       hmuonfromhadenergy->Fill(m.e(), weight);
       hmuonfromhadpfiso->Fill(m.iso_rel_04(), weight);
-      hmuonfromhadminiiso->Fill(m.iso_mini(), weight);
       hmuonfromhaddxy->Fill(m.dxy(), weight);
       hmuonfromhaddz->Fill(m.dz(), weight);
       hmuonfromhadd->Fill(d_pv, weight);
@@ -265,7 +255,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonunmatchedmass->Fill(m.m(), weight);
       hmuonunmatchedenergy->Fill(m.e(), weight);
       hmuonunmatchedpfiso->Fill(m.iso_rel_04(), weight);
-      hmuonunmatchedminiiso->Fill(m.iso_mini(), weight);
       hmuonunmatcheddxy->Fill(m.dxy(), weight);
       hmuonunmatcheddz->Fill(m.dz(), weight);
       hmuonunmatchedd->Fill(d_pv, weight);
@@ -282,7 +271,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon1mass->Fill(m.m(), weight);
       hmuon1energy->Fill(m.e(), weight);
       hmuon1pfiso->Fill(m.iso_rel_04(), weight);
-      hmuon1miniiso->Fill(m.iso_mini(), weight);
       hmuon1dxy->Fill(m.dxy(), weight);
       hmuon1dz->Fill(m.dz(), weight);
       hmuon1d->Fill(d_pv, weight);
@@ -299,7 +287,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon2mass->Fill(m.m(), weight);
       hmuon2energy->Fill(m.e(), weight);
       hmuon2pfiso->Fill(m.iso_rel_04(), weight);
-      hmuon2miniiso->Fill(m.iso_mini(), weight);
       hmuon2dxy->Fill(m.dxy(), weight);
       hmuon2dz->Fill(m.dz(), weight);
       hmuon2d->Fill(d_pv, weight);
@@ -316,7 +303,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon3mass->Fill(m.m(), weight);
       hmuon3energy->Fill(m.e(), weight);
       hmuon3pfiso->Fill(m.iso_rel_04(), weight);
-      hmuon3miniiso->Fill(m.iso_mini(), weight);
       hmuon3dxy->Fill(m.dxy(), weight);
       hmuon3dz->Fill(m.dz(), weight);
       hmuon3d->Fill(d_pv, weight);
@@ -333,7 +319,6 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon4mass->Fill(m.m(), weight);
       hmuon4energy->Fill(m.e(), weight);
       hmuon4pfiso->Fill(m.iso_rel_04(), weight);
-      hmuon4miniiso->Fill(m.iso_mini(), weight);
       hmuon4dxy->Fill(m.dxy(), weight);
       hmuon4dz->Fill(m.dz(), weight);
       hmuon4d->Fill(d_pv, weight);

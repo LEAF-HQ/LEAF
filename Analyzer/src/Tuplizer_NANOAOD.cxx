@@ -830,22 +830,22 @@ int main(int argc, char* argv[]){
     for(size_t i=0; i<*muon_n; i++){
       Muon m;
 
-      m.set_is_global(muon_is_global[i]);
-      m.set_is_pf(muon_is_pf[i]);
-      m.set_is_tracker(muon_is_tracker[i]);
+      // m.set_is_global(muon_is_global[i]);
+      // m.set_is_pf(muon_is_pf[i]);
+      // m.set_is_tracker(muon_is_tracker[i]);
       m.set_charge(muon_charge[i]);
       m.set_jetidx(muon_jetidx[i]);
       m.set_pdgid(muon_pdgid[i]);
       m.set_dxy(muon_dxy[i]);
       m.set_dz(muon_dz[i]);
-      m.set_iso_mini(muon_iso_mini[i]);
-      m.set_iso_mini_charged(muon_iso_mini_charged[i]);
+      // m.set_iso_mini(muon_iso_mini[i]);
+      // m.set_iso_mini_charged(muon_iso_mini_charged[i]);
       m.set_iso_rel_04(muon_iso_rel_04[i]);
       m.set_iso_rel_03(muon_iso_rel_03[i]);
       m.set_iso_rel_03_charged(muon_iso_rel_03_charged[i]);
       m.set_pt_err(muon_pt_err[i]);
       m.set_iso_tk(muon_iso_tk[i]);
-      m.set_pt_rel_tunep(muon_pt_rel_tunep[i]);
+      // m.set_pt_rel_tunep(muon_pt_rel_tunep[i]);
       m.set_pt(muon_pt[i]);
       m.set_eta(muon_eta[i]);
       m.set_phi(muon_phi[i]);
