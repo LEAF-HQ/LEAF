@@ -23,6 +23,8 @@ CMSSWDIR=$3         # Location of CMSSW for this production
 TARGETFOLDERNAME=$4 # Basefolder to store files to. Still need to create sample-specific subfolder (LQM1400_DM1323232321_X93281)
 JOBLIST=$5          # List of cmsRun commands
 
+#Get the start time
+STARTTIME=$(date +%s.%N)
 
 #Set up CMSSW and PYTHONPATH
 eval "source $VO_CMS_SW_DIR/cmsset_default.sh"
@@ -73,4 +75,9 @@ eval "rm $FILENAME"
 # cleaning of temporal working dir when job was completed:
 rm -rf $TMPDIR
 echo Removed TMPDIR: $TMPDIR
+
+#Get the end time and display execution time
+ENDTIME=$(date +%s.%N)
+echo "Execution time:" $(date -u -d "0 $ENDTIME sec - $STARTTIME sec" +"%H:%M:%S")
+
 echo Done.
