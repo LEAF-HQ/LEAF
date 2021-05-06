@@ -38,7 +38,7 @@ public:
   vector<Jet>* jets;//
   vector<Tau>* taus;
   vector<Muon>* muons; //
-  vector<Electron>* electrons;
+  vector<Electron>* electrons; //
   bool is_data;//
   unsigned int run, lumiblock;//
   int npv, npv_good; //

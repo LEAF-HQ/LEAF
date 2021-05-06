@@ -899,16 +899,16 @@ int main(int argc, char* argv[]){
 
       e.set_jetidx(electron_jetidx[i]);
       e.set_charge(electron_charge[i]);
-      e.set_id_bitmap(electron_id_bitmap[i]);
+      // e.set_id_bitmap(electron_id_bitmap[i]);
       e.set_lost_hits(electron_lost_hits[i]);
       e.set_conv_veto(electron_conv_veto[i]);
       e.set_is_pf(electron_is_pf[i]);
-      e.set_delta_eta_sc(electron_delta_eta_sc[i]);
+      // e.set_delta_eta_sc(electron_delta_eta_sc[i]);
       e.set_dxy(electron_dxy[i]);
       e.set_dz(electron_dz[i]);
       e.set_einv_minus_pinv(electron_einv_minus_pinv[i]);
       e.set_h_over_e(electron_h_over_e[i]);
-      e.set_ip_3d(electron_ip_3d[i]);
+      e.set_d0(electron_ip_3d[i]);
       e.set_iso_rel_03(electron_iso_rel_03[i]);
       e.set_iso_rel_03_charged(electron_iso_rel_03_charged[i]);
       e.set_sigma_ietaieta(electron_sigma_ietaieta[i]);

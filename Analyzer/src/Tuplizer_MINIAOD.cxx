@@ -41,6 +41,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/Run.h"
+#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 
 
 
@@ -125,7 +126,7 @@ int main(int argc, char* argv[]){
   fwlite::Handle< LHEEventProduct > handle_lhe;
   fwlite::Handle< edm::TriggerResults > handle_hltresults;
   fwlite::Handle< edm::TriggerResults > handle_metfilterresults;
-  fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
+  // fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
 
 
 
@@ -154,7 +155,7 @@ int main(int argc, char* argv[]){
     TString metfilterstep = "PAT";
     if(!is_mc) metfilterstep = "RECO";
     handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
-    handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
+    // handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
 
 
 
@@ -178,7 +179,7 @@ int main(int argc, char* argv[]){
     const edm::TriggerNames &hltnames = ev.triggerNames(*hltresults);
     const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
     const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
-    const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
+    // const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
 
 
     if(idx < idx_start){
@@ -566,8 +567,8 @@ int main(int argc, char* argv[]){
       m.set_selector(Muon::Tracker   , patmu.isTrackerMuon());
       m.set_selector(Muon::Standalone, patmu.isStandAloneMuon());
       m.set_selector(Muon::Good, muon::isGoodMuon(patmu, muon::TMOneStationTight));
-      int jetidx = -1;
 
+      int jetidx = -1;
       for (unsigned int j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
         pat::Jet jet = jets->at(j);
         if (matchByCommonSourceCandidatePtr(patmu, jet)) {
@@ -678,11 +679,100 @@ int main(int argc, char* argv[]){
       }
       else                                                           m.set_sim_type(Muon::SimType::Unknown);
 
-     m.set_sim_pdgid(patmu.simPdgId());
-     m.set_sim_mother_pdgid(patmu.simMotherPdgId());
-     m.set_sim_heaviestmother_flav(patmu.simHeaviestMotherFlavour());
+      m.set_sim_pdgid(patmu.simPdgId());
+      m.set_sim_mother_pdgid(patmu.simMotherPdgId());
+      m.set_sim_heaviestmother_flav(patmu.simHeaviestMotherFlavour());
 
       event.muons->emplace_back(m);
+    }
+
+
+
+    // Do Electrons
+    // ============
+
+    // get effective area file
+    TString CMSSWPATH = (TString)getenv("CMSSW_RELEASE_BASE");
+    TString effarea_file = CMSSWPATH + "/src/RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt";
+    EffectiveAreas effareas(effarea_file.Data());
+
+    // loop over electrons
+    for(size_t i=0; i<electrons->size(); i++){
+      pat::Electron patele = electrons->at(i);
+      Electron e;
+
+      int jetidx = -1;
+      for (size_t j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = jets->at(j);
+        if (matchByCommonSourceCandidatePtr(patele, jet)) {
+          jetidx = j;
+          break;
+        }
+      }
+      e.set_jetidx(jetidx);
+      e.set_charge(patele.charge());
+      e.set_pdgid(patele.pdgId());
+      e.set_pt(patele.pt());
+      e.set_eta(patele.eta());
+      e.set_phi(patele.phi());
+      e.set_m(patele.mass());
+
+      e.set_pt_err(patele.gsfTrack()->ptError());
+      e.set_eta_err(patele.gsfTrack()->etaError());
+      e.set_phi_err(patele.gsfTrack()->phiError());
+
+
+      e.set_dxy(fabs(patele.dB(pat::Electron::PV2D)));
+      e.set_dz(fabs(patele.dB(pat::Electron::PVDZ)));
+      e.set_d0(fabs(patele.dB(pat::Electron::PV3D)));
+      e.set_edxy(patele.edB(pat::Electron::PV2D));
+      e.set_edz(patele.edB(pat::Electron::PVDZ));
+      e.set_ed0(patele.edB(pat::Electron::PV3D));
+
+      e.set_lost_hits(patele.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS));
+      e.set_conv_veto(patele.passConversionVeto());
+      e.set_is_pf(patele.pfCandidateRef().isNonnull());
+      e.set_eta_sc(patele.superCluster()->eta());
+      e.set_phi_sc(patele.superCluster()->phi());
+      e.set_e_sc(patele.superCluster()->energy());
+      e.set_einv_minus_pinv((1-patele.eSuperClusterOverP())/patele.ecalEnergy());
+      e.set_h_over_e(patele.hadronicOverEm());
+      e.set_sigma_ietaieta(patele.full5x5_sigmaIetaIeta());
+
+      float ea = effareas.getEffectiveArea(fabs(patele.superCluster()->eta()));
+      e.set_ea(ea);
+      reco::GsfElectron::PflowIsolationVariables pfiso = patele.pfIsolationVariables();
+      e.set_sumnhet(pfiso.sumNeutralHadronEt);
+      e.set_sumchpt(pfiso.sumChargedHadronPt);
+      e.set_sumphpt(pfiso.sumPhotonEt);
+      e.set_sumpupt(pfiso.sumPUPt);
+      float iso = pfiso.sumChargedHadronPt + max(0., pfiso.sumNeutralHadronEt + pfiso.sumPhotonEt - (*rho)*ea);
+      e.set_iso_rel_03(iso/patele.pt());
+      e.set_iso_rel_03_charged(pfiso.sumChargedHadronPt/patele.pt());
+
+      if(patele.superCluster().isNonnull() && patele.superCluster()->seed().isNonnull()) e.set_deta_in_seed(patele.deltaEtaSuperClusterTrackAtVtx() - patele.superCluster()->eta() + patele.superCluster()->seed()->eta());
+      else e.set_deta_in_seed(-999);
+      e.set_dphi_in(patele.deltaPhiSuperClusterTrackAtVtx());
+
+
+
+      // set ID bits
+      e.set_selector(Electron::IDCutBasedVeto, patele.electronID("cutBasedElectronID-Fall17-94X-V2-veto"));
+      e.set_selector(Electron::IDCutBasedLoose, patele.electronID("cutBasedElectronID-Fall17-94X-V2-loose"));
+      e.set_selector(Electron::IDCutBasedMedium, patele.electronID("cutBasedElectronID-Fall17-94X-V2-medium"));
+      e.set_selector(Electron::IDCutBasedTight, patele.electronID("cutBasedElectronID-Fall17-94X-V2-tight"));
+      e.set_selector(Electron::IDCutBasedHEEP, patele.electronID("heepElectronID-HEEPV70"));
+      e.set_selector(Electron::IDMVAIsoLoose, patele.electronID("mvaEleID-Fall17-iso-V2-wpLoose"));
+      e.set_selector(Electron::IDMVAIsoEff90, patele.electronID("mvaEleID-Fall17-iso-V2-wp90"));
+      e.set_selector(Electron::IDMVAIsoEff80, patele.electronID("mvaEleID-Fall17-iso-V2-wp80"));
+      e.set_selector(Electron::IDMVANonIsoLoose, patele.electronID("mvaEleID-Fall17-noIso-V2-wpLoose"));
+      e.set_selector(Electron::IDMVANonIsoEff90, patele.electronID("mvaEleID-Fall17-noIso-V2-wp90"));
+      e.set_selector(Electron::IDMVANonIsoEff80, patele.electronID("mvaEleID-Fall17-noIso-V2-wp80"));
+
+
+
+      event.electrons->emplace_back(e);
+
     }
 
 
