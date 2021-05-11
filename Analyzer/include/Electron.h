@@ -28,6 +28,7 @@ public:
 
   Electron(){
     m_charge = 0;
+    m_jetidx = -1;
     m_selector_bits = 0;
     // m_id_bitmap = -1;
     m_lost_hits = -1;
@@ -39,7 +40,7 @@ public:
     m_sumnhet = -1.;
     m_sumphpt = -1.;
     m_sumpupt = -1.;
-    
+
     m_dphi_in = -999;
     m_deta_in_seed = -999;
     m_pt_err = -1;

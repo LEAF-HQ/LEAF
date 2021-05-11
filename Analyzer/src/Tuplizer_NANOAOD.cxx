@@ -524,22 +524,19 @@ int main(int argc, char* argv[]){
         gp.set_status(genparticle_status[i]);
         event.genparticles_all->emplace_back(gp);
 
-        if(is_final){
-          //keep, if final particle is b, t, tau, or nutau
-          for(size_t j=0; j<npids.size(); j++){
-            if(id == npids[j]) keepfinal = true;
-          }
-          // if(id == 5 || id == 6 || id == 15 || id == 16) keepfinal = true;
-          if(id <= 25) keepfinal = true;
-        }
-        if(keepfinal){
-          event.genparticles_final->emplace_back(gp);
-          // event.genevent->genparticles_final->emplace_back(gp);
-        }
-        if(is_hard){
-          event.genparticles_hard->emplace_back(gp);
-          // event.genevent->genparticles_hard->emplace_back(gp);
-        }
+        // if(is_final){
+        //   //keep, if final particle is b, t, tau, or nutau
+        //   for(size_t j=0; j<npids.size(); j++){
+        //     if(id == npids[j]) keepfinal = true;
+        //   }
+        //   if(id <= 25) keepfinal = true;
+        // }
+        // if(keepfinal){
+        //   event.genparticles_final->emplace_back(gp);
+        // }
+        // if(is_hard){
+        //   event.genparticles_hard->emplace_back(gp);
+        // }
 
         // find the visible parts of the taus from the hard process
         // if (id == 15 && is_final){
@@ -787,8 +784,8 @@ int main(int argc, char* argv[]){
       t.set_gen_part_flav(tau_gen_part_flav[i]);
       t.set_charged_iso(tau_charged_iso[i]);
       t.set_neutral_iso(tau_neutral_iso[i]);
-      t.set_dxy(tau_dxy[i]);
-      t.set_dz(tau_dz[i]);
+      t.set_dxy(fabs(tau_dxy[i]));
+      t.set_dz(fabs(tau_dz[i]));
       t.set_pu_corr(tau_pu_corr[i]);
       t.set_score_deeptau_vse(tau_score_deeptau_vse[i]);
       t.set_score_deeptau_vsmu(tau_score_deeptau_vsmu[i]);

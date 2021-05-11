@@ -119,9 +119,10 @@ int main(int argc, char* argv[]){
       p.set_m(gps->at(i).mass());
       p.set_pdgid(gps->at(i).pdgId());
       p.set_ndaughters(gps->at(i).numberOfDaughters());
+      event.genparticles_all->emplace_back(p);
 
       if(keepfinal){
-        event.genparticles_final->emplace_back(p);
+        // event.genparticles_final->emplace_back(p);
         // save visible daughters of final taus (not only from hard-process-taus)
         if(id == 15){
           vector<reco::GenParticle> dummydaus = {};
@@ -143,9 +144,9 @@ int main(int argc, char* argv[]){
           event.genparticles_visibletaus->emplace_back(taudaughters_visible);
         }
       }
-      if(ishard){
-        event.genparticles_hard->emplace_back(p);
-      }
+      // if(ishard){
+      //   event.genparticles_hard->emplace_back(p);
+      // }
       if(finalstate_invis){
         TLorentzVector p4current = p4suminvis.p4();
         p4current += p.p4();

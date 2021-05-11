@@ -12,7 +12,7 @@ CFLAGSDICT = -std=c++17 -fPIC -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_
 # `xml2-config --cflags`
 LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} -L./lib `xml2-config --libs`
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
-CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreCommon -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules -lDataFormatsProvenance -lDataFormatsJetReco -lDataFormatsParticleFlowCandidate -lDataFormatsTrackReco -lPhysicsToolsHepMCCandAlgos -lPhysicsToolsJetMCUtils -lDataFormatsMuonReco -lDataFormatsRecoCandidate -lDataFormatsEgammaCandidates -lRecoEgammaEgammaTools
+CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreCommon -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules -lDataFormatsProvenance -lDataFormatsJetReco -lDataFormatsParticleFlowCandidate -lDataFormatsTrackReco -lPhysicsToolsHepMCCandAlgos -lPhysicsToolsJetMCUtils -lDataFormatsMuonReco -lDataFormatsRecoCandidate -lDataFormatsEgammaCandidates -lRecoEgammaEgammaTools -lDataFormatsTauReco
 LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2
 LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
 

@@ -36,7 +36,7 @@ public:
   Met* rawmet; //
   vector<TriggerObject>* triggerobjects; //
   vector<Jet>* jets;//
-  vector<Tau>* taus;
+  vector<Tau>* taus; //
   vector<Muon>* muons; //
   vector<Electron>* electrons; //
   bool is_data;//

@@ -38,19 +38,21 @@ public:
 
   // Constructors, destructor
   Tau(){
+    m_selector_bits = 0;
     m_charge = 0;
+    m_jetidx = -1;
     m_decay_mode = 0;
-    m_gen_part_flav = 0;
-    m_charged_iso = 0.;
-    m_neutral_iso = 0.;
-    m_dxy = 0.;
-    m_dz = 0.;
-    m_pu_corr = 0.;
-    m_score_deeptau_vse = 0.;
-    m_score_deeptau_vsmu = 0.;
-    m_score_deeptau_vsjet = 0.;
-    m_comb_iso = 0.;
-    m_comb_iso_dr03 = 0.;
+    m_gen_part_flav = -1;
+    m_charged_iso = -1.;
+    m_neutral_iso = -1.;
+    m_dxy = -1.;
+    m_dz = -1.;
+    m_pu_corr = -1.;
+    m_score_deeptau_vse = -1.;
+    m_score_deeptau_vsmu = -1.;
+    m_score_deeptau_vsjet = -1.;
+    m_comb_iso = -1.;
+    m_comb_iso_dr03 = -1.;
   }
 
   bool get_selector(Selector i) const {
@@ -62,25 +64,27 @@ public:
     else      m_selector_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
-  uint64_t selector_bits(){return m_selector_bits;};
-  int charge(){return m_charge;};
-  int decay_mode(){return m_decay_mode;};
-  unsigned char gen_part_flav(){return m_gen_part_flav;};
-  float charged_iso(){return m_charged_iso;};
-  float neutral_iso(){return m_neutral_iso;};
-  float dxy(){return m_dxy;};
-  float dz(){return m_dz;};
-  float pu_corr(){return m_pu_corr;};
-  float score_deeptau_vse(){return m_score_deeptau_vse;};
-  float score_deeptau_vsmu(){return m_score_deeptau_vsmu;};
-  float score_deeptau_vsjet(){return m_score_deeptau_vsjet;};
-  float comb_iso(){return m_comb_iso;};
-  float comb_iso_dr03(){return m_comb_iso_dr03;};
+  const uint64_t selector_bits() const {return m_selector_bits;};
+  const int jetidx() const {return m_jetidx;};
+  const int charge() const {return m_charge;};
+  const int decay_mode() const {return m_decay_mode;};
+  const int gen_part_flav() const {return m_gen_part_flav;};
+  const float charged_iso() const {return m_charged_iso;};
+  const float neutral_iso() const {return m_neutral_iso;};
+  const float dxy() const {return m_dxy;};
+  const float dz() const {return m_dz;};
+  const float pu_corr() const {return m_pu_corr;};
+  const float score_deeptau_vse() const {return m_score_deeptau_vse;};
+  const float score_deeptau_vsmu() const {return m_score_deeptau_vsmu;};
+  const float score_deeptau_vsjet() const {return m_score_deeptau_vsjet;};
+  const float comb_iso() const {return m_comb_iso;};
+  const float comb_iso_dr03() const {return m_comb_iso_dr03;};
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
+  void set_jetidx(int x){m_jetidx = x;};
   void set_charge(int x){m_charge = x;};
   void set_decay_mode(int x){m_decay_mode = x;};
-  void set_gen_part_flav(unsigned char x){m_gen_part_flav = x;};
+  void set_gen_part_flav(int x){m_gen_part_flav = x;};
   void set_charged_iso(float x){m_charged_iso = x;};
   void set_neutral_iso(float x){m_neutral_iso = x;};
   void set_dxy(float x){m_dxy = x;};
@@ -95,9 +99,10 @@ public:
 
 protected:
   uint64_t m_selector_bits;
+  int m_jetidx;
   int m_charge;
   int m_decay_mode;
-  unsigned char m_gen_part_flav;
+  int m_gen_part_flav;
   float m_charged_iso;
   float m_neutral_iso;
   float m_dxy;

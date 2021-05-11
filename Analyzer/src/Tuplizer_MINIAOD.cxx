@@ -43,6 +43,8 @@
 #include "FWCore/Framework/interface/Run.h"
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 
+#include "RecoTauTag/RecoTau/interface/RecoTauVertexAssociator.h"
+
 
 
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
@@ -143,20 +145,21 @@ int main(int argc, char* argv[]){
     handle_met      .getByLabel(ev, "slimmedMETs");
     handle_rho      .getByLabel(ev, "fixedGridRhoFastjetAll");
     handle_pvs      .getByLabel(ev, "offlineSlimmedPrimaryVertices");
-    handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
     handle_l1prefiring.getByLabel(ev, "prefiringweight", "nonPrefiringProb");
     handle_l1prefiring_up.getByLabel(ev, "prefiringweight", "nonPrefiringProbUp");
     handle_l1prefiring_down.getByLabel(ev, "prefiringweight", "nonPrefiringProbDown");
-    handle_genjets.getByLabel(ev, "slimmedGenJets");
-    handle_genparticles.getByLabel(ev, "prunedGenParticles");
-    handle_geninfo.getByLabel(ev, "generator");
-    handle_lhe.getByLabel(ev, "externalLHEProducer");
     handle_hltresults.getByLabel(ev, "TriggerResults", "", "HLT");
     TString metfilterstep = "PAT";
     if(!is_mc) metfilterstep = "RECO";
     handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
     // handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
-
+    if(is_mc){
+      handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
+      handle_genjets.getByLabel(ev, "slimmedGenJets");
+      handle_genparticles.getByLabel(ev, "prunedGenParticles");
+      handle_geninfo.getByLabel(ev, "generator");
+      handle_lhe.getByLabel(ev, "externalLHEProducer");
+    }
 
 
 
@@ -167,19 +170,27 @@ int main(int argc, char* argv[]){
     const std::vector<pat::MET, std::allocator<pat::MET>>*           mets       = handle_met.product();
     const double*                                                    rho        = handle_rho.product();
     const std::vector<reco::Vertex, std::allocator<reco::Vertex>>*   pvs        = handle_pvs.product();
-    const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus= handle_pus.product();
     const double*                                                   l1prefiring = handle_l1prefiring.product();
     const double*                                                l1prefiring_up = handle_l1prefiring_up.product();
     const double*                                              l1prefiring_down = handle_l1prefiring_down.product();
-    const std::vector<reco::GenJet, std::allocator<reco::GenJet>>* genjets      = handle_genjets.product();
-    const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* genparticles = handle_genparticles.product();
-    const GenEventInfoProduct* geninfo = handle_geninfo.product();
-    const LHEEventProduct* lhe = handle_lhe.product();
     const edm::TriggerResults* hltresults = handle_hltresults.product();
     const edm::TriggerNames &hltnames = ev.triggerNames(*hltresults);
     const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
     const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
     // const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
+
+    const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus;
+    const std::vector<reco::GenJet, std::allocator<reco::GenJet>>* genjets;
+    const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* genparticles;
+    const GenEventInfoProduct* geninfo;
+    const LHEEventProduct* lhe;
+    if(is_mc){
+      pus = handle_pus.product();
+      genjets = handle_genjets.product();
+      genparticles = handle_genparticles.product();
+      geninfo = handle_geninfo.product();
+      lhe = handle_lhe.product();
+    }
 
 
     if(idx < idx_start){
@@ -214,6 +225,7 @@ int main(int argc, char* argv[]){
 
     // Do MC truth variables
     // =====================
+    vector<reco::GenParticle> reco_genvistaus = {};
     if(is_mc){
 
       // Reco-event variables based on simulation
@@ -356,6 +368,7 @@ int main(int argc, char* argv[]){
           }
         }
 
+        reco_genvistaus.emplace_back(genVisTau);
         // here the source genvistau is complete, ready to translate to LEAF format
         GenParticle gvt;
         gvt.set_p4(genVisTau.pt(), genVisTau.eta(), genVisTau.phi(), genVisTau.mass());
@@ -683,6 +696,7 @@ int main(int argc, char* argv[]){
       m.set_sim_mother_pdgid(patmu.simMotherPdgId());
       m.set_sim_heaviestmother_flav(patmu.simHeaviestMotherFlavour());
 
+
       event.muons->emplace_back(m);
     }
 
@@ -770,21 +784,122 @@ int main(int argc, char* argv[]){
       e.set_selector(Electron::IDMVANonIsoEff80, patele.electronID("mvaEleID-Fall17-noIso-V2-wp80"));
 
 
-
       event.electrons->emplace_back(e);
 
     }
 
 
 
+    // Do Taus
+    // =======
+    // loop over taus
+    for(size_t i=0; i<taus->size(); i++){
+      pat::Tau pattau = taus->at(i);
+      Tau t;
+
+      int jetidx = -1;
+      for (size_t j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = jets->at(j);
+        if (matchByCommonSourceCandidatePtr(pattau, jet)) {
+          jetidx = j;
+          break;
+        }
+      }
+      t.set_jetidx(jetidx);
+      t.set_charge(pattau.charge());
+      t.set_pdgid(pattau.pdgId());
+      t.set_pt(pattau.pt());
+      t.set_eta(pattau.eta());
+      t.set_phi(pattau.phi());
+      t.set_m(pattau.mass());
+
+      t.set_decay_mode(pattau.decayMode());
+      t.set_charged_iso(pattau.tauID("chargedIsoPtSum"));
+      t.set_neutral_iso(pattau.tauID("neutralIsoPtSum"));
+      t.set_pu_corr(pattau.tauID("puCorrPtSum"));
+      const reco::CandidatePtr& leadingPFCharged = pattau.leadChargedHadrCand();
+      if (leadingPFCharged.isNonnull()) {
+        const pat::PackedCandidate* packedCandPtr = dynamic_cast<const pat::PackedCandidate*>(leadingPFCharged.get());
+        if (packedCandPtr != nullptr) {
+          const reco::Track* track = packedCandPtr->bestTrack();
+          if (track != nullptr) {
+            t.set_dxy(fabs(track->dxy()));
+            t.set_dz(fabs(track->dz()));
+          }
+        }
+
+      }
+      t.set_score_deeptau_vse(pattau.tauID("byDeepTau2017v2VSeraw")); // needs to become v2p1 once added to tuples
+      t.set_score_deeptau_vsmu(pattau.tauID("byDeepTau2017v2VSmuraw")); // needs to become v2p1 once added to tuples
+      t.set_score_deeptau_vsjet(pattau.tauID("byDeepTau2017v2VSjetraw")); // needs to become v2p1 once added to tuples
+      t.set_comb_iso(pattau.tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits"));
+      t.set_comb_iso_dr03((pattau.tauID("chargedIsoPtSumdR03")+max(0.,pattau.tauID("neutralIsoPtSumdR03")-0.072*pattau.tauID("puCorrPtSum"))));
+
+      int gen_part_flav = -1;
+      if(is_mc){
+        // match to gen-e, gen-mu, and genvistaus
+        int idx_match_lep = -1;
+        float min_dr_lep = 99999;
+        for(size_t j=0; j<genparticles->size(); j++){
+          reco::GenParticle minigp = genparticles->at(j);
+          int gpid = abs(minigp.pdgId());
+          if(!(gpid == 11 || gpid == 13)) continue;
+
+          float dr = deltaR(pattau, minigp);
+          if(dr < min_dr_lep){
+            min_dr_lep = dr;
+            if(dr < 0.3) idx_match_lep = j;
+          }
+        }
+
+        int idx_match_gvt = 0;
+        float min_dr_gvt = 99999;
+        for(size_t j=0; j<reco_genvistaus.size(); j++){
+          reco::GenParticle genvistau = reco_genvistaus.at(j);
+
+          float dr = deltaR(pattau, genvistau);
+          if(dr < min_dr_gvt){
+            min_dr_gvt = dr;
+            if(dr < 0.3) idx_match_gvt = j;
+          }
+        }
+
+        // define gen part flav as in: https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/plugins/CandMCMatchTableProducer.cc#L178#L190
+        if(idx_match_lep > 0 && genparticles->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 1;
+        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 2;
+        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 3;
+        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 4;
+        else if(idx_match_gvt > 0) gen_part_flav = 5;
+
+      }
+      t.set_gen_part_flav(gen_part_flav);
+
+      //set ID bits
+      t.set_selector(Tau::DeepTauVsJetVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVVLoose, pattau.tauID("byVVLooseDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVLoose, pattau.tauID("byVLooseDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetLoose, pattau.tauID("byLooseDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetMedium, pattau.tauID("byMediumDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetTight, pattau.tauID("byTightDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVTight, pattau.tauID("byVTightDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVVTight, pattau.tauID("byVVTightDeepTau2017v2VSjet"));
+      t.set_selector(Tau::DeepTauVsEleVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleVVLoose, pattau.tauID("byVVLooseDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleVLoose, pattau.tauID("byVLooseDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleLoose, pattau.tauID("byLooseDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleMedium, pattau.tauID("byMediumDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleTight, pattau.tauID("byTightDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleVTight, pattau.tauID("byVTightDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsEleVVTight, pattau.tauID("byVVTightDeepTau2017v2VSe"));
+      t.set_selector(Tau::DeepTauVsMuVLoose, pattau.tauID("byVLooseDeepTau2017v2VSmu"));
+      t.set_selector(Tau::DeepTauVsMuLoose, pattau.tauID("byLooseDeepTau2017v2VSmu"));
+      t.set_selector(Tau::DeepTauVsMuMedium, pattau.tauID("byMediumDeepTau2017v2VSmu"));
+      t.set_selector(Tau::DeepTauVsMuTight, pattau.tauID("byTightDeepTau2017v2VSmu"));
 
 
 
-
-
-
-
-
+      event.taus->emplace_back(t);
+    }
 
 
 
@@ -792,8 +907,8 @@ int main(int argc, char* argv[]){
     event.reset();
     idx++;
   }
-
   event.clear();
+  outfile->cd();
   tree->Write();
   outfile->Close();
 

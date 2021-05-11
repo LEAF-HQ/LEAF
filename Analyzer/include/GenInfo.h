@@ -6,7 +6,19 @@ class GenInfo {
 
 public:
   // Constructors, destructor
-  GenInfo() = default;
+  GenInfo(){
+    m_systweights = {};
+    m_originalXWGTUP = -1;
+    m_id1 = -1;
+    m_id2 = -1;
+    m_scale_pdf = -1;
+    m_weight = -1;
+    m_x1 = -1;
+    m_x2 = -1;
+    m_xpdf1 = -1;
+    m_xpdf2 = -1;
+  }
+
   GenInfo(const GenInfo &) = default;
   GenInfo & operator = (const GenInfo &) = default;
   ~GenInfo() = default;
