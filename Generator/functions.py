@@ -10,6 +10,7 @@ from bisect import bisect_left
 from ROOT import TFile
 from utils import *
 from constants import *
+from tqdm import tqdm
 
 def get_samplename(mlq, mps, mch, lamb, tag):
     return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
@@ -229,7 +230,7 @@ def get_all_combinations(preferred_configurations, mlq_stepsize=90, mch_exp_step
 def get_best_lambda(mlq):
     return float(1.1/2. * (mlq/1000.))
 
-def findMissingFilesT2(filepath, filename_base, maxindex, gensimfolder, generation_step):
+def findMissingFilesT2(filepath, filename_base, maxindex, generatorfolder, generation_step, treename='Events'):
     missing_indices = []
     filename_base = filepath+'/'+filename_base
     min_size = 0
@@ -237,43 +238,28 @@ def findMissingFilesT2(filepath, filename_base, maxindex, gensimfolder, generati
         min_size = 1E7
     elif generation_step is 'DR':
         min_size = 1E9
-    for idx in range(maxindex):
+    pbar = tqdm(range(maxindex), desc="Files checked")
+    for idx in pbar:
         filename = filename_base + '_' + str(idx+1) + '.root'
-        # print 'didn\'t find file %s, going to try to open it' % (filename)
-        result = subprocess.Popen(['/bin/bash', '%s/check_T2_file.sh' % (gensimfolder), filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = result.communicate()
-        returncode = result.returncode
-        if returncode > 0: # opening failed
-            print 'opening failed for index %i' % (idx+1)
-            missing_indices.append(idx)
-        else:
-            size = int(output.split()[4])
-            # print size
-            if size < min_size: # file too small.
-                print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
-                missing_indices.append(idx)
-    return missing_indices
 
-def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
-    missing_indices = []
-    filename_base = filepath+'/'+filename_base
-    min_size = 0
-    if generation_step is 'Tuples_GENSIM':
-        min_size = 1E5
-    if generation_step is 'Tuples_NANOAOD':
-        min_size = 1E5
-    for idx in range(maxindex):
-        filename = filename_base + '_' + str(idx+1) + '.root'
-        # have to check if there is an 'AnalysisTree' in the file, not just 'ls' the file. If not accessible, remove file so that later step will add it to list of missing files
-        f = TFile.Open(filename)
-        n_genevents = 0
         try:
-            n_genevents = f.Get('AnalysisTree').GetEntriesFast()
+            f = TFile.Open(filename)
+            tree = f.Get(treename)
+            n_genevents = tree.GetEntriesFast()
         except AttributeError:
-            print yellow('  --> Couldn\'t open file, adding it to list of missing indices: %s.' % (filename))
+            print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (filename))
             missing_indices.append(idx)
-        f.Close()
-        # result = subprocess.Popen(['ls', '-lrt', filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except ReferenceError:
+            print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (filename))
+            missing_indices.append(idx)
+        try:
+            f.Close()
+        except:
+            pass
+
+
+        # print 'didn\'t find file %s, going to try to open it' % (filename)
+        # result = subprocess.Popen(['/bin/bash', '%s/check_T2_file.sh' % (generatorfolder), filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # output, error = result.communicate()
         # returncode = result.returncode
         # if returncode > 0: # opening failed
@@ -281,9 +267,33 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
         #     missing_indices.append(idx)
         # else:
         #     size = int(output.split()[4])
+        #     # print size
         #     if size < min_size: # file too small.
         #         print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
         #         missing_indices.append(idx)
+    return missing_indices
+
+def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
+    missing_indices = []
+    filename_base = filepath+'/'+filename_base
+    pbar = tqdm(range(maxindex), desc="Files checked")
+    for idx in pbar:
+        filename = filename_base + '_' + str(idx+1) + '.root'
+        # have to check if there is an 'AnalysisTree' in the file, not just 'ls' the file. If not accessible, remove file so that later step will add it to list of missing files
+        try:
+            f = TFile.Open(filename)
+            tree = f.Get('AnalysisTree')
+            n_genevents = tree.GetEntriesFast()
+        except AttributeError:
+            print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (filename))
+            missing_indices.append(idx)
+        except ReferenceError:
+            print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (filename))
+            missing_indices.append(idx)
+        try:
+            f.Close()
+        except:
+            pass
     return missing_indices
 
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
