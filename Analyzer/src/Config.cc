@@ -100,8 +100,13 @@ void Config::process_datasets(){
 
 
     // make sure outdir exists
+    TString mkdircommand = "mkdir -p ";
     TString outfolder = output_directory();
-    TString mkdircommand = "mkdir -p " + outfolder;
+    if(outfolder.Contains("/pnfs")){
+      outfolder = se_director() + outfolder;
+      mkdircommand = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p ";
+    }
+    mkdircommand += outfolder;
     system((const char*)mkdircommand);
 
     // create output file and handle exception for /pnfs storage that is not immediately writeable
@@ -142,7 +147,7 @@ void Config::process_datasets(){
     TString outfilename_final = outfilename_target;
     outfilename_final.ReplaceAll("_tmp.root", ".root");
 
-    string command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + (string)outfilename_tmp + " " + (string)se_director() + (string)outfilename_final + (string)" > /dev/null";
+    string command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + (string)outfilename_tmp + " " + (string)outfilename_final + (string)" > /dev/null";
     // cout << "copy command: " << command << endl;
     system(command.c_str());
     command = (string)"LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + (string)outfilename_tmp + (string)" > /dev/null";
