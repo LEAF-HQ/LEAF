@@ -7,10 +7,15 @@ from preferred_configurations import *
 from bisect import bisect_left
 
 
-def ensureDirectory(dirname):
+def ensureDirectory(dirname, use_se=False):
     """Make directory if it does not exist."""
-    if not os.path.exists(dirname):
-        os.makedirs(dirname)
+    if use_se:
+        # print dirname
+        command = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-mkdir -p %s' % (dirname)
+        execute_command_silent(command)
+    else:
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
         if not os.path.exists(dirname):
             print yellow('--> failed to make directory "%s"'%(dirname))
     return dirname
@@ -41,6 +46,12 @@ def bold(string):
 def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''
     return formatted
+
+def execute_command_silent(command):
+    DEVNULL = open(os.devnull, 'wb')
+    p = subprocess.Popen(command, stdout=DEVNULL, stderr=DEVNULL, shell=True)
+    p.wait()
+    DEVNULL.close()
 
 def execute_commands_parallel(commands=[], ncores=10, niceness=10):
     n_running = 0
