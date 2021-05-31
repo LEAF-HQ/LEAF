@@ -14,7 +14,7 @@ from constants import *
 import ROOT
 from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
                  kBlack, kRed, kBlue, kAzure, kCyan, kGreen, kGreen, kYellow, kOrange, kMagenta, kViolet,\
-                 kSolid, kDashed, kDotted
+                 kSolid, kDashed, kDotted, gSystem
 from math import sqrt, log, floor, ceil
 from array import array
 
@@ -59,17 +59,18 @@ config_per_year = {
 
 
 year = '2017'
+stage = 'mini'
 submit = True
 
 
 # all
-# samplenames = ['LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0', 'LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest']
+# samplenames = ['PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0']
 # samplenames = data.keys()
 # samplenames = backgrounds.keys()
 # samplenames = data.keys() + backgrounds.keys()
 # samplenames = backgrounds.keys() + signals.keys()
-samplenames = data.keys() + backgrounds.keys() + signals.keys()
-# samplenames = signals.keys()
+# samplenames = data.keys() + backgrounds.keys() + signals.keys()
+samplenames = signals.keys()
 # samplenames = sorted(data.keys()) + sorted(backgrounds.keys()) + sorted(signals.keys())
 # samplenames = sorted(sorted(backgrounds.keys()) + sorted(signals.keys()))
 # samplenames = sorted(sorted(signals.keys()))
@@ -90,14 +91,16 @@ def main():
     for samplename in samplenames:
         print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
-        Tuplizer = TuplizeRunner(sample=s, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
+        Tuplizer = TuplizeRunner(sample=s, stage=stage, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.CreateDatasetXMLFile(force_counting=True)
+        Tuplizer.CreateDatasetXMLFile(force_counting=True)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=False)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+
+
 
 
 
