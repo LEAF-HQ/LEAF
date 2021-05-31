@@ -55,23 +55,6 @@ bool path_exists(const TString &s){
 
 
 
-/// distance in phi, with the convention -phi < deltaPhi <= phi
-// T and U have to have a 'phi()' method, e.g. Particle, LorentzVector, etc.
-template<typename T, typename U>
-double deltaPhi(const T & p1, const U & p2){
-  double result = fabs(p1.phi() - p2.phi());
-  if(result > TMath::Pi()) result = 2 * TMath::Pi() - result;
-  return result;
-}
-
-/// distance in eta
-// T and U have to have a 'eta()' method, e.g. Particle etc.
-template<typename T, typename U>
-double deltaEta(const T & p1, const U & p2){
-  double result = fabs(p1.eta() - p2.eta());
-  return result;
-}
-
 /// distance in R
 // T and U have to have a 'eta()' and 'phi()' method, e.g. Particle etc.
 // template<typename T, typename U>
