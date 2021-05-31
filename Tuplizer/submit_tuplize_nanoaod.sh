@@ -12,6 +12,7 @@ echo HOME: $HOME
 echo USER: $USER
 echo SLURM_JOB_ID: $SLURM_JOB_ID
 echo HOSTNAME: $HOSTNAME
+echo VOMS: $X509_USER_PROXY
 pwd
 
 ARCHTAG=$1
@@ -45,6 +46,7 @@ eval $TASKCMD
 # create sample-specific folder and all missing parent folders
 echo "creating folder: $TARGETFOLDERNAME"
 MKDIRCOMMAND='LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p $TARGETFOLDERNAME; sleep 10s;'
+echo $MKDIRCOMMAND
 eval "$MKDIRCOMMAND"
 
 # copy the file from /scratch to T3
