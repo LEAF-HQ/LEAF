@@ -54,7 +54,7 @@ class CrossSectionRunner:
 
     def RunMG(self, only_resubmit=False, ncores=2, runtime=(00,40), maxjobs_per_proc=50):
         runtime_str = '%02i:%02i:00' % runtime
-        queue = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
+        queue = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
 
         for processname in self.processnames:
             if only_resubmit:
@@ -174,14 +174,14 @@ class CrossSectionRunner:
             total_writelines_cross.append('# ATTENTION: All cross sections in this file have the default BW cutoff of M +- 15 * Gamma.\n')
             total_writelines_cross.append('crosssection = {\n')
             total_writelines_br.append('branchingratio = {\n')
-            if 'LQLQ' in processname:
+            if 'LQLQ' in processname or 'LQTChannel' in processname:
                 total_writelines_cross.append('  # lambda --> mass(chi) -->  (mass(LQ),    sigma,       Q_low,   Q_up,    PDF)\n')
                 total_writelines_br.append('  # mass(LQ) --> mass(chi) --> (dau1, dau2) --> (br, partial width)\n')
             elif 'PsiPsi' in processname:
                 total_writelines_cross.append('  # lambda --> mass(LQ)  -->  (mass(chi),   sigma,       Q_low,   Q_up,    PDF)\n')
                 # total_writelines_br.append('  # mass(chi) --> mass(LQ) --> (dau1, dau2) --> (br, partial width)\n')
             else:
-                raise ValueError('processname does not contain \'LQLQ\' or \'PsiPsi\', what kind of process are we looking at here?')
+                raise ValueError('processname does not contain \'LQLQ\' or \'LQTChannel\' or \'PsiPsi\', what kind of process are we looking at here?')
 
             filenames = get_filelist_crossbr(filepath=self.crosssecfolder+'/'+processname, short=True, tag=self.tag)
             tuplelist = []
@@ -234,8 +234,8 @@ class CrossSectionRunner:
                     pre, pdf_up, pdf_down = parser_pdf.parse(line_pdf)
 
                     # put everything into the right tuples and sort
-                    mref = mch if 'LQLQ' in processname else mlq
-                    mdep = mlq if 'LQLQ' in processname else mch
+                    mref = mch if ('LQLQ' in processname or 'LQTChannel' in processname) else mlq
+                    mdep = mlq if ('LQLQ' in processname or 'LQTChannel' in processname) else mch
                     # print lamb
                     if not lamb in tupledicts_per_lambda.keys():
                         tupledicts_per_lambda[lamb] = {}
@@ -378,7 +378,7 @@ class CrossSectionRunner:
                         tot_his.append(tot_hi)
                         mdeps_lo.append(0.)
                         mdeps_hi.append(0.)
-                        if 'LQLQ' in processname:
+                        if 'LQLQ' in processname or 'LQTChannel' in processname:
                             graph2d.SetPoint(npoints2d, mdep, mref, sigma)
                             set_points[mdep][mref] = True
                         elif 'PsiPsi' in processname:
@@ -390,11 +390,11 @@ class CrossSectionRunner:
 
                     # make TGraph out of it
                     graph = TGraphAsymmErrors(len(mdeps), mdeps, sigmas, mdeps_lo, mdeps_hi, tot_los, tot_his)
-                    xaxistitle = 'M_{LQ} [GeV]' if 'LQLQ' in processname else 'M_{#chi_{1}} [GeV]'
+                    xaxistitle = 'M_{LQ} [GeV]' if ('LQLQ' in processname or 'LQTChannel' in processname) else 'M_{#chi_{1}} [GeV]'
                     graph.GetXaxis().SetTitle('M_{LQ} [GeV]')
                     graph.GetYaxis().SetTitle('#sigma [pb]')
                     graphname = processname
-                    if 'LQLQ' in processname:
+                    if 'LQLQ' in processname or 'LQTChannel' in processname:
                         graphname += '_MC1%i' % (mref)
                     elif 'PsiPsi' in processname:
                         graphname += '_MLQ%i' % (mref)
@@ -405,7 +405,7 @@ class CrossSectionRunner:
                     graph.SetName(graphname)
                     # print 'graphname: %s' % (graphname)
                     graphtitle = processname
-                    if 'LQLQ' in processname:
+                    if 'LQLQ' in processname or 'LQTChannel' in processname:
                         graphtitle += ', M_{#chi_{1}} = %i GeV' % (mref)
                     elif 'PsiPsi' in processname:
                         graphtitle += ', M_{LQ} = %i GeV' % (mref)
@@ -547,7 +547,7 @@ class CrossSectionRunner:
                     mrefs.append(find_closest(sorted(preferred_configurations[preferred_configurations.keys()[0]]), mref))
 
             # open rootfile and get corresponding graphs
-            if 'LQLQ' in processname:
+            if 'LQLQ' in processname or 'LQTChannel' in processname:
                 rootfilename_brs = self.crosssecfolder+'/Branchingratios_LQLQ%s.root' % (self.tag)
             else:
                 rootfilename_brs = ''
@@ -588,7 +588,7 @@ class CrossSectionRunner:
                 if self.submit:
                     c.SaveAs(plotname)
 
-                if 'LQLQ' in processname and not processname == 'LQLQ':
+                if ('LQLQ' in processname) and not processname == 'LQLQ':
                     infile_brs = TFile(rootfilename_brs, 'READ')
                     infile_lqlq = TFile(self.crosssecfolder+'/Crosssections_LQLQ.root', 'READ')
                     decaymodes = procname_to_decaymodes[processname]

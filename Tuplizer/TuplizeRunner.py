@@ -32,9 +32,10 @@ from samples.Storage import *
 
 
 class TuplizeRunner:
-    def __init__(self, year, sample, config, workarea, basefolder, tuplizefolder, sampleinfofolder, macrofolder, submit=False):
+    def __init__(self, stage, year, sample, config, workarea, basefolder, tuplizefolder, sampleinfofolder, macrofolder, submit=False):
         self.sample = sample
         self.submit = submit
+        self.stage   = stage
         self.year   = year
         self.config = config[year]
         self.workarea = workarea
@@ -47,7 +48,7 @@ class TuplizeRunner:
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
+        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
         runtime_str = '%02i:%02i:00' % runtime
         commandfilename = ''
         if mode is 'new':        commandfilename = join(self.tuplizefolder, 'commands/tuplize_%s.txt' % (self.sample.name))
@@ -55,20 +56,25 @@ class TuplizeRunner:
 
         samplename = self.sample.name
         # print green('--> Working on sample \'%s\'' % (samplename))
-        filedict = self.sample.get_filedict_nano(sampleinfofolder=self.sampleinfofolder, year=self.year)
+        filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year)
         if filedict is False:
             return
+        # outfoldername = self.sample.tuplepaths[self.year].director.replace('root://', 'gsiftp://')+self.sample.tuplepaths[self.year].path
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
 
 
+        if self.stage is 'nano':
+            stagetag = 'NANOAOD'
+        elif self.stage is 'mini':
+            stagetag = 'MINIAOD'
         commands = []
         njobs = 0
         for filename in filedict:
             nevt_thisfile = filedict[filename]
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
-                outfilename = 'Tuples_NANOAOD_%i.root' % (njobs+1)
-                command = '%s %s %s %s %i %i' % ('Tuplizer_NANOAOD', self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
+                outfilename = 'Tuples_%s_%i.root' % (stagetag, njobs+1)
+                command = '%s %s %s %s %i %i' % ('Tuplizer_%s' % (stagetag), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
                 commands.append(command)
                 njobs += 1
 
@@ -77,7 +83,9 @@ class TuplizeRunner:
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
             print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
-            missing_indices = findMissingFilesT3(filepath=self.sample.tuplepaths[self.year].path, filename_base='Tuples_NANOAOD', maxindex=len(commands), generation_step='Tuples_NANOAOD') # only the missing ones -- only works if tuplizing into a new directory
+            # filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step
+            # missing_indices = findOpenMissingFilesT2(filepath=self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, filename_base='Tuples_%s'%(stagetag), maxindex=len(commands), generation_step='Tuples_%s'%(stagetag)) # only the missing ones -- only works if tuplizing into a new directory
+            missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='Tuples_%s' % (stagetag), maxindex=len(commands), generation_step='Tuples_%s' % (stagetag)) # only the missing ones -- only works if tuplizing into a new directory
 
         njobs = 0
         idx = 0
@@ -107,30 +115,37 @@ class TuplizeRunner:
         # print self.year, self.sample.nevents.has_year(self.year)
         # print self.sample.nevents[self.year]
         xmlfilename = join(self.macrofolder, self.sample.xmlfiles[self.year])
-        inputfilepattern = join(self.macrofolder, self.sample.tuplepaths[self.year].path, '*.root')
+        inputfilepattern = join(self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, '*.root')
         out = open(xmlfilename, 'w')
-        l = glob.glob(inputfilepattern)
+        # l = glob.glob(inputfilepattern)
+        l = list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, pattern='*.root')
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(l), self.sample.name))
         l.sort()
         commands = []
         idx = 0
+        n_genevents_sum = 0
         for filename in l:
             # print filename
             idx += 1
-            f = ROOT.TFile.Open(filename)
             n_genevents = 0
             try:
+                f = ROOT.TFile.Open(filename)
                 n_genevents = f.Get('AnalysisTree').GetEntriesFast()
-            except AttributeError:
+            except:
                 print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
-            f.Close()
+            try:
+                f.Close()
+            except:
+                pass
             del f
+            n_genevents_sum += n_genevents
             if n_genevents > 0:
                 try:
-                    if count_weights: commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
+                    if count_weights:
+                        commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
                     out.write('<InputFile FileName="%s"/>\n' % filename)
                 except:
-                    print yellow('  --> Couldn\'t read number of weighted events in file, skip this one. Will not appear in XML file, so it\'s safe.')
+                    print yellow('  --> Couldn\'t read number of weighted events in file \'%s\', skip this one. Will not appear in XML file, so it\'s safe.' % (filename))
 
         # if self.sample.nevents.has_year(self.year) :
         if not force_counting:
@@ -154,7 +169,8 @@ class TuplizeRunner:
                 else:
                     print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
             else:
-                print green('  --> Did not count events. Simply wrote the XML file with number of generated/recorded events in sample.')
+                out.write('<!-- Generated number of events: %s -->\n' % str(n_genevents_sum))
+                print green('  --> Only counted events, not weights. Wrote the XML file with number of generated events in sample.')
 
             # else:
             #     if count_weights:
@@ -199,7 +215,21 @@ class TuplizeRunner:
         print green('  --> Final cross section: \'%s\': %f' % (year, xsec))
 
 
-
+def list_folder_content_T2(foldername, pattern=None):
+    result = []
+    command = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls %s' % (foldername)
+    list = subprocess.check_output(command, shell=True).split('\n')
+    for l in list:
+        filename = l.split(' ')[-1]
+        if pattern is not None: # check pattern
+            parser = parse.compile(pattern.replace('*', '{}'))
+            tuple = parser.parse(filename)
+            if tuple is not None:
+                result.append(os.path.join(foldername, filename))
+        else: #don't check pattern
+            result.append(os.path.join(foldername, filename))
+    # print len(result), result
+    return result
 
 def get_mini_parts_from_nano_name(nanopath):
     primary_name = nanopath.split('/')[1]
