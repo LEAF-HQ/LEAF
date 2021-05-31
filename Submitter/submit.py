@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--notreeadd', '-t', action='store_true', default=False, dest='notreeadd', help='Add split files without adding the trees. By default does not apply the force-add')
     parser.add_argument('--plothadd', '-p', action='store_true', default=False, dest='hadd', help='Hadd files to groups used for plotting and further analysis. Will always force.')
     parser.add_argument('--clean', '-c', action='store_true', default=False, dest='clean', help='Clean up: remove the local and the remote workdir')
+    parser.add_argument('--local', '-l', action='store', type=int, dest='ncores', help='Run split jobs locally on NCORES cores')
 
     args = parser.parse_args()
     xmlfilename = os.path.abspath(args.xmlfilename[0])
@@ -36,6 +37,7 @@ def main():
     notreeadd = args.notreeadd
     hadd = args.hadd
     clean = args.clean
+    ncores = args.ncores
     nargs = sum([1 for x in vars(args) if vars(args)[x] is True])
 
     ROOT.gErrorIgnoreLevel = kError
@@ -50,11 +52,12 @@ def main():
         if nargs > 1:
             raise AttributeError('More than one argument given together with \'-c\' option. This is unsafe.')
         submitter.Clean()
-    if divide:          submitter.Divide()
-    if output:          submitter.Output()
-    if submit:          submitter.Submit()
+    if divide:                       submitter.Divide()
+    if output:                       submitter.Output()
+    if submit:                       submitter.Submit()
     if add or forceadd or notreeadd: submitter.Add(force=forceadd, ignoretree=notreeadd)
-    if hadd:            submitter.Hadd()
+    if hadd:                         submitter.Hadd()
+    if ncores is not None:           submitter.RunLocal(ncores=ncores)
 
 
 

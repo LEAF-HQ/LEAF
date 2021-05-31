@@ -1,5 +1,6 @@
 import os, sys, math, copy
 from ROOT import TFile
+import subprocess
 
 def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
     nevents = 0
@@ -32,13 +33,22 @@ def order_haddlist(haddlist):
 
 
 
-def clean_haddlist(haddlist):
+def clean_haddlist(haddlist, use_se=False):
     # remove files that don't exist from the haddlist
     result = []
-
+    DEVNULL = open(os.devnull, 'wb')
     for file in haddlist:
-        if os.path.isfile(file):
-            result.append(file)
+        if not use_se:
+            if os.path.isfile(file):
+                result.append(file)
+        else:
+            lscommand = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls %s' % (file)
+            proc = subprocess.Popen(lscommand, stdout=DEVNULL, stderr=DEVNULL, shell=True)
+            # output = proc.communicate()[0]
+            returncode = proc.returncode
+            if not (returncode > 0): # ls succeeded
+                result.append(file)
+    DEVNULL.close()
     return result
 
 

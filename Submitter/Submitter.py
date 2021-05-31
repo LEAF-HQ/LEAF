@@ -21,8 +21,13 @@ class Submitter:
         path_parts_local.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
+        self.se_director = self.xmlinfo.configsettings.SEDirector
+        self.use_se = False
+        if self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and not ('t3dcachedb03.psi.ch' in self.se_director):
+            self.use_se = True
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
+
         self.workdir_remote = str(os.path.join('/', *path_parts_remote))
 
         self.missing_files_txt = os.path.join(self.workdir_local, 'commands_missing_files.txt')
@@ -59,6 +64,26 @@ class Submitter:
             command = 'sbatch -a 1-%i -J %s -p quick --chdir %s -t 01:00:00 submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, os.path.join(self.workdir_local, datasetname, 'joboutput'), missing_files, environ_path, environ_ld_lib_path)
             jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
+
+
+
+    def RunLocal(self, ncores):
+        print green('--> Locally running jobs on %i cores' % (ncores))
+        missing_files_per_dataset = self.Output()
+
+        # njobs = -1
+        # with open(self.missing_files_txt, 'r') as f:
+        #     njobs = len(f.readlines())
+        commands = []
+        for datasetname in missing_files_per_dataset:
+            missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
+            with open(missing_files, 'r') as f:
+                for line in f.readlines():
+                    commands.append(line)
+        if len(commands) < 1: return
+        print green('  --> Going to run %i jobs locally on %i cores.' % (len(commands), ncores))
+        execute_commands_parallel(commands, ncores)
+        print green('  --> Finished running missing jobs locally.')
 
 
 
@@ -109,7 +134,11 @@ class Submitter:
         print green('--> Cleaning up (removing) local and remote workdir')
 
         shutil.rmtree(self.workdir_local, ignore_errors=True)
-        shutil.rmtree(self.workdir_remote, ignore_errors=True)
+        if not self.use_se:
+            shutil.rmtree(self.workdir_remote, ignore_errors=True)
+        else:
+            rmcommand = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (str(self.se_director + self.workdir_remote))
+            execute_command_silent(rmcommand)
         print green('--> Cleaned up (removed) local and remote workdir')
 
 
@@ -136,14 +165,17 @@ class Submitter:
             if len(expected_files[datasetname]) < 1: continue
 
             # order expected files such that the first has an AnalysisTree (if any of the files has one).
-            expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=expected_files[datasetname]))
+            expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=expected_files[datasetname], use_se=self.use_se))
             expected_files_string = ' '.join(expected_files_ordered)
 
             # get outfilename
             outfilename_parts = expected_files_ordered[0].split('/')[-1].split('_')[:-1]
             outfilename = '_'.join(outfilename_parts) + '.root'
             outpath_parts = self.workdir_remote.split('/')[:-1]
-            outpath = str(os.path.join('/', *outpath_parts))
+            if self.use_se:
+                outpath = self.se_director + str(os.path.join('/', *outpath_parts))
+            else:
+                outpath = str(os.path.join('/', *outpath_parts))
             outfilepath_and_name = os.path.join(outpath, outfilename)
 
             if os.path.isfile(outfilepath_and_name) and not force:
@@ -187,12 +219,15 @@ class Submitter:
             grouptype = datasets_per_group[group][0]
             outfilename = '%s__%s.root' % (grouptype, group)
             outpath_parts = self.workdir_remote.split('/')[:-1]
-            outpath = str(os.path.join('/', *outpath_parts))
+            if self.use_se:
+                outpath = self.se_director + str(os.path.join('/', *outpath_parts))
+            else:
+                outpath = str(os.path.join('/', *outpath_parts))
             outfilepath_and_name = os.path.join(outpath, outfilename)
             files_to_add = []
             for filename in datasets_per_group[group][1]:
                 files_to_add.append(os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)))
-            files_to_add_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=files_to_add))
+            files_to_add_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=files_to_add, use_se=self.use_se))
             sourcestring = ' '.join( files_to_add_ordered )
             # sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
 
@@ -235,10 +270,13 @@ class Submitter:
     def create_remote_workdir(self):
         """ Create workdir + 1 subdir per sample for Submitter in the remote target directory """
 
-        ensureDirectory(self.workdir_remote)
+        workdirname = self.workdir_remote
+        if self.use_se:
+             workdirname = self.se_director + workdirname
+        ensureDirectory(workdirname, use_se=self.use_se)
         for dataset in self.xmlinfo.datasets:
             samplename = dataset.settings.Name
-            ensureDirectory(os.path.join(self.workdir_remote, samplename))
+            ensureDirectory(os.path.join(workdirname, samplename), use_se=self.use_se)
         print green('  --> Created remote workdir \'%s\'' % (self.workdir_remote))
 
     def divide_xml_files(self):
@@ -297,7 +335,10 @@ class Submitter:
             njobs = njobs_and_type_per_dataset[datasetname][0]
             datasettype = njobs_and_type_per_dataset[datasetname][1]
 
-            outpath = os.path.join(self.workdir_remote, datasetname)
+            if self.use_se:
+                outpath = self.se_director + os.path.join(self.workdir_remote, datasetname)
+            else:
+                outpath = os.path.join(self.workdir_remote, datasetname)
             expected_files = []
             for i in range(njobs):
                 filename = '%s__%s_%i.root\n' % (datasettype, datasetname, i+1)
@@ -355,6 +396,7 @@ class Submitter:
             self.xmlinfo.configsettings.NEventsMax  = str(nevents_per_job)
 
         # adjust general settings: output path, postfix
+        # this does not need extra care if using the T2 or T3 SE, the "Analyzer" will do this
         self.xmlinfo.configsettings.OutputDirectory = os.path.join(self.workdir_remote, datasetname)
         self.xmlinfo.configsettings.PostFix         = '_%i' % (index)
 
@@ -388,13 +430,18 @@ class Submitter:
 
     def find_missing_files(self, expected_files):
 
+        DEVNULL = open(os.devnull, 'wb')
         missing_files_per_dataset = OrderedDict()
         # nmissing_per_dataset = OrderedDict()
         for datasetname in expected_files:
             nmissing = 0
             missing = []
             for file in expected_files[datasetname]:
-                result = subprocess.Popen(['ls', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # print file
+                lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
+                lscommand += file
+                # result = subprocess.Popen([lscommand, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                result = subprocess.Popen(lscommand, stdout=DEVNULL, stderr=DEVNULL, shell=True)
                 output = result.communicate()[0]
                 returncode = result.returncode
                 if returncode > 0: # opening failed
@@ -402,6 +449,7 @@ class Submitter:
                     nmissing += 1
             missing_files_per_dataset[datasetname] = missing
             # nmissing_per_dataset[datasetname] = nmissing
+        DEVNULL.close()
         return missing_files_per_dataset
 
 
