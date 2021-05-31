@@ -85,7 +85,7 @@ class GensimRunner:
                     mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
                     jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
                     # if not jobname == 'LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest': continue
-                    command = 'sbatch -J gridpacks_%s -p quick -t 01:00:00 --cpus-per-task 1 --mem=4000 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                    command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 --mem=4000 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                     if self.submit:
                         time.sleep(5)
                         os.system(command)
@@ -133,7 +133,7 @@ class GensimRunner:
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
         runtime_str = '%02i:%02i:00' % runtime
-        queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
+        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
 
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
@@ -163,7 +163,7 @@ class GensimRunner:
                         indices = range(self.maxindex)
                     elif mode is 'resubmit':
                         print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
-                        indices = missing_indices = findMissingFilesT2(filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
+                        indices = missing_indices = findMissingFilesT2(filepath=self.T2_director_root+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
 
                     njobs = 0
                     for i in indices:
@@ -207,7 +207,7 @@ class GensimRunner:
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
+        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
         runtime_str = '%02i:%02i:00' % runtime
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
