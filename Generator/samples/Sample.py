@@ -56,10 +56,11 @@ class YearDependentContainer():
 
 
 class Sample:
-    def __init__(self, type, name, group=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents=YearDependentContainer()):
+    def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents=YearDependentContainer()):
         self.type = type
         self.name = name
         self.group = group
+        self.minipaths = minipaths
         self.nanopaths = nanopaths
         self.tuplepaths = tuplepaths
         self.xsecs = xsecs
@@ -71,6 +72,7 @@ class Sample:
         print '  --> type: %s' % (str(self.type))
         print '  --> name: %s' % (str(self.name))
         print '  --> group: %s' % (str(self.group[year]))
+        print '  --> minipath: %s' % (str(self.minipaths[year].path))
         print '  --> nanopath: %s' % (str(self.nanopaths[year].path))
         print '  --> tuplepath: %s' % (str(self.tuplepaths[year].path))
         print '  --> xsec: %s' % (str(self.xsecs[year]))
@@ -80,15 +82,17 @@ class Sample:
     def get_var_for_year(self, varname, year):
         if varname is 'type' or varname is 'name':
             return getattr(self, varname)
-        elif varname is 'nanopaths' or varname is 'tuplepaths':
+        elif varname is 'minipaths' or varname is 'nanopaths' or varname is 'tuplepaths':
             return getattr(self, varname)[year].path
         else:
             return getattr(self, varname)[year]
 
-    def get_filedict_nano(self, sampleinfofolder, year, force_update=False):
+    def get_filedict(self, sampleinfofolder, stage, year, force_update=False):
+        if stage is not 'nano' and stage is not 'mini':
+            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
 
         # first try to read it from the json
-        filedict = self.get_filedict_nano_from_json(sampleinfofolder=sampleinfofolder, year=year)
+        filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
         if filedict is not False:
             if not force_update:
                 return filedict
@@ -96,22 +100,26 @@ class Sample:
                 pass
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
-        filelist = self.nanopaths[year].get_file_list()
-        filedict = self.count_events_in_files(filelist)
+        if stage is 'nano':
+            filelist = self.nanopaths[year].get_file_list()
+        elif stage is 'mini':
+            filelist = self.minipaths[year].get_file_list()
+        filedict = self.count_events_in_files(filelist, stage=stage)
         if filedict is False:
             return False
-        self.update_filedict_nano_in_json(sampleinfofolder=sampleinfofolder, year=year, filedict=filedict)
+        self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=filedict)
 
         # get from json to make sure it's always ordered in the same way
-        filedict = self.get_filedict_nano_from_json(sampleinfofolder=sampleinfofolder, year=year)
+        filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
         if filedict is not False:
             return filedict
         else:
             raise ValueError('Unable to get filedict for sample %s.' % (self.name))
 
-    def get_filedict_nano_from_json(self, sampleinfofolder, year):
-        jsonname = os.path.join(sampleinfofolder, 'filelist_%s.json' % (year))
-
+    def get_filedict_from_json(self, sampleinfofolder, stage, year):
+        if stage is not 'nano' and stage is not 'mini':
+            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        jsonname = os.path.join(sampleinfofolder, 'filelist_%s_%s.json' % (stage, year))
         dict_in_json = {}
 
         if not os.path.exists(jsonname):
@@ -124,9 +132,10 @@ class Sample:
         return dict_in_json[self.name]
 
 
-    def update_filedict_nano_in_json(self, sampleinfofolder, year, filedict):
-
-        jsonname = os.path.join(sampleinfofolder, 'filelist_%s.json' % (year))
+    def update_filedict_in_json(self, sampleinfofolder, stage, year, filedict):
+        if stage is not 'nano' and stage is not 'mini':
+            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        jsonname = os.path.join(sampleinfofolder, 'filelist_%s_%s.json' % (stage, year))
         dict_in_json = {}
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
@@ -138,7 +147,9 @@ class Sample:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
 
-    def count_events_in_files(self, filelist):
+    def count_events_in_files(self, filelist, stage):
+        if stage is not 'nano' and stage is not 'mini':
+            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
         print green('  --> Going to count events in %i files' % (len(filelist)))
         commands = []
         for i, filename in enumerate(filelist):
