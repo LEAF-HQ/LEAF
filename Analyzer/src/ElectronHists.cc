@@ -174,7 +174,7 @@ void ElectronHists::fill(const RecoEvent & event){
       float dr = deltaR(e, gp);
       if(dr < gendr_min){
         gendr_min = dr;
-        if(gendr_min < 0.1){ // these are updated only for better matches than the previous closest match
+        if(gendr_min < 0.2){ // these are updated only for better matches than the previous closest match
           if(gp.get_statusflag(GenParticle::isDirectHardProcessTauDecayProduct)) gen_origin = 1;
           else if(gp.get_statusflag(GenParticle::isDirectHadronDecayProduct)) gen_origin = 2;
           else gen_origin = 0;
@@ -186,9 +186,8 @@ void ElectronHists::fill(const RecoEvent & event){
     else if (gen_origin == 0) nfromelse++;
     else if (gen_origin == -1) nunmatched++;
 
-    float d_pv = sqrt(e.dxy()*e.dxy() + e.dz()*e.dz());
-    if(d_pv < d_max){
-      d_max = d_pv;
+    if(e.d0() < d_max){
+      d_max = e.d0();
       gen_origin_closest = gen_origin;
     }
 
@@ -202,7 +201,7 @@ void ElectronHists::fill(const RecoEvent & event){
     helectronpfiso->Fill(e.iso_rel_03(), weight);
     helectrondxy->Fill(e.dxy(), weight);
     helectrondz->Fill(e.dz(), weight);
-    helectrond->Fill(d_pv, weight);
+    helectrond->Fill(e.d0(), weight);
     helectron_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
     helectrongendrmin->Fill(gendr_min, weight);
     helectrongenorigin->Fill(gen_origin, weight);
@@ -220,7 +219,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectronfromtaupfiso->Fill(e.iso_rel_03(), weight);
       helectronfromtaudxy->Fill(e.dxy(), weight);
       helectronfromtaudz->Fill(e.dz(), weight);
-      helectronfromtaud->Fill(d_pv, weight);
+      helectronfromtaud->Fill(e.d0(), weight);
       helectronfromtau_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
       helectronfromtaugendrmin->Fill(gendr_min, weight);
     }
@@ -235,7 +234,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectronfromhadpfiso->Fill(e.iso_rel_03(), weight);
       helectronfromhaddxy->Fill(e.dxy(), weight);
       helectronfromhaddz->Fill(e.dz(), weight);
-      helectronfromhadd->Fill(d_pv, weight);
+      helectronfromhadd->Fill(e.d0(), weight);
       helectronfromhad_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
       helectronfromhadgendrmin->Fill(gendr_min, weight);
     }
@@ -250,7 +249,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectronunmatchedpfiso->Fill(e.iso_rel_03(), weight);
       helectronunmatcheddxy->Fill(e.dxy(), weight);
       helectronunmatcheddz->Fill(e.dz(), weight);
-      helectronunmatchedd->Fill(d_pv, weight);
+      helectronunmatchedd->Fill(e.d0(), weight);
       helectronunmatched_dxy_vs_dz->Fill(e.dxy(), e.dz(), weight);
       helectronunmatchedgendrmin->Fill(gendr_min, weight);
     }
@@ -266,7 +265,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectron1pfiso->Fill(e.iso_rel_03(), weight);
       helectron1dxy->Fill(e.dxy(), weight);
       helectron1dz->Fill(e.dz(), weight);
-      helectron1d->Fill(d_pv, weight);
+      helectron1d->Fill(e.d0(), weight);
       helectron1gendrmin->Fill(gendr_min, weight);
       helectron1genorigin->Fill(gen_origin, weight);
     }
@@ -281,7 +280,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectron2pfiso->Fill(e.iso_rel_03(), weight);
       helectron2dxy->Fill(e.dxy(), weight);
       helectron2dz->Fill(e.dz(), weight);
-      helectron2d->Fill(d_pv, weight);
+      helectron2d->Fill(e.d0(), weight);
       helectron2gendrmin->Fill(gendr_min, weight);
       helectron2genorigin->Fill(gen_origin, weight);
     }
@@ -296,7 +295,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectron3pfiso->Fill(e.iso_rel_03(), weight);
       helectron3dxy->Fill(e.dxy(), weight);
       helectron3dz->Fill(e.dz(), weight);
-      helectron3d->Fill(d_pv, weight);
+      helectron3d->Fill(e.d0(), weight);
       helectron3gendrmin->Fill(gendr_min, weight);
       helectron3genorigin->Fill(gen_origin, weight);
     }
@@ -311,7 +310,7 @@ void ElectronHists::fill(const RecoEvent & event){
       helectron4pfiso->Fill(e.iso_rel_03(), weight);
       helectron4dxy->Fill(e.dxy(), weight);
       helectron4dz->Fill(e.dz(), weight);
-      helectron4d->Fill(d_pv, weight);
+      helectron4d->Fill(e.d0(), weight);
       helectron4gendrmin->Fill(gendr_min, weight);
       helectron4genorigin->Fill(gen_origin, weight);
     }

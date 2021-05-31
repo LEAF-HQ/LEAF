@@ -181,7 +181,7 @@ void MuonHists::fill(const RecoEvent & event){
       float dr = deltaR(m, gp);
       if(dr < gendr_min){
         gendr_min = dr;
-        if(gendr_min < 0.1){ // these are updated only for better matches than the previous closest match
+        if(gendr_min < 0.2){ // these are updated only for better matches than the previous closest match
           if(gp.get_statusflag(GenParticle::isDirectHardProcessTauDecayProduct)) gen_origin = 1;
           else if(gp.get_statusflag(GenParticle::isDirectHadronDecayProduct)) gen_origin = 2;
           else gen_origin = 0;
@@ -193,9 +193,8 @@ void MuonHists::fill(const RecoEvent & event){
     else if (gen_origin == 0) nfromelse++;
     else if (gen_origin == -1) nunmatched++;
 
-    float d_pv = sqrt(m.dxy()*m.dxy() + m.dz()*m.dz());
-    if(d_pv < d_max){
-      d_max = d_pv;
+    if(m.d0() < d_max){
+      d_max = m.d0();
       gen_origin_closest = gen_origin;
     }
 
@@ -210,7 +209,7 @@ void MuonHists::fill(const RecoEvent & event){
     hmuonpfiso->Fill(m.iso_rel_04(), weight);
     hmuondxy->Fill(m.dxy(), weight);
     hmuondz->Fill(m.dz(), weight);
-    hmuond->Fill(d_pv, weight);
+    hmuond->Fill(m.d0(), weight);
     hmuon_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
     hmuongendrmin->Fill(gendr_min, weight);
     hmuongenorigin->Fill(gen_origin, weight);
@@ -227,7 +226,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonfromtaupfiso->Fill(m.iso_rel_04(), weight);
       hmuonfromtaudxy->Fill(m.dxy(), weight);
       hmuonfromtaudz->Fill(m.dz(), weight);
-      hmuonfromtaud->Fill(d_pv, weight);
+      hmuonfromtaud->Fill(m.d0(), weight);
       hmuonfromtau_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
       hmuonfromtaugendrmin->Fill(gendr_min, weight);
     }
@@ -242,7 +241,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonfromhadpfiso->Fill(m.iso_rel_04(), weight);
       hmuonfromhaddxy->Fill(m.dxy(), weight);
       hmuonfromhaddz->Fill(m.dz(), weight);
-      hmuonfromhadd->Fill(d_pv, weight);
+      hmuonfromhadd->Fill(m.d0(), weight);
       hmuonfromhad_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
       hmuonfromhadgendrmin->Fill(gendr_min, weight);
     }
@@ -257,7 +256,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuonunmatchedpfiso->Fill(m.iso_rel_04(), weight);
       hmuonunmatcheddxy->Fill(m.dxy(), weight);
       hmuonunmatcheddz->Fill(m.dz(), weight);
-      hmuonunmatchedd->Fill(d_pv, weight);
+      hmuonunmatchedd->Fill(m.d0(), weight);
       hmuonunmatched_dxy_vs_dz->Fill(m.dxy(), m.dz(), weight);
       hmuonunmatchedgendrmin->Fill(gendr_min, weight);
     }
@@ -273,7 +272,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon1pfiso->Fill(m.iso_rel_04(), weight);
       hmuon1dxy->Fill(m.dxy(), weight);
       hmuon1dz->Fill(m.dz(), weight);
-      hmuon1d->Fill(d_pv, weight);
+      hmuon1d->Fill(m.d0(), weight);
       hmuon1gendrmin->Fill(gendr_min, weight);
       hmuon1genorigin->Fill(gen_origin, weight);
       hmuon1genflav->Fill(m.gen_part_flav(), weight);
@@ -289,7 +288,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon2pfiso->Fill(m.iso_rel_04(), weight);
       hmuon2dxy->Fill(m.dxy(), weight);
       hmuon2dz->Fill(m.dz(), weight);
-      hmuon2d->Fill(d_pv, weight);
+      hmuon2d->Fill(m.d0(), weight);
       hmuon2gendrmin->Fill(gendr_min, weight);
       hmuon2genorigin->Fill(gen_origin, weight);
       hmuon2genflav->Fill(m.gen_part_flav(), weight);
@@ -305,7 +304,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon3pfiso->Fill(m.iso_rel_04(), weight);
       hmuon3dxy->Fill(m.dxy(), weight);
       hmuon3dz->Fill(m.dz(), weight);
-      hmuon3d->Fill(d_pv, weight);
+      hmuon3d->Fill(m.d0(), weight);
       hmuon3gendrmin->Fill(gendr_min, weight);
       hmuon3genorigin->Fill(gen_origin, weight);
       hmuon3genflav->Fill(m.gen_part_flav(), weight);
@@ -321,7 +320,7 @@ void MuonHists::fill(const RecoEvent & event){
       hmuon4pfiso->Fill(m.iso_rel_04(), weight);
       hmuon4dxy->Fill(m.dxy(), weight);
       hmuon4dz->Fill(m.dz(), weight);
-      hmuon4d->Fill(d_pv, weight);
+      hmuon4d->Fill(m.d0(), weight);
       hmuon4gendrmin->Fill(gendr_min, weight);
       hmuon4genorigin->Fill(gen_origin, weight);
       hmuon4genflav->Fill(m.gen_part_flav(), weight);
