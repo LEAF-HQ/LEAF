@@ -233,11 +233,6 @@ def get_best_lambda(mlq):
 def findMissingFilesT2(filepath, filename_base, maxindex, generatorfolder, generation_step, treename='Events'):
     missing_indices = []
     filename_base = filepath+'/'+filename_base
-    min_size = 0
-    if generation_step is 'GENSIM':
-        min_size = 1E7
-    elif generation_step is 'DR':
-        min_size = 1E9
     pbar = tqdm(range(maxindex), desc="Files checked")
     for idx in pbar:
         filename = filename_base + '_' + str(idx+1) + '.root'
@@ -256,21 +251,6 @@ def findMissingFilesT2(filepath, filename_base, maxindex, generatorfolder, gener
             f.Close()
         except:
             pass
-
-
-        # print 'didn\'t find file %s, going to try to open it' % (filename)
-        # result = subprocess.Popen(['/bin/bash', '%s/check_T2_file.sh' % (generatorfolder), filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # output, error = result.communicate()
-        # returncode = result.returncode
-        # if returncode > 0: # opening failed
-        #     print 'opening failed for index %i' % (idx+1)
-        #     missing_indices.append(idx)
-        # else:
-        #     size = int(output.split()[4])
-        #     # print size
-        #     if size < min_size: # file too small.
-        #         print yellow('  --> size for index %i is %i, resubmit.' % (idx+1, size))
-        #         missing_indices.append(idx)
     return missing_indices
 
 def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
