@@ -85,7 +85,7 @@ class GensimRunner:
                     mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
                     jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
                     # if not jobname == 'LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest': continue
-                    command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 --mem=4000 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                    command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                     if self.submit:
                         time.sleep(5)
                         os.system(command)

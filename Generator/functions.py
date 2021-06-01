@@ -91,6 +91,7 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
     # 2017 CP5:      303600
     # 2018 CP5:      303600 (same as 2017)
     # 2017/18 CP2:   315200 for 2017/8
+    ensureDirectory(card_output_folder)
     samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
     cardbasename = processname + '_template'
     cardtypes = ['proc_card.dat', 'run_card.dat', 'extramodels.dat', 'customizecards.dat']
