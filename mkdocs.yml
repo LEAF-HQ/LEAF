@@ -4,3 +4,9 @@ theme: cinder
 nav:
     - Home: README.md
     - Installation: installation.md
+    - Packages:
+      - Generator: packages/generator.md
+      - Tuplizer: packages/tuplizer.md
+      - Analyzer: packages/analyzer.md
+      - Plotter: packages/plotter.md
+      - Submitter: packages/submitter.md
