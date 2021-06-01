@@ -224,9 +224,9 @@ submit = True
 
 CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
-CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00), maxjobs_per_proc=50)
+# CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
-# CrossBRRunner.RunMG(only_resubmit=True,  ncores=4, runtime=(01,00), maxjobs_per_proc=150)
+CrossBRRunner.RunMG(only_resubmit=True,  ncores=1, runtime=(01,00), maxjobs_per_proc=150)
 # CrossBRRunner.ReadoutCrossBR()
 # CrossBRRunner.RootifyCrossBR()
 # CrossBRRunner.PlotCrossBR()
