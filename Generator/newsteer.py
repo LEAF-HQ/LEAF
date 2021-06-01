@@ -122,23 +122,24 @@ cmssw_tag_gp   = 'CMSSW_10_6_0'
 cmssw_tag_sim  = 'CMSSW_10_6_12'
 cmssw_tag_hlt  = 'CMSSW_9_4_14_UL_patch1'
 campaign       = 'UL17'
+sampletype     = 'ChiPsi'
 
 
-workarea       = '/work/'+ username
-workdir_slurm  = workarea + '/workdir_slurm'
-mgfolder       = workarea + '/' + cmssw_tag_sim + '/src/genproductions/bin/MadGraph5_aMCatNLO'
-mgfolder_local = workarea + '/' + 'MG5_aMC_v2_7_2'
-basefolder     = workarea + '/LEAF'
-generatorfolder= basefolder + '/Generator'
-gridpackfolder = generatorfolder + '/gridpacks/ChiPsi'
-cardfolder     = generatorfolder + '/cards/ChiPsi'
-crosssecfolder = generatorfolder + '/crosssections/ChiPsi'
-psetfolder     = generatorfolder + '/PSets/' + campaign
+workarea       = os.path.join('/work', username)
+workdir_slurm  = os.path.join(workarea, 'workdir_slurm')
+mgfolder       = os.path.join(workarea, cmssw_tag_sim, 'src', 'genproductions', 'bin', 'MadGraph5_aMCatNLO')
+mgfolder_local = os.path.join(workarea, 'MG5_aMC_v2_7_2')
+basefolder     = os.path.join(workarea, 'LEAF')
+generatorfolder= os.path.join(basefolder, 'Generator')
+gridpackfolder = os.path.join(generatorfolder, 'gridpacks', sampletype)
+cardfolder     = os.path.join(generatorfolder, 'cards', sampletype)
+crosssecfolder = os.path.join(generatorfolder, 'crosssections', sampletype)
+psetfolder     = os.path.join(generatorfolder, 'PSets', campaign)
 T2_director      = 'gsiftp://storage01.lcg.cscs.ch/'
 T2_director_root = 'root://storage01.lcg.cscs.ch/'
 T3_director      = 'root://t3dcachedb03.psi.ch/'
-T2_path          = '/pnfs/lcg.cscs.ch/cms/trivcat/store/user/'+ username
-T3_path          = '/pnfs/psi.ch/cms/trivcat/store/user/'+ username
+T2_path          = os.path.join('/pnfs/lcg.cscs.ch/cms/trivcat/store/user', username)
+T3_path          = os.path.join('/pnfs/psi.ch/cms/trivcat/store/user', username)
 
 
 
@@ -148,67 +149,67 @@ folderstructure = {
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'gensim',
         'outfilenamebase': 'GENSIM',
-        'pathtag':         'GENSIM/ChiPsi'
+        'pathtag':         'GENSIM/' + sampletype
     },
     'DR': {
         'pset':            psetfolder+'/pset_03_dr.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'dr',
         'outfilenamebase': 'DR',
-        'infilepathtag':   'GENSIM/ChiPsi',
+        'infilepathtag':   'GENSIM/' + sampletype,
         'infilenamebase':  'GENSIM',
-        'pathtag':         'DR/ChiPsi'
+        'pathtag':         'DR/' + sampletype
     },
     'HLT': {
         'pset':            psetfolder+'/pset_04_hlt.py',
         'cmsswtag':        cmssw_tag_hlt,
         'jobnametag':      'hlt',
         'outfilenamebase': 'HLT',
-        'infilepathtag':   'DR/ChiPsi',
+        'infilepathtag':   'DR/' + sampletype,
         'infilenamebase':  'DR',
-        'pathtag':         'HLT/ChiPsi'
+        'pathtag':         'HLT/' + sampletype
     },
     'AOD': {
         'pset':            psetfolder+'/pset_05_aod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'aod',
         'outfilenamebase': 'AOD',
-        'infilepathtag':   'HLT/ChiPsi',
+        'infilepathtag':   'HLT/' + sampletype,
         'infilenamebase':  'HLT',
-        'pathtag':         'AOD/ChiPsi'
+        'pathtag':         'AOD/' + sampletype
     },
     'MINIAOD': {
         'pset':            psetfolder+'/pset_06_miniaod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'miniaod',
         'outfilenamebase': 'MINIAOD',
-        'infilepathtag':   'AOD/ChiPsi',
+        'infilepathtag':   'AOD/' + sampletype,
         'infilenamebase':  'AOD',
-        'pathtag':         'MINIAOD/ChiPsi'
+        'pathtag':         'MINIAOD/' + sampletype
     },
     'NANOAOD': {
         'pset':            psetfolder+'/pset_07_nanoaod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'nanoaod',
         'outfilenamebase': 'NANOAOD',
-        'infilepathtag':   'MINIAOD/ChiPsi',
+        'infilepathtag':   'MINIAOD/' + sampletype,
         'infilenamebase':  'MINIAOD',
-        'pathtag':         'NANOAOD/ChiPsi'
+        'pathtag':         'NANOAOD/' + sampletype
     },
     'Tuples_GENSIM': {
         'jobnametag':      'tuples_gensim',
         'cmsswtag':        cmssw_tag_sim,
         'outfilenamebase': 'Tuples_GENSIM',
-        'infilepathtag':   'GENSIM/ChiPsi',
+        'infilepathtag':   'GENSIM/' + sampletype,
         'infilenamebase':  'GENSIM',
-        'pathtag':         'Tuples_GENSIM/ChiPsi',
+        'pathtag':         'Tuples_GENSIM/' + sampletype,
         'tuplizer':        'Tuplizer'
     },
     'Tuples_NANOAOD': {
         'jobnametag':      'tuples_nanoaod',
         'cmsswtag':        cmssw_tag_sim,
         'outfilenamebase': 'Tuples_NANOAOD',
-        'pathtag':         'Tuples_NANOAOD/ChiPsi',
+        'pathtag':         'Tuples_NANOAOD/' + sampletype,
         'tuplizer':        'Tuplizer_NANOAOD'
     }
 
@@ -223,12 +224,12 @@ submit = True
 
 CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
-# CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00), maxjobs_per_proc=50)
+CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True,  ncores=4, runtime=(01,00), maxjobs_per_proc=150)
-CrossBRRunner.ReadoutCrossBR()
-CrossBRRunner.RootifyCrossBR()
-CrossBRRunner.PlotCrossBR()
+# CrossBRRunner.ReadoutCrossBR()
+# CrossBRRunner.RootifyCrossBR()
+# CrossBRRunner.PlotCrossBR()
 
 
 
@@ -303,6 +304,7 @@ EventGenerator_psichitau = GensimRunner(processnames=processes_psichitau, tag=ta
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='new')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00), mode='resubmit')
+# EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=4, runtime=(10,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='new')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00), mode='new')
