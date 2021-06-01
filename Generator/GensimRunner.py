@@ -54,42 +54,59 @@ class GensimRunner:
         for processname in self.processnames:
             idx = 0
             allowed_configs = []
-            for config in self.configs:
-                if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
-                    allowed_configs.append(config)
-            for config in allowed_configs:
-                mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
-                for lamb in self.lambdas:
-                    if self.submit:
-                        ensureDirectory(self.cardfolder+'/%s' % (processname))
-                        make_card(card_template_folder=self.cardfolder, card_output_folder=self.cardfolder+'/%s' % (processname), processname=processname, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
-                        print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(allowed_configs)*len(self.lambdas), processname, float(idx)/float(len(allowed_configs)*len(self.lambdas))*100))
-                    idx += 1
+            if self.configs is not None:
+                for config in self.configs:
+                    if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
+                        allowed_configs.append(config)
+                for config in allowed_configs:
+                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
+                    for lamb in self.lambdas:
+                        if self.submit:
+                            ensureDirectory(self.cardfolder+'/%s' % (processname))
+                            make_card(card_template_folder=self.cardfolder, card_output_folder=self.cardfolder+'/%s' % (processname), processname=processname, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
+                            print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(allowed_configs)*len(self.lambdas), processname, float(idx)/float(len(allowed_configs)*len(self.lambdas))*100))
+                        idx += 1
 
-            if not self.submit:
-                print yellow('Would have produced %i sets of cards for process %s.' % (len(allowed_configs)*len(self.lambdas), processname))
+                if not self.submit:
+                    print yellow('Would have produced %i sets of cards for process %s.' % (len(allowed_configs)*len(self.lambdas), processname))
+            else:
+                if self.submit:
+                    ensureDirectory(self.cardfolder+'/%s' % (processname))
+                    make_card(card_template_folder=self.cardfolder, card_output_folder=self.cardfolder+'/%s' % (processname), processname=processname, tag=self.tag, mlq=None, mps=None, mch=None, lamb=None, verbose=False)
+                    print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, 1, processname, float(idx)/float(1)*100))
+                idx += 1
+
+                if not self.submit:
+                    print yellow('Would have produced %i sets of cards for process %s.' % (1, processname))
 
 
 
     def SubmitGridpacks(self):
         # Submit gridpacks based on cards created above
         for processname in self.processnames:
-            allowed_configs = []
-            for config in self.configs:
-                if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
-                    allowed_configs.append(config)
-                else:
-                    print yellow('Skip config %s for process \'%s\'' % (config, processname))
-            for config in allowed_configs:
-                for lamb in self.lambdas:
-                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
-                    jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                    # if not jobname == 'LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest': continue
-                    command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
-                    if self.submit:
-                        time.sleep(5)
-                        os.system(command)
-                    else: print command
+            if self.configs is not None:
+                allowed_configs = []
+                for config in self.configs:
+                    if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
+                        allowed_configs.append(config)
+                    else:
+                        print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                for config in allowed_configs:
+                    for lamb in self.lambdas:
+                        mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
+                        jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
+                        command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                        if self.submit:
+                            time.sleep(5)
+                            os.system(command)
+                        else: print command
+            else:
+                jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
+                command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                if self.submit:
+                    time.sleep(5)
+                    os.system(command)
+                else: print command
 
 
         if self.submit: print green('--> Done submitting gridpacks.')
@@ -100,27 +117,40 @@ class GensimRunner:
         # Move gridpacks to new dir
         commands = []
         for processname in self.processnames:
-            allowed_configs = []
-            for config in self.configs:
-                if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
-                    allowed_configs.append(config)
-                else:
-                    print yellow('Skip config %s for process \'%s\'' % (config, processname))
-            for config in allowed_configs:
-                for lamb in self.lambdas:
-                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
-                    jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-
-                    gpname = jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
-                    sourcefile = '%s/%s' % (self.mgfolder, gpname)
-                    targetfile = '%s/%s/%s' % (self.gridpackfolder, processname, gpname)
-                    ensureDirectory('%s/%s' % (self.gridpackfolder, processname))
-                    command = 'mv %s %s' % (sourcefile, targetfile)
-                    commands.append(command)
-                    if self.submit:
-                        print green('moving gridpack \'%s\'' % (gpname))
+            if self.configs is not None:
+                allowed_configs = []
+                for config in self.configs:
+                    if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
+                        allowed_configs.append(config)
                     else:
-                        print yellow('would move gridpack \'%s\'' % (gpname))
+                        print yellow('Skip config %s for process \'%s\'' % (config, processname))
+                for config in allowed_configs:
+                    for lamb in self.lambdas:
+                        mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
+                        jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
+
+                        gpname = jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
+                        sourcefile = '%s/%s' % (self.mgfolder, gpname)
+                        targetfile = '%s/%s/%s' % (self.gridpackfolder, processname, gpname)
+                        ensureDirectory('%s/%s' % (self.gridpackfolder, processname))
+                        command = 'mv %s %s' % (sourcefile, targetfile)
+                        commands.append(command)
+                        if self.submit:
+                            print green('moving gridpack \'%s\'' % (gpname))
+                        else:
+                            print yellow('would move gridpack \'%s\'' % (gpname))
+            else:
+                jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
+                gpname = jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
+                sourcefile = '%s/%s' % (self.mgfolder, gpname)
+                targetfile = '%s/%s/%s' % (self.gridpackfolder, processname, gpname)
+                ensureDirectory('%s/%s' % (self.gridpackfolder, processname))
+                command = 'mv %s %s' % (sourcefile, targetfile)
+                commands.append(command)
+                if self.submit:
+                    print green('moving gridpack \'%s\'' % (gpname))
+                else:
+                    print yellow('would move gridpack \'%s\'' % (gpname))
         if self.submit:
             execute_commands_parallel(commands=commands, ncores=1)
             print green('\ndone moving gridpacks')
@@ -150,12 +180,8 @@ class GensimRunner:
             # num = 0
             for config in allowed_configs:
                 for lamb in self.lambdas:
-                    # if num > 0: break
-                    # num += 1
                     mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
                     jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                    # resubs = ['LQLQToBTau_MLQ1360_MPS4843_MC14467_L1p0', 'LQLQToPsiChi_MLQ1000_MPS244_MC1214_L1p0', 'LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest', 'PsiPsiToLQChi_MLQ7030_MPS244_MC1214_L1p0']
-                    # if not jobname in resubs: continue
                     commandfilename = commandfilebase + jobname + '.txt'
                     f = open(commandfilename, 'w')
                     indices = -1
@@ -199,6 +225,66 @@ class GensimRunner:
                             print green('  --> No jobs to resubmit.')
                         else:
                             print green('  --> No jobs to submit.')
+
+
+
+    def SubmitGenerationStepSM(self, generation_step, ncores=8, runtime=(10,00), mode='new'):
+        # Submit event generation jobs to the SLURM cluster
+
+        if mode is not 'new' and mode is not 'resubmit':
+            raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
+        runtime_str = '%02i:%02i:00' % runtime
+        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+
+        commandfilebase = ''
+        if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
+        elif mode is 'resubmit': commandfilebase = self.generatorfolder + '/commands/resubmit_%s_' % (self.folderstructure[generation_step]['jobnametag'])
+
+        # Create command file for array of jobs
+        for processname in self.processnames:
+            jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
+            commandfilename = commandfilebase + jobname + '.txt'
+            f = open(commandfilename, 'w')
+            indices = -1
+            if mode is 'new':
+                indices = range(self.maxindex)
+            elif mode is 'resubmit':
+                print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
+                indices = missing_indices = findMissingFilesT2(filepath=self.T2_director_root+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
+
+            njobs = 0
+            for i in indices:
+                outfilename = '%s_%i.root' % (self.folderstructure[generation_step]['outfilenamebase'], i+1)
+                command = ''
+                if generation_step is not 'GENSIM':
+                    infilename   = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['infilepathtag']+'/'+jobname+'/%s_%i.root' % (self.folderstructure[generation_step]['infilenamebase'], i+1)
+                    command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=-1, ncores=ncores)
+                else:
+                    infilename   = self.gridpackfolder + '/' + processname + '/' + jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
+                    command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=self.nevents, ncores=ncores)
+
+                f.write(command + '\n')
+                njobs += 1
+
+            f.close()
+            slurmjobname = ''
+            if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
+            elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
+
+            command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+            if njobs > 0:
+                if self.submit:
+                    os.system(command)
+                    print green("  --> Submitted an array of %i jobs for name %s"%(njobs, jobname))
+                else:
+                    print command
+                    print yellow("  --> Would submit an array of %i jobs"%(njobs))
+
+            else:
+                if mode is 'resubmit':
+                    print green('  --> No jobs to resubmit.')
+                else:
+                    print green('  --> No jobs to submit.')
 
 
 

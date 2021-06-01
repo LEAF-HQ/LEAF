@@ -15,8 +15,13 @@ from tqdm import tqdm
 def get_samplename(mlq, mps, mch, lamb, tag):
     return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
 
-def get_jobname(processname, mlq, mps, mch, lamb, tag):
-    return processname + '_' + get_samplename(mlq, mps, mch, lamb, tag)
+def get_jobname(processname, mlq=None, mps=None, mch=None, lamb=None, tag=None):
+    if mlq is not None and mps is not None and mch is not None and lamb is not None:
+        return processname + '_' + get_samplename(mlq, mps, mch, lamb, tag)
+    elif tag is not None:
+        return processname + format_tag(tag)
+    else:
+        return processname
 
 def get_lambdastring(lamb):
     if lamb == 'best':
@@ -92,7 +97,10 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
     # 2018 CP5:      303600 (same as 2017)
     # 2017/18 CP2:   315200 for 2017/8
     ensureDirectory(card_output_folder)
-    samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+    if mlq is not None and mps is not None and mch is not None and lamb is not None:
+        samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
+    else:
+        samplename = processname
     cardbasename = processname + '_template'
     cardtypes = ['proc_card.dat', 'run_card.dat', 'extramodels.dat', 'customizecards.dat']
     cards = [card_template_folder + '/' + cardbasename + '_' + c for c in cardtypes]
@@ -100,7 +108,10 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
     newcards = []
     for card in cards:
         template = card
-        newcard = card.replace('template', samplename).replace(card_template_folder, card_output_folder)
+        if not samplename == processname:
+            newcard = card.replace('template', samplename).replace(card_template_folder, card_output_folder)
+        else:
+            newcard = card.replace('template_', '').replace(card_template_folder, card_output_folder)
         newcards.append(newcard)
 
         # create newcard
@@ -110,18 +121,26 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
 
     if lamb == 'best':
         lamb = get_best_lambda(mlq)
-    outputfoldername = processname + '_' + samplename
+    if not samplename == processname:
+        outputfoldername = processname + '_' + samplename
+    else:
+        outputfoldername = processname
+
+    # default replacements
     replacement_dict = {
-        'MLQ':      mlq,
-        'MPS':      mps,
-        'MCH':      mch,
-        'MC2':      int(round(2*mps - mch)), # delta_c2 = 2 * delta_ps => mc2 = 2mps - mch --> As done in paper, but value of mc2 doesn't matter for anomalies or relic abundance. Maybe increase to suppress this channel
-        'MZP':      int(round(mlq/math.sqrt(2))), # as done in the paper, but doesn't really affect anomalies or relic abundance
-        'LAMBDA':   lamb,
         'BWCUTOFF': bwcutoff,
         'OUTPUT':   outputfoldername,
         'PDF':      lhapdfid
     }
+
+    # ChiPsi specific
+    if mlq is not None and mps is not None and mch is not None and lamb is not None:
+        replacement_dict['MLQ']    = mlq
+        replacement_dict['MPS']    = mps
+        replacement_dict['MCH']    = mch
+        replacement_dict['MC2']    = int(round(2*mps - mch)) # delta_c2 = 2 * delta_ps => mc2 = 2mps - mch --> As done in paper, but value of mc2 doesn't matter for anomalies or relic abundance. Maybe increase to suppress this channel
+        replacement_dict['MZP']    = int(round(mlq/math.sqrt(2))) # as done in the paper, but doesn't really affect anomalies or relic abundance
+        replacement_dict['LAMBDA'] = lamb
 
     # replace values in the cards
     for card in newcards:
