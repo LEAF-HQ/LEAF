@@ -133,8 +133,15 @@ class GensimRunner:
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
         runtime_str = '%02i:%02i:00' % runtime
-        queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
-
+        if runtime[0] <= 1: # new queues: short, standard, long
+            queue = 'short'
+        elif runtime[0] <= 12: 
+            queue = "standard" 
+        elif runtime[0] <= 168: 
+            queue   = 'long'  
+        else: 
+            raise ValueError("walltime exceeding limits of any queue at T3_PSI! The 'long' queue has a walltime of 7 days (168 hours). ")
+            # values taken from here: https://wiki.chipp.ch/twiki/bin/view/CmsTier3/SlurmUsage or executing sinfo 
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.gensimfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
         elif mode is 'resubmit': commandfilebase = self.gensimfolder + '/commands/resubmit_%s_' % (self.folderstructure[generation_step]['jobnametag'])
@@ -207,7 +214,15 @@ class GensimRunner:
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        queue   = 'wn' if runtime[0] > 1 else 'quick'      # quick -- wn
+        if runtime[0] <= 1: # new queues: short, standard, long
+            queue = 'short'
+        elif runtime[0] <= 12: 
+            queue = "standard" 
+        elif runtime[0] <= 168: 
+            queue   = 'long'  
+        else: 
+            raise ValueError("walltime exceeding limits of any queue at T3_PSI! The 'long' queue has a walltime of 7 days (168 hours). ")
+            # values taken from here: https://wiki.chipp.ch/twiki/bin/view/CmsTier3/SlurmUsage or executing sinfo 
         runtime_str = '%02i:%02i:00' % runtime
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.gensimfolder + '/commands/tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
