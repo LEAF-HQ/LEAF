@@ -53,8 +53,9 @@ class CrossSectionRunner:
                 print yellow('Would have produced %i cards for process %s.' % (len(configs)*len(self.lambdas), processname))
 
     def RunMG(self, only_resubmit=False, ncores=2, runtime=(00,40), maxjobs_per_proc=50):
-        runtime_str = '%02i:%02i:00' % runtime
-        queue = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        # runtime_str = '%02i:%02i:00' % runtime
+        # queue = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        runtime_str, queue = format_runtime(runtime)
 
         for processname in self.processnames:
             if only_resubmit:

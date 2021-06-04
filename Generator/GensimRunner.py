@@ -157,13 +157,14 @@ class GensimRunner:
 
 
 
-    def SubmitGenerationStep(self, generation_step, ncores=8, runtime=(10,00), mode='new'):
+    def SubmitGenerationStep(self, generation_step, ncores=8, runtime=(10,00,00), mode='new'):
         # Submit event generation jobs to the SLURM cluster
 
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        runtime_str = '%02i:%02i:00' % runtime
-        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        # runtime_str = '%02i:%02i:00' % runtime
+        # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        runtime_str, queue = format_runtime(runtime)
 
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
@@ -188,6 +189,7 @@ class GensimRunner:
                     if mode is 'new':
                         indices = range(self.maxindex)
                     elif mode is 'resubmit':
+                        # if not jobname == 'PsiChiTauToLQChi_MLQ7030_MPS117_MC1100_Lbest' and not jobname == 'PsiChiTauToLQChi_MLQ10000_MPS117_MC1100_Lbest': continue
                         print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
                         indices = missing_indices = findMissingFilesT2(filepath=self.T2_director_root+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step)
 
@@ -228,13 +230,14 @@ class GensimRunner:
 
 
 
-    def SubmitGenerationStepSM(self, generation_step, ncores=8, runtime=(10,00), mode='new'):
+    def SubmitGenerationStepSM(self, generation_step, ncores=8, runtime=(10,00,00), mode='new'):
         # Submit event generation jobs to the SLURM cluster
 
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        runtime_str = '%02i:%02i:00' % runtime
-        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        runtime_str, queue = format_runtime(runtime)
+        # runtime_str = '%02i:%02i:00' % runtime
+        # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
 
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/%s_' % (self.folderstructure[generation_step]['jobnametag'])
@@ -289,12 +292,13 @@ class GensimRunner:
 
 
 
-    def SubmitTuplize(self, generation_step, ncores=1, runtime=(01,00), mode='new'):
+    def SubmitTuplize(self, generation_step, ncores=1, runtime=(01,00,00), mode='new'):
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
-        runtime_str = '%02i:%02i:00' % runtime
+        # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        # runtime_str = '%02i:%02i:00' % runtime
+        runtime_str, queue = format_runtime(runtime)
         commandfilebase = ''
         if mode is 'new':        commandfilebase = self.generatorfolder + '/commands/tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])
         elif mode is 'resubmit': commandfilebase = self.generatorfolder + '/commands/resubmit_tuplize_%s_' % (self.folderstructure[generation_step]['jobnametag'])

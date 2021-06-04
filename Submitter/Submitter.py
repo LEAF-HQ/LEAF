@@ -61,7 +61,7 @@ class Submitter:
             if njobs < 1: continue
             environ_path = os.getenv('PATH')
             environ_ld_lib_path = os.getenv('LD_LIBRARY_PATH')
-            command = 'sbatch -a 1-%i -J %s -p quick --chdir %s -t 01:00:00 submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, os.path.join(self.workdir_local, datasetname, 'joboutput'), missing_files, environ_path, environ_ld_lib_path)
+            command = 'sbatch -a 1-%i -J %s -p short --chdir %s -t 01:00:00 submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, os.path.join(self.workdir_local, datasetname, 'joboutput'), missing_files, environ_path, environ_ld_lib_path)
             jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
 

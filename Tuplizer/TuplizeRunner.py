@@ -48,8 +48,9 @@ class TuplizeRunner:
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
-        queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
-        runtime_str = '%02i:%02i:00' % runtime
+        # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+        # runtime_str = '%02i:%02i:00' % runtime
+        runtime_str, queue = format_runtime(runtime)
         commandfilename = ''
         if mode is 'new':        commandfilename = join(self.tuplizefolder, 'commands/tuplize_%s.txt' % (self.sample.name))
         elif mode is 'resubmit': commandfilename = join(self.tuplizefolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
