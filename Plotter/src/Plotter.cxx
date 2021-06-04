@@ -220,9 +220,9 @@ int main(){
   linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   0;
   linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  0;
   linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = 0;
-  
-  TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
-  // TString foldername = "LQDM/2017/Preselection/PsiPsi_Initial/";
+
+  // TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
+  TString foldername = "LQDM/2017/Preselection/PsiPsi_Initial/";
 
   Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
