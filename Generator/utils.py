@@ -5,6 +5,7 @@ import subprocess
 import time
 from preferred_configurations import *
 from bisect import bisect_left
+from constants import *
 
 
 def ensureDirectory(dirname, use_se=False):
@@ -170,6 +171,21 @@ def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=Tru
         for o in resub_outputs:
             outputs.append(o)
     return outputs
+
+def format_runtime(hms):
+    if not type(hms) == tuple: raise AttributeError('format_runtime needs to be passed a tuple as argument, containing the hours and minutes and seconds of runtime.')
+    (h, m, s) = hms
+    if s >=60 or m >= 60: raise ValueError('Minutes and seconds must be < 60, instead increase the hours or minutes.')
+    if h > 24 or (h == 24 and (m > 0 or s > 0)): raise ValueError('Maximum runtime is 24, 0, 0.')
+
+    runtime_str = '%02i:%02i:%02i' % (hms)
+    if h == 24:
+        runtime_str = '1-00:00:00'
+
+    total_seconds = h*3600 + m*60 + s
+    min_matching_qtime = min(i for i in slurm_queues_runtimes.keys() if i*3600 >= total_seconds)
+    queue = slurm_queues_runtimes[min_matching_qtime]
+    return (runtime_str, queue)
 
 
 def find_closest(myList, myNumber):
