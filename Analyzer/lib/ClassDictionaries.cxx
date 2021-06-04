@@ -80,6 +80,7 @@ namespace std {} using namespace std;
 #include "include/Jet.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
+#include "include/FlagHists.h"
 #include "include/Electron.h"
 #include "include/RecoEvent.h"
 #include "include/BTaggingScaleFactorApplicator.h"
@@ -2326,6 +2327,7 @@ namespace {
 "include/Jet.h",
 "include/LumiblockSelection.h",
 "include/JetHists.h",
+"include/FlagHists.h",
 "include/Electron.h",
 "include/RecoEvent.h",
 "include/BTaggingScaleFactorApplicator.h",
@@ -2418,6 +2420,7 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/Jet.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
+#include "include/FlagHists.h"
 #include "include/Electron.h"
 #include "include/RecoEvent.h"
 #include "include/BTaggingScaleFactorApplicator.h"
