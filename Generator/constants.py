@@ -2,6 +2,11 @@ from ROOT import kBlack, kRed, kBlue, kAzure, kCyan, kGreen, kGreen, kYellow, kO
 
 
 colors = [kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2]
+slurm_queues_runtimes = {
+1: 'short',
+12: 'standard',
+24: 'long'
+}
 
 
 procname_to_latex = {
@@ -11,7 +16,8 @@ procname_to_latex = {
     'LQLQToPsiChi': 'LQ LQ #rightarrow #psi#chi_{1} #psi#chi_{1}',
     'PsiPsiToLQChi': '#psi#psi #rightarrow b#tau#chi_{1} b#tau#chi_{1}',
     'PsiPsi': '#psi#psi',
-    'LQTChannelTauNu': 'LQ t-channel'
+    'LQTChannelTauNu': 'LQ t-channel #tau#nu',
+    'LQTChannelTauTau': 'LQ t-channel #tau#tau',
 }
 
 decaymode_dict = {
