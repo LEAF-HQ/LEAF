@@ -227,9 +227,9 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True,  ncores=2, runtime=(00,30,00), maxjobs_per_proc=50)
-CrossBRRunner.ReadoutCrossBR()
-CrossBRRunner.RootifyCrossBR()
-CrossBRRunner.PlotCrossBR()
+# CrossBRRunner.ReadoutCrossBR()
+# CrossBRRunner.RootifyCrossBR()
+# CrossBRRunner.PlotCrossBR()
 
 
 
@@ -306,8 +306,8 @@ EventGenerator_psichitau = GensimRunner(processnames=processes_psichitau, tag=ta
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=4, runtime=(10,00,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='GENSIM', ncores=8, runtime=(24,00,00), mode='resubmit')
-# EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00,00), mode='new')
-# EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00,00), mode='resubmit')
+# EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='new')
+EventGenerator_psichitau.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00,00), mode='new')
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00,00), mode='resubmit')
 # EventGenerator_psichitau.RemoveSamples(generation_step='DR')
