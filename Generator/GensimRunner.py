@@ -356,23 +356,33 @@ class GensimRunner:
         # Loop through samples to find all that should be deleted
         commands = []
         for processname in self.processnames:
-            allowed_configs = []
-            for config in self.configs:
-                if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
-                    allowed_configs.append(config)
-                else:
-                    print yellow('--> Skip config %s for process \'%s\'' % (config, processname))
-            for config in allowed_configs:
-                for lamb in self.lambdas:
-                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
-                    jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                    samplepath    = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname
-                    command       = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
-                    # print command
-                    if self.submit:
-                        print green('--> Will delete files from job %s for generation step %s'%(jobname, generation_step))
+            if self.configs is not None:
+                allowed_configs = []
+                for config in self.configs:
+                    if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=self.preferred_configurations):
+                        allowed_configs.append(config)
                     else:
-                        print yellow('--> Would delete files from job %s for generation step %s'%(jobname, generation_step))
-                    commands.append(command)
+                        print yellow('--> Skip config %s for process \'%s\'' % (config, processname))
+                for config in allowed_configs:
+                    for lamb in self.lambdas:
+                        mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
+                        jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
+                        samplepath    = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname
+                        command       = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
+                        if self.submit:
+                            print green('--> Will delete files from job %s for generation step %s'%(jobname, generation_step))
+                        else:
+                            print yellow('--> Would delete files from job %s for generation step %s'%(jobname, generation_step))
+                        commands.append(command)
+
+            else:
+                jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
+                samplepath    = self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname
+                command       = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm -r %s' % (samplepath)
+                if self.submit:
+                    print green('--> Will delete files from job %s for generation step %s'%(jobname, generation_step))
+                else:
+                    print yellow('--> Would delete files from job %s for generation step %s'%(jobname, generation_step))
+                commands.append(command)
         if self.submit:
             execute_commands_parallel(commands=commands, niceness=None)
