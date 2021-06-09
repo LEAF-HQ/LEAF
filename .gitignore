@@ -17,6 +17,7 @@ Generator/crosssections/ChiPsi/LQLQToBTauPsiChi/*
 Generator/crosssections/ChiPsi/LQLQToPsiChi/*
 Generator/crosssections/ChiPsi/PsiPsi/*
 Generator/crosssections/ChiPsi/LQTChannelTauNu/*
+Generator/crosssections/ChiPsi/LQTChannelTauTau/*
 Generator/NanoAODTools/
 Generator/exampleAnalysis.py
 Analyzer/obj/*
