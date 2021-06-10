@@ -31,13 +31,15 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Set up CVMFS and verify it works
         run: |
-          wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
-          sudo dpkg -i cvmfs-release-latest_all.deb
-          rm -f cvmfs-release-latest_all.deb
-          sudo apt-get update
-          sudo apt-get install cvmfs
-          sudo cvmfs_config setup
-          export CVMFS_CLIENT_PROFILE=single
-          sudo cvmfs_config probe
-          ls -1 /cvmfs/cms.cern.ch/
+          sudo mkdir -p /cvmfs/cms.cern.ch
+          sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
+          #wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
+          #sudo dpkg -i cvmfs-release-latest_all.deb
+          #rm -f cvmfs-release-latest_all.deb
+          #sudo apt-get update
+          #sudo apt-get install cvmfs
+          #sudo cvmfs_config setup
+          #export CVMFS_CLIENT_PROFILE=single
+          #sudo cvmfs_config probe
+          #ls -1 /cvmfs/cms.cern.ch/
 
