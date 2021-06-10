@@ -22,6 +22,7 @@ else
 fi
 cd CMSSW_10_6_12/src
 eval `scramv1 runtime -sh`
+echo $PATH
 scram b
 cd ../../
 
