@@ -36,8 +36,8 @@ jobs:
           rm -f cvmfs-release-latest_all.deb
           sudo apt-get update
           sudo apt-get install cvmfs
-          cvmfs_config setup
-          CVMFS_CLIENT_PROFILE=single
-          cvmfs_config probe
+          sudo cvmfs_config setup
+          export CVMFS_CLIENT_PROFILE=single
+          sudo cvmfs_config probe
           ls -1 /cvmfs/cms.cern.ch/
 
