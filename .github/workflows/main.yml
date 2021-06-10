@@ -58,12 +58,14 @@ jobs:
           shopt -s expand_aliases
           source /cvmfs/cms.cern.ch/cmsset_default.sh
           eval 'which g++'
+          echo $PATH
 
       - name: Download get_leaf.sh
         run: wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
 
       - name: Get and install LEAF
         run: |
+          echo $PATH
           eval 'which g++'
           shopt -s expand_aliases
           source get_leaf.sh
