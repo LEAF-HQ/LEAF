@@ -44,9 +44,7 @@ jobs:
           sudo mkdir -p /cvmfs/cvmfs-config.cern.ch
           echo +++ going to mount config
           sudo mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
-          #sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
-          #sudo cvmfs_config setup
-          #export CVMFS_CLIENT_PROFILE=single
-          #sudo cvmfs_config probe
+          sudo echo CVMFS_REPOSITORIES=cms.cern.ch > /etc/cvmfs/default.local
+          sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -1 /cvmfs/cms.cern.ch/
 
