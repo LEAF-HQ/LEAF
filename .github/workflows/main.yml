@@ -47,7 +47,9 @@ jobs:
           ls -1 /cvmfs/cms.cern.ch/
 
       - name: Install gcc packages
-        run: sudo apt-get install g++-multilib
+        run: |
+          eval 'which g++'
+          sudo apt-get install g++-multilib
 
       - name: Set up environment to install LEAF
         run: |
