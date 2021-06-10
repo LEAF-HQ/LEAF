@@ -37,6 +37,7 @@ jobs:
           rm -f cvmfs-release-latest_all.deb
           sudo apt-get update
           sudo apt-get install cvmfs
+          export CVMFS_HTTP_PROXY=DIRECT
           sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           #sudo cvmfs_config setup
           #export CVMFS_CLIENT_PROFILE=single
