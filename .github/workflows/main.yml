@@ -63,5 +63,6 @@ jobs:
 
       - name: Get and install LEAF
         run: |
+          eval 'which g++'
           shopt -s expand_aliases
           source get_leaf.sh
