@@ -22,14 +22,9 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      #- uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Set up CVMFS and verify it works
+      - name: Install CVMFS
         run: |
           sudo mkdir -p /cvmfs/cms.cern.ch
           wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
@@ -37,14 +32,22 @@ jobs:
           rm -f cvmfs-release-latest_all.deb
           sudo apt-get update
           sudo apt-get install cvmfs
-          echo +++++++++++++++++++ successfully installed cvmfs ++++++++++++++++++++
-          echo +++ going to make dir
+
+      - name: Mount and configure basics
+        run: |
           sudo mkdir -p /cvmfs/cvmfs-config.cern.ch
-          echo +++ going to mount config
           sudo mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
           sudo touch /etc/cvmfs/default.local
           echo CVMFS_REPOSITORIES=cms.cern.ch | sudo tee /etc/cvmfs/default.local
           echo CVMFS_CLIENT_PROFILE=single | sudo tee /etc/cvmfs/default.local
+
+      - name: Mount cms.cern.ch and check contents
+        run: |
           sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -1 /cvmfs/cms.cern.ch/
 
+      - name: Download get_leah.sh
+        run: wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
+
+      - name: Get and install LEAF
+        run: source get_leaf.sh
