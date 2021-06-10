@@ -50,10 +50,13 @@ jobs:
         run: |
           export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
           export SCRAM_ARCH=slc7_amd64_gcc700
+          shopt -s expand_aliases
           source /cvmfs/cms.cern.ch/cmsset_default.sh
 
       - name: Download get_leaf.sh
         run: wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
 
       - name: Get and install LEAF
-        run: source get_leaf.sh
+        run: |
+          shopt -s expand_aliases
+          source get_leaf.sh
