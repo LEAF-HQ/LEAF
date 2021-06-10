@@ -23,6 +23,8 @@ fi
 cd CMSSW_10_6_12/src
 eval `scramv1 runtime -sh`
 echo $PATH
+eval `which g++`
+ls -lrth /cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gcc/7.0.0-pafccj/bin/g++
 scram b
 cd ../../
 
@@ -61,6 +63,8 @@ cd ../../
 # all folders there, set up environment
 source setup.sh
 
+
+eval `which g++`
 # compile all!
 cd $ANALYZERPATH
 make clean
