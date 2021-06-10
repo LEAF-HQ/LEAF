@@ -46,6 +46,9 @@ jobs:
           sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -1 /cvmfs/cms.cern.ch/
 
+      - name: Install gcc packages
+        run: sudo apt-get install gcc-multilib g++-multilib
+
       - name: Set up environment to install LEAF
         run: |
           export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
