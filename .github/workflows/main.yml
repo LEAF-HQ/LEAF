@@ -40,9 +40,9 @@ jobs:
           sudo apt-get install cvmfs
           echo +++++++++++++++++++ successfully installed cvmfs ++++++++++++++++++++
           export CVMFS_REPOSITORIES=cms.cern.ch
-          echo >>> going to make dir
+          echo +++ going to make dir
           sudo mkdir -p /cvmfs/cvmfs-config.cern.ch
-          echo >>> going to mount config
+          echo +++ going to mount config
           sudo mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
           #sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           #sudo cvmfs_config setup
