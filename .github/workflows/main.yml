@@ -46,7 +46,12 @@ jobs:
           sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -1 /cvmfs/cms.cern.ch/
 
-      - name: Download get_leah.sh
+      - name: Set up environment to install LEAF
+        run: |
+          export SCRAM_ARCH=slc7_amd64_gcc700
+          source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+      - name: Download get_leaf.sh
         run: wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
 
       - name: Get and install LEAF
