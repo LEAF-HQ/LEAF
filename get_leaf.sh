@@ -23,7 +23,7 @@ fi
 cd CMSSW_10_6_12/src
 eval `scramv1 runtime -sh`
 echo $PATH
-eval `which g++`
+eval 'which g++'
 ls -lrth /cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gcc/7.0.0-pafccj/bin/g++
 scram b
 cd ../../
@@ -32,6 +32,7 @@ cd ../../
 git clone https://github.com/reimersa/LEAF.git LEAF
 cd LEAF
 export LEAFPATH=$(readlink -f .)
+echo $LEAFPATH
 
 # clone JEC and JR databases into Analyzer
 cd Analyzer
