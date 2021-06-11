@@ -21,7 +21,7 @@ jobs:
     #runs-on: ubuntu-18.04
     container: 
       image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
-      options: --user root
+      options: --user root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
