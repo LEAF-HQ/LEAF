@@ -3,7 +3,8 @@
 # set up architecture
 export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-eval 'which sh'
+which sh
+sh --version
 
 
 # get CMSSW_10_2_13 for combine
