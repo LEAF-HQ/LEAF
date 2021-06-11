@@ -1,3 +1,4 @@
+#!/bin/bash
 # script to get all necessary ingredients to download and run LEAF. Running standalone.
 
 # set up architecture

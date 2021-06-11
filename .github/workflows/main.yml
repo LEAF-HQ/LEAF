@@ -102,4 +102,7 @@ jobs:
           echo $PATH
           #eval 'which g++'
           shopt -s expand_aliases
+          cat get_leaf.sh
+          chmod +x get_leaf.sh
+          ./get_leaf.sh
           . get_leaf.sh
