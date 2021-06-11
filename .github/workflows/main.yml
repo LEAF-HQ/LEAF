@@ -31,9 +31,6 @@ jobs:
       - name: Install CVMFS
         run: |
           set -x
-          mkdir -p /cvmfs/cms.cern.ch
-          ls -lrth /
-          ls -lrth /cvmfs
           yum clean all
           yum --disablerepo="epel" update nss 
           echo y > answer.txt
@@ -42,22 +39,24 @@ jobs:
 
       - name: Mount and configure basics
         run: |
-          mkdir -p /cvmfs/cvmfs-config.cern.ch
-          mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
+          cvmfs_config setup
+          #mkdir -p /cvmfs/cvmfs-config.cern.ch
+          #mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
           touch /etc/cvmfs/default.local
-          echo CVMFS_REPOSITORIES=cms.cern.ch | sudo tee /etc/cvmfs/default.local
-          echo CVMFS_CLIENT_PROFILE=single | sudo tee /etc/cvmfs/default.local
+          echo CVMFS_REPOSITORIES=cms.cern.ch | tee /etc/cvmfs/default.local
+          echo CVMFS_CLIENT_PROFILE=single | tee -a /etc/cvmfs/default.local
+          cvmfs_config probe
 
       - name: Mount cms.cern.ch and check contents
         run: |
           set -x
-          mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
+          #mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -lrth .
           ls -lrth /
           ls -lrth /cvmfs
           #mkdir -p /cvmfs/cms.cern.ch
           #mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
-          ls -l /cvmfs/cms.cern.ch/
+          ls -lrth /cvmfs/cms.cern.ch/
 
       #- name: Install gcc packages
       #  run: |
