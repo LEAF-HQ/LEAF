@@ -65,6 +65,7 @@ jobs:
 
       - name: Get and install LEAF
         run: |
+          sudo ln -sf bash /bin/sh
           echo $PATH
           eval 'which g++'
           shopt -s expand_aliases
