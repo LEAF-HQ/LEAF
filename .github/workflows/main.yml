@@ -22,7 +22,8 @@ jobs:
     container: 
       image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
       options: --user root --privileged 
-      volumes: /sys/fs/cgroup:/sys/fs/cgroup:ro
+      volumes: 
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
     
     #entrypoint: /usr/sbin/init
     #args:
