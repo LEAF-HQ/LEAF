@@ -77,6 +77,14 @@ sleep 2
 source $LEAFPATH/setup.sh
 echo $PWD
 
+sleep 2
+echo $PATH
+sleep 1
+echo $LD_LIBRARY_PATH
+sleep 1
+echo $CXXFLAGS
+
+
 # compile all!
 cd $ANALYZERPATH
 echo $PWD
