@@ -91,6 +91,7 @@ jobs:
         run: |
           set -x
           wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
+          chmod +x get_leaf.sh
           ./get_leaf.sh
           #/bin/bash get_leaf.sh
           #. get_leaf.sh
