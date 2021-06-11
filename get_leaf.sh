@@ -73,32 +73,42 @@ echo $PWD
 # cd $LEAFPATH
 
 # all folders there, set up environment
-source setup.sh
+sleep 2
+source $LEAFPATH/setup.sh
 echo $PWD
 
 # compile all!
 cd $ANALYZERPATH
 echo $PWD
+ls -lrth
+sleep 2
 make clean
 echo $PWD
+sleep 2
 make -j
 echo $PWD
 
 cd $PLOTTERPATH
 echo $PWD
+sleep 2
 make clean
 echo $PWD
+sleep 2
 make -j
 echo $PWD
 
 cd $COMBINEPATH
 echo $PWD
+sleep 2
 source env_standalone.sh
 echo $PWD
+sleep 2
 make clean
 echo $PWD
+sleep 2
 make -j
 echo $PWD
+sleep 2
 
 cd $LEAFPATH
 echo $PWD
