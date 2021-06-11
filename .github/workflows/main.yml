@@ -91,22 +91,6 @@ jobs:
         run: |
           set -x
           wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
-          pwd
-          ls -lrth
-          #- name: Get and install LEAF
-          #  run: |
-          #    set -x
-          pwd
-          ls -lrth
-          ln -sf bash /bin/sh
-          ls -lrth /bin/sh
-          echo $PATH
-          #eval 'which g++'
-          shopt -s expand_aliases
-          #cat get_leaf.sh
-          #chmod +x get_leaf.sh
-          ls -lrth /cvmfs/cms.cern.ch/cmsset_default.sh
-          #cat /cvmfs/cms.cern.ch/cmsset_default.sh
-          echo $SHELL
-          /bin/bash get_leaf.sh
+          ./get_leaf.sh
+          #/bin/bash get_leaf.sh
           #. get_leaf.sh
