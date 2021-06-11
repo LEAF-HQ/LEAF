@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 # script to get all necessary ingredients to download and run LEAF. Running standalone.
 
 # set up architecture
 export SCRAM_ARCH=slc7_amd64_gcc700
-source /cvmfs/cms.cern.ch/cmsset_default.sh
+/bin/sh /cvmfs/cms.cern.ch/cmsset_default.sh
 echo $PATH
 export PATH=/bin/sh:$PATH
 echo $PATH
@@ -67,7 +67,7 @@ cd ../../
 # cd $LEAFPATH
 
 # all folders there, set up environment
-source setup.sh
+/bin/sh setup.sh
 
 
 eval 'which g++'
@@ -81,7 +81,7 @@ make clean
 make -j
 
 cd $COMBINEPATH
-source env_standalone.sh
+/bin/sh env_standalone.sh
 make clean
 make -j
 
