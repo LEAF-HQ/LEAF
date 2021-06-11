@@ -50,17 +50,17 @@ jobs:
       - name: Mount and configure basics
         run: |
           set -x
-          exec /usr/sbin/init && systemctl restart autofs
+          #exec /usr/sbin/init && systemctl restart autofs
           #systemctl enable autofs
-          cvmfs_config setup
-          #mkdir -p /cvmfs/cvmfs-config.cern.ch
-          #mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
+          #cvmfs_config setup
+          mkdir -p /cvmfs/cvmfs-config.cern.ch
+          mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
           touch /etc/cvmfs/default.local
           echo CVMFS_REPOSITORIES=cms.cern.ch | tee /etc/cvmfs/default.local
           echo CVMFS_CLIENT_PROFILE=single | tee -a /etc/cvmfs/default.local
-          /usr/bin/systemctl restart autofs &
-          exec /usr/sbin/init
-          cvmfs_config probe
+          #/usr/bin/systemctl restart autofs &
+          #exec /usr/sbin/init
+          #cvmfs_config probe
 
       - name: Mount cms.cern.ch and check contents
         run: |
