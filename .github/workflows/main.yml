@@ -99,12 +99,13 @@ jobs:
           pwd
           ls -lrth
           ln -sf bash /bin/sh
+          ls -lrth /bin/sh
           echo $PATH
           #eval 'which g++'
           shopt -s expand_aliases
           #cat get_leaf.sh
           #chmod +x get_leaf.sh
           ls -lrth /cvmfs/cms.cern.ch/cmsset_default.sh
-          cat /cvmfs/cms.cern.ch/cmsset_default.sh
+          #cat /cvmfs/cms.cern.ch/cmsset_default.sh
           /bin/bash get_leaf.sh
           #. get_leaf.sh
