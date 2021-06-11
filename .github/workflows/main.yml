@@ -73,10 +73,9 @@ jobs:
           mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -lrth /cvmfs/cms.cern.ch/
 
-      #- name: Install gcc packages
-      #  run: |
-      #    eval 'which g++'
-      #    sudo apt-get install g++-multilib
+      - name: Install missing packages normally available
+        run: |
+          yum install libglu1
 
       - name: Set up environment to install LEAF and download the script
         run: |
