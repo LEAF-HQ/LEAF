@@ -54,8 +54,10 @@ jobs:
           set -x
           #sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -lrth .
-          ls -lrth /.
+          ls -lrth /
           ls -lrth /cvmfs
+          mkdir -p /cvmfs/cms.cern.ch
+          mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -l /cvmfs/cms.cern.ch/
 
       #- name: Install gcc packages
