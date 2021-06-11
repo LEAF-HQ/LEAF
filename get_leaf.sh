@@ -2,12 +2,8 @@
 
 # set up architecture
 export SCRAM_ARCH=slc7_amd64_gcc700
-/bin/bash /cvmfs/cms.cern.ch/cmsset_default.sh
-echo $PATH
-export PATH=/bin/sh:$PATH
-echo $PATH
-eval 'which sh'
-
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+echo $PWD
 
 # get CMSSW_10_2_13 for combine
 if [ -r CMSSW_10_2_13/src ] ; then
@@ -24,32 +20,43 @@ else
   echo "Setting up CMSSW_10_6_12."
   cmsrel CMSSW_10_6_12
 fi
+echo $PWD
+
 cd CMSSW_10_6_12/src
+echo $PWD
 eval `scramv1 runtime -sh`
-echo $PATH
-eval 'which g++'
-ls -lrth /cvmfs/cms.cern.ch/slc7_amd64_gcc700/external/gcc/7.0.0-pafccj/bin/g++
 scram b
 cd ../../
+echo $PWD
 
 # download LEAF
 git clone https://github.com/reimersa/LEAF.git LEAF
 cd LEAF
+echo $PWD
 export LEAFPATH=$(readlink -f .)
 echo $LEAFPATH
+echo $PWD
 
 # clone JEC and JR databases into Analyzer
-cd Analyzer
+cd $LEAFPATH/Analyzer
+echo $PWD
 git clone https://github.com/cms-jet/JECDatabase.git
 git clone https://github.com/cms-jet/JRDatabase.git
+echo $PWD
 
 # download Higgs Combine
 cd ../
+echo $PWD
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
-cd HiggsAnalysis/CombinedLimit/
+echo $PWD
+cd HiggsAnalysis/CombinedLimit
+echo $PWD
 git fetch origin
+echo $PWD
 git checkout v8.2.0
+echo $PWD
 cd ../../
+echo $PWD
 # cd $CMSSW_BASE/src
 # git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 # cd HiggsAnalysis/CombinedLimit/
@@ -66,23 +73,33 @@ cd ../../
 # cd $LEAFPATH
 
 # all folders there, set up environment
-/bin/sh setup.sh
+source setup.sh
+echo $PWD
 
-
-eval 'which g++'
 # compile all!
 cd $ANALYZERPATH
+echo $PWD
 make clean
+echo $PWD
 make -j
+echo $PWD
 
 cd $PLOTTERPATH
+echo $PWD
 make clean
+echo $PWD
 make -j
+echo $PWD
 
 cd $COMBINEPATH
-/bin/sh env_standalone.sh
+echo $PWD
+source env_standalone.sh
+echo $PWD
 make clean
+echo $PWD
 make -j
+echo $PWD
 
 cd $LEAFPATH
+echo $PWD
 echo "--> Done setting up LEAF!"
