@@ -34,9 +34,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v2
 
-      - name: Startup
-        run: |
-         /usr/sbin/init systemctl start httpd.service
+      #- name: Startup
+      #  run: |
+      #   /usr/sbin/init systemctl start httpd.service
 
       - name: Install CVMFS
         run: |
