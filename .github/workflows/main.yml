@@ -51,8 +51,12 @@ jobs:
 
       - name: Mount cms.cern.ch and check contents
         run: |
+          set -x
           #sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
-          ls -1 /cvmfs/cms.cern.ch/
+          ls -lrth .
+          ls -lrth /.
+          ls -lrth /cvmfs
+          ls -l /cvmfs/cms.cern.ch/
 
       #- name: Install gcc packages
       #  run: |
@@ -61,6 +65,7 @@ jobs:
 
       - name: Set up environment to install LEAF
         run: |
+          set -x
           export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
           export SCRAM_ARCH=slc7_amd64_gcc700
           shopt -s expand_aliases
@@ -73,6 +78,7 @@ jobs:
 
       - name: Get and install LEAF
         run: |
+          set -x
           sudo ln -sf bash /bin/sh
           echo $PATH
           eval 'which g++'
