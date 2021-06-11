@@ -107,5 +107,6 @@ jobs:
           #chmod +x get_leaf.sh
           ls -lrth /cvmfs/cms.cern.ch/cmsset_default.sh
           #cat /cvmfs/cms.cern.ch/cmsset_default.sh
+          echo $SHELL
           /bin/bash get_leaf.sh
           #. get_leaf.sh

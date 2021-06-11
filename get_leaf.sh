@@ -4,9 +4,9 @@
 # set up architecture
 shopt -s expand_aliases # force alias expansion
 
-
+set -x
 export SCRAM_ARCH=slc7_amd64_gcc700
-/bin/sh /cvmfs/cms.cern.ch/cmsset_default.sh
+/bin/bash /cvmfs/cms.cern.ch/cmsset_default.sh
 echo $PATH
 export PATH=/bin/sh:$PATH
 echo $PATH
