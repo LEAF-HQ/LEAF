@@ -87,4 +87,6 @@ jobs:
           wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
           echo $PATH
           sleep 2
+          ls -lrth /lib64
+          ls -lrth /lib
           source $PWD/get_leaf.sh
