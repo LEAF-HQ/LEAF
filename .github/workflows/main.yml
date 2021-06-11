@@ -37,11 +37,13 @@ jobs:
       - name: Install CVMFS
         run: |
           mkdir -p /cvmfs/cms.cern.ch
-          #wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
-          #sudo dpkg -i cvmfs-release-latest_all.deb
-          #rm -f cvmfs-release-latest_all.deb
-          #sudo apt-get update
-          #sudo apt-get install cvmfs
+          ls -lrth /
+          ls -lrth /cvmfs
+          wget https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest_all.deb
+          dpkg -i cvmfs-release-latest_all.deb
+          rm -f cvmfs-release-latest_all.deb
+          apt-get update
+          apt-get install cvmfs
 
       - name: Mount and configure basics
         run: |
@@ -54,7 +56,7 @@ jobs:
       - name: Mount cms.cern.ch and check contents
         run: |
           set -x
-          #sudo mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
+          mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -lrth .
           ls -lrth /
           ls -lrth /cvmfs
