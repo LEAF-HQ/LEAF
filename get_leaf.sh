@@ -65,7 +65,7 @@ cd ../../
 source setup.sh
 
 
-eval `which g++`
+eval 'which g++'
 # compile all!
 cd $ANALYZERPATH
 make clean
