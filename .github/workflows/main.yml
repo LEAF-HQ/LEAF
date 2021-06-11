@@ -49,7 +49,9 @@ jobs:
 
       - name: Mount and configure basics
         run: |
-          systemctl enable autofs
+          set -x
+          exec /usr/sbin/init && systemctl restart autofs
+          #systemctl enable autofs
           cvmfs_config setup
           #mkdir -p /cvmfs/cvmfs-config.cern.ch
           #mount -t cvmfs cvmfs-config.cern.ch /cvmfs/cvmfs-config.cern.ch
