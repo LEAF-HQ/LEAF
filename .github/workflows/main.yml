@@ -94,9 +94,9 @@ jobs:
           pwd
           ls -lrth
 
-      - name: Get and install LEAF
-        run: |
-          set -x
+      #- name: Get and install LEAF
+      #  run: |
+      #    set -x
           pwd
           ls -lrth
           ln -sf bash /bin/sh
