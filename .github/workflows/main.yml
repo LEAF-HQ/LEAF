@@ -35,8 +35,9 @@ jobs:
           ls -lrth /
           ls -lrth /cvmfs
           yum clean all
-          yum --disablerepo="epel" update nss
-          y | yum install https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
+          yum --disablerepo="epel" update nss 
+          echo y > answer.txt
+          yum install https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm < answer.txt
           yum install -y cvmfs
 
       - name: Mount and configure basics
