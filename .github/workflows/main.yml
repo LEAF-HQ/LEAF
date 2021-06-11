@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     #runs-on: ubuntu-18.04
     container: 
-      image: gitlab-registry.cern.ch/ci-tools/ci-worker:slc6
+      image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
       options: --user root
 
     # Steps represent a sequence of tasks that will be executed as part of the job
