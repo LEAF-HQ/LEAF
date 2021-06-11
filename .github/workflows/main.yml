@@ -22,14 +22,19 @@ jobs:
     container: 
       image: gitlab-registry.cern.ch/ci-tools/ci-worker:cc7
       options: --user root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup
-      entrypoint: /usr/sbin/init
-      args:
-        - 'systemctl start httpd.service'
+    
+    #entrypoint: /usr/sbin/init
+    #args:
+    #  - 'systemctl start httpd.service'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v2
+
+      - name: Startup
+        run: |
+         /usr/sbin/init systemctl start httpd.service
 
       - name: Install CVMFS
         run: |
