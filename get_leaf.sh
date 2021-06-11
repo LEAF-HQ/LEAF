@@ -7,8 +7,6 @@ echo $PATH
 export PATH=/bin/sh:$PATH
 echo $PATH
 eval 'which sh'
-eval 'ls -lrth /bin/sh'
-eval 'ls -lrth /usr/bin/sh'
 
 
 # get CMSSW_10_2_13 for combine
