@@ -69,8 +69,8 @@ jobs:
           ls -lrth .
           ls -lrth /
           ls -lrth /cvmfs
-          #mkdir -p /cvmfs/cms.cern.ch
-          #mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
+          mkdir -p /cvmfs/cms.cern.ch
+          mount -t cvmfs cms.cern.ch /cvmfs/cms.cern.ch
           ls -lrth /cvmfs/cms.cern.ch/
 
       #- name: Install gcc packages
