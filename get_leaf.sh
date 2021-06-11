@@ -4,9 +4,11 @@
 export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 echo $PATH
-which sh
-ls -lrth /bin/sh
-ls -lrth /usr/bin/sh
+export PATH=/bin/sh:$PATH
+echo $PATH
+eval 'which sh'
+eval 'ls -lrth /bin/sh'
+eval 'ls -lrth /usr/bin/sh'
 
 
 # get CMSSW_10_2_13 for combine
