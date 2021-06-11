@@ -1,10 +1,6 @@
-#!/bin/sh
 # script to get all necessary ingredients to download and run LEAF. Running standalone.
 
 # set up architecture
-shopt -s expand_aliases # force alias expansion
-
-set -x
 export SCRAM_ARCH=slc7_amd64_gcc700
 /bin/bash /cvmfs/cms.cern.ch/cmsset_default.sh
 echo $PATH

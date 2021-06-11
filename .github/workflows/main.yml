@@ -87,12 +87,5 @@ jobs:
           source /cvmfs/cms.cern.ch/cmsset_default.sh
           wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
           echo $PATH
-
-      - name: Download get_leaf.sh
-        run: |
-          set -x
-          export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
-          export SCRAM_ARCH=slc7_amd64_gcc700
-          shopt -s expand_aliases
           sleep 2
           source get_leaf.sh
