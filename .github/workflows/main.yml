@@ -30,13 +30,14 @@ jobs:
 
       - name: Install CVMFS
         run: |
+          set -x
           mkdir -p /cvmfs/cms.cern.ch
           ls -lrth /
           ls -lrth /cvmfs
           yum clean all
           yum --disablerepo="epel" update nss
           yum install https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
-          yum install -y cvmfs
+          y | yum install -y cvmfs
 
       - name: Mount and configure basics
         run: |
