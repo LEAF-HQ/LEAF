@@ -37,11 +37,11 @@ jobs:
       - name: yum things
         run: |
           set -x
-          ldconfig -p > before.txt
-          grep libGLU before.txt
+          ldconfig -p
+          #grep libGLU before.txt
           yum install mesa-libGLU
-          ldconfig -p > after.txt
-          grep libGLU after.txt
+          ldconfig -p
+          #grep libGLU after.txt
 
       #- name: Install CVMFS
         #run: |
