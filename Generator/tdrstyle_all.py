@@ -1,4 +1,5 @@
 import ROOT as rt
+from array import array
 
 #######################################
 # New CMS Style from 2014             #
@@ -16,6 +17,15 @@ def ExtraTextOff(TDR):
 def ForThesis(TDR):
     CMSOff(TDR)
     ExtraTextOff(TDR)
+
+def SetAlternative2DColor(h=None):
+    Red    = [ 0.00, 0.00, 1.00, 0.70]
+    Green  = [ 0.30, 0.50, 0.70, 0.00]
+    Blue   = [ 0.50, 0.40, 0.20, 0.15]
+    Length = [ 0.00, 0.15, 0.70, 1.00]
+    nb = 200
+    rt.TColor.CreateGradientColorTable(len(Length), array('d',Length), array('d',Red), array('d',Green), array('d',Blue), nb)
+    if h is not None: h.SetContour(nb)
 
 #############
 # tdrstyle  #
@@ -363,7 +373,7 @@ def tdrCanvas(canvName, x_min, x_max, y_min, y_max, nameXaxis, nameYaxis, square
   canv.SetTopMargin( T/H )
   canv.SetBottomMargin( B/H )
 
-  
+
   h = canv.DrawFrame(x_min,y_min,x_max,y_max)
   h.GetYaxis().SetTitleOffset(1.25 if square else 1.0)
   h.GetXaxis().SetTitleOffset(1.0  if square else 0.9)
