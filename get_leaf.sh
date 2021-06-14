@@ -85,8 +85,9 @@ cd $LEAFPATH
 sleep 2
 ls -lrth
 sleep 5
-source setup.sh
 echo $PWD
+sleep 5
+source $PWD/setup.sh
 
 sleep 2
 echo $PATH
@@ -120,7 +121,7 @@ echo $PWD
 sleep 2
 ls -lrth
 sleep 1
-source env_standalone.sh
+source $PWD/env_standalone.sh
 echo $PWD
 sleep 2
 make clean
