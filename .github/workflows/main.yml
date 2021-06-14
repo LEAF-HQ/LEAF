@@ -34,22 +34,22 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v2
 
-      - name: yum things
+      - name: Create answer file for 'yes'
+        run: echo y > yes.txt
+
+      - name: Install libGLU
         run: |
           set -x
           ldconfig -p
-          #grep libGLU before.txt
-          yum install mesa-libGLU
+          yum install mesa-libGLU < yes.txt
           ldconfig -p
-          #grep libGLU after.txt
 
       #- name: Install CVMFS
         #run: |
           #set -x
           #yum clean all
           #yum --disablerepo="epel" update nss
-          #echo y > answer.txt
-          #yum install https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm < answer.txt
+          #yum install https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm < yes.txt
           #yum install -y cvmfs
 
       #- name: Mount and configure basics
