@@ -82,7 +82,9 @@ echo $PWD
 # all folders there, set up environment
 sleep 2
 cd $LEAFPATH
-sleep 1
+sleep 2
+ls -lrth
+sleep 5
 source setup.sh
 echo $PWD
 
