@@ -37,9 +37,9 @@ jobs:
       - name: yum things
         run: |
           set -x
-          ldconfig -p | grep libGLU
+          eval 'ldconfig -p | grep libGLU'
           yum install mesa-libGLU
-          ldconfig -p | grep libGLU
+          eval 'ldconfig -p | grep libGLU'
 
       #- name: Install CVMFS
         #run: |
