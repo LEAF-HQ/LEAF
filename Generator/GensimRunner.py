@@ -81,7 +81,10 @@ class GensimRunner:
 
 
 
-    def SubmitGridpacks(self):
+    def SubmitGridpacks(self, runtime=(01,00,00)):
+
+        runtime_str, queue = format_runtime(runtime)
+
         # Submit gridpacks based on cards created above
         for processname in self.processnames:
             if self.configs is not None:
@@ -95,14 +98,14 @@ class GensimRunner:
                     for lamb in self.lambdas:
                         mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
                         jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                        command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                        command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                         if self.submit:
                             time.sleep(5)
                             os.system(command)
                         else: print command
             else:
                 jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
-                command = 'sbatch -J gridpacks_%s -p short -t 01:00:00 --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                 if self.submit:
                     time.sleep(5)
                     os.system(command)
