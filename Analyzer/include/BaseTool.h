@@ -88,7 +88,7 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cout << green << "--> Going to process " << maxidx - cfg.nevt_skip() << " events, skipping the first " << cfg.nevt_skip() << "." << reset << endl;
 
   for(Long64_t i=cfg.nevt_skip(); i<maxidx; ++i) {
-    if(i%10000==0 || i == maxidx-1){
+    if(i%1000==0 || i == maxidx-1){
       auto now = std::chrono::high_resolution_clock::now();
       auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
       std::chrono::milliseconds sec_left = std::chrono::milliseconds(999999999999);
