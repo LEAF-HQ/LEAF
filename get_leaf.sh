@@ -48,13 +48,20 @@ echo $PWD
 cd ../
 echo $PWD
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+sleep 2
+ls -lrth
 echo $PWD
 cd HiggsAnalysis/CombinedLimit
 echo $PWD
+sleep 1
 git fetch origin
 echo $PWD
+sleep 1
 git checkout v8.2.0
 echo $PWD
+sleep 1
+ls -lrth
+sleep 1
 cd ../../
 echo $PWD
 # cd $CMSSW_BASE/src
@@ -74,7 +81,9 @@ echo $PWD
 
 # all folders there, set up environment
 sleep 2
-source $LEAFPATH/setup.sh
+cd $LEAFPATH
+sleep 1
+source setup.sh
 echo $PWD
 
 sleep 2
@@ -83,7 +92,6 @@ sleep 1
 echo $LD_LIBRARY_PATH
 sleep 1
 echo $CXXFLAGS
-
 
 # compile all!
 cd $ANALYZERPATH
@@ -108,6 +116,8 @@ echo $PWD
 cd $COMBINEPATH
 echo $PWD
 sleep 2
+ls -lrth
+sleep 1
 source env_standalone.sh
 echo $PWD
 sleep 2
