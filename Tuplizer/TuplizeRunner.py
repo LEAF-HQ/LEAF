@@ -23,8 +23,8 @@ from array import array
 from tdrstyle_all import *
 import tdrstyle_all as TDR
 
-from samples.Sample import *
-from samples.Storage import *
+from Samples.Sample import *
+from Samples.Storage import *
 
 
 
