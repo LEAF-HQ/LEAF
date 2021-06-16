@@ -137,7 +137,6 @@ int main(int argc, char* argv[]){
   int idx = 0;
   for( ev.toBegin(); ! ev.atEnd(); ++ev) {
 
-
     handle_jets     .getByLabel(ev, "slimmedJets");
     handle_muons    .getByLabel(ev, "slimmedMuons");
     handle_electrons.getByLabel(ev, "slimmedElectrons");
@@ -184,12 +183,19 @@ int main(int argc, char* argv[]){
     const std::vector<reco::GenParticle, std::allocator<reco::GenParticle>>* genparticles;
     const GenEventInfoProduct* geninfo;
     const LHEEventProduct* lhe;
+
+    bool has_lhe = is_mc;
     if(is_mc){
       pus = handle_pus.product();
       genjets = handle_genjets.product();
       genparticles = handle_genparticles.product();
       geninfo = handle_geninfo.product();
-      lhe = handle_lhe.product();
+      try{
+        lhe = handle_lhe.product();
+      }
+      catch(...){
+        has_lhe = false;
+      }
     }
 
 
@@ -404,12 +410,13 @@ int main(int argc, char* argv[]){
         event.geninfo->set_xpdf2(-999);
       }
 
-      event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
-      // cout << "orig: " << lhe->originalXWGTUP() << endl;
       vector<double> systweights = {};
-      for(unsigned int i=0; i<lhe->weights().size(); i++){
-        systweights.emplace_back(lhe->weights().at(i).wgt);
-        // cout << "weight " << i << ": " <<lhe->weights().at(i).wgt << endl;
+      if(has_lhe){
+        event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
+        for(unsigned int i=0; i<lhe->weights().size(); i++){
+          systweights.emplace_back(lhe->weights().at(i).wgt);
+          // cout << "weight " << i << ": " <<lhe->weights().at(i).wgt << endl;
+        }
       }
       event.geninfo->set_systweights(systweights);
 
