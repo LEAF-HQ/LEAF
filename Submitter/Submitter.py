@@ -51,9 +51,8 @@ class Submitter:
 
         missing_files_per_dataset = self.Output()
 
-        # njobs = -1
-        # with open(self.missing_files_txt, 'r') as f:
-        #     njobs = len(f.readlines())
+        (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
+
         for datasetname in missing_files_per_dataset:
             missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
             with open(missing_files, 'r') as f:
@@ -61,7 +60,7 @@ class Submitter:
             if njobs < 1: continue
             environ_path = os.getenv('PATH')
             environ_ld_lib_path = os.getenv('LD_LIBRARY_PATH')
-            command = 'sbatch -a 1-%i -J %s -p short --chdir %s -t 01:00:00 submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, os.path.join(self.workdir_local, datasetname, 'joboutput'), missing_files, environ_path, environ_ld_lib_path)
+            command = 'sbatch -a 1-%i -J %s -p %s --chdir %s -t %s submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, queue, os.path.join(self.workdir_local, datasetname, 'joboutput'), runtime_str, missing_files, environ_path, environ_ld_lib_path)
             jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
 
@@ -285,6 +284,7 @@ class Submitter:
         # check how to split jobs
         nfiles_per_job  = int(self.xmlinfo.submissionsettings.FilesPerJob)
         nevents_per_job = int(self.xmlinfo.submissionsettings.EventsPerJob)
+
         is_filesplit  = False
         is_eventsplit = False
         if nfiles_per_job > 0: is_filesplit = True

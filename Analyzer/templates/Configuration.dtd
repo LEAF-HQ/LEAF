@@ -17,6 +17,7 @@
 <!ATTLIST SubmissionSettings
     EventsPerJob         CDATA            "-1"
     FilesPerJob          CDATA            "-1"
+    Walltime             CDATA            "01:00:00"
 >
 
 <!ELEMENT InputDatasets (Dataset+)>

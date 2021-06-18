@@ -11,6 +11,7 @@ from utils import *
 from functions import *
 import json
 from yaml import safe_load
+from multiprocessing import Pool
 
 import ROOT
 from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
@@ -87,30 +88,38 @@ class Sample:
         else:
             return getattr(self, varname)[year]
 
-    def get_filedict(self, sampleinfofolder, stage, year, force_update=False):
+    def get_filedict(self, sampleinfofolder, stage, year, check_missing=False, force_update=False):
         if stage is not 'nano' and stage is not 'mini':
             raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
 
         # first try to read it from the json
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
         if filedict is not False:
-            if not force_update:
+            if not force_update and not check_missing:
                 return filedict
             else:
                 pass
+
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
         if stage is 'nano':
             filelist = self.nanopaths[year].get_file_list()
         elif stage is 'mini':
             filelist = self.minipaths[year].get_file_list()
+
+        if filedict is not False:
+            if check_missing:
+                if len(filedict) == len(filelist):
+                    print green('  --> Sample \'%s\' has all files counted, continue.' % (self.name))
+                    return filedict
+
+
         filedict = self.count_events_in_files(filelist, stage=stage)
-        if filedict is False:
-            return False
         self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=filedict)
 
         # get from json to make sure it's always ordered in the same way
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
+
         if filedict is not False:
             return filedict
         else:
@@ -147,27 +156,108 @@ class Sample:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
 
-    def count_events_in_files(self, filelist, stage):
+    def count_events_in_files(self, filelist, stage, ncores=10, chunksize=5, maxtries=5):
         if stage is not 'nano' and stage is not 'mini':
             raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
         print green('  --> Going to count events in %i files' % (len(filelist)))
-        commands = []
-        for i, filename in enumerate(filelist):
+        # commands = []
+        # for i, filename in enumerate(filelist):
+        #
+        #     # get number of events
+        #     command = 'Counter_NANOAOD %s' % (filename)
+        #     commands.append((command, filename))
+        # outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
+        #
+        # newdict = {}
+        # for o in outputs:
+        #     try:
+        #         nevt = int(o[0].split('\n')[0])
+        #         filename = o[1]
+        #         newdict[filename] = nevt
+        #     except Exception as e:
+        #         print yellow('  --> Caught exception \'%s\'. Skip sample \'%s\'.' % (e, self.name))
+        #         return False
 
-            # get number of events
-            command = 'Counter_NANOAOD %s' % (filename)
-            commands.append((command, filename))
-        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=10)
 
+        #################################
+
+
+        pool = Pool(processes=ncores)
+        result = pool.map(countEventsInFileGrid, filelist, chunksize)
+        pool.terminate()
+        pool.close()
+
+        # Output the result
         newdict = {}
-        for o in outputs:
-            try:
-                nevt = int(o[0].split('\n')[0])
-                filename = o[1]
-                newdict[filename] = nevt
-            except Exception as e:
-                print yellow('  --> Caught exception \'%s\'. Skip sample \'%s\'.' % (e, self.name))
-                return False
+        failed_files = []
+        for d in result:
+            if d[d.keys()[0]] is None:
+                failed_files.append(d.keys()[0])
+            else:
+                newdict.update(d)
+
+        idx = 0
+        while len(failed_files) > 0 and idx < maxtries:
+            failed_files_loop = []
+
+            pool = Pool(processes=ncores)
+            result = pool.map(countEventsInFileGrid, failed_files, chunksize)
+            pool.terminate()
+            pool.close()
+
+            for d in result:
+                if d[d.keys()[0]] is None:
+                    failed_files_loop.append(d.keys()[0])
+                else:
+                    newdict.update(d)
+            failed_files = failed_files_loop
+            idx += 1
+
+
+
+
+
+            # pbar = tqdm(range(len(failed_files)), desc="Files counted")
+            # for idx in pbar:
+            #     filename = failed_files[idx]
+            #     nevt = countEventsInFileGrid(absolute_filename=filename)
+            #     if nevt is None:
+            #         failed_files_loop.append(filename)
+            #     else:
+            #         newdict[filename]=nevt
+            # failed_files = failed_files_loop
+
+
+
+        #################################
+
+
+
+        # failed_files = []
+        # newdict = {}
+        # pbar = tqdm(range(len(filelist)), desc="Files counted")
+        # for idx in pbar:
+        #     filename = filelist[idx]
+        #     nevt = countEventsInFileGrid(absolute_filename=filename)
+        #     if nevt is None:
+        #         failed_files.append(filename)
+        #     else:
+        #         newdict[filename]=nevt
+        #
+        # idx = 0
+        # keep_going = True
+        # while len(failed_files) > 0 and idx < maxtries:
+        #     failed_files_loop = []
+        #     pbar = tqdm(range(len(failed_files)), desc="Files counted")
+        #     for idx in pbar:
+        #         filename = failed_files[idx]
+        #         nevt = countEventsInFileGrid(absolute_filename=filename)
+        #         if nevt is None:
+        #             failed_files_loop.append(filename)
+        #         else:
+        #             newdict[filename]=nevt
+        #     failed_files = failed_files_loop
+
 
         print green('  --> Successfully counted events in %i files' % (len(newdict)))
         return newdict

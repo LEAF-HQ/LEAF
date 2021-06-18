@@ -6,13 +6,14 @@
 #include "Analyzer/include/ObjectIdUtils.h"
 
 #include <vector>
+// #include <pair>
 
 class METSelection: public Selection<RecoEvent>{
 public:
-  explicit METSelection(const Config & cfg, double min_, double max_);
+  explicit METSelection(const Config & cfg, float min_, float max_);
   virtual bool passes(RecoEvent & event) override;
 
 private:
-  double min, max;
+  float min, max;
 
 };

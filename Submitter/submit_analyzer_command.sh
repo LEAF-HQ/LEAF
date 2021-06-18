@@ -18,7 +18,6 @@ JOBLIST=$1
 PATH=$PATH:$2
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$3
 
-# the joblist contains a list of 'cmsRun pSet.py ......' commands
 # TASKCMD="Analyzer /work/areimers/LQDM/macros/LQDM/config/workdir_LQDMPreselection/PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0/PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0_3.xml"
 TASKCMD=$(cat $JOBLIST | sed "${SLURM_ARRAY_TASK_ID}q;d")
 echo $TASKCMD

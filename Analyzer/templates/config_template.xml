@@ -13,7 +13,7 @@
 
 <Configuration OutputDirectory="&outfilepath;" PostFix="" SEDirector="root://t3dcachedb03.psi.ch/" TargetLumi="&TargetLumi;" AnalysisTool="$MYTOOLNAME">
 
-  <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" />
+  <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" Walltime="01:00:00" />
 
   <InputDatasets>
     <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" Group="None" Year="2017" >

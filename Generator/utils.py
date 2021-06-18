@@ -187,6 +187,22 @@ def format_runtime(hms):
     queue = slurm_queues_runtimes[min_matching_qtime]
     return (runtime_str, queue)
 
+def tuplize_runtime(hms):
+    if not type(hms) == str: raise AttributeError('format_runtime needs to be passed a string as argument, containing the hours and minutes and seconds of runtime separated by colons.')
+    parts = hms.split(':')
+    (h, m, s) = (int(parts[0]), int(parts[1]), int(parts[2]))
+    if s >=60 or m >= 60: raise ValueError('Minutes and seconds must be < 60, instead increase the hours or minutes.')
+    if h > 24 or (h == 24 and (m > 0 or s > 0)): raise ValueError('Maximum runtime is 24, 0, 0.')
+
+    runtime_str = '%02i:%02i:%02i' % (h, m, s)
+    if h == 24:
+        runtime_str = '1-00:00:00'
+
+    total_seconds = h*3600 + m*60 + s
+    min_matching_qtime = min(i for i in slurm_queues_runtimes.keys() if i*3600 >= total_seconds)
+    queue = slurm_queues_runtimes[min_matching_qtime]
+    return ( (h,m,s), queue, runtime_str )
+
 
 def find_closest(myList, myNumber):
     """

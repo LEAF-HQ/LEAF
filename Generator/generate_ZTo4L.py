@@ -29,7 +29,7 @@ from GensimRunner import *
 processes = ['ZTo2Mu2Tau_1TauToMu'] # (new) 200*1000 events
 
 tag = ''                # tags are auto-formatted to '_XXXX'
-maxindex        = 200   # Number of samples per configuration
+maxindex        = 400   # Number of samples per configuration
 nevents         = 1000  # Events per sample
 
 
@@ -135,7 +135,6 @@ folderstructure = {
 ensureDirectory(workdir_slurm)
 
 
-
 submit = True
 
 
@@ -145,9 +144,11 @@ EventGenerator = GensimRunner(processnames=processes, tag=tag, configs=None, lam
 # EventGenerator.SubmitGridpacks(runtime=(5,00,00))
 # EventGenerator.MoveGridpacks()
 # EventGenerator.SubmitGenerationStepSM(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='new')
+# EventGenerator.SubmitGenerationStepSM(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='resubmit')
 # EventGenerator.SubmitGenerationStepSM(generation_step='GENSIM', ncores=8, runtime=(3,00,00), mode='resubmit')
 # EventGenerator.SubmitGenerationStepSM(generation_step='DR', ncores=8, runtime=(3,00,00), mode='new')
-# EventGenerator.SubmitGenerationStepSM(generation_step='DR', ncores=8, runtime=(10,00,00), mode='resubmit')
+# EventGenerator.SubmitGenerationStepSM(generation_step='DR', ncores=8, runtime=(3,00,00), mode='resubmit')
+EventGenerator.SubmitGenerationStepSM(generation_step='DR', ncores=8, runtime=(10,00,00), mode='resubmit')
 # EventGenerator.SubmitGenerationStepSM(generation_step='HLT', ncores=8, runtime=(3,00,00), mode='new')
 # EventGenerator.SubmitGenerationStepSM(generation_step='HLT', ncores=8, runtime=(3,00,00), mode='resubmit')
 # EventGenerator.RemoveSamples(generation_step='DR')

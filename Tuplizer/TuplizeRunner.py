@@ -44,6 +44,12 @@ class TuplizeRunner:
         self.sampleinfofolder = sampleinfofolder
         self.macrofolder = macrofolder
 
+
+    def CountEvents(self, check_missing=True, force_update=True):
+        filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, check_missing=check_missing, force_update=force_update)
+
+
+
     def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new'):
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
@@ -129,18 +135,20 @@ class TuplizeRunner:
             # print filename
             idx += 1
             n_genevents = 0
+            file_ok = True
             try:
                 f = ROOT.TFile.Open(filename)
                 n_genevents = f.Get('AnalysisTree').GetEntriesFast()
             except:
                 print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
+                file_ok = False
             try:
                 f.Close()
             except:
-                pass
+                file_ok = False
             del f
             n_genevents_sum += n_genevents
-            if n_genevents > 0:
+            if n_genevents > 0 and file_ok:
                 try:
                     if count_weights:
                         commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
@@ -193,24 +201,33 @@ class TuplizeRunner:
 
     def PrintDASCrossSection(self, sample, year, recalculate=False):
         xsec = None
+        if self.stage is 'nano':
+            stagetag = 'NANOAOD'
+        elif self.stage is 'mini':
+            stagetag = 'MINIAOD'
+
         if not recalculate and sample.xsecs[year] is not None:
             print yellow('--> Sample \'%s\' in year %s already has a cross section filled in. Because \'recalculate\' is not set, skip.' % (sample.name, year))
             return
-        if isinstance(sample.nanopaths[year], Storage_DAS):
-            print green('--> Sample \'%s\' in year %s is a dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
-
+        if self.stage is 'nano' and isinstance(sample.nanopaths[year], Storage_DAS):
+            print green('--> Sample \'%s\' in year %s is a NanoAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
             (minipath, primary_name, campaigntag, tiertag) = get_mini_parts_from_nano_name(sample.nanopaths[year].path)
-            cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=sample.nanopaths[year].director)
+        elif self.stage is 'mini' and isinstance(sample.minipaths[year], Storage_DAS):
+            print green('--> Sample \'%s\' in year %s is a MiniAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
+            (minipath, primary_name, campaigntag, tiertag) = get_mini_parts_from_mini_name(sample.minipaths[year].path)
 
         else:
             print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
             return
+
+        cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=sample.nanopaths[year].director)
 
         # print cmsrun_command
         # cmsrun_output = subprocess.check_output(cmsrun_command, shell=True, stderr=subprocess.STDOUT).split('\n') #
         cmsrun_output = subprocess.check_output(cmsrun_command, shell=True).split('\n') #
         for l in cmsrun_output:
             if l.startswith('After filter: final cross section'):
+                print l
                 xsec = float(l.split('=')[1].split(' ')[1])
                 break
         print green('  --> Final cross section: \'%s\': %f' % (year, xsec))
@@ -241,13 +258,23 @@ def get_mini_parts_from_nano_name(nanopath):
     minipath = [x.strip() for x in output][0]
     return (minipath, primary_name, campaigntag, tiertag)
 
+def get_mini_parts_from_mini_name(nanopath):
+    primary_name = nanopath.split('/')[1]
+    campaigntag  = nanopath.split('/')[2].split('-')[0]
+    tiertag      = nanopath.split('/')[3]
+    dasgocommand = 'dasgoclient --limit=0 -query="dataset dataset=/%s/*%s*/%s"' % (primary_name, campaigntag, tiertag)
+    output = subprocess.check_output(dasgocommand, shell=True).split('\n')
+    minipath = [x.strip() for x in output][0]
+    return (minipath, primary_name, campaigntag, tiertag)
+
 
 
 def get_dasxsec_cmsrun_command(minipath, director):
     dasgocommand = 'dasgoclient --limit=100 -query="file dataset=%s"' % (minipath)
+    print dasgocommand
     files = "/store"+subprocess.check_output(dasgocommand, shell=True).replace("\n",",").split("/store",1)[1]
     files = files.strip(',')
     result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i  2>&1 | tee xsec_%s.log' % (files, 1e6, minipath.split('/')[1])
-    print result
+    # print result
 
     return result

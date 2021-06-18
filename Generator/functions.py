@@ -296,6 +296,26 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
             pass
     return missing_indices
 
+def countEventsInFileGrid(absolute_filename, treename='Events'):
+    result = None
+    try:
+        f = TFile.Open(absolute_filename)
+        tree = f.Get(treename)
+        n_genevents = tree.GetEntriesFast()
+        result = n_genevents
+    except AttributeError:
+        print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (absolute_filename))
+        result = None
+    except ReferenceError:
+        print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (absolute_filename))
+        result = None
+    try:
+        f.Close()
+    except:
+        result = None
+    return {absolute_filename: result}
+    # return result
+
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
     """Submit PSet config file and gridpack to SLURM batch system."""
 
