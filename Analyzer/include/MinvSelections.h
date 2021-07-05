@@ -47,3 +47,13 @@ private:
   double mmin, mmax;
 
 };
+
+class MmumuSelection: public Selection<RecoEvent>{
+public:
+  explicit MmumuSelection(const Config & cfg, int mmin_, int mmax_);
+  virtual bool passes(RecoEvent & event) override;
+
+private:
+  double mmin, mmax;
+
+};

@@ -64,6 +64,24 @@ bool MtautauSelection::passes(RecoEvent & event){
   bool pass = false;
 
   //select events where at least one combination of e and mu fulfills the selection
+  for(size_t i=0; i<event.muons->size(); i++){
+    for(size_t j=0; j<event.muons->size(); j++){
+      if(j <= i) continue;
+      double m = (event.muons->at(i).p4() + event.muons->at(j).p4()).M();
+      if ( m >= mmin && (m <= mmax || mmax < 0)) pass = true;
+    }
+  }
+
+  return pass;
+}
+
+
+MmumuSelection::MmumuSelection(const Config & cfg, int mmin_, int mmax_) : mmin(mmin_), mmax(mmax_){}
+bool MmumuSelection::passes(RecoEvent & event){
+
+  bool pass = false;
+
+  //select events where at least one combination of e and mu fulfills the selection
   for(size_t i=0; i<event.taus->size(); i++){
     for(size_t j=0; j<event.taus->size(); j++){
       if(j <= i) continue;
