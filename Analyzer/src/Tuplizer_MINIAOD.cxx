@@ -618,8 +618,8 @@ int main(int argc, char* argv[]){
 
       // m.set_iso_mini(muon_iso_mini[i]);
       // m.set_iso_mini_charged(muon_iso_mini_charged[i]);
-      m.set_iso_rel_03(patmu.pfIsolationR03().sumChargedHadronPt + max(patmu.pfIsolationR03().sumNeutralHadronEt + patmu.pfIsolationR03().sumPhotonEt - patmu.pfIsolationR03().sumPUPt/2,float(0.0))/patmu.pt());
-      m.set_iso_rel_04(patmu.pfIsolationR04().sumChargedHadronPt + max(patmu.pfIsolationR04().sumNeutralHadronEt + patmu.pfIsolationR04().sumPhotonEt - patmu.pfIsolationR04().sumPUPt/2,float(0.0))/patmu.pt());
+      m.set_iso_rel_03((patmu.pfIsolationR03().sumChargedHadronPt + max(patmu.pfIsolationR03().sumNeutralHadronEt + patmu.pfIsolationR03().sumPhotonEt - patmu.pfIsolationR03().sumPUPt/2,float(0.0)))/patmu.pt());
+      m.set_iso_rel_04((patmu.pfIsolationR04().sumChargedHadronPt + max(patmu.pfIsolationR04().sumNeutralHadronEt + patmu.pfIsolationR04().sumPhotonEt - patmu.pfIsolationR04().sumPUPt/2,float(0.0)))/patmu.pt());
       m.set_iso_rel_03_charged(patmu.pfIsolationR03().sumChargedHadronPt/patmu.pt());
       m.set_sumchpt(patmu.pfIsolationR04().sumChargedHadronPt);
       m.set_sumnhet(patmu.pfIsolationR04().sumNeutralHadronEt);
