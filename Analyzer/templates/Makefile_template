@@ -20,7 +20,7 @@ lib$MYANALYSISNAMEClassDictionaries.so: $(LIBDIR)/ClassDictionaries.cxx
 
 $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 	@echo "--> Creating custom class dictionaries."
-	@rootcling -f $@ -c -p -I${ANALYZERPATH} $^
+	@rootcling -f $@ -c -p -I${LEAFPATH} $^
 
 clean:
 	@echo "--> cleaning folders $(OBJDIR)/, $(LIBDIR)/"
