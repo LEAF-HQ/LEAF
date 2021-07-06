@@ -18,6 +18,9 @@ procname_to_latex = {
     'PsiPsi': '#psi#psi',
     'LQTChannelTauNu': 'LQ t-channel #tau#nu',
     'LQTChannelTauTau': 'LQ t-channel #tau#tau',
+    'LQTChannelTauMuMuMu': 'LQ t-channel #tau#mu/#mu#mu',
+    'LQTChannelTauMu': 'LQ t-channel #tau#mu',
+    'LQTChannelMuMu': 'LQ t-channel #mu#mu',
 }
 
 decaymode_dict = {
