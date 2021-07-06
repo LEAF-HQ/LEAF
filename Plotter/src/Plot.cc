@@ -165,8 +165,13 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
 
 
   // make sure outfolder exists
-  if(singlePDF) outfolder += "SinglePDF/";
   mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+  if(singlePDF){
+    outfolder += "SinglePDF/";
+    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    outfolder +=  foldername + "/";
+    mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+  }
 
   //set up canvas
   TCanvas* c = new TCanvas("c", "c", 400, 400);
@@ -202,7 +207,10 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     //defaults fo cosmetics
     double minimum = 0.;
     if(normalize) minimum = 5E-1;
-    else if(logy) minimum = 5E-2;
+    if(logy){
+      minimum = 5E-2;
+      if(normalize) minimum = 5E-5;
+    }
     double maxscale = 1.5;
     if(logy) maxscale = 100;
     double maximum = -1.;

@@ -7,102 +7,6 @@ using namespace std;
 
 int main(){
 
-  // Greet
-  // cout << "Hello from the Plotter." << endl;
-
-  // PlottingTool Plotter_Genlevel;
-  // Plotter_Genlevel.set_inpath("/work/areimers/LQDM/GENSIM/analysisfiles/");
-  // Plotter_Genlevel.set_outpath("/work/areimers/LQDM/GENSIM/plots/");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1900_MPS475_MC1427_L1p0", "MC__LQLQToBTauPsiChi_MLQ1900_MPS475_MC1427_L1p0", "MC__LQLQToPsiChi_MLQ1900_MPS475_MC1427_L1p0", "MC__PsiPsiToLQChi_MLQ1900_MPS475_MC1427_L1p0"});
-  // Plotter_Genlevel.set_legends({"LQLQ#rightarrow b#tau b#tau", "LQLQ#rightarrow b#tau #psi#chi_{1}", "LQLQ#rightarrow #psi#chi_{1} #psi#chi_{1}", "#psi#psi#rightarrow LQ#chi_{1} LQ#chi_{1}"});
-  // Plotter_Genlevel.set_colors({kRed+4, kRed+1, kAzure-2, kGreen-2});
-  // Plotter_Genlevel.set_linestyles({1, 1, 1, 1});
-  //
-  // //Plotter_Genlevel.Plot(normalize, logY, SinglePDF);
-  // // Plotter_Genlevel.Plot(false, true, false);       // usual
-  // // Plotter_Genlevel.Plot(true, true, false);     // normalized
-  // // Plotter_Genlevel.Plot(false, false, false);   // lin Y
-  // // Plotter_Genlevel.Plot(true, false, false);    // lin Y normalized
-  // Plotter_Genlevel.Plot(false, true, true);        // SinglePDF
-  // // Plotter_Genlevel.Plot(true, true, true);         // SinglePDF normalized
-
-
-  // PlottingTool Plotter_Genlevel;
-  // Plotter_Genlevel.set_inpath("/work/areimers/LQDM/2017/Genlevel/");
-  // Plotter_Genlevel.set_outpath("/work/areimers/LQDM/2017/Genlevel/plots/");
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTau_MC1214_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ1360_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ1810_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ2170_MPS244_MC1214_L1p0", "MC__LQLQToBTau_MLQ2620_MPS244_MC1214_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = 1.0", "M_{LQ} = 1360 GeV, #lambda = 1.0", "M_{LQ} = 1810 GeV, #lambda = 1.0", "M_{LQ} = 2170 GeV, #lambda = 1.0", "M_{LQ} = 2620 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.set_colors({kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2});
-  // Plotter_Genlevel.set_linestyles({1, 1, 1, 1, 1});
-  // //Plotter_Genlevel.Plot(normalize, logY, SinglePDF);
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  // // Plotter_Genlevel.Plot(true, true, false);     // normalized
-  // // Plotter_Genlevel.Plot(false, false, false);   // lin Y
-  // // Plotter_Genlevel.Plot(true, false, false);    // lin Y normalized
-  // Plotter_Genlevel.Plot(false, true, true);        // SinglePDF
-  // // Plotter_Genlevel.Plot(true, true, true);         // SinglePDF normalized
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTau_MC1214_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS244_MC1214_Lbest", "MC__LQLQToBTau_MLQ1360_MPS244_MC1214_Lbest", "MC__LQLQToBTau_MLQ1810_MPS244_MC1214_Lbest", "MC__LQLQToBTau_MLQ2170_MPS244_MC1214_Lbest", "MC__LQLQToBTau_MLQ2620_MPS244_MC1214_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = best", "M_{LQ} = 1360 GeV, #lambda = best", "M_{LQ} = 1810 GeV, #lambda = best", "M_{LQ} = 2170 GeV, #lambda = best", "M_{LQ} = 2620 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTau_MC110233_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS11493_MC110233_L1p0", "MC__LQLQToBTau_MLQ1360_MPS11488_MC110233_L1p0", "MC__LQLQToBTau_MLQ1810_MPS11554_MC110233_L1p0", "MC__LQLQToBTau_MLQ2170_MPS11635_MC110233_L1p0", "MC__LQLQToBTau_MLQ2620_MPS11813_MC110233_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = 1.0", "M_{LQ} = 1360 GeV, #lambda = 1.0", "M_{LQ} = 1810 GeV, #lambda = 1.0", "M_{LQ} = 2170 GeV, #lambda = 1.0", "M_{LQ} = 2620 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.Plot(false, true, false);
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTau_MC110233_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS11493_MC110233_Lbest", "MC__LQLQToBTau_MLQ1360_MPS11488_MC110233_Lbest", "MC__LQLQToBTau_MLQ1810_MPS11554_MC110233_Lbest", "MC__LQLQToBTau_MLQ2170_MPS11635_MC110233_Lbest", "MC__LQLQToBTau_MLQ2620_MPS11813_MC110233_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = best", "M_{LQ} = 1360 GeV, #lambda = best", "M_{LQ} = 1810 GeV, #lambda = best", "M_{LQ} = 2170 GeV, #lambda = best", "M_{LQ} = 2620 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);
-  //
-  //
-  //
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTauPsiChi_MC1214_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTauPsiChi_MLQ1000_MPS244_MC1214_L1p0", "MC__LQLQToBTauPsiChi_MLQ1360_MPS244_MC1214_L1p0", "MC__LQLQToBTauPsiChi_MLQ1810_MPS244_MC1214_L1p0", "MC__LQLQToBTauPsiChi_MLQ2170_MPS244_MC1214_L1p0", "MC__LQLQToBTauPsiChi_MLQ2620_MPS244_MC1214_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = 1.0", "M_{LQ} = 1360 GeV, #lambda = 1.0", "M_{LQ} = 1810 GeV, #lambda = 1.0", "M_{LQ} = 2170 GeV, #lambda = 1.0", "M_{LQ} = 2620 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToBTauPsiChi_MC1214_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToBTauPsiChi_MLQ1000_MPS244_MC1214_Lbest", "MC__LQLQToBTauPsiChi_MLQ1360_MPS244_MC1214_Lbest", "MC__LQLQToBTauPsiChi_MLQ1810_MPS244_MC1214_Lbest", "MC__LQLQToBTauPsiChi_MLQ2170_MPS244_MC1214_Lbest", "MC__LQLQToBTauPsiChi_MLQ2620_MPS244_MC1214_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = best", "M_{LQ} = 1360 GeV, #lambda = best", "M_{LQ} = 1810 GeV, #lambda = best", "M_{LQ} = 2170 GeV, #lambda = best", "M_{LQ} = 2620 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToPsiChi_MC1214_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToPsiChi_MLQ1000_MPS244_MC1214_L1p0", "MC__LQLQToPsiChi_MLQ1360_MPS244_MC1214_L1p0", "MC__LQLQToPsiChi_MLQ1810_MPS244_MC1214_L1p0", "MC__LQLQToPsiChi_MLQ2170_MPS244_MC1214_L1p0", "MC__LQLQToPsiChi_MLQ2620_MPS244_MC1214_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = 1.0", "M_{LQ} = 1360 GeV, #lambda = 1.0", "M_{LQ} = 1810 GeV, #lambda = 1.0", "M_{LQ} = 2170 GeV, #lambda = 1.0", "M_{LQ} = 2620 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("LQLQToPsiChi_MC1214_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__LQLQToPsiChi_MLQ1000_MPS244_MC1214_Lbest", "MC__LQLQToPsiChi_MLQ1360_MPS244_MC1214_Lbest", "MC__LQLQToPsiChi_MLQ1810_MPS244_MC1214_Lbest", "MC__LQLQToPsiChi_MLQ2170_MPS244_MC1214_Lbest", "MC__LQLQToPsiChi_MLQ2620_MPS244_MC1214_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{LQ} = 1000 GeV, #lambda = best", "M_{LQ} = 1360 GeV, #lambda = best", "M_{LQ} = 1810 GeV, #lambda = best", "M_{LQ} = 2170 GeV, #lambda = best", "M_{LQ} = 2620 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  //
-  //
-  // Plotter_Genlevel.set_outnameprefix("PsiPsiToLQChi_MLQ1000_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{#psi} = 117 GeV, #lambda = 1.0", "M_{#psi} = 244 GeV, #lambda = 1.0", "M_{#psi} = 567 GeV, #lambda = 1.0", "M_{#psi} = 1051 GeV, #lambda = 1.0", "M_{#psi} = 2221 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("PsiPsiToLQChi_MLQ1000_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_Lbest", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_Lbest", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_Lbest", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_Lbest", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{#psi} = 117 GeV, #lambda = best", "M_{#psi} = 244 GeV, #lambda = best", "M_{#psi} = 567 GeV, #lambda = best", "M_{#psi} = 1051 GeV, #lambda = best", "M_{#psi} = 2221 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("PsiPsiToLQChi_MLQ10000_L1p0_");
-  // Plotter_Genlevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ10000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ10000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ10000_MPS504_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ10000_MPS1052_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0"});
-  // Plotter_Genlevel.set_legends({"M_{#psi} = 117 GeV, #lambda = 1.0", "M_{#psi} = 244 GeV, #lambda = 1.0", "M_{#psi} = 504 GeV, #lambda = 1.0", "M_{#psi} = 1052 GeV, #lambda = 1.0", "M_{#psi} = 2342 GeV, #lambda = 1.0"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-  //
-  // Plotter_Genlevel.set_outnameprefix("PsiPsiToLQChi_MLQ10000_Lbest_");
-  // Plotter_Genlevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ10000_MPS117_MC1100_Lbest", "MC__PsiPsiToLQChi_MLQ10000_MPS244_MC1214_Lbest", "MC__PsiPsiToLQChi_MLQ10000_MPS504_MC1457_Lbest", "MC__PsiPsiToLQChi_MLQ10000_MPS1052_MC1977_Lbest", "MC__PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_Lbest"});
-  // Plotter_Genlevel.set_legends({"M_{#psi} = 117 GeV, #lambda = best", "M_{#psi} = 244 GeV, #lambda = best", "M_{#psi} = 504 GeV, #lambda = best", "M_{#psi} = 1052 GeV, #lambda = best", "M_{#psi} = 2342 GeV, #lambda = best"});
-  // Plotter_Genlevel.Plot(false, true, false);       // usual
-
   map<TString, TString> legends {
     make_pair("DATA__DATA_Tau",                                  "Data (#tau)"),
     make_pair("DATA__DATA_SingleMuon",                           "Data (#mu)"),
@@ -172,110 +76,104 @@ int main(){
 
 
   PlottingTool Plotter_Recolevel;
+
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   kRed+4;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   kRed+1;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   kAzure-2;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  kOrange;
+  // colors["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = kGreen-2;
   //
-  // // TString foldername = "LQDM/2017/Fullselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
-  // TString foldername = "LQDM/2017/Finalselection/TauTau_ElTau_MuTau_ElMu_2Jets_12LooseBTag_met50/";
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  0;
+  // linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = 0;
+  //
+  // // TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
+  // // TString foldername = "LQDM/2017/Preselection/PsiPsi_02LessTriggers/";
+  // TString foldername = "LQDM/2017/Preselection/PsiPsi_muon/";
+  //
   //
   // Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   // Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
   // Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
-  // Plotter_Recolevel.set_outnameprefix("DataMuon_");
-  // // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleMuon", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
+  // Plotter_Recolevel.set_outnameprefix("PsiPsi_");
+  //
+  // Plotter_Recolevel.set_samplenames({"MC__ST", "MC__TT", "MC__DYJets", "MC__WJets", "MC__QCD_Had", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
+  // // Plotter_Recolevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
+  // Plotter_Recolevel.set_stacks({"MC__ST", "MC__QCD_Had", "MC__DYJets", "MC__TT", "MC__WJets"});
   // Plotter_Recolevel.set_legends(legends);
   // Plotter_Recolevel.set_colors(colors);
   // Plotter_Recolevel.set_linestyles(linestyles);
-  // Plotter_Recolevel.set_stacks({"MC__ST", "MC__QCD_Had", "MC__DYJets", "MC__TT", "MC__WJets"});
-  // Plotter_Recolevel.set_numerator("DATA__DATA_SingleMuon");
   //
-  // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, false, true, true);       // single
-  //
-  //
-  // Plotter_Recolevel.set_outnameprefix("DataElectron_");
-  // Plotter_Recolevel.set_samplenames({"DATA__DATA_SingleElectron", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.set_numerator("DATA__DATA_SingleElectron");
-  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, false, true, true);         // single
-  //
-  //
-  //
-  // Plotter_Recolevel.set_outnameprefix("DataTau_");
-  // Plotter_Recolevel.set_samplenames({"DATA__DATA_Tau", "MC__QCD_Had", "MC__DYJets", "MC__WJets", "MC__ST", "MC__TT", "MC__LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_L1p0", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.set_numerator("DATA__DATA_Tau");
-  // // Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, false, true, true);        // single
+  // // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
+  // Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  // // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
+
+  colors["MC__LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0"] = kRed+4;
+  colors["MC__LQTChannelTauNu_MLQ1360_MPS117_MC1100_L1p0"] = kRed+1;
+  colors["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = kAzure-2;
+  colors["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = kOrange;
+  colors["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = kGreen-2;
+  colors["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = kRed+4;
+  colors["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = kRed+1;
+  colors["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = kAzure-2;
+  colors["MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0"] = kOrange;
+  colors["MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"] = kGreen-2;
 
 
+  linestyles["MC__LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_MLQ1360_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"] = 0;
 
-  colors["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   kRed+4;
-  colors["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   kRed+1;
-  colors["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   kAzure-2;
-  colors["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  kOrange;
-  colors["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = kGreen-2;
 
-  linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0"] =   0;
-  linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0"] =   0;
-  linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0"] =   0;
-  linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0"] =  0;
-  linestyles["MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"] = 0;
+  legends["MC__LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.00 TeV)";
+  legends["MC__LQTChannelTauNu_MLQ1360_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.36 TeV)";
+  legends["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.81 TeV)";
+  legends["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.17 TeV)";
+  legends["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.98 TeV)";
+  legends["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.00 TeV)";
+  legends["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.36 TeV)";
+  legends["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.81 TeV)";
+  legends["MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 2.17 TeV)";
+  legends["MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 2.98 TeV)";
 
   // TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
-  TString foldername = "LQDM/2017/Preselection/PsiPsi_Initial/";
+  // TString foldername = "LQDM/2017/Preselection/PsiPsi_02LessTriggers/";
+  TString foldername = "LQDM/2017/Preselection/HLTCheck/";
+
 
   Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
   Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
-  Plotter_Recolevel.set_outnameprefix("PsiPsi_");
+  Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauNu_");
 
-  Plotter_Recolevel.set_samplenames({"MC__ST", "MC__TT", "MC__DYJets", "MC__WJets", "MC__QCD_Had", "MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
-  // Plotter_Recolevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
-  Plotter_Recolevel.set_stacks({"MC__ST", "MC__QCD_Had", "MC__DYJets", "MC__TT", "MC__WJets"});
+  Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
 
   // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  Plotter_Recolevel.Plot(true, true, true, false);       // usual
   // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
 
 
+  Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauMu_");
+  Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"});
+  // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
+  Plotter_Recolevel.Plot(true, false, true, false);       // usual
+  Plotter_Recolevel.Plot(true, true, true, false);       // usual
+  // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
 
 
-
-
-  // Plotter_Recolevel.set_outnameprefix("LQLQToBTau_MC1100_Lbest_");
-  // Plotter_Recolevel.set_samplenames({"MC__LQLQToBTau_MLQ1000_MPS117_MC1100_Lbest", "MC__LQLQToBTau_MLQ1360_MPS117_MC1100_Lbest", "MC__LQLQToBTau_MLQ1810_MPS117_MC1100_Lbest", "MC__LQLQToBTau_MLQ2170_MPS117_MC1100_Lbest", "MC__LQLQToBTau_MLQ2620_MPS117_MC1100_Lbest"});
-  // Plotter_Recolevel.set_legends({{"MC__LQLQToBTau_MLQ1000_MPS117_MC1100_Lbest","M_{LQ} = 1000 GeV, #lambda = best"}, {"MC__LQLQToBTau_MLQ1360_MPS117_MC1100_Lbest","M_{LQ} = 1360 GeV, #lambda = best"}, {"MC__LQLQToBTau_MLQ1810_MPS117_MC1100_Lbest","M_{LQ} = 1810 GeV, #lambda = best"}, {"MC__LQLQToBTau_MLQ2170_MPS117_MC1100_Lbest","M_{LQ} = 2170 GeV, #lambda = best"}, {"MC__LQLQToBTau_MLQ2620_MPS117_MC1100_Lbest","M_{LQ} = 2620 GeV, #lambda = best"}});
-  // Plotter_Recolevel.set_linestyles({{"MC__LQLQToBTau_MLQ1000_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTau_MLQ1360_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTau_MLQ1810_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTau_MLQ2170_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTau_MLQ2620_MPS117_MC1100_Lbest",0}});
-  // Plotter_Recolevel.set_colors({{"MC__LQLQToBTau_MLQ1000_MPS117_MC1100_Lbest",kRed+4}, {"MC__LQLQToBTau_MLQ1360_MPS117_MC1100_Lbest",kRed+1}, {"MC__LQLQToBTau_MLQ1810_MPS117_MC1100_Lbest",kAzure-2}, {"MC__LQLQToBTau_MLQ2170_MPS117_MC1100_Lbest",kOrange}, {"MC__LQLQToBTau_MLQ2620_MPS117_MC1100_Lbest",kGreen-2}});
-  // // Plotter_Recolevel.Plot(false, true, true);       // SinglePDF
-  //
-  //
-  //
-  // Plotter_Recolevel.set_outnameprefix("LQLQToBTauPsiChi_MC1100_Lbest_");
-  // Plotter_Recolevel.set_samplenames({"MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest", "MC__LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_Lbest", "MC__LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest", "MC__LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest", "MC__LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_Lbest"});
-  // Plotter_Recolevel.set_legends({{"MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest","M_{LQ} = 1000 GeV, #lambda = best"}, {"MC__LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_Lbest","M_{LQ} = 1360 GeV, #lambda = best"}, {"MC__LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest","M_{LQ} = 1810 GeV, #lambda = best"}, {"MC__LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest","M_{LQ} = 2170 GeV, #lambda = best"}, {"MC__LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_Lbest","M_{LQ} = 2620 GeV, #lambda = best"}});
-  // Plotter_Recolevel.set_linestyles({{"MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest",0}, {"MC__LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_Lbest",0}});
-  // Plotter_Recolevel.set_colors({{"MC__LQLQToBTauPsiChi_MLQ1000_MPS117_MC1100_Lbest",kRed+4}, {"MC__LQLQToBTauPsiChi_MLQ1360_MPS117_MC1100_Lbest",kRed+1}, {"MC__LQLQToBTauPsiChi_MLQ1810_MPS117_MC1100_Lbest",kAzure-2}, {"MC__LQLQToBTauPsiChi_MLQ2170_MPS117_MC1100_Lbest",kOrange}, {"MC__LQLQToBTauPsiChi_MLQ2620_MPS117_MC1100_Lbest",kGreen-2}});
-  // // Plotter_Recolevel.Plot(false, true, true);       // SinglePDF
-  //
-  //
-  // Plotter_Recolevel.set_outnameprefix("LQLQToPsiChi_MC1100_Lbest_");
-  // Plotter_Recolevel.set_samplenames({"MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_Lbest", "MC__LQLQToPsiChi_MLQ1360_MPS117_MC1100_Lbest", "MC__LQLQToPsiChi_MLQ1810_MPS117_MC1100_Lbest", "MC__LQLQToPsiChi_MLQ2170_MPS117_MC1100_L1p0", "MC__LQLQToPsiChi_MLQ2620_MPS117_MC1100_Lbest"});
-  // Plotter_Recolevel.set_legends({{"MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_Lbest","M_{LQ} = 1000 GeV, #lambda = best"}, {"MC__LQLQToPsiChi_MLQ1360_MPS117_MC1100_Lbest","M_{LQ} = 1360 GeV, #lambda = best"}, {"MC__LQLQToPsiChi_MLQ1810_MPS117_MC1100_Lbest","M_{LQ} = 1810 GeV, #lambda = best"}, {"MC__LQLQToPsiChi_MLQ2170_MPS117_MC1100_L1p0","M_{LQ} = 2170 GeV, #lambda = best"}, {"MC__LQLQToPsiChi_MLQ2620_MPS117_MC1100_Lbest","M_{LQ} = 2620 GeV, #lambda = best"}});
-  // Plotter_Recolevel.set_linestyles({{"MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_Lbest",0}, {"MC__LQLQToPsiChi_MLQ1360_MPS117_MC1100_Lbest",0}, {"MC__LQLQToPsiChi_MLQ1810_MPS117_MC1100_Lbest",0}, {"MC__LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest",0}, {"MC__LQLQToPsiChi_MLQ2620_MPS117_MC1100_Lbest",0}});
-  // Plotter_Recolevel.set_colors({{"MC__LQLQToPsiChi_MLQ1000_MPS117_MC1100_Lbest",kRed+4}, {"MC__LQLQToPsiChi_MLQ1360_MPS117_MC1100_Lbest",kRed+1}, {"MC__LQLQToPsiChi_MLQ1810_MPS117_MC1100_Lbest",kAzure-2}, {"MC__LQLQToPsiChi_MLQ2170_MPS117_MC1100_Lbest",kOrange}, {"MC__LQLQToPsiChi_MLQ2620_MPS117_MC1100_Lbest",kGreen-2}});
-  // // Plotter_Recolevel.Plot(false, true, true);       // SinglePDF
-  //
-  //
-  // Plotter_Recolevel.set_outnameprefix("PsiPsiToLQChi_MLQ1000_L1p0_");
-  // Plotter_Recolevel.set_samplenames({"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0", "MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0"});
-  // Plotter_Recolevel.set_legends({{"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0","M_{#psi} = 117 GeV, #lambda = 1.0"}, {"MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0","M_{#psi} = 244 GeV, #lambda = 1.0"}, {"MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0","M_{#psi} = 567 GeV, #lambda = 1.0"}, {"MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0","M_{#psi} = 1051 GeV, #lambda = 1.0"}, {"MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0","M_{#psi} = 2221 GeV, #lambda = 1.0"}});
-  // Plotter_Recolevel.set_linestyles({{"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",0}, {"MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0",0}, {"MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0",0}, {"MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0",0}, {"MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0",0}});
-  // Plotter_Recolevel.set_colors({{"MC__PsiPsiToLQChi_MLQ1000_MPS117_MC1100_L1p0",kRed+4}, {"MC__PsiPsiToLQChi_MLQ1000_MPS244_MC1214_L1p0",kRed+1}, {"MC__PsiPsiToLQChi_MLQ1000_MPS567_MC1457_L1p0",kAzure-2}, {"MC__PsiPsiToLQChi_MLQ1000_MPS1051_MC1977_L1p0",kOrange}, {"MC__PsiPsiToLQChi_MLQ1000_MPS2221_MC12089_L1p0",kGreen-2}});
-  // // Plotter_Recolevel.Plot(false, true, true);       // SinglePDF
 
 
 
