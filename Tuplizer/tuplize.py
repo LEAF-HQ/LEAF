@@ -66,9 +66,10 @@ submit = True
 # all
 # samplenames = ['QCD_Pt_1800to2400']
 # samplenames = [n for n in backgrounds.keys() if 'QCD_Pt' in n]
-# samplenames = signals.keys()
+samplenames = [n for n in signals.keys() if 'LQTChannel' in n]
+# samplenames = ['LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0', 'LQTChannelTauNu_MLQ2620_MPS117_MC1100_Lbest']
 # samplenames = data.keys()
-samplenames = backgrounds.keys()
+# samplenames = backgrounds.keys()
 # samplenames = backgrounds.keys() + data.keys()
 # samplenames = backgrounds.keys() + signals.keys()
 # samplenames = data.keys() + signals.keys()
@@ -81,14 +82,15 @@ def main():
         print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
         Tuplizer = TuplizeRunner(sample=s, stage=stage, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
-        # Tuplizer.CountEvents(check_missing=True, force_update=False)
+        # Tuplizer.CountEvents(check_missing=False, force_update=True)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='new')
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=100000, mode='resubmit')
-        Tuplizer.CreateDatasetXMLFile(force_counting=True)
+        # Tuplizer.CreateDatasetXMLFile(force_counting=True)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=True)
-    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
