@@ -141,7 +141,7 @@ class Submitter:
         print green('--> Cleaned up (removed) local and remote workdir')
 
 
-    def Add(self, force=False, ignoretree=False):
+    def Add(self, force=False, ignoretree=False, nchunks=9):
         print green('--> Adding finished samples')
 
         # update list of missing files
@@ -155,44 +155,76 @@ class Submitter:
             if len(missing_files[datasetname]) == 0:
                 datasetnames_complete.append(datasetname)
 
-
         # add all completed datasets
-        commands = []
         for datasetname in datasetnames_complete:
+
+            print green('  --> Adding dataset \'%s\'' % (datasetname))
 
             # get list of expected files
             if len(expected_files[datasetname]) < 1: continue
 
-            # order expected files such that the first has an AnalysisTree (if any of the files has one).
-            expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=expected_files[datasetname], use_se=self.use_se))
-            expected_files_string = ' '.join(expected_files_ordered)
-
-            # get outfilename
-            outfilename_parts = expected_files_ordered[0].split('/')[-1].split('_')[:-1]
-            outfilename = '_'.join(outfilename_parts) + '.root'
             outpath_parts = self.workdir_remote.split('/')[:-1]
             if self.use_se:
                 outpath = self.se_director + str(os.path.join('/', *outpath_parts))
             else:
                 outpath = str(os.path.join('/', *outpath_parts))
+
+            # get outfilename
+            outfilename_parts = expected_files[datasetname][0].split('/')[-1].split('_')[:-1]
+            outfilename = '_'.join(outfilename_parts) + '.root'
             outfilepath_and_name = os.path.join(outpath, outfilename)
 
-            if os.path.isfile(outfilepath_and_name) and not force:
-                continue
 
-            command = 'hadd'
-            if force: command += ' -f'
-            if ignoretree: command += ' -T'
-            command += ' %s' % (outfilepath_and_name)
-            command += ' ' + expected_files_string
-            commands.append(command)
+            chunklength = len(expected_files[datasetname]) / nchunks
+            if chunklength < 1:
+                # just execute single command
+                expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=expected_files[datasetname], use_se=self.use_se))
+                expected_files_ordered_str = ' '.join(expected_files_ordered)
+                hadd_large(outfilepath_and_name, expected_files_ordered, force, ignoretree)
 
-        execute_commands_parallel(commands)
+            else:
+                chunkoutnames = []
+                commands = []
+                argumentlist = []
+                for idx, chunk in enumerate(chunks(expected_files[datasetname], chunklength)):
+                    chunkoutname = outfilepath_and_name.replace('.root', '_tmp%i.root' % (idx))
+                    chunkoutnames.append(chunkoutname)
+
+                    # order expected files such that the first has an AnalysisTree (if any of the files has one).
+                    expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=chunk, use_se=self.use_se))
+                    expected_files_ordered_str = ' '.join(expected_files_ordered)
+
+                    if os.path.isfile(outfilepath_and_name) and not force:
+                        continue
+
+                    command = 'hadd'
+                    if force: command += ' -f'
+                    if ignoretree: command += ' -T'
+                    command += ' %s' % (chunkoutname)
+                    command += ' ' + expected_files_ordered_str
+                    commands.append(command)
+
+                    # print force, ignoretree
+                    singleargument = '%s---%s---%s---%s' % (chunkoutname, expected_files_ordered_str, str(force), str(ignoretree))
+                    # print singleargument
+                    argumentlist.append(singleargument)
+
+
+                # execute_commands_parallel(commands)
+                execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
+                chunkoutnames_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=chunkoutnames, use_se=self.use_se))
+                chunkoutnames_str = ' '.join(order_haddlist(haddlist=clean_haddlist(haddlist=chunkoutnames, use_se=self.use_se)))
+                hadd_large(outfilepath_and_name, chunkoutnames_ordered, force, ignoretree)
+
+                for chunkoutname in chunkoutnames_ordered:
+                    command = 'rm -rf %s' % (chunkoutname)
+                    os.system(command)
+                    
 
         if force:
-            print green('--> Added all completed files (%i)' % (len(commands)))
+            print green('--> Added all completed files')
         else:
-            print green('--> Added newly completed files, if any (%i)' % (len(commands)))
+            print green('--> Added newly completed files, if any')
 
 
 
@@ -213,6 +245,7 @@ class Submitter:
                 datasets_per_group[group] = (datasettype, [datasetname])
 
         commands = []
+        argumentlist = []
         for group in datasets_per_group:
             if group == 'None': continue # don't hadd if files are not part of a group
             grouptype = datasets_per_group[group][0]
@@ -230,10 +263,15 @@ class Submitter:
             sourcestring = ' '.join( files_to_add_ordered )
             # sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
 
-            command = 'hadd -f %s %s' % (outfilepath_and_name, sourcestring)
-            # print command
-            commands.append(command)
-        execute_commands_parallel(commands)
+            # command = 'hadd -f -T %s %s' % (outfilepath_and_name, sourcestring)
+            # commands.append(command)
+
+            singleargument = '%s---%s---%s---%s' % (outfilepath_and_name, sourcestring, 'True', 'True')
+            # print singleargument
+            argumentlist.append(singleargument)
+
+        # execute_commands_parallel(commands)
+        execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
         print green('--> Added %i datasets into groups.' % (len(commands)))
 
 
