@@ -6,6 +6,10 @@ import time
 from preferred_configurations import *
 from bisect import bisect_left
 from constants import *
+import distutils
+
+from multiprocessing import Pool
+import ROOT
 
 
 def ensureDirectory(dirname, use_se=False):
@@ -221,3 +225,64 @@ def find_closest(myList, myNumber):
        return after
     else:
        return before
+
+
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in xrange(0, len(lst), n):
+        yield lst[i:i + n]
+
+
+def execute_function_parallel(func, argumentlist, ncores=10):
+    """
+    Executes a function once per argument in argumentlist.
+
+    Assumes the function takes exactly one argument.
+
+    Does not return any output the function might produce or return
+    """
+    pool = Pool(processes=ncores)
+    result = pool.map(func, argumentlist)
+    pool.terminate()
+    pool.close()
+
+
+
+def hadd_large(outfilename, infilelist, force, notree, maxsize=int(3E11)): #default maxsize: 300GB (standard root: 100)
+    ROOT.TTree.SetMaxTreeSize(maxsize)
+    rm = ROOT.TFileMerger(False)
+    rm.SetFastMethod(True)
+    rm.SetNotrees(notree)
+
+    for f in infilelist:
+        rm.AddFile(f)
+
+    rm.OutputFile(outfilename, force)
+    rm.Merge()
+
+
+
+def hadd_large_singlearg(arg): #default maxsize: 300GB (standard root: 100), good to be used with 'execute_function_parallel'
+    singleargs = arg.split('---')
+    outfilename = singleargs[0]
+    infilestring = singleargs[1]
+    infilelist = infilestring.split(' ')
+    if singleargs[2] == 'True':
+        force = True
+    elif singleargs[2] == 'False':
+        force = False
+    else:
+        raise ValueError('Invalid value for (singleargs[2])')
+
+    if singleargs[3] == 'True':
+        notree = True
+    elif singleargs[3] == 'False':
+        notree = False
+    else:
+        raise ValueError('Invalid value for (singleargs[3])')
+    # print outfilename, infilelist, force, notree
+    if len(singleargs) > 4:
+        maxsize = int(singleargs[4])
+        hadd_large(outfilename=outfilename, infilelist=infilelist, force=force, notree=notree, maxsize=maxsize)
+    else:
+        hadd_large(outfilename=outfilename, infilelist=infilelist, force=force, notree=notree)

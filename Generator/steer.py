@@ -54,7 +54,8 @@ mchs_exp_psichitau = [2.0, 2.33, 2.66, 3.0, 3.33]
 lambdas_psichitau  = [1.0, 'best']
 # lambdas_psichitau  = [1.0]
 
-processes_lqtch_taunu = ['LQTChannelTauNu']
+processes_lqtch_taunu = ['LQTChannelTauNu', 'LQTChannelTauMu', 'LQTChannelMuMu']
+# processes_lqtch_taunu = ['LQTChannelMuMu']
 mlqs_lqtch_taunu     = [1000, 1400, 1800, 2200, 2600, 3000]
 mchs_exp_lqtch_taunu = [2.0] # no Psi/Chi involved, so just choose random mass
 lambdas_lqtch_taunu  = [1.0, 'best']
@@ -95,18 +96,18 @@ for mlq in mlqs_psichitau:
         mass_configurations_psichitau.append(config)
 
 
-mass_configurations_lqtch_taunu = []
+mass_configurations_lqtch_mixed = []
 for mlq in mlqs_lqtch_taunu:
     prefmlq = find_closest(sorted(preferred_configurations.keys()), mlq)
     for exp in mchs_exp_lqtch_taunu:
         mch = find_closest(sorted(preferred_configurations[prefmlq].keys()), 10**exp)
         config = {'mlq': prefmlq, 'mch': mch}
-        mass_configurations_lqtch_taunu.append(config)
+        mass_configurations_lqtch_mixed.append(config)
 
 
 
-processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi', 'LQTChannelTauNu', 'LQTChannelTauTau']
-# processes_xsec = ['LQTChannelTauTau']
+# processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi', 'LQTChannelTauNu', 'LQTChannelTauTau']
+processes_xsec = ['LQTChannelTauMu', 'LQTChannelMuMu']
 lambdas_xsec = [1.0, 'best']
 
 
@@ -114,6 +115,7 @@ lambdas_xsec = [1.0, 'best']
 tag = ''                # tags are auto-formatted to '_XXXX'
 maxindex        = 100   # Number of samples per configuration
 nevents         = 1000  # Events per sample
+
 
 
 username       = os.environ['USER']
@@ -140,6 +142,7 @@ T2_director_root = 'root://storage01.lcg.cscs.ch/'
 T3_director      = 'root://t3dcachedb03.psi.ch/'
 T2_path          = os.path.join('/pnfs/lcg.cscs.ch/cms/trivcat/store/user', username)
 T3_path          = os.path.join('/pnfs/psi.ch/cms/trivcat/store/user', username)
+
 
 
 
@@ -224,9 +227,9 @@ submit = True
 
 CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
-# CrossBRRunner.RunMG(only_resubmit=False, ncores=2, runtime=(01,00,00), maxjobs_per_proc=50)
+# CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
-# CrossBRRunner.RunMG(only_resubmit=True,  ncores=2, runtime=(00,30,00), maxjobs_per_proc=50)
+# CrossBRRunner.RunMG(only_resubmit=True,  ncores=1, runtime=(01,00,00), maxjobs_per_proc=150)
 # CrossBRRunner.ReadoutCrossBR()
 # CrossBRRunner.RootifyCrossBR()
 # CrossBRRunner.PlotCrossBR()
@@ -319,25 +322,24 @@ EventGenerator_psichitau = GensimRunner(processnames=processes_psichitau, tag=ta
 # EventGenerator_psichitau.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='resubmit')
 
 
-EventGenerator_lqtch_taunu = GensimRunner(processnames=processes_lqtch_taunu, tag=tag, configs=mass_configurations_lqtch_taunu, lambdas=lambdas_lqtch_taunu, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
-# EventGenerator_lqtch_taunu.ProduceCards()
-# EventGenerator_lqtch_taunu.SubmitGridpacks()
-# EventGenerator_lqtch_taunu.MoveGridpacks()
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(10,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(10,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.RemoveSamples(generation_step='DR')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(10,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='resubmit')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='new')
-# EventGenerator_lqtch_taunu.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='resubmit')
-
+EventGenerator_lqtch_mixed = GensimRunner(processnames=processes_lqtch_taunu, tag=tag, configs=mass_configurations_lqtch_mixed, lambdas=lambdas_lqtch_taunu, preferred_configurations=preferred_configurations, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
+# EventGenerator_lqtch_mixed.ProduceCards()
+# EventGenerator_lqtch_mixed.SubmitGridpacks(ncores=4)
+# EventGenerator_lqtch_mixed.MoveGridpacks()
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(05,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(03,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.RemoveSamples(generation_step='DR')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='new')
+EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='resubmit')
 
 
 

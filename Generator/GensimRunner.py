@@ -81,7 +81,7 @@ class GensimRunner:
 
 
 
-    def SubmitGridpacks(self, runtime=(01,00,00)):
+    def SubmitGridpacks(self, runtime=(01,00,00), ncores=1):
 
         runtime_str, queue = format_runtime(runtime)
 
@@ -98,14 +98,14 @@ class GensimRunner:
                     for lamb in self.lambdas:
                         mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=self.preferred_configurations, config=config)
                         jobname = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                        command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                        command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task %i submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, ncores, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                         if self.submit:
                             time.sleep(5)
                             os.system(command)
                         else: print command
             else:
                 jobname = get_jobname(processname=processname, mlq=None, mps=None, mch=None, lamb=None, tag=self.tag)
-                command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task 1 submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task %i submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, ncores, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
                 if self.submit:
                     time.sleep(5)
                     os.system(command)
@@ -215,7 +215,7 @@ class GensimRunner:
                     if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
                     elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
                     # jobs_per_sample_string = '%10' if mode == 'new' else ''
-                    command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+                    command = 'sbatch -a 1-%s -J %s -p %s -t %s --exclude t3wn[49,50,54] --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
                     if njobs > 0:
                         if self.submit:
                             # print command
