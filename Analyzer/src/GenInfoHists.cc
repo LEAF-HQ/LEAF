@@ -28,9 +28,15 @@ GenInfoHists::GenInfoHists(TString dir_) : BaseHists(dir_){
   hgeninfoid2 = book<TH1F>("geninfoid2", ";ID of initial state 2; Events / bin", 11, -5.5, 5.5);
   hgeninfox1 = book<TH1F>("geninfox1", ";x of initial state 1; Events / bin", 50, 0, 1);
   hgeninfox2 = book<TH1F>("geninfox2", ";x of initial state 2; Events / bin", 50, 0, 1);
-  hgeninfoxpdf1 = book<TH1F>("geninfoxpdf1", ";xpdf of initial state 1; Events / bin", 500, 0, 100);
-  hgeninfoxpdf2 = book<TH1F>("geninfoxpdf2", ";xpdf of initial state 2; Events / bin", 500, 0, 100);
-  hgeninfoxpdfproduct = book<TH1F>("geninfoxpdfproduct", ";xpdf1 * xpdf2; Events / bin", 500, 0, 100);
+  hgeninfoxpdf1 = book<TH1F>("geninfoxpdf1", ";xpdf of initial state 1; Events / bin", 100, 0, 20);
+  hgeninfoxpdf2 = book<TH1F>("geninfoxpdf2", ";xpdf of initial state 2; Events / bin", 100, 0, 20);
+  hgeninfoxpdf1_rebin1 = book<TH1F>("geninfoxpdf1_rebin1", ";xpdf of initial state 1; Events / bin", 40, 0, 20);
+  hgeninfoxpdf2_rebin1 = book<TH1F>("geninfoxpdf2_rebin1", ";xpdf of initial state 2; Events / bin", 40, 0, 20);
+  hgeninfoxpdf1_rebin2 = book<TH1F>("geninfoxpdf1_rebin2", ";xpdf of initial state 1; Events / bin", 40, 0, 2);
+  hgeninfoxpdf2_rebin2 = book<TH1F>("geninfoxpdf2_rebin2", ";xpdf of initial state 2; Events / bin", 40, 0, 2);
+  hgeninfoxpdfproduct = book<TH1F>("geninfoxpdfproduct", ";xpdf1 * xpdf2; Events / bin", 100, 0, 20);
+  hgeninfoxpdfproduct_rebin1 = book<TH1F>("geninfoxpdfproduct_rebin1", ";xpdf1 * xpdf2; Events / bin", 40, 0, 20);
+  hgeninfoxpdfproduct_rebin2 = book<TH1F>("geninfoxpdfproduct_rebin2", ";xpdf1 * xpdf2; Events / bin", 40, 0, 2);
   hgeninfoscalepdf = book<TH1F>("geninfoscalepdf", ";PDF scale; Events / bin", 200, 0, 3000);
 
   hsumweights = book<TH1F>("sumweights", ";bincontent = sum of event weights; Events / bin", 1, 0.5, 1.5);
@@ -67,7 +73,13 @@ void GenInfoHists::fill(const RecoEvent & event){
 
   hgeninfoxpdf1->Fill(xpdf1, weight);
   hgeninfoxpdf2->Fill(xpdf2, weight);
+  hgeninfoxpdf1_rebin1->Fill(xpdf1, weight);
+  hgeninfoxpdf2_rebin1->Fill(xpdf2, weight);
+  hgeninfoxpdf1_rebin2->Fill(xpdf1, weight);
+  hgeninfoxpdf2_rebin2->Fill(xpdf2, weight);
   hgeninfoxpdfproduct->Fill(xpdf1*xpdf2, weight);
+  hgeninfoxpdfproduct_rebin1->Fill(xpdf1*xpdf2, weight);
+  hgeninfoxpdfproduct_rebin2->Fill(xpdf1*xpdf2, weight);
 
   // cout << "q2: " << event.geninfo->scale_pdf() << endl;
   // cout << "id1: " << event.geninfo->id1() << ", x1: " << event.geninfo->x1() << ", xpdf1: " << xpdf1 << endl;
