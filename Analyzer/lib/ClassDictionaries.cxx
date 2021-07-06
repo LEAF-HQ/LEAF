@@ -86,6 +86,7 @@ namespace std {} using namespace std;
 #include "include/BTaggingScaleFactorApplicator.h"
 #include "include/ElectronScaleFactorApplicator.h"
 #include "include/BaseHists.h"
+#include "include/GenInfoHists.h"
 #include "include/Muon.h"
 #include "include/METSelection.h"
 #include "include/MuonScaleFactorApplicator.h"
@@ -2333,6 +2334,7 @@ namespace {
 "include/BTaggingScaleFactorApplicator.h",
 "include/ElectronScaleFactorApplicator.h",
 "include/BaseHists.h",
+"include/GenInfoHists.h",
 "include/Muon.h",
 "include/METSelection.h",
 "include/MuonScaleFactorApplicator.h",
@@ -2426,6 +2428,7 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/BTaggingScaleFactorApplicator.h"
 #include "include/ElectronScaleFactorApplicator.h"
 #include "include/BaseHists.h"
+#include "include/GenInfoHists.h"
 #include "include/Muon.h"
 #include "include/METSelection.h"
 #include "include/MuonScaleFactorApplicator.h"
