@@ -54,11 +54,13 @@ mchs_exp_psichitau = [2.0, 2.33, 2.66, 3.0, 3.33]
 lambdas_psichitau  = [1.0, 'best']
 # lambdas_psichitau  = [1.0]
 
-processes_lqtch_taunu = ['LQTChannelTauNu', 'LQTChannelTauMu', 'LQTChannelMuMu']
-# processes_lqtch_taunu = ['LQTChannelMuMu']
+# processes_lqtch_taunu = ['LQTChannelTauNu', 'LQTChannelTauMu', 'LQTChannelMuMu']
+processes_lqtch_taunu = ['LQTChannelTauNu_DynamicScale']
 mlqs_lqtch_taunu     = [1000, 1400, 1800, 2200, 2600, 3000]
+# mlqs_lqtch_taunu     = [2600, 3000]
 mchs_exp_lqtch_taunu = [2.0] # no Psi/Chi involved, so just choose random mass
-lambdas_lqtch_taunu  = [1.0, 'best']
+# lambdas_lqtch_taunu  = [1.0, 'best']
+lambdas_lqtch_taunu  = [1.0]
 
 
 mass_configurations_lqlq_dark = []
@@ -330,14 +332,14 @@ EventGenerator_lqtch_mixed = GensimRunner(processnames=processes_lqtch_taunu, ta
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='new')
-# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
+EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(05,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(03,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.RemoveSamples(generation_step='DR')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='new')
-EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='resubmit')
 

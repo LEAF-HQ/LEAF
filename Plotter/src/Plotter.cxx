@@ -161,17 +161,19 @@ int main(){
   Plotter_Recolevel.set_linestyles(linestyles);
 
   // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  Plotter_Recolevel.Plot(true, true, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
+  Plotter_Recolevel.Plot(true, false, true, false);      // usual
+  Plotter_Recolevel.Plot(true, true, true, false);       // norm
+  Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
+  Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
 
 
   Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauMu_");
   Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"});
-  // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  Plotter_Recolevel.Plot(true, false, true, false);       // usual
-  Plotter_Recolevel.Plot(true, true, true, false);       // usual
-  // Plotter_Recolevel.Plot(true, false, true, true);        // SinglePDF
+  // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
+  Plotter_Recolevel.Plot(true, false, true, false);      // usual
+  Plotter_Recolevel.Plot(true, true, true, false);       // norm
+  Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
+  Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
 
 
 
