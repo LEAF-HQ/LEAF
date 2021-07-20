@@ -1117,4 +1117,71 @@ signallist = [
         nevents=YearDependentContainer({'2017': 99999.0})
         )),
 
+  ('LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+  ('LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+  ('LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+  ('LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+  ('LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2620_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+  ('LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0', Sample(
+      type='MC',
+      name='LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0',
+      minipaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/MINIAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0')}),
+      nanopaths=YearDependentContainer({'2017': Storage_T2PSI('/store/user/areimers/NANOAOD/ChiPsi/LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0')}),
+      # tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v02_NANOAOD/PsiPsiToLQChi_MLQ10000_MPS2342_MC12089_L1p0')}),
+      tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Tuples_v01_MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0')}),
+      xsecs=YearDependentContainer(),
+      xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/MINIAOD/LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0.xml'}),
+      nevents=YearDependentContainer({'2017': 100000.0})
+      )),
+
 ]
