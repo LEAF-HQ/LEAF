@@ -99,7 +99,7 @@ class CrossSectionRunner:
                 idx_offset = slurm_max_array_size*narrays
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
-                command = 'sbatch --parsable -a 1-%i%%%i -J %s -p %s -t %s --cpus-per-task %i submit_crossbr_array.sh %s %i' % (arrayend, maxjobs_per_proc, slurmjobname, queue, runtime_str, ncores, commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i%%%i -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i submit_crossbr_array.sh %s %i' % (arrayend, maxjobs_per_proc, slurmjobname, queue, runtime_str, ncores, commandfilename, idx_offset)
                 if self.submit:
                     jobid = int(subprocess.check_output(command.split(' ')))
                     print green("--> Submitted an array of %i jobs for process %s. Master-jobid: %i"%(njobs_per_array[narrays], processname, int(jobid)))
