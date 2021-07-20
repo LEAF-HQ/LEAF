@@ -219,7 +219,7 @@ class Submitter:
                 for chunkoutname in chunkoutnames_ordered:
                     command = 'rm -rf %s' % (chunkoutname)
                     os.system(command)
-                    
+
 
         if force:
             print green('--> Added all completed files')
@@ -272,7 +272,7 @@ class Submitter:
 
         # execute_commands_parallel(commands)
         execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
-        print green('--> Added %i datasets into groups.' % (len(commands)))
+        print green('--> Added datasets into groups.')
 
 
 

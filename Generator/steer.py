@@ -54,8 +54,8 @@ mchs_exp_psichitau = [2.0, 2.33, 2.66, 3.0, 3.33]
 lambdas_psichitau  = [1.0, 'best']
 # lambdas_psichitau  = [1.0]
 
-# processes_lqtch_taunu = ['LQTChannelTauNu', 'LQTChannelTauMu', 'LQTChannelMuMu']
-processes_lqtch_taunu = ['LQTChannelTauNu_DynamicScale']
+# processes_lqtch_taunu = ['LQTChannelTauNu', 'LQTChannelTauMu', 'LQTChannelMuMu', 'LQTChannelTauNu_DynamicScale']
+processes_lqtch_taunu = ['LQTChannelTauMu_DynamicScale', 'LQTChannelMuMu_DynamicScale']
 mlqs_lqtch_taunu     = [1000, 1400, 1800, 2200, 2600, 3000]
 # mlqs_lqtch_taunu     = [2600, 3000]
 mchs_exp_lqtch_taunu = [2.0] # no Psi/Chi involved, so just choose random mass
@@ -108,10 +108,9 @@ for mlq in mlqs_lqtch_taunu:
 
 
 
-# processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi', 'LQTChannelTauNu', 'LQTChannelTauTau']
-processes_xsec = ['LQTChannelTauMu', 'LQTChannelMuMu']
+# processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi', 'LQTChannelTauNu', 'LQTChannelTauTau', 'LQTChannelTauMu', 'LQTChannelMuMu']
+processes_xsec = ['LQTChannelTauNu_DynamicScale', 'LQTChannelTauMu_DynamicScale', 'LQTChannelMuMu_DynamicScale']
 lambdas_xsec = [1.0, 'best']
-
 
 
 tag = ''                # tags are auto-formatted to '_XXXX'
@@ -230,7 +229,7 @@ submit = True
 CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
-# CrossBRRunner.ShortenCrossBR()
+CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True,  ncores=1, runtime=(01,00,00), maxjobs_per_proc=150)
 # CrossBRRunner.ReadoutCrossBR()
 # CrossBRRunner.RootifyCrossBR()
@@ -332,18 +331,16 @@ EventGenerator_lqtch_mixed = GensimRunner(processnames=processes_lqtch_taunu, ta
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(3,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='GENSIM', ncores=2, runtime=(10,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='new')
-EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='DR', ncores=8, runtime=(05,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(05,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(03,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.RemoveSamples(generation_step='DR')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(05,00,00), mode='resubmit')
-# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='new')
-# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(5,00,00), mode='resubmit')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(3,00,00), mode='new')
+# EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(3,00,00), mode='resubmit')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='new')
 # EventGenerator_lqtch_mixed.SubmitGenerationStep(generation_step='NANOAOD', ncores=1, runtime=(1,00,00), mode='resubmit')
-
-
 
 
 #

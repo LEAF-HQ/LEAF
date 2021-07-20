@@ -66,7 +66,7 @@ submit = True
 # all
 # samplenames = ['QCD_Pt_1800to2400']
 # samplenames = [n for n in backgrounds.keys() if 'QCD_Pt' in n]
-samplenames = [n for n in signals.keys() if 'LQTChannel' in n]
+samplenames = [n for n in signals.keys() if 'LQTChannelTauNu_DynamicScale' in n]
 # samplenames = ['LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0', 'LQTChannelTauNu_MLQ2620_MPS117_MC1100_Lbest']
 # samplenames = data.keys()
 # samplenames = backgrounds.keys()
@@ -90,7 +90,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile(force_counting=True)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=True)
-    create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
