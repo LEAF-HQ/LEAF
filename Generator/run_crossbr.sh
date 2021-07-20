@@ -10,6 +10,11 @@ NCORES=$8
 echo $MG_FOLDER
 echo $JOBNAME
 echo $CARDDIR
+echo $CMSSWDIR
+echo $LOGDIR
+echo $TARGETFOLDER
+echo $PROCNAME
+echo $NCORES
 echo "<-- End user input."
 
 function peval { echo "--> $@"; eval "$@"; }
@@ -59,8 +64,14 @@ peval "cp $RELPATH_TO_CARDS/$RUN_CARD $JOBNAME/Cards/run_card.dat"
 
 # now generate some events to get the cross section and BRs (going to be in the param_card.dat)
 echo "--> Starting event generation with command: "
-peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
-# cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}
+if [ ${NCORES} -ne 1 ]
+  then
+    peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
+  else
+    peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events"
+fi
+
+# peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
 
 # copy logfile and param_card for later scrutiny
 peval "mkdir -p $TARGETFOLDER/$PROCNAME"
