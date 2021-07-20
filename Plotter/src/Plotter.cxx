@@ -115,6 +115,11 @@ int main(){
   colors["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = kAzure-2;
   colors["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = kOrange;
   colors["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = kGreen-2;
+  colors["MC__LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0"] = kRed+4;
+  colors["MC__LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0"] = kRed+1;
+  colors["MC__LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0"] = kAzure-2;
+  colors["MC__LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0"] = kOrange;
+  colors["MC__LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0"] = kGreen-2;
   colors["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = kRed+4;
   colors["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = kRed+1;
   colors["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = kAzure-2;
@@ -127,6 +132,11 @@ int main(){
   linestyles["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = 0;
   linestyles["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = 0;
   linestyles["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0"] = 0;
+  linestyles["MC__LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0"] = 0;
   linestyles["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = 0;
   linestyles["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = 0;
   linestyles["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = 0;
@@ -139,6 +149,11 @@ int main(){
   legends["MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.81 TeV)";
   legends["MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.17 TeV)";
   legends["MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.98 TeV)";
+  legends["MC__LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.00 TeV)";
+  legends["MC__LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.36 TeV)";
+  legends["MC__LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 1.81 TeV)";
+  legends["MC__LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.17 TeV)";
+  legends["MC__LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0"] = "t-ch. #tau#nu (M_{LQ} = 2.98 TeV)";
   legends["MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.00 TeV)";
   legends["MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.36 TeV)";
   legends["MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0"] = "t-ch. #tau#mu (M_{LQ} = 1.81 TeV)";
@@ -147,33 +162,35 @@ int main(){
 
   // TString foldername = "LQDM/2017/Studies/PsiPsi_LeptonIDEfficiencies/";
   // TString foldername = "LQDM/2017/Preselection/PsiPsi_02LessTriggers/";
-  TString foldername = "LQDM/2017/Preselection/HLTCheck/";
+  TString foldername = "LQDM/2017/Preselection/TChannelTauNu_tau/";
+  // TString foldername = "LQDM/2017/Fullselection/TChannelTauNu_tau/";
 
 
   Plotter_Recolevel.set_inpath("/pnfs/psi.ch/cms/trivcat/store/user/areimers/"+foldername);
   Plotter_Recolevel.set_outpath("/work/areimers/"+foldername+"plots/distributions/");
   Plotter_Recolevel.set_lumitext("41.5 fb^{-1} (13 TeV)");
-  Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauNu_");
+  Plotter_Recolevel.set_outnameprefix("LQTChannelTauNu_DynamicScale_");
 
-  Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_MLQ2980_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_samplenames({"MC__ST", "MC__TT", "MC__DYJets", "MC__WJets", "MC__QCD_Had", "MC__LQTChannelTauNu_DynamicScale_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_DynamicScale_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_DynamicScale_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_DynamicScale_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauNu_DynamicScale_MLQ2980_MPS117_MC1100_L1p0"});
+  Plotter_Recolevel.set_stacks({"MC__ST", "MC__QCD_Had", "MC__DYJets", "MC__TT", "MC__WJets"});
   Plotter_Recolevel.set_legends(legends);
   Plotter_Recolevel.set_colors(colors);
   Plotter_Recolevel.set_linestyles(linestyles);
 
   // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
   Plotter_Recolevel.Plot(true, false, true, false);      // usual
-  Plotter_Recolevel.Plot(true, true, true, false);       // norm
-  Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
-  Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
+  // Plotter_Recolevel.Plot(true, true, true, false);       // norm
+  // Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
+  // Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
 
 
-  Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauMu_");
-  Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"});
-  // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  Plotter_Recolevel.Plot(true, false, true, false);      // usual
-  Plotter_Recolevel.Plot(true, true, true, false);       // norm
-  Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
-  Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
+  // Plotter_Recolevel.set_outnameprefix("HLTCheck_LQTChannelTauMu_");
+  // Plotter_Recolevel.set_samplenames({"MC__LQTChannelTauMu_MLQ1000_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1360_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ1810_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2170_MPS117_MC1100_L1p0", "MC__LQTChannelTauMu_MLQ2980_MPS117_MC1100_L1p0"});
+  // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
+  // Plotter_Recolevel.Plot(true, false, true, false);      // usual
+  // Plotter_Recolevel.Plot(true, true, true, false);       // norm
+  // Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
+  // Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
 
 
 
