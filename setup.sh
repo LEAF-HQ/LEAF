@@ -24,7 +24,7 @@ export LHAPDFINC=`scram tool tag lhapdf INCLUDE`
 cd $LEAFPATH
 
 # Combine
-# export CMSSW_COMBINE_BASE=$(readlink -f $LEAFPATH/../CMSSW_10_2_13)
+export CMSSW_COMBINE_BASE=$(readlink -f $LEAFPATH/../CMSSW_10_2_13)
 export COMBINEPATH=$(readlink -f HiggsAnalysis/CombinedLimit)
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:

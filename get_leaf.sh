@@ -12,6 +12,15 @@ else
   cmsrel CMSSW_10_6_12
 fi
 
+# get CMSSW_10_2_13 for Combine
+if [ -r CMSSW_10_2_13/src ] ; then
+ echo "Release CMSSW_10_2_13 already exists, using that."
+else
+  echo "Setting up CMSSW_10_2_13."
+  cmsrel CMSSW_10_2_13
+fi
+
+
 # get CMSSW_9_4_14_UL_patch1 for HLT step in UL generation
 if [ -r CMSSW_9_4_14_UL_patch1/src ] ; then
  echo "Release CMSSW_9_4_14_UL_patch1 already exists, using that."
