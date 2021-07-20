@@ -20,6 +20,9 @@ Generator/crosssections/ChiPsi/LQTChannelTauNu/*
 Generator/crosssections/ChiPsi/LQTChannelTauTau/*
 Generator/crosssections/ChiPsi/LQTChannelMuMu/*
 Generator/crosssections/ChiPsi/LQTChannelTauMu/*
+Generator/crosssections/ChiPsi/LQTChannelMuMu_DynamicScale/*
+Generator/crosssections/ChiPsi/LQTChannelTauMu_DynamicScale/*
+Generator/crosssections/ChiPsi/LQTChannelTauNu_DynamicScale/*
 Generator/NanoAODTools/
 Generator/exampleAnalysis.py
 Analyzer/obj/*
