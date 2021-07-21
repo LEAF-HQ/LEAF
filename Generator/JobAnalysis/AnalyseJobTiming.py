@@ -47,7 +47,7 @@ if __name__ == "__main__":
 	parser = ArgumentParser(description="JobTimeAnalysis")
 	parser.add_argument('filename', action="store", type=str, help="Which time list you want to analyse")
 	parser.add_argument("--threshold", dest="threshold", action="store", type=float, default=0., help="The threshold above which you want to consider the time")
-	parser.add_argument("--prefix", dest="prefix", action="store", type=str, default="Execution time: ", help="The threshold above which you want to consider the time")
+	parser.add_argument("--prefix", dest="prefix", action="store", type=str, default="Execution time: ", help="The prefix of the time string in the input file")
 	parser.add_argument("--debug", dest="debug", action="store_true", default=False, help="Turn on debug output")
 	parser.add_argument("--save", dest="save", action="store", type=str, default="", help="Save histogram under provided name")
 
