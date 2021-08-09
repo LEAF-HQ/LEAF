@@ -31,3 +31,7 @@ Can be specified to remove a substring ```somestring``` from the lines in the in
 	python AnalyseJobTiming.py timeDRstep.dat --threshold 1 --save image.pdf 
 
 Saves the histogram with filename ```image.pdf```, or any other desired format, for further use. By default the histogram is not saved. 
+
+	 python JobAnalysis/AnalyseJobTiming.py JobAnalysis/timeDRstep.dat --threshold 1 --max 14 --granularity 200
+
+This changes the output histogram parameters. The parameter ```max``` specifies the maximum of the axis range to plot, while ```granularity``` sets the number of bins. 
