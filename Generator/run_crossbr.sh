@@ -63,12 +63,13 @@ peval "cp $RELPATH_TO_CARDS/$RUN_CARD $JOBNAME/Cards/run_card.dat"
 # cp $RELPATH_TO_CARDS/$RUN_CARD $JOBNAME/Cards/run_card.dat
 
 # now generate some events to get the cross section and BRs (going to be in the param_card.dat)
+peval "sleep 10"
 echo "--> Starting event generation with command: "
 if [ ${NCORES} -ne 1 ]
   then
     peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
   else
-    peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events"
+    peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --nb_core=${NCORES}"
 fi
 
 # peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"

@@ -21,6 +21,9 @@ procname_to_latex = {
     'LQTChannelTauMuMuMu': 'LQ t-channel #tau#mu/#mu#mu',
     'LQTChannelTauMu': 'LQ t-channel #tau#mu',
     'LQTChannelMuMu': 'LQ t-channel #mu#mu',
+    'LQTChannelTauNu_DynamicScale': 'LQ t-channel #tau#nu',
+    'LQTChannelTauMu_DynamicScale': 'LQ t-channel #tau#mu',
+    'LQTChannelMuMu_DynamicScale': 'LQ t-channel #mu#mu',
 }
 
 decaymode_dict = {

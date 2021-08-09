@@ -178,9 +178,9 @@ int main(){
   Plotter_Recolevel.set_linestyles(linestyles);
 
   // // Plotter_Recolevel.Plot(blind, normalize, logY, SinglePDF);
-  Plotter_Recolevel.Plot(true, false, true, false);      // usual
+  // Plotter_Recolevel.Plot(true, false, true, false);      // usual
   // Plotter_Recolevel.Plot(true, true, true, false);       // norm
-  // Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
+  Plotter_Recolevel.Plot(true, false, true, true);       // SinglePDF
   // Plotter_Recolevel.Plot(true, true, true, true);        // SinglePDF norm
 
 
