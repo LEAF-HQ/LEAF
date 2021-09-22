@@ -39,20 +39,20 @@ namespace std {} using namespace std;
 // Header files passed as explicit arguments
 #include "include/Event.h"
 #include "include/BTagCalibrationStandalone.h"
-#include "include/ObjectIdUtils.h"
+#include "include/STMETSelection.h"
 #include "include/MuonIds.h"
 #include "include/massconfig.h"
 #include "include/NElectronSelection.h"
 #include "include/ScaleFactorApplicator.h"
 #include "include/Particle.h"
 #include "include/NTauSelection.h"
-#include "include/STMETSelection.h"
+#include "include/GenInfo.h"
 #include "include/constants.h"
 #include "include/GenEvent.h"
 #include "include/FlagSelection.h"
 #include "include/TauIds.h"
 #include "include/Met.h"
-#include "include/GenInfo.h"
+#include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
@@ -76,8 +76,10 @@ namespace std {} using namespace std;
 #include "include/JetIds.h"
 #include "include/PreselectionHists.h"
 #include "include/JetCorrections.h"
+#include "include/ObjectIdUtils.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
+#include "include/BJetHists.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
@@ -740,7 +742,7 @@ namespace ROOT {
       ::RecoEvent *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::RecoEvent));
       static ::ROOT::TGenericClassInfo 
-         instance("RecoEvent", "include/RecoEvent.h", 22,
+         instance("RecoEvent", "include/RecoEvent.h", 23,
                   typeid(::RecoEvent), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &RecoEvent_Dictionary, isa_proxy, 4,
                   sizeof(::RecoEvent) );
@@ -2287,20 +2289,20 @@ namespace {
     static const char* headers[] = {
 "include/Event.h",
 "include/BTagCalibrationStandalone.h",
-"include/ObjectIdUtils.h",
+"include/STMETSelection.h",
 "include/MuonIds.h",
 "include/massconfig.h",
 "include/NElectronSelection.h",
 "include/ScaleFactorApplicator.h",
 "include/Particle.h",
 "include/NTauSelection.h",
-"include/STMETSelection.h",
+"include/GenInfo.h",
 "include/constants.h",
 "include/GenEvent.h",
 "include/FlagSelection.h",
 "include/TauIds.h",
 "include/Met.h",
-"include/GenInfo.h",
+"include/GenParticlePrinter.h",
 "include/GenParticleHists.h",
 "include/GenJet.h",
 "include/NJetSelection.h",
@@ -2324,8 +2326,10 @@ namespace {
 "include/JetIds.h",
 "include/PreselectionHists.h",
 "include/JetCorrections.h",
+"include/ObjectIdUtils.h",
 "include/MuonHists.h",
 "include/Jet.h",
+"include/BJetHists.h",
 "include/LumiblockSelection.h",
 "include/JetHists.h",
 "include/FlagHists.h",
@@ -2357,17 +2361,17 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/GenParticle.h")))
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
 class __attribute__((annotate("$clingAutoload$Analyzer/include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  GenJet;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/TriggerObject.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  TriggerObject;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Jet;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Tau;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Muon;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Electron.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Electron;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  RecoEvent;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenEvent.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenEvent;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/TriggerObject.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  TriggerObject;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Jet;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Tau;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Muon;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Electron.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Electron;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  RecoEvent;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/GenEvent.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  GenEvent;
 class __attribute__((annotate("$clingAutoload$include/Event.h")))  Event;
 class __attribute__((annotate("$clingAutoload$Analyzer/include/Met.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  Met;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Flags.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Flags;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenInfo.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenInfo;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Flags.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Flags;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/GenInfo.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  GenInfo;
 class __attribute__((annotate("$clingAutoload$Analyzer/include/FlavorParticle.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  FlavorParticle;
 class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  Particle;
 )DICTFWDDCLS";
@@ -2381,20 +2385,20 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #define _BACKWARD_BACKWARD_WARNING_H
 #include "include/Event.h"
 #include "include/BTagCalibrationStandalone.h"
-#include "include/ObjectIdUtils.h"
+#include "include/STMETSelection.h"
 #include "include/MuonIds.h"
 #include "include/massconfig.h"
 #include "include/NElectronSelection.h"
 #include "include/ScaleFactorApplicator.h"
 #include "include/Particle.h"
 #include "include/NTauSelection.h"
-#include "include/STMETSelection.h"
+#include "include/GenInfo.h"
 #include "include/constants.h"
 #include "include/GenEvent.h"
 #include "include/FlagSelection.h"
 #include "include/TauIds.h"
 #include "include/Met.h"
-#include "include/GenInfo.h"
+#include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
@@ -2418,8 +2422,10 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/JetIds.h"
 #include "include/PreselectionHists.h"
 #include "include/JetCorrections.h"
+#include "include/ObjectIdUtils.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
+#include "include/BJetHists.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
