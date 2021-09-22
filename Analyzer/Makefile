@@ -47,7 +47,7 @@ $(OBJECTSEXE): $(OBJDIR)/%.o : $(SRCDIR)/%.cxx
 
 libClassDictionaries.so: $(LIBDIR)/ClassDictionaries.cxx
 	@echo "--> Creating shared library with class dictionaries."
-	@$(CC) $(CFLAGSDICT) -shared -o $(LIBDIR)/$@ $(ROOTLIBS) $^
+	@$(CC) $(CFLAGSDICT) $(LFLAGS) -shared -o $(LIBDIR)/$@ $(ROOTLIBS) $(CMSSWLIBS) $^
 
 $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 	@echo "--> Creating class dictionaries."
