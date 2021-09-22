@@ -50,6 +50,9 @@ if __name__ == "__main__":
 	parser.add_argument("--prefix", dest="prefix", action="store", type=str, default="Execution time: ", help="The prefix of the time string in the input file")
 	parser.add_argument("--debug", dest="debug", action="store_true", default=False, help="Turn on debug output")
 	parser.add_argument("--save", dest="save", action="store", type=str, default="", help="Save histogram under provided name")
+	parser.add_argument("--max", dest="max", action="store", type=float, default=12.5, help="Max value on x axis")
+	parser.add_argument("--granularity", dest="granularity", action="store", type=int, default=50, help="Number of bins to use for histogram")
+
 
 	options = parser.parse_args()
 
@@ -66,7 +69,7 @@ if __name__ == "__main__":
 
 		canvas = ROOT.TCanvas("canvas", "canvas", 800, 600)
 
-		histo = ROOT.TH1D("timedistribution", "Time distribution", 50, -0.5, 12.5)
+		histo = ROOT.TH1D("timedistribution", "Time distribution", options.granularity, -0.5, options.max)
 
 		#for value in timedistribution: 
 		#	histo.Fill(value)

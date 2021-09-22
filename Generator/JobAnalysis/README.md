@@ -16,18 +16,22 @@ On can also filter out the time for a single job, using the job number, etc...
 
 The script ```AnalyseJobTiming.py``` reads a text file containing the timing info lines from the job log and can porduce histograms of the execution time distribution: 
 
-	AnalyseJobTiming.py timeDRstep.dat 
+	python AnalyseJobTiming.py timeDRstep.dat 
 
 The first agrument is the text file obtained in the previous step. It can optionally take more arguments: 
 
-	AnalyseJobTiming.py timeDRstep.dat --threshld value
+	python AnalyseJobTiming.py timeDRstep.dat --threshold value
 
 Will only consider jobs with execution time higher than the provided value. It is used to veto jobs that did not properly run, and crashed due to missing input file for example. 
 
-	AnalyseJobTiming.py timeDRstep.dat --threshold 1 --prefix somestring
+	python AnalyseJobTiming.py timeDRstep.dat --threshold 1 --prefix somestring
 
 Can be specified to remove a substring ```somestring``` from the lines in the input text file. By thefault, this option is set to ```Execution time: ``` which is the prefix used in the job output logs. 
 
-	AnalyseJobTiming.py timeDRstep.dat --threshold 1 --save image.pdf 
+	python AnalyseJobTiming.py timeDRstep.dat --threshold 1 --save image.pdf 
 
 Saves the histogram with filename ```image.pdf```, or any other desired format, for further use. By default the histogram is not saved. 
+
+	 python JobAnalysis/AnalyseJobTiming.py JobAnalysis/timeDRstep.dat --threshold 1 --max 14 --granularity 200
+
+This changes the output histogram parameters. The parameter ```max``` specifies the maximum of the axis range to plot, while ```granularity``` sets the number of bins. 
