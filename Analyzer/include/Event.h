@@ -17,13 +17,20 @@ class Event {
 
 public:
   // Constructors, destructor
-  Event();
+  Event(){
+    weight = 1.;
+  };
+
   Event(const Event &) = default;
   Event & operator = (const Event &) = default;
-  ~Event();
+  ~Event(){};
 
-  void clear();
-  void reset();
+  void clear(){
+    weight = 1.;
+  };
+  void reset(){
+    weight = 1.;
+  };
 
   double weight;
 
