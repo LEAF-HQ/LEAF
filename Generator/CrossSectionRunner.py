@@ -22,8 +22,9 @@ from tdrstyle_all import *
 import tdrstyle_all as TDR
 
 class CrossSectionRunner:
-    def __init__(self, processnames, tag, lambdas, cardfolder, crosssecfolder, generatorfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
+    def __init__(self, processnames, sampletype, tag, lambdas, cardfolder, crosssecfolder, generatorfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
         self.processnames = processnames
+        self.sampletype = sampletype
         self.tag = tag
         self.lambdas = lambdas
         self.cardfolder = cardfolder
@@ -40,15 +41,25 @@ class CrossSectionRunner:
         for processname in self.processnames:
             configs = get_config_list(preferred_configurations=preferred_configurations, processname=processname)
             idx = 0
-            for config in configs:
-                mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=preferred_configurations, config=config)
+            if configs is not None:
+                if not (self.sampletype == 'ChiPsi'):
+                    raise ValueError('Cross section runner got a list of configs, but not for the ChiPsi model. This is not supported for other sampletypes.')
+                for config in configs:
+                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=preferred_configurations, config=config)
+                    for lamb in self.lambdas:
+                        if self.submit:
+                            make_card(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, sampletype=self.sampletype, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
+                            idx += 1
+                            if idx % 20 is 0:
+                                print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(configs)*len(self.lambdas), processname, float(idx)/float(len(configs)*len(self.lambdas))*100))
+
+            else:
                 for lamb in self.lambdas:
                     if self.submit:
-                        make_card(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
+                        make_card(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, sampletype=self.sampletype, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
                         idx += 1
                         if idx % 20 is 0:
                             print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(configs)*len(self.lambdas), processname, float(idx)/float(len(configs)*len(self.lambdas))*100))
-
             if not self.submit:
                 print yellow('Would have produced %i cards for process %s.' % (len(configs)*len(self.lambdas), processname))
 

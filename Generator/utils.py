@@ -8,7 +8,7 @@ from bisect import bisect_left
 from constants import *
 import distutils
 
-from multiprocessing import Pool
+from multiprocessing import Pool, Queue
 import ROOT
 
 
@@ -103,7 +103,7 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
         b_wait = (n_completed < n_jobs)
     DEVNULL.close()
 
-def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=True, niceness=10):
+def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=True, niceness=10, level=0):
     n_running = 0
     n_completed = 0
     n_jobs = len(commands)
@@ -156,7 +156,7 @@ def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=Tru
                 proc.stdout.close()
                 processes.remove(tuple)
         percent = float(n_completed)/float(n_jobs)*100
-        sys.stdout.write( '{0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(n_completed, n_jobs, percent))
+        sys.stdout.write( green('  --> {0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(n_completed, n_jobs, percent)))
         sys.stdout.flush()
         timestep = 2
         time.sleep(timestep)
@@ -170,8 +170,12 @@ def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=Tru
             tuple[0].kill()
             commands_resub.append((tuple[2].split('nice -n %i ' % (niceness))[1], tuple[1]))
             # tuple[0].stdout.close()
+
+    if level > 1:
+        return outputs
     if len(commands_resub) > 0:
-        resub_outputs = getoutput_commands_parallel(commands_resub, max_time=max_time)
+        print yellow('\n  --> Resubmitting %i jobs.' % (len(commands_resub)))
+        resub_outputs = getoutput_commands_parallel(commands_resub, max_time=max_time, level=level+1)
         for o in resub_outputs:
             outputs.append(o)
     return outputs
@@ -248,7 +252,7 @@ def execute_function_parallel(func, argumentlist, ncores=10):
 
 
 
-def hadd_large(outfilename, infilelist, force, notree, maxsize=int(3E11)): #default maxsize: 300GB (standard root: 100)
+def hadd_large(outfilename, infilelist, force, notree, maxsize=int(5E11)): #default maxsize: 300GB (standard root: 100)
     ROOT.TTree.SetMaxTreeSize(maxsize)
     rm = ROOT.TFileMerger(False)
     rm.SetFastMethod(True)

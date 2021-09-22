@@ -4,6 +4,7 @@ from os.path import isfile, join
 from fnmatch import fnmatch
 import subprocess
 import time
+import signal
 import math
 from math import sqrt, log, floor, ceil
 from bisect import bisect_left
@@ -12,12 +13,35 @@ from utils import *
 from constants import *
 from tqdm import tqdm
 
-def get_samplename(mlq, mps, mch, lamb, tag):
-    return 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
+from multiprocessing import Process, Queue
+
+def get_samplename(mlq=None, mps=None, mch=None, lamb=None, betaR=None, beta33L=None, beta32L=None, beta23L=None, tag=None):
+    # 'MLQ%i_MPS%i_MC1%i_L%s%s' % (mlq, mps, mch, get_lambdastring(lamb), format_tag(tag))
+    result = ''
+    if mlq is not None:
+        result += 'MLQ%i_'%mlq
+    if mps is not None:
+        result += 'MPS%i_'%mps
+    if mps is not None:
+        result += 'MC1%i_'%mch
+    if lamb is not None:
+        result += 'L%s_'%get_lambdastring(lamb)
+    if betaR is not None:
+        result += 'BetaR%s_'%get_lambdastring(betaR)
+    if beta33L is not None:
+        result += 'Beta33L%s_'%get_lambdastring(beta33L)
+    if beta32L is not None:
+        result += 'Beta32L%s_'%get_lambdastring(beta32L)
+    if beta23L is not None:
+        result += 'Beta23L%s_'%get_lambdastring(beta23L)
+    while result.endswith('_'):
+        result = result[:-1]
+    result += format_tag(tag) # still safe if tag is None
+    return result
 
 def get_jobname(processname, mlq=None, mps=None, mch=None, lamb=None, tag=None):
     if mlq is not None and mps is not None and mch is not None and lamb is not None:
-        return processname + '_' + get_samplename(mlq, mps, mch, lamb, tag)
+        return processname + '_' + get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
     elif tag is not None:
         return processname + format_tag(tag)
     else:
@@ -89,7 +113,7 @@ def get_config_list(preferred_configurations, processname):
 
 
 
-def make_card(card_template_folder, card_output_folder, processname, tag, mlq, mps, mch, lamb=1.0, bwcutoff=15., lhapdfid=315200, verbose=False):
+def make_card(card_template_folder, card_output_folder, processname, sampletype, tag, mlq=None, mps=None, mch=None, lamb=None, betaR=None, beta33L=None, beta32L=None, beta23L=None, bwcutoff=15., lhapdfid=315200, verbose=False):
     # PDF CMS standard (Paolo):
     # 2016 LO:       263000
     # 2016 NLO:      260000
@@ -97,9 +121,8 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
     # 2018 CP5:      303600 (same as 2017)
     # 2017/18 CP2:   315200 for 2017/8
     ensureDirectory(card_output_folder)
-    if mlq is not None and mps is not None and mch is not None and lamb is not None:
-        samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=tag)
-    else:
+    samplename = get_samplename(mlq=mlq, mps=mps, mch=mch, lamb=lamb, betaR=betaR, beta33L=beta33L, beta32L=beta32L, beta23L=beta23L, tag=tag)
+    if samplename == '':
         samplename = processname
     cardbasename = processname + '_template'
     cardtypes = ['proc_card.dat', 'run_card.dat', 'extramodels.dat', 'customizecards.dat']
@@ -116,7 +139,6 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
 
         # create newcard
         command = 'cp %s %s' % (template, newcard)
-        # print command
         os.system(command)
 
     if lamb == 'best':
@@ -126,6 +148,7 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
     else:
         outputfoldername = processname
 
+
     # default replacements
     replacement_dict = {
         'BWCUTOFF': bwcutoff,
@@ -133,14 +156,27 @@ def make_card(card_template_folder, card_output_folder, processname, tag, mlq, m
         'PDF':      lhapdfid
     }
 
+
     # ChiPsi specific
-    if mlq is not None and mps is not None and mch is not None and lamb is not None:
+    if sampletype == 'ChiPsi':
         replacement_dict['MLQ']    = mlq
         replacement_dict['MPS']    = mps
         replacement_dict['MCH']    = mch
         replacement_dict['MC2']    = int(round(2*mps - mch)) # delta_c2 = 2 * delta_ps => mc2 = 2mps - mch --> As done in paper, but value of mc2 doesn't matter for anomalies or relic abundance. Maybe increase to suppress this channel
         replacement_dict['MZP']    = int(round(mlq/math.sqrt(2))) # as done in the paper, but doesn't really affect anomalies or relic abundance
         replacement_dict['LAMBDA'] = lamb
+
+    # LQTChannel specific
+    elif sampletype == 'LQTChannel':
+        replacement_dict['MLQ']    = mlq
+        replacement_dict['LAMBDA'] = lamb
+        replacement_dict['B33R']  = beta33R
+        replacement_dict['B33L']  = beta33L
+        replacement_dict['B23L']  = beta33L
+        replacement_dict['B32L']  = beta33L
+
+    else:
+        raise AttributeError('Unknown sampletype \'%s\'. Add replacement_dict for this type.' % (sampletype))
 
     # replace values in the cards
     for card in newcards:
@@ -282,6 +318,16 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
         # have to check if there is an 'AnalysisTree' in the file, not just 'ls' the file. If not accessible, remove file so that later step will add it to list of missing files
         try:
             f = TFile.Open(filename)
+            if not f:
+                print yellow('  --> File is a nullptr, raising error: %s.' % (filename))
+                raise ReferenceError()
+                if f.IsZombie():
+                    print yellow('  --> File is a zombie, raising error: %s.' % (filename))
+                    raise ReferenceError()
+            is_recovered = f.TestBit(ROOT.TFile.kRecovered)
+            if is_recovered:
+                print yellow('  --> File had to be recovered, raising error: %s.' % (filename))
+                raise ReferenceError()
             tree = f.Get('AnalysisTree')
             n_genevents = tree.GetEntriesFast()
         except AttributeError:
@@ -296,7 +342,9 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
             pass
     return missing_indices
 
+
 def countEventsInFileGrid(absolute_filename, treename='Events'):
+
     result = None
     try:
         f = TFile.Open(absolute_filename)
@@ -313,8 +361,33 @@ def countEventsInFileGrid(absolute_filename, treename='Events'):
         f.Close()
     except:
         result = None
+
+    # print 'in function: ', result
     return {absolute_filename: result}
-    # return result
+    # queue.put({absolute_filename: result})
+
+
+# def countEventsInFileGridTimeout(absolute_filename, treename='Events', maxtime=15):
+#
+#     result = {absolute_filename: None}
+#
+#     queue = Queue()
+#     p = Process(target=countEventsInFileGrid, args=(absolute_filename, queue))
+#     p.start()
+#     p.join(maxtime)
+#     if p.is_alive():
+#         print yellow('  --> Timeout! Adding file to list of missing indices: %s.' % (absolute_filename))
+#         # Terminate foo
+#         p.terminate()
+#         p.join()
+#         return result
+#
+#     result = queue.get()
+#     return result
+
+
+
+
 
 def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
     """Submit PSet config file and gridpack to SLURM batch system."""
