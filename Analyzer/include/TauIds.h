@@ -14,3 +14,21 @@ public:
 private:
   Tau::Selector sel;
 };
+
+class TauDecaymodeID {
+public:
+  explicit TauDecaymodeID(std::vector<int>);
+  bool operator()(const Tau&, const RecoEvent&) const;
+
+private:
+  std::vector<int> decaymodes;
+};
+
+class TauDecaymodeVetoID {
+public:
+  explicit TauDecaymodeVetoID(std::vector<int>);
+  bool operator()(const Tau&, const RecoEvent&) const;
+
+private:
+  std::vector<int> decaymodes;
+};
