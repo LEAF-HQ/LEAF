@@ -127,15 +127,6 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   else if(infiles_stack.size() > 0) foldernames = get_foldernames(infiles_stack[0]);
   else throw runtime_error("In make_plots(): infile-list for both single histograms and for stacks is empty. What should even be plotted?");
 
-  // Plot plots in each folder
-  for(size_t i=0; i<foldernames.size(); i++){
-
-    TString foldername = foldernames[i];
-    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
-  }
-
-  cout << green << "--> Wrote plots to folder: " << outfolder << ", now cleaning up..." << reset << endl;
-
   for(size_t i=0; i<infiles_single.size(); i++){
     delete infiles_single[i];
   }
@@ -145,6 +136,48 @@ void make_plots(TString infolder, vector<TString> samples, vector<TString> stack
   for(size_t i=0; i<infiles_numerator.size(); i++){
     delete infiles_numerator[i];
   }
+
+  // Plot plots in each folder
+  for(size_t i=0; i<foldernames.size(); i++){
+
+    // Get remaining infile pointers. Skip if already present in infilenames_stack
+    vector<TFile*> infiles_single, infiles_stack, infiles_numerator = {};
+    for(size_t i=0; i<infilenames_single.size(); i++){
+      infiles_single.emplace_back(new TFile(infilenames_single[i], "READ"));
+    }
+    for(size_t i=0; i<infilenames_stack_ordered.size(); i++){
+      infiles_stack.emplace_back(new TFile(infilenames_stack_ordered[i], "READ"));
+    }
+    for(size_t i=0; i<infilenames_numerator.size(); i++){
+      infiles_numerator.emplace_back(new TFile(infilenames_numerator[i], "READ"));
+    }
+
+    TString foldername = foldernames[i];
+    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
+
+
+    for(size_t i=0; i<infiles_single.size(); i++){
+      delete infiles_single[i];
+    }
+    for(size_t i=0; i<infiles_stack.size(); i++){
+      delete infiles_stack[i];
+    }
+    for(size_t i=0; i<infiles_numerator.size(); i++){
+      delete infiles_numerator[i];
+    }
+  }
+
+  cout << green << "--> Wrote plots to folder: " << outfolder << ", now cleaning up..." << reset << endl;
+
+  // for(size_t i=0; i<infiles_single.size(); i++){
+  //   delete infiles_single[i];
+  // }
+  // for(size_t i=0; i<infiles_stack.size(); i++){
+  //   delete infiles_stack[i];
+  // }
+  // for(size_t i=0; i<infiles_numerator.size(); i++){
+  //   delete infiles_numerator[i];
+  // }
   cout << green << "--> Cleaned up!" << reset << endl;
 }
 
@@ -187,22 +220,35 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     pad_top->Draw();
   }
 
-  float height_per_legitem = 0.055;
-  if(!do_ratio) height_per_legitem *=0.66666;
-  float leg_y_high = 0.9;
-  float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
-
 
   // loop over histograms and plot each
   for(size_t i=0; i<histnames.size(); i++){
     TString histname = histnames[i];
 
+    // Find number of legend entries to format it properly
+    int n_legentries_per_col = 6;
+    int n_legentries = infiles_single.size() + infiles_stack.size();
+    int n_legcols = (n_legentries-1)/n_legentries_per_col + 1;
+    float leg_colwidth = 0.37;
+    float leg_x_high = 0.9;
+    float leg_x_low = leg_x_high - n_legcols*leg_colwidth;
 
-    TLegend* leg = new TLegend(0.6, leg_y_low, 0.9, leg_y_high);
+
+
+    float height_per_legitem = 0.055;
+    if(!do_ratio) height_per_legitem *=0.66666;
+    float leg_y_high = 0.915;
+    // float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
+    int max_num_entries_per_col = ceil((double)n_legentries/n_legcols);
+    float leg_y_low  = leg_y_high - height_per_legitem * max_num_entries_per_col;
+
+    TLegend* leg = new TLegend(leg_x_low, leg_y_low, leg_x_high, leg_y_high);
+    // leg->SetTextAlign(32);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(43);
-    leg->SetTextSize(12);
+    leg->SetTextSize(10);
+    leg->SetNColumns(n_legcols);
 
     //defaults fo cosmetics
     double minimum = 0.;
@@ -214,6 +260,8 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     double maxscale = 1.5;
     if(logy) maxscale = 100;
     double maximum = -1.;
+
+
 
 
     // find histograms to be stacked
@@ -235,12 +283,14 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       if(is_data[j]) {
         leg->AddEntry(hist, labels_single[j], "lp");
       }
+      delete hist;
     }
 
     for(int j=infiles_stack.size()-1; j>=0; j--){
       TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
       hist->SetFillColor(colors_stack[j]);
       leg->AddEntry(hist, labels_stack[j], "f");
+
     }
     if(infiles_stack.size() > 0){
       maximum = max(max(maximum, ((TH1*)(stack->GetStack()->Last()))->GetMaximum()), 1E-4);
@@ -253,7 +303,7 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       if(normalize) hist->Scale(1./hist->Integral());
       maximum = max(max(maximum, hist->GetMaximum()), 1E-4);
       hists_single.emplace_back(hist);
-      if(!is_data[j])leg->AddEntry(hist, labels_single[j], "l");
+      if(!is_data[j]) leg->AddEntry(hist, labels_single[j], "l");
     }
 
     pad_top->Clear();
@@ -413,6 +463,13 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     if(do_stack){
       delete h_err;
     }
+
+    for(size_t j=0; j<hists_single.size(); j++){
+      delete hists_single[j];
+    }
+
+    delete leg;
+    delete stack;
 
 
   }
