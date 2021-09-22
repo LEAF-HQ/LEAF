@@ -45,8 +45,8 @@ class TuplizeRunner:
         self.macrofolder = macrofolder
 
 
-    def CountEvents(self, check_missing=True, force_update=True):
-        filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, check_missing=check_missing, force_update=force_update)
+    def CountEvents(self, check_missing=True):
+        filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, check_missing=check_missing)
 
 
 
@@ -85,14 +85,12 @@ class TuplizeRunner:
                 commands.append(command)
                 njobs += 1
 
-
         if mode is 'new':
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
             print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
-            # filepath=self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, generatorfolder=self.generatorfolder, generation_step=generation_step
-            # missing_indices = findOpenMissingFilesT2(filepath=self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, filename_base='Tuples_%s'%(stagetag), maxindex=len(commands), generation_step='Tuples_%s'%(stagetag)) # only the missing ones -- only works if tuplizing into a new directory
-            missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='Tuples_%s' % (stagetag), maxindex=len(commands), generation_step='Tuples_%s' % (stagetag)) # only the missing ones -- only works if tuplizing into a new directory
+            # missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='Tuples_%s' % (stagetag), maxindex=len(commands), generation_step='Tuples_%s' % (stagetag)) # only the missing ones -- only works if tuplizing into a new directory
+            missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='Tuples', update_missing=True, update_all=False)
 
         njobs = 0
         idx = 0
@@ -104,19 +102,69 @@ class TuplizeRunner:
                 f.write(command + '\n')
                 njobs += 1
                 idx += 1
-        command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_nanoaod.sh %s %s %s %s %s' % (njobs, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename)
-        if njobs > 0:
-            if self.submit:
-                jobid = int(subprocess.check_output(command, shell=True))
-                print green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs, samplename, jobid))
-            else:
-                print command
-                print yellow("  --> Would submit an array of %i jobs for name %s"%(njobs, samplename))
-        else:
+
+        slurm_max_array_size = 4000
+        submit_more_arrays = True if (njobs > slurm_max_array_size) else False
+        # if submit_more_arrays:
+        njobs_left = njobs
+        narrays = 0
+        njobs_per_array = []
+        if njobs == 0:
             if mode is 'resubmit':
                 print green('  --> No jobs to resubmit for job %s.' % (samplename))
             else:
                 print green('  --> No jobs to submit for job %s.' % (samplename))
+            return
+
+        while njobs_left > 0:
+            idx_offset = slurm_max_array_size*narrays
+            arrayend = min(njobs_left, slurm_max_array_size)
+            njobs_per_array.append(arrayend)
+
+            command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_nanoaod.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename, idx_offset)
+            if njobs > 0:
+                if self.submit:
+                    jobid = int(subprocess.check_output(command, shell=True))
+                    print green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs_per_array[narrays], samplename, jobid))
+                else:
+                    print command
+                    print yellow("  --> Would submit an array of %i jobs for name %s"%(njobs_per_array[narrays], samplename))
+            njobs_left -= arrayend
+            narrays += 1
+
+    def CleanBrokenFiles(self, nevt_per_job=200000):
+
+        filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year)
+        if filedict is False: raise ValueError('Got invalid filedict when trying to delete broken tuples.')
+
+        if self.stage is 'nano': stagetag = 'NANOAOD'
+        elif self.stage is 'mini': stagetag = 'MINIAOD'
+        njobs = 0
+        for filename in filedict:
+            nevt_thisfile = filedict[filename]
+            njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
+            njobs += njobs_thisfile
+
+        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='Tuples', update_missing=True, update_all=False)
+
+        outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
+        missing_or_broken_tuples = [os.path.join(outfoldername, 'Tuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
+        commands = []
+        for f in missing_or_broken_tuples:
+            command = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm %s' % (f)
+            commands.append(command)
+
+
+        if self.submit:
+            print green('  --> Removing up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
+            execute_commands_parallel(commands, niceness=None)
+        else:
+            print yellow('  --> Would remove up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
+            print commands
+        # print missing_indices
+        # print commands
+
+
 
     def CreateDatasetXMLFile(self, force_counting, count_weights=True):
         # print self.year, self.sample.nevents.has_year(self.year)
@@ -129,11 +177,13 @@ class TuplizeRunner:
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(l), self.sample.name))
         l.sort()
         commands = []
-        idx = 0
+        # idx = 0
         n_genevents_sum = 0
-        for filename in l:
+        pbar = tqdm(l, desc="  --> Files counted")
+        for filename in pbar:
+        # for filename in l:
             # print filename
-            idx += 1
+            # idx += 1
             n_genevents = 0
             file_ok = True
             try:
@@ -203,8 +253,10 @@ class TuplizeRunner:
         xsec = None
         if self.stage is 'nano':
             stagetag = 'NANOAOD'
+            director = sample.nanopaths[year].director
         elif self.stage is 'mini':
             stagetag = 'MINIAOD'
+            director = sample.minipaths[year].director
 
         if not recalculate and sample.xsecs[year] is not None:
             print yellow('--> Sample \'%s\' in year %s already has a cross section filled in. Because \'recalculate\' is not set, skip.' % (sample.name, year))
@@ -220,7 +272,8 @@ class TuplizeRunner:
             print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
             return
 
-        cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=sample.nanopaths[year].director)
+
+        cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=director)
 
         # print cmsrun_command
         # cmsrun_output = subprocess.check_output(cmsrun_command, shell=True, stderr=subprocess.STDOUT).split('\n') #

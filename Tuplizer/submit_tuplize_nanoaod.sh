@@ -20,10 +20,13 @@ CMSSWDIR=$2
 BASEFOLDER=$3
 TARGETFOLDERNAME=$4
 JOBLIST=$5
+STARTINDEX=$6
+
+EFFECTIVEINDEX=$(( $STARTINDEX + $SLURM_ARRAY_TASK_ID ))
 
 
 # each worker node has local /scratch space to be used during job run
-export TMPDIR=/scratch/$USER/tmpdir_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/scratch/$USER/tmpdir_${SLURM_JOB_ID}_${EFFECTIVEINDEX}
 mkdir -p $TMPDIR
 echo TMPDIR: $TMPDIR
 
@@ -37,7 +40,7 @@ eval "source setup.sh"
 
 # actual job
 cd $TMPDIR
-export TASKID=$SLURM_ARRAY_TASK_ID
+export TASKID=$EFFECTIVEINDEX
 echo $TASKID
 TASKCMD=$(cat $JOBLIST | sed "${TASKID}q;d")
 echo $TASKCMD
