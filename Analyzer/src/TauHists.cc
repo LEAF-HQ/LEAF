@@ -29,6 +29,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htaumass = book<TH1D>("taumass", ";m^{#tau} [GeV];Events / bin", 50, 0, 1500);
   htauenergy = book<TH1D>("tauenergy", ";E^{#tau} [GeV];Events / bin", 50, 0, 1500);
   htauiso = book<TH1D>("tauiso", ";Iso^{#tau} [GeV];Events / bin", 100, 0, 1);
+  htaudecaymode = book<TH1D>("taudecaymode", ";#tau decay mode;Events / bin", 12, -0.5, 11.5);
   htauorigin = book<TH1D>("tauorigin", ";#tau origin;Events / bin", 6, -0.5, 5.5);
   htaudxy = book<TH1D>("taudxy", ";#tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htaudz = book<TH1D>("taudz", ";#tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -45,6 +46,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htaumatchedmass = book<TH1D>("taumatchedmass", ";m^{gen-matched #tau_{h}} [GeV];Events / bin", 50, 0, 1500);
   htaumatchedenergy = book<TH1D>("taumatchedenergy", ";E^{gen-matched #tau_{h}} [GeV];Events / bin", 50, 0, 1500);
   htaumatchediso = book<TH1D>("taumatchediso", ";Iso^{gen-matched #tau} [GeV];Events / bin", 100, 0, 1);
+  htaumatcheddecaymode = book<TH1D>("taumatcheddecaymode", ";gen-matched #tau decay mode;Events / bin", 12, -0.5, 11.5);
   htaumatchedorigin = book<TH1D>("taumatchedorigin", ";gen-matched #tau origin;Events / bin", 6, -0.5, 5.5);
   htaumatcheddxy = book<TH1D>("taumatcheddxy", ";gen-matched #tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htaumatcheddz = book<TH1D>("taumatcheddz", ";gen-matched #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -61,6 +63,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htauunmatchedmass = book<TH1D>("tauunmatchedmass", ";m^{unmatched #tau_{h}} [GeV];Events / bin", 50, 0, 1500);
   htauunmatchedenergy = book<TH1D>("tauunmatchedenergy", ";E^{unmatched #tau_{h}} [GeV];Events / bin", 50, 0, 1500);
   htauunmatchediso = book<TH1D>("tauunmatchediso", ";Iso^{unmatched #tau} [GeV];Events / bin", 100, 0, 1);
+  htauunmatcheddecaymode = book<TH1D>("tauunmatcheddecaymode", ";unmatched #tau decay mode;Events / bin", 12, -0.5, 11.5);
   htauunmatchedorigin = book<TH1D>("tauunmatchedorigin", ";unmatched #tau origin;Events / bin", 6, -0.5, 5.5);
   htauunmatcheddxy = book<TH1D>("tauunmatcheddxy", ";unmatched #tau d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htauunmatcheddz = book<TH1D>("tauunmatcheddz", ";unmatched #tau d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -76,6 +79,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htau1mass = book<TH1D>("tau1mass", ";m^{#tau 1} [GeV];Events / bin", 50, 0, 1500);
   htau1energy = book<TH1D>("tau1energy", ";E^{#tau 1} [GeV];Events / bin", 50, 0, 1500);
   htau1iso = book<TH1D>("tau1iso", ";Iso^{#tau 1} [GeV];Events / bin", 100, 0, 1);
+  htau1decaymode = book<TH1D>("tau1decaymode", ";#tau 1 decay mode;Events / bin", 12, -0.5, 11.5);
   htau1origin = book<TH1D>("tau1origin", ";#tau 1 origin;Events / bin", 6, -0.5, 5.5);
   htau1dxy = book<TH1D>("tau1dxy", ";#tau 1 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htau1dz = book<TH1D>("tau1dz", ";#tau 1 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -91,6 +95,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htau2mass = book<TH1D>("tau2mass", ";m^{#tau 2} [GeV];Events / bin", 50, 0, 1500);
   htau2energy = book<TH1D>("tau2energy", ";E^{#tau 2} [GeV];Events / bin", 50, 0, 1500);
   htau2iso = book<TH1D>("tau2iso", ";Iso^{#tau 2} [GeV];Events / bin", 100, 0, 1);
+  htau2decaymode = book<TH1D>("tau2decaymode", ";#tau 2 decay mode;Events / bin", 12, -0.5, 11.5);
   htau2origin = book<TH1D>("tau2origin", ";#tau 2 origin;Events / bin", 6, -0.5, 5.5);
   htau2dxy = book<TH1D>("tau2dxy", ";#tau 2 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htau2dz = book<TH1D>("tau2dz", ";#tau 2 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -106,6 +111,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htau3mass = book<TH1D>("tau3mass", ";m^{#tau 3} [GeV];Events / bin", 50, 0, 1500);
   htau3energy = book<TH1D>("tau3energy", ";E^{#tau 3} [GeV];Events / bin", 50, 0, 1500);
   htau3iso = book<TH1D>("tau3iso", ";Iso^{#tau 3} [GeV];Events / bin", 100, 0, 1);
+  htau3decaymode = book<TH1D>("tau3decaymode", ";#tau 3 decay mode;Events / bin", 12, -0.5, 11.5);
   htau3origin = book<TH1D>("tau3origin", ";#tau 3 origin;Events / bin", 6, -0.5, 5.5);
   htau3dxy = book<TH1D>("tau3dxy", ";#tau 3 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htau3dz = book<TH1D>("tau3dz", ";#tau 3 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -121,6 +127,7 @@ TauHists::TauHists(TString dir_) : BaseHists(dir_){
   htau4mass = book<TH1D>("tau4mass", ";m^{#tau 4} [GeV];Events / bin", 50, 0, 1500);
   htau4energy = book<TH1D>("tau4energy", ";E^{#tau 4} [GeV];Events / bin", 50, 0, 1500);
   htau4iso = book<TH1D>("tau4iso", ";Iso^{#tau 4} [GeV];Events / bin", 100, 0, 1);
+  htau4decaymode = book<TH1D>("tau4decaymode", ";#tau 4 decay mode;Events / bin", 12, -0.5, 11.5);
   htau4origin = book<TH1D>("tau4origin", ";#tau 4 origin;Events / bin", 6, -0.5, 5.5);
   htau4dxy = book<TH1D>("tau4dxy", ";#tau 4 d_{xy} wrt. PV [cm];Events / bin", 250, 0, 0.5);
   htau4dz = book<TH1D>("tau4dz", ";#tau 4 d_{z} wrt. PV [cm];Events / bin", 250, 0, 0.5);
@@ -165,6 +172,7 @@ void TauHists::fill(const RecoEvent & event){
       htaumatchedmass->Fill(t.m(), weight);
       htaumatchedenergy->Fill(t.e(), weight);
       htaumatchediso->Fill(t.comb_iso(), weight);
+      htaumatcheddecaymode->Fill(t.decay_mode(), weight);
       htaumatchedorigin->Fill((int)t.gen_part_flav(), weight);
       htaumatcheddxy->Fill(t.dxy(), weight);
       htaumatcheddz->Fill(t.dz(), weight);
@@ -182,6 +190,7 @@ void TauHists::fill(const RecoEvent & event){
       htauunmatchedmass->Fill(t.m(), weight);
       htauunmatchedenergy->Fill(t.e(), weight);
       htauunmatchediso->Fill(t.comb_iso(), weight);
+      htauunmatcheddecaymode->Fill(t.decay_mode(), weight);
       htauunmatchedorigin->Fill((int)t.gen_part_flav(), weight);
       htauunmatcheddxy->Fill(t.dxy(), weight);
       htauunmatcheddz->Fill(t.dz(), weight);
@@ -198,6 +207,7 @@ void TauHists::fill(const RecoEvent & event){
     htaumass->Fill(t.m(), weight);
     htauenergy->Fill(t.e(), weight);
     htauiso->Fill(t.comb_iso(), weight);
+    htaudecaymode->Fill(t.decay_mode(), weight);
     htauorigin->Fill((int)t.gen_part_flav(), weight);
     htaudxy->Fill(t.dxy(), weight);
     htaudz->Fill(t.dz(), weight);
@@ -214,6 +224,7 @@ void TauHists::fill(const RecoEvent & event){
       htau1mass->Fill(t.m(), weight);
       htau1energy->Fill(t.e(), weight);
       htau1iso->Fill(t.comb_iso(), weight);
+      htau1decaymode->Fill(t.decay_mode(), weight);
       htau1origin->Fill((int)t.gen_part_flav(), weight);
       htau1dxy->Fill(t.dxy(), weight);
       htau1dz->Fill(t.dz(), weight);
@@ -230,6 +241,7 @@ void TauHists::fill(const RecoEvent & event){
       htau2mass->Fill(t.m(), weight);
       htau2energy->Fill(t.e(), weight);
       htau2iso->Fill(t.comb_iso(), weight);
+      htau2decaymode->Fill(t.decay_mode(), weight);
       htau2origin->Fill((int)t.gen_part_flav(), weight);
       htau2dxy->Fill(t.dxy(), weight);
       htau2dz->Fill(t.dz(), weight);
@@ -246,6 +258,7 @@ void TauHists::fill(const RecoEvent & event){
       htau3mass->Fill(t.m(), weight);
       htau3energy->Fill(t.e(), weight);
       htau3iso->Fill(t.comb_iso(), weight);
+      htau3decaymode->Fill(t.decay_mode(), weight);
       htau3origin->Fill((int)t.gen_part_flav(), weight);
       htau3dxy->Fill(t.dxy(), weight);
       htau3dz->Fill(t.dz(), weight);
@@ -262,6 +275,7 @@ void TauHists::fill(const RecoEvent & event){
       htau4mass->Fill(t.m(), weight);
       htau4energy->Fill(t.e(), weight);
       htau4iso->Fill(t.comb_iso(), weight);
+      htau4decaymode->Fill(t.decay_mode(), weight);
       htau4origin->Fill((int)t.gen_part_flav(), weight);
       htau4dxy->Fill(t.dxy(), weight);
       htau4dz->Fill(t.dz(), weight);

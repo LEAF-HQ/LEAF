@@ -39,9 +39,13 @@ GenParticleHists::GenParticleHists(TString dir_) : BaseHists(dir_){
   hdrgentaumu = book<TH1D>("drgentaumu", ";#DeltaR(gen #tau i, #mu j); Events / bin", 200, 0, 10);
   hdphigentaumu = book<TH1D>("dphigentaumu", ";#Delta#Phi(gen #tau i, #mu j); Events / bin", 35, 0, 3.5);
   hdetagentaumu = book<TH1D>("detagentaumu", ";#Delta#eta(gen #tau i, #mu j); Events / bin", 100, 0, 10);
+  hdptgentaumu = book<TH1D>("dptgentaumu", ";#Deltap_{T}(gen #tau i, matched gen #mu) [GeV]; Events / bin", 400, -200, 200);
+  hdptrelgentaumu = book<TH1D>("dptrelgentaumu", ";#Deltap_{T}^{rel}(gen #tau i, matched gen #mu) / p_{T}^{#tau i}; Events / bin", 100, -2, 2);
   hdrgentaue = book<TH1D>("drgentaue", ";#DeltaR(gen #tau i, e j); Events / bin", 200, 0, 10);
   hdphigentaue = book<TH1D>("dphigentaue", ";#Delta#Phi(gen #tau i, e j); Events / bin", 35, 0, 3.5);
   hdetagentaue = book<TH1D>("detagentaue", ";#Delta#eta(gen #tau i, e j); Events / bin", 100, 0, 10);
+  hdptgentaue = book<TH1D>("dptgentaue", ";#Deltap_{T}(gen #tau i, matched gen e) [GeV]; Events / bin", 400, -200, 200);
+  hdptrelgentaue = book<TH1D>("dptrelgentaue", ";#Deltap_{T}^{rel}(gen #tau i, matched gen e) / p_{T}^{#tau i}; Events / bin", 100, -2, 2);
 
 
   hngenvistaus = book<TH1D>("ngenvistaus", ";N_{gen vis. #tau}; Events / bin", 11, -0.5, 10.5);
@@ -321,6 +325,38 @@ GenParticleHists::GenParticleHists(TString dir_) : BaseHists(dir_){
   hdetagenbnotfromharde = book<TH1D>("detagenbnotfromharde", ";#Delta#eta(gen b not from hard proc. i, gen e j); Events / bin", 100, 0, 10);
 
 
+  hngennus = book<TH1D>("ngennus", ";N_{gen #nu}; Events / bin", 11, -0.5, 10.5);
+  hptgennu = book<TH1D>("ptgennu", ";p_{T}^{gen #nu} [GeV]; Events / bin", 40, 0, 1200);
+  hptgennu_rebin = book<TH1D>("ptgennu_rebin", ";p_{T}^{gen #nu} [GeV]; Events / bin", 50, 0, 200);
+  hptgennu_rebin2 = book<TH1D>("ptgennu_rebin2", ";p_{T}^{gen #nu} [GeV]; Events / bin", 50, 0, 50);
+  hphigennu = book<TH1D>("phigennu", ";#phi^{gen #nu 1}; Events / bin", 70, -3.5, 3.5);
+  hetagennu = book<TH1D>("etagennu", ";#eta^{gen #nu 1}; Events / bin", 50, 0, 5);
+  hdrminnue = book<TH1D>("drminnue", ";#DeltaR(gen #nu, gen e); Events / bin", 60, 0, 3);
+  hdrminnumu = book<TH1D>("drminnumu", ";#DeltaR(gen #nu, gen #mu); Events / bin", 60, 0, 3);
+  hdrminnutau = book<TH1D>("drminnutau", ";#DeltaR(gen #nu, gen #tau); Events / bin", 60, 0, 3);
+  hdphiminnue = book<TH1D>("dphiminnue", ";#Delta#phi(gen #nu, gen e); Events / bin", 35, 0, 3.5);
+  hdphiminnumu = book<TH1D>("dphiminnumu", ";#Delta#phi(gen #nu, gen #mu); Events / bin", 35, 0, 3.5);
+  hdphiminnutau = book<TH1D>("dphiminnutau", ";#Delta#phi(gen #nu, gen #tau); Events / bin", 35, 0, 3.5);
+  hdetaminnue = book<TH1D>("detaminnue", ";#Delta#eta(gen #nu, gen e); Events / bin", 50, 0, 5);
+  hdetaminnumu = book<TH1D>("detaminnumu", ";#Delta#eta(gen #nu, gen #mu); Events / bin", 50, 0, 5);
+  hdetaminnutau = book<TH1D>("detaminnutau", ";#Delta#eta(gen #nu, gen #tau); Events / bin", 50, 0, 5);
+
+  hptgennu1 = book<TH1D>("ptgennu1", ";p_{T}^{gen #nu 1} [GeV]; Events / bin", 40, 0, 1200);
+  hptgennu1_rebin = book<TH1D>("ptgennu1_rebin", ";p_{T}^{gen #nu 1} [GeV]; Events / bin", 50, 0, 200);
+  hptgennu1_rebin2 = book<TH1D>("ptgennu1_rebin2", ";p_{T}^{gen #nu 1} [GeV]; Events / bin", 50, 0, 50);
+  hphigennu1 = book<TH1D>("phigennu1", ";#phi^{gen #nu1}; Events / bin", 70, -3.5, 3.5);
+  hetagennu1 = book<TH1D>("etagennu1", ";#eta^{gen #nu1}; Events / bin", 50, 0, 5);
+  hdrminnu1e = book<TH1D>("drminnu1e", ";#DeltaR(gen #nu1, gen e); Events / bin", 60, 0, 3);
+  hdrminnu1mu = book<TH1D>("drminnu1mu", ";#DeltaR(gen #nu1, gen #mu); Events / bin", 60, 0, 3);
+  hdrminnu1tau = book<TH1D>("drminnu1tau", ";#DeltaR(gen #nu1, gen #tau); Events / bin", 60, 0, 3);
+  hdphiminnu1e = book<TH1D>("dphiminnu1e", ";#Delta#phi(gen #nu1, gen e); Events / bin", 35, 0, 3.5);
+  hdphiminnu1mu = book<TH1D>("dphiminnu1mu", ";#Delta#phi(gen #nu1, gen #mu); Events / bin", 35, 0, 3.5);
+  hdphiminnu1tau = book<TH1D>("dphiminnu1tau", ";#Delta#phi(gen #nu1, gen #tau); Events / bin", 35, 0, 3.5);
+  hdetaminnu1e = book<TH1D>("detaminnu1e", ";#Delta#eta(gen #nu1, gen e); Events / bin", 50, 0, 5);
+  hdetaminnu1mu = book<TH1D>("detaminnu1mu", ";#Delta#eta(gen #nu1, gen #mu); Events / bin", 50, 0, 5);
+  hdetaminnu1tau = book<TH1D>("detaminnu1tau", ";#Delta#eta(gen #nu1, gen #tau); Events / bin", 50, 0, 5);
+
+
   // gen b's
 
 }
@@ -412,12 +448,13 @@ void GenParticleHists::fill(const RecoEvent & event){
   int n_genelsmatched = 0;
   int n_genbs = 0;
   int n_genbsmatched = 0;
+  int n_gennus = 0;
   int gpidx = -1;
   for(const GenParticle & gp : *event.genparticles_all){
     gpidx++;
     // cout << "GenParticle at index " << gpidx << " with ID " << gp.pdgid() << ". "
     int id = abs(gp.pdgid());
-    if(id != 11 && id != 13 && id != 15 && id != 5) continue;
+    if(id != 11 && id != 13 && id != 15 && id != 5 && id != 12 && id != 14 && id != 16) continue;
     if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
     // if((id == 5) && !gp.get_statusflag(GenParticle::isFirstCopy)) continue;
 
@@ -440,18 +477,28 @@ void GenParticleHists::fill(const RecoEvent & event){
         GenParticle gpmu = event.genparticles_all->at(i);
         if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
         if ((int)i == gpidx) continue;
-        hdrgentaumu->Fill(deltaR(gp, gpmu), weight);
+        double dr = deltaR(gp, gpmu);
+        hdrgentaumu->Fill(dr, weight);
         hdphigentaumu->Fill(deltaPhi(gp, gpmu), weight);
         hdetagentaumu->Fill(deltaEta(gp, gpmu), weight);
+        if(dr < 0.2){
+          hdptgentaumu->Fill(gp.pt() - gpmu.pt(), weight);
+          hdptrelgentaumu->Fill((gp.pt() - gpmu.pt())/gp.pt(), weight);
+        }
       }
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
         if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
         if ((int)i == gpidx) continue;
-        hdrgentaue->Fill(deltaR(gp, gpe), weight);
+        double dr = deltaR(gp, gpe);
+        hdrgentaue->Fill(dr, weight);
         hdphigentaue->Fill(deltaPhi(gp, gpe), weight);
         hdetagentaue->Fill(deltaEta(gp, gpe), weight);
+        if(dr < 0.2){
+          hdptgentaue->Fill(gp.pt() - gpe.pt(), weight);
+          hdptrelgentaue->Fill((gp.pt() - gpe.pt())/gp.pt(), weight);
+        }
       }
     }
     else if(id == 13){ // muons
@@ -803,7 +850,7 @@ void GenParticleHists::fill(const RecoEvent & event){
       }
       else origin = 2.;
 
-        if(gp.get_statusflag(GenParticle::fromHardProcess)){
+      if(gp.get_statusflag(GenParticle::fromHardProcess)){
         hgenbsfromhardtotal->Fill(0., weight);
         hptgenbfromhard->Fill(gp.pt(), weight);
         hptgenbfromhard_rebin->Fill(gp.pt(), weight);
@@ -935,6 +982,87 @@ void GenParticleHists::fill(const RecoEvent & event){
       }
 
     }
+    else if(id == 12 || id == 14 || id == 16){
+      n_gennus++;
+
+      hptgennu->Fill(gp.pt(), weight);
+      hptgennu_rebin->Fill(gp.pt(), weight);
+      hptgennu_rebin2->Fill(gp.pt(), weight);
+      hphigennu->Fill(gp.phi(), weight);
+      hetagennu->Fill(gp.eta(), weight);
+
+      double drmine = 999;
+      double dphimine = 999;
+      double detamine = 999;
+      for(size_t i=0; i<event.genparticles_all->size(); i++){
+        GenParticle gpe = event.genparticles_all->at(i);
+        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        double dr = deltaR(gp, gpe);
+        double dphi = deltaPhi(gp, gpe);
+        double deta = deltaEta(gp, gpe);
+        if(dr < drmine) drmine = dr;
+        if(dphi < dphimine) dphimine = dphi;
+        if(deta < detamine) detamine = deta;
+      }
+      hdrminnue->Fill(drmine, weight);
+      hdphiminnue->Fill(dphimine, weight);
+      hdetaminnue->Fill(detamine, weight);
+
+      double drminmu = 999;
+      double dphiminmu = 999;
+      double detaminmu = 999;
+      for(size_t i=0; i<event.genparticles_all->size(); i++){
+        GenParticle gpm = event.genparticles_all->at(i);
+        if (abs(gpm.pdgid()) != 13 || !gpm.get_statusflag(GenParticle::isLastCopy)) continue;
+        double dr = deltaR(gp, gpm);
+        double dphi = deltaPhi(gp, gpm);
+        double deta = deltaEta(gp, gpm);
+        if(dr < drminmu) drminmu = dr;
+        if(dphi < dphiminmu) dphiminmu = dphi;
+        if(deta < detaminmu) detaminmu = deta;
+      }
+      hdrminnumu->Fill(drminmu, weight);
+      hdphiminnumu->Fill(dphiminmu, weight);
+      hdetaminnumu->Fill(detaminmu, weight);
+
+      double drmintau = 999;
+      double dphimintau = 999;
+      double detamintau = 999;
+      for(size_t i=0; i<event.genparticles_all->size(); i++){
+        GenParticle gpt = event.genparticles_all->at(i);
+        if (abs(gpt.pdgid()) != 15 || !gpt.get_statusflag(GenParticle::isLastCopy)) continue;
+        double dr = deltaR(gp, gpt);
+        double dphi = deltaPhi(gp, gpt);
+        double deta = deltaEta(gp, gpt);
+        if(dr < drmintau) drmintau = dr;
+        if(dphi < dphimintau) dphimintau = dphi;
+        if(deta < detamintau) detamintau = deta;
+      }
+      hdrminnutau->Fill(drmintau, weight);
+      hdphiminnutau->Fill(dphimintau, weight);
+      hdetaminnutau->Fill(detamintau, weight);
+
+      if(n_gennus == 1){
+        hptgennu1->Fill(gp.pt(), weight);
+        hptgennu1_rebin->Fill(gp.pt(), weight);
+        hptgennu1_rebin2->Fill(gp.pt(), weight);
+        hphigennu1->Fill(gp.phi(), weight);
+        hetagennu1->Fill(gp.eta(), weight);
+
+        hdrminnu1e->Fill(drmine, weight);
+        hdphiminnu1e->Fill(dphimine, weight);
+        hdetaminnu1e->Fill(detamine, weight);
+
+        hdrminnu1mu->Fill(drminmu, weight);
+        hdphiminnu1mu->Fill(dphiminmu, weight);
+        hdetaminnu1mu->Fill(detaminmu, weight);
+
+        hdrminnu1tau->Fill(drmintau, weight);
+        hdphiminnu1tau->Fill(dphimintau, weight);
+        hdetaminnu1tau->Fill(detamintau, weight);
+      }
+
+    }
 
   }
 
@@ -944,6 +1072,7 @@ void GenParticleHists::fill(const RecoEvent & event){
   hngenelsmatched->Fill(n_genelsmatched, weight);
   hngenbs->Fill(n_genbs, weight);
   hngenbsmatched->Fill(n_genbsmatched, weight);
+  hngennus->Fill(n_gennus, weight);
 
   hngentaus->Fill(n_gentaus, weight);
   hptgentau1->Fill(pt_tau1, weight);

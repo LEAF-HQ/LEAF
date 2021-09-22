@@ -27,7 +27,7 @@ public:
 
 protected:
 
-  shared_ptr<TH1D> hngentaus, hptgentau1, hptgentau1_rebin, hptgentau1_rebin2, hptgentau1_rebin3, hptgentau1_rebin4, hptgentau2, hptgentau2_rebin, hptgentau2_rebin2, hptgentau2_rebin3, hptgentau2_rebin4, hdrgenditau, hdphigenditau, hdetagenditau, hdrgentaumu, hdphigentaumu, hdetagentaumu, hdrgentaue, hdphigentaue, hdetagentaue,
+  shared_ptr<TH1D> hngentaus, hptgentau1, hptgentau1_rebin, hptgentau1_rebin2, hptgentau1_rebin3, hptgentau1_rebin4, hptgentau2, hptgentau2_rebin, hptgentau2_rebin2, hptgentau2_rebin3, hptgentau2_rebin4, hdrgenditau, hdphigenditau, hdetagenditau, hdrgentaumu, hdphigentaumu, hdetagentaumu, hdptgentaumu, hdptrelgentaumu, hdrgentaue, hdphigentaue, hdetagentaue, hdptgentaue, hdptrelgentaue,
 
   hngenvistaus, hngenvistausmatched, hgenvistaustotal, hgenvistausmatched, hptgenvistau, hptgenvistau_rebin, hptgenvistau_rebin2, hptgenvistaumatched, hptgenvistaumatched_rebin, hptgenvistaumatched_rebin2, hdrmintau, hgenvistaudecaymode, hptgenvistau1, hptgenvistau1_rebin, hptgenvistau1_rebin2, hptgenvistau1matched, hptgenvistau1matched_rebin, hptgenvistau1matched_rebin2, hdrmintau1, hgenvistau1decaymode, hptgenvistau2, hptgenvistau2_rebin, hptgenvistau2_rebin2, hptgenvistau2matched, hptgenvistau2matched_rebin, hptgenvistau2matched_rebin2, hdrmintau2, hgenvistau2decaymode, hdrgenvisditau, hdphigenvisditau, hdetagenvisditau, hdrgenvistaumu, hdphigenvistaumu, hdetagenvistaumu, hdrgenvistaue, hdphigenvistaue, hdetagenvistaue,
 
@@ -54,7 +54,11 @@ protected:
 
   hgenbsfromhardtotal, hgenbsfromhardmatched, hptgenbfromhard, hptgenbfromhard_rebin, hptgenbfromhard_rebin2, hptgenbfromhardmatched, hptgenbfromhardmatched_rebin, hptgenbfromhardmatched_rebin2, hdrgendibfromhard, hdphigendibfromhard, hdetagendibfromhard, hdrgenbfromhardvistau, hdphigenbfromhardvistau, hdetagenbfromhardvistau, hdrgenbfromhardmu, hdphigenbfromhardmu, hdetagenbfromhardmu, hdrgenbfromharde, hdphigenbfromharde, hdetagenbfromharde,
 
-  hgenbsnotfromhardtotal, hgenbsnotfromhardmatched, hptgenbnotfromhard, hptgenbnotfromhard_rebin, hptgenbnotfromhard_rebin2, hptgenbnotfromhardmatched, hptgenbnotfromhardmatched_rebin, hptgenbnotfromhardmatched_rebin2, hdrgendibnotfromhard, hdphigendibnotfromhard, hdetagendibnotfromhard, hdrgenbnotfromhardvistau, hdphigenbnotfromhardvistau, hdetagenbnotfromhardvistau, hdrgenbnotfromhardmu, hdphigenbnotfromhardmu, hdetagenbnotfromhardmu, hdrgenbnotfromharde, hdphigenbnotfromharde, hdetagenbnotfromharde;
+  hgenbsnotfromhardtotal, hgenbsnotfromhardmatched, hptgenbnotfromhard, hptgenbnotfromhard_rebin, hptgenbnotfromhard_rebin2, hptgenbnotfromhardmatched, hptgenbnotfromhardmatched_rebin, hptgenbnotfromhardmatched_rebin2, hdrgendibnotfromhard, hdphigendibnotfromhard, hdetagendibnotfromhard, hdrgenbnotfromhardvistau, hdphigenbnotfromhardvistau, hdetagenbnotfromhardvistau, hdrgenbnotfromhardmu, hdphigenbnotfromhardmu, hdetagenbnotfromhardmu, hdrgenbnotfromharde, hdphigenbnotfromharde, hdetagenbnotfromharde,
+
+
+  hngennus, hptgennu, hptgennu_rebin, hptgennu_rebin2, hphigennu, hetagennu, hdrminnue, hdrminnumu, hdrminnutau, hdphiminnue, hdphiminnumu, hdphiminnutau, hdetaminnue, hdetaminnumu, hdetaminnutau,
+  hptgennu1, hptgennu1_rebin, hptgennu1_rebin2, hphigennu1, hetagennu1, hdrminnu1e, hdrminnu1mu, hdrminnu1tau, hdphiminnu1e, hdphiminnu1mu, hdphiminnu1tau, hdetaminnu1e, hdetaminnu1mu, hdetaminnu1tau;
 
 
 
