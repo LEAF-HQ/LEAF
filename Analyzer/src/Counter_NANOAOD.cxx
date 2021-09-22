@@ -20,12 +20,14 @@ using namespace std;
 int main(int argc, char* argv[]){
 
 
-  if(argc != 2) throw runtime_error("Expected exactly one argument. Usage: Counter_NANOAOD <infilename>");
+  if(argc != 2 && argc != 3) throw runtime_error("Expected exactly one or exactly 2 argument(2). Usage: Counter_NANOAOD <infilename> [treename, if different from 'Events']");
   string inarg  = argv[1];
+  TString treename = "Events";
+  if(argc == 3) treename = (TString)argv[2];
 
   TString infilename = (TString)inarg;
   TFile* infile = TFile::Open(infilename, "READ");
-  int n_total = ((TTree*)infile->Get("Events"))->GetEntriesFast();
+  int n_total = ((TTree*)infile->Get(treename))->GetEntriesFast();
   cout << n_total << endl;
   return 0;
 }

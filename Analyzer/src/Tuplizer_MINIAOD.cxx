@@ -507,6 +507,7 @@ int main(int argc, char* argv[]){
     // Do Jets
     // =======
     for(size_t i=0; i<jets->size(); i++){
+      if(!jets->at(i).isPFJet()) continue;
       pat::Jet patjet = jets->at(i);
       Jet j;
 
