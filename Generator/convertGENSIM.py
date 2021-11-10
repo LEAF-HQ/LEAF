@@ -29,7 +29,7 @@ args      = parser.parse_args()
 gStyle.SetOptStat(11111)
 decaydict = { 'ele': 0, 'muon': 1, 'tau': 2 }
 
-
+# root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_1.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_2.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_3.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_4.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_5.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_6.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_7.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_8.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_9.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_10.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_11.root root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/areimers/GENSIM/LQTChannel/LQTChannelTauNu_CP2_M3000/GENSIM_12.root
 
 def main():
 
@@ -172,6 +172,7 @@ def convertGENSIM(infiles,outfilename,Nmax=-1):
 
   tree_event.addBranch('weight',         'f')
   tree_event.addBranch('event_id',       'i')
+  tree_event.addBranch('qscale',         'f')
 
   # JETS raw
   tree_jet_raw.addBranch('mass',             'f')
@@ -223,6 +224,7 @@ def convertGENSIM(infiles,outfilename,Nmax=-1):
       event.getByLabel(label_weight,handle_weight)
       gweight = handle_weight.product()
       weight = gweight.weight()
+      qscale = gweight.qScale()
 
       # GEN PARTICLES
       gps_final    = [p for p in gps if isFinal(p) and abs(p.pdgId()) in [5,6,15,16]+lqids + dmids + xids]
@@ -525,6 +527,7 @@ def convertGENSIM(infiles,outfilename,Nmax=-1):
 
 
       tree_event.weight[0] = weight
+      tree_event.qscale[0] = qscale
 
       if len(gps_mother)==1:
         tree_event.lq1_mass[0]  = gps_mother[0].mass()
