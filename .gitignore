@@ -23,6 +23,14 @@ Generator/crosssections/ChiPsi/LQTChannelTauMu/*
 Generator/crosssections/ChiPsi/LQTChannelMuMu_DynamicScale/*
 Generator/crosssections/ChiPsi/LQTChannelTauMu_DynamicScale/*
 Generator/crosssections/ChiPsi/LQTChannelTauNu_DynamicScale/*
+Generator/crosssections/LQTChannel/LQTChannelTauTau_DynamicScale_VectorLQUFO/*
+Generator/crosssections/LQTChannel/LQTChannelTauNu_DynamicScale_VectorLQUFO/*
+Generator/crosssections/LQTChannel/LQTChannelTauMu_DynamicScale_VectorLQUFO/*
+Generator/crosssections/LQTChannel/LQTChannelTauTau_DynamicScale_VectorLQUFOFlex/*
+Generator/crosssections/LQTChannel/LQTChannelTauNu_DynamicScale_VectorLQUFOFlex/*
+Generator/crosssections/LQTChannel/LQTChannelTauMu_DynamicScale_VectorLQUFOFlex/*
+Generator/crosssections/LQTChannel/LQTChannelTauTau_DynamicScale_VectorLQUFOFlexCorrectCouplings/*
+Generator/crosssections/LQTChannel/LQTChannelTauNu_DynamicScale_VectorLQUFOFlexCorrectCouplings/*
 Generator/NanoAODTools/
 Generator/exampleAnalysis.py
 Analyzer/obj/*
