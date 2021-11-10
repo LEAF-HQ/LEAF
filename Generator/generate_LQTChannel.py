@@ -17,6 +17,7 @@ from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D
                  kSolid, kDashed, kDotted
 from math import sqrt, log, floor, ceil
 from array import array
+from collections import OrderedDict
 
 from preferred_configurations import *
 from tdrstyle_all import *
@@ -26,14 +27,42 @@ from CrossSectionRunner import *
 from GensimRunner import *
 
 # processes = ['LQTChannelTauTau_DynamicScale', 'LQTChannelTauNu_DynamicScale', 'LQTChannelTauMu_DynamicScale']
-processes = ['LQTChannelTauTau_DynamicScale', 'LQTChannelTauNu_DynamicScale', 'LQTChannelTauMu_DynamicScale']
+# processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFO', 'LQTChannelTauNu_DynamicScale_VectorLQUFO', 'LQTChannelTauMu_DynamicScale_VectorLQUFO']
+# processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFOFlex', 'LQTChannelTauNu_DynamicScale_VectorLQUFOFlex', 'LQTChannelTauMu_DynamicScale_VectorLQUFOFlex']
+# processes = ['LQTChannelTauNu_DynamicScale_VectorLQUFOFlexCorrectCouplings', 'LQTChannelTauTau_DynamicScale_VectorLQUFOFlexCorrectCouplings']
+processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFOFlexCorrectCouplings']
 mlqs      = [100, 300, 700, 1000, 3000, 7000, 10000, 15000]
+mlqs_xsec = range(100, 15001, 100)
 
 
 processes_xsec = processes
-lambdas_xsec = [1.0, 2.0, 3.0, 'best']
-betavalues_xsec = [{'B33R':1.0, 'B33L':1.0, 'B23L':0.0, 'B32L':0.0},]
+lambdas_xsec = [1.0]
+betavalues_xsec = [
+{'B33R':-1.0, 'B33L':1.0, 'B32L':-0.11, 'B31L':0.0, 'B23L':0.11, 'B22L':0.02, 'B21L':0.0, 'B13L':-0.02, 'B12L':0.0, 'B11L':0.0}, # page 8 of 2109.08689, LQDM model choice
+{'B33R':0.0, 'B33L':1.0, 'B32L':1.0, 'B31L':1.0, 'B23L':1.0, 'B22L':1.0, 'B21L':1.0, 'B13L':1.0, 'B12L':1.0, 'B11L':1.0}, # democratic benchmark as discussed with Darius
+{'B33R':-1.0, 'B33L':1.0, 'B32L':-0.21, 'B31L':0.0, 'B23L':0.21, 'B22L':0.03, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0}, # Table 2.3 (3rd section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020),
+{'B33R':0.0, 'B33L':1.0, 'B32L':-0.15, 'B31L':0.0, 'B23L':0.19, 'B22L':0.014, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0} # Table 2.3 (1st section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020)
+]
 
+general_settings = {
+'UL17':{
+    'BWCUTOFF': 15,
+    'PDF':      315200
+    }
+}
+
+individual_settings_xsec = []
+for lamb in lambdas_xsec:
+    for bv in betavalues_xsec:
+        for mlq in mlqs_xsec:
+            dict = OrderedDict()
+            # dict keys: what to replace in cards
+            # dict value tuples: (value, "name of parameter in samplename")
+            dict['MLQ'] = (mlq, 'MLQ')
+            dict['LAMBDA'] = (lamb, 'L')
+            for key in bv:
+                dict[key] = (bv[key], key)
+            individual_settings_xsec.append(dict)
 
 tag = ''                # tags are auto-formatted to '_XXXX'
 maxindex        = 100   # Number of samples per configuration
@@ -132,18 +161,22 @@ ensureDirectory(workdir_slurm)
 submit = True
 
 
-CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, sampletype=sampletype, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
+CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
-# CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
+# CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=600)
 # CrossBRRunner.ShortenCrossBR()
-# CrossBRRunner.RunMG(only_resubmit=True,  ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
-# CrossBRRunner.ReadoutCrossBR()
-# CrossBRRunner.RootifyCrossBR()
-# CrossBRRunner.PlotCrossBR()
+# CrossBRRunner.RunMG(only_resubmit=True, ignore_br=True, ncores=1, runtime=(01,00,00), maxjobs_per_proc=600)
+# CrossBRRunner.ReadoutCrossBR(ignore_br=True)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
+# CrossBRRunner.PlotCrosssections(overlay=['LAMBDA'], overlay_values=[None])
+# CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[None])
+# CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
+# CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
 
 
 
-EventGenerator = GensimRunner(processnames=processes, tag=tag, configs=None, lambdas=lambdas, preferred_configurations=None, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
+# EventGenerator = GensimRunner(processnames=processes, tag=tag, configs=None, lambdas=lambdas, preferred_configurations=None, workdir_slurm=workdir_slurm, workarea=workarea, basefolder=basefolder, cardfolder=cardfolder, mgfolder=mgfolder, generatorfolder=generatorfolder, gridpackfolder=gridpackfolder, arch_tag=arch_tag, cmssw_tag_gp=cmssw_tag_gp, T2_director=T2_director, T2_path=T2_path, T2_director_root=T2_director_root, T3_director=T3_director, T3_path=T3_path, campaign=campaign, folderstructure=folderstructure, maxindex=maxindex, nevents=nevents, submit=submit)
 # EventGenerator.ProduceCards()
 # EventGenerator.SubmitGridpacks()
 # EventGenerator.MoveGridpacks()

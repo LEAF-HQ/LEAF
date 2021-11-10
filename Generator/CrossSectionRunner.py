@@ -7,6 +7,12 @@ import time
 import parse
 from operator import itemgetter
 import importlib
+import itertools
+
+import json
+from yaml import safe_load
+
+
 from utils import *
 from functions import *
 
@@ -16,17 +22,18 @@ from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D
                  kSolid, kDashed, kDotted
 from math import sqrt, log, floor, ceil
 from array import array
+import pandas as pd
 
 from preferred_configurations import *
 from tdrstyle_all import *
-import tdrstyle_all as TDR
+
 
 class CrossSectionRunner:
-    def __init__(self, processnames, sampletype, tag, lambdas, cardfolder, crosssecfolder, generatorfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
+    def __init__(self, processnames, tag, individual_settings, general_settings, cardfolder, crosssecfolder, generatorfolder, mgfolder_local, workarea, cmssw_tag_sim, workdir_slurm, submit=False):
         self.processnames = processnames
-        self.sampletype = sampletype
         self.tag = tag
-        self.lambdas = lambdas
+        self.individual_settings = individual_settings
+        self.general_settings = general_settings
         self.cardfolder = cardfolder
         self.crosssecfolder = crosssecfolder
         self.generatorfolder = generatorfolder
@@ -37,35 +44,23 @@ class CrossSectionRunner:
         self.submit = submit
 
 
+
     def ProduceCards(self):
+
         for processname in self.processnames:
-            configs = get_config_list(preferred_configurations=preferred_configurations, processname=processname)
             idx = 0
-            if configs is not None:
-                if not (self.sampletype == 'ChiPsi'):
-                    raise ValueError('Cross section runner got a list of configs, but not for the ChiPsi model. This is not supported for other sampletypes.')
-                for config in configs:
-                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=preferred_configurations, config=config)
-                    for lamb in self.lambdas:
-                        if self.submit:
-                            make_card(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, sampletype=self.sampletype, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
-                            idx += 1
-                            if idx % 20 is 0:
-                                print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(configs)*len(self.lambdas), processname, float(idx)/float(len(configs)*len(self.lambdas))*100))
-
-            else:
-                for lamb in self.lambdas:
-                    if self.submit:
-                        make_card(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, sampletype=self.sampletype, tag=self.tag, mlq=mlq, mps=mps, mch=mch, lamb=lamb, verbose=False)
-                        idx += 1
-                        if idx % 20 is 0:
-                            print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(configs)*len(self.lambdas), processname, float(idx)/float(len(configs)*len(self.lambdas))*100))
+            for individual_setting in self.individual_settings:
+                if self.submit:
+                    make_card_flex(card_template_folder=self.cardfolder+'/CrossBR', card_output_folder=self.cardfolder+'/CrossBR/%s' % (processname), processname=processname, tag=self.tag, general_settings=self.general_settings, individual_setting=individual_setting, verbose=False)
+                    idx += 1
+                    if idx % 20 is 0:
+                        print green('--> Produced %i out of %i cards for process %s (%.2f%%).' % (idx, len(self.individual_settings), processname, float(idx)/float(len(self.individual_settings))*100))
             if not self.submit:
-                print yellow('Would have produced %i cards for process %s.' % (len(configs)*len(self.lambdas), processname))
+                print yellow('Would have produced %i cards for process %s.' % (len(self.individual_settings), processname))
 
-    def RunMG(self, only_resubmit=False, ncores=2, runtime=(00,40), maxjobs_per_proc=50):
-        # runtime_str = '%02i:%02i:00' % runtime
-        # queue = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
+
+
+    def RunMG(self, only_resubmit=False, ignore_br=True, ncores=2, runtime=(00,40), maxjobs_per_proc=50):
         runtime_str, queue = format_runtime(runtime)
 
         for processname in self.processnames:
@@ -74,32 +69,31 @@ class CrossSectionRunner:
             njobs = 0
             commandfilename = self.generatorfolder + '/commands/CrossBR_%s.txt' % (processname)
             f = open(commandfilename, 'w')
-            configs = get_config_list(preferred_configurations=preferred_configurations, processname=processname)
-            for config in configs:
-                for lamb in self.lambdas:
-                    # if njobs > 1: break
-                    mlq, mps, mch = get_mlq_mps_mch(preferred_configurations=preferred_configurations, config=config)
-                    jobname       = get_jobname(processname=processname, mlq=mlq, mps=mps, mch=mch, lamb=lamb, tag=self.tag)
-                    write_command = True
-                    if only_resubmit:
-                        write_command = False
-                        if len(shortfilelist) == 0:
+            for individual_setting in self.individual_settings:
+                # if njobs > 1: break
+                jobname = get_jobname_flex(processname=processname, ordered_dict=individual_setting, tag=self.tag)
+                write_command = True
+                if only_resubmit:
+                    write_command = False
+                    if len(shortfilelist) == 0:
+                        write_command = True
+                    else:
+                        param_card_shortname   = jobname+'_param_card_short.txt'
+                        crosssection_shortname = jobname+'_crosssection_short.txt'
+                        if not (crosssection_shortname in shortfilelist):
                             write_command = True
-                        else:
-                            param_card_shortname   = jobname+'_param_card_short.txt'
-                            crosssection_shortname = jobname+'_crosssection_short.txt'
-                            if (not (param_card_shortname in shortfilelist) or not (crosssection_shortname in shortfilelist)):
+                        if not ignore_br:
+                            if not (param_card_shortname in shortfilelist):
                                 write_command = True
-                    # write to a command file the shell command: 'source run_crossbr.sh  .....' %
-                    command = 'source %s %s %s %s %s %s %s %s %i' % (self.generatorfolder+'/run_crossbr.sh', self.mgfolder_local, jobname, self.cardfolder+'/CrossBR/%s' % (processname), self.workarea + '/' + self.cmssw_tag_sim, self.workdir_slurm, self.crosssecfolder, processname, ncores)
-                    if write_command:
-                        f.write(command + '\n')
-                        njobs += 1
+                # write to a command file the shell command: 'source run_crossbr.sh  .....' %
+                command = 'source %s %s %s %s %s %s %s %s %i' % (self.generatorfolder+'/run_crossbr.sh', self.mgfolder_local, jobname, self.cardfolder+'/CrossBR/%s' % (processname), self.workarea + '/' + self.cmssw_tag_sim, self.workdir_slurm, self.crosssecfolder, processname, ncores)
+                if write_command:
+                    f.write(command + '\n')
+                    njobs += 1
             f.close()
             slurmjobname = 'CrossBR_%s' % (processname)
             slurm_max_array_size = 4000
             submit_more_arrays = True if (njobs > slurm_max_array_size) else False
-            # if submit_more_arrays:
             njobs_left = njobs
             narrays = 0
             njobs_per_array = []
@@ -178,612 +172,408 @@ class CrossSectionRunner:
                     os.remove(infilename)
             if self.submit: check_shortfiles(filepath=self.crosssecfolder+'/'+processname, tag=self.tag)
 
-    def ReadoutCrossBR(self):
-        for processname in self.processnames:
-            total_writelines_cross = []
-            total_writelines_br = []
 
-            total_writelines_cross.append('# ATTENTION: All cross sections in this file have the default BW cutoff of M +- 15 * Gamma.\n')
-            total_writelines_cross.append('crosssection = {\n')
-            total_writelines_br.append('branchingratio = {\n')
-            if 'LQLQ' in processname or 'LQTChannel' in processname:
-                total_writelines_cross.append('  # lambda --> mass(chi) -->  (mass(LQ),    sigma,       Q_low,   Q_up,    PDF)\n')
-                total_writelines_br.append('  # mass(LQ) --> mass(chi) --> (dau1, dau2) --> (br, partial width)\n')
+
+
+    def ReadoutCrossBR(self, ignore_br=True):
+        for processname in self.processnames:
+
+            if 'LQLQ' in processname:
+                filenamepattern_base = 'MLQ{}_MPS{}_MC1{}_L{}'
+                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+
+            elif 'LQTChannel' in processname and not 'UFOFlex' in processname:
+                filenamepattern_base = 'MLQ{}_L{}_B33R{}_B33L{}_B23L{}_B32L{}'
+                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+
+            elif 'LQTChannel' in processname and 'UFOFlex' in processname:
+                filenamepattern_base = 'MLQ{}_L{}_B12L{}_B33R{}_B11L{}_B23L{}_B22L{}_B13L{}_B21L{}_B33L{}_B31L{}_B32L{}'
+                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+
             elif 'PsiPsi' in processname:
-                total_writelines_cross.append('  # lambda --> mass(LQ)  -->  (mass(chi),   sigma,       Q_low,   Q_up,    PDF)\n')
-                # total_writelines_br.append('  # mass(chi) --> mass(LQ) --> (dau1, dau2) --> (br, partial width)\n')
+                filenamepattern_base = 'MLQ{}_MPS{}_MC1{}_L{}'
+                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
             else:
                 raise ValueError('processname does not contain \'LQLQ\' or \'LQTChannel\' or \'PsiPsi\', what kind of process are we looking at here?')
 
             filenames = get_filelist_crossbr(filepath=self.crosssecfolder+'/'+processname, short=True, tag=self.tag)
-            tuplelist = []
-            tupledicts_per_lambda = {}
-            target_tuplelist_dict = {}
-            brs_per_mref = {}
-            # for lamb in self.lambdas:
-            #     print lamb
-            #     tupledicts_per_lambda[lamb] = {}
-            #     brs_per_mref[lamb] = {}
-            # print '%i files found' % (len(filenames))
+            if ignore_br:
+                filenames = [x for x in filenames if not 'param_card' in x]
+            colnames_settings  = self.individual_settings[0].keys() #common for BR and XSEC
+            colnames_xsec = ['crosssection', 'scale_down', 'scale_up', 'pdf'] # specific column names
+            colnames_br   = ['daughter_1', 'daughter_2', 'branchingratio', 'decaywidth'] # specific column names
+            varlists_xsec  = []
+            varlists_br    = []
+
+            setting_list = []
+            for param in colnames_settings:
+                setting_list.append(self.individual_settings[0][param][1])
+
             for filename in filenames:
                 is_param_card = True if 'param_card' in filename else False
-                parse_pattern_cross = processname + '_MLQ{}_MPS{}_MC1{}_L{}'
-                parse_pattern_cross += '%s_crosssection{}' % (self.tag)
-                parse_pattern_br = processname + '_MLQ{}_MPS{}_MC1{}_L{}'
-                parse_pattern_br += '%s_param_card{}' % (self.tag)
                 if not is_param_card:
-                    parser_cross = parse.compile(parse_pattern_cross)
-                    # print filename
-                    mlq, mps, mch, lambstr, dummy = parser_cross.parse(filename)
-                    mlq, mps, mch, lamb = float(mlq), float(mps), float(mch), lambstr_to_float(lambstr)
-                    # print lambstr, lamb
-                    # if not lamb in self.lambdas: continue
-                    # lamb_key = lamb
-                    # if is_best_lambda(lamb, mlq):
-                    #     lamb_key = 'best'
 
-                    # find correct lines to parse and set up the patterns
-                    pattern_crosssection = '{}:   {} +- {} pb\n'
-                    pattern_scale        = '{}: +{}% -{}%\n'
-                    pattern_pdf          = '{}: +{}% -{}%\n'
-                    fin = open(join(self.crosssecfolder+'/'+processname, filename), 'r')
-                    lines = fin.readlines()
-                    line_crosssection = ''
-                    line_scale        = 'TEST'
-                    line_pdf          = ''
-                    lineidx = 0
-                    for line in lines:
-                        if 'Cross-section :' in line: line_crosssection = line
-                        elif 'scale variation:' in line: line_scale = line
-                        elif 'PDF variation:' in line: line_pdf = line
-
-                    # do the parsing
-                    parser_xsec  = parse.compile(pattern_crosssection)
-                    parser_scale = parse.compile(pattern_scale)
-                    parser_pdf   = parse.compile(pattern_pdf)
-                    pre, xsec, xsec_unc = parser_xsec.parse(line_crosssection)
-                    pre, scale_up, scale_down = parser_scale.parse(line_scale)
-                    pre, pdf_up, pdf_down = parser_pdf.parse(line_pdf)
-
-                    # put everything into the right tuples and sort
-                    mref = mch if ('LQLQ' in processname or 'LQTChannel' in processname) else mlq
-                    mdep = mlq if ('LQLQ' in processname or 'LQTChannel' in processname) else mch
-                    # print lamb
-                    if not lamb in tupledicts_per_lambda.keys():
-                        tupledicts_per_lambda[lamb] = {}
-                    if not mref in tupledicts_per_lambda[lamb]: tupledicts_per_lambda[lamb][mref] = []
-                    tupledicts_per_lambda[lamb][mref].append((mdep, xsec, scale_down, scale_up, str(max(float(pdf_up), float(pdf_down)))))
+                    parse_pattern_cross = processname + '_' + filenamepattern_base
+                    parse_pattern_cross += '%s_crosssection{}' % (self.tag)
+                    infilename = join(self.crosssecfolder+'/'+processname, filename)
+                    varlist = readout_crossection(infilename=infilename, filenamepattern=parse_pattern_cross, variable_order=variable_order, order_settings=setting_list, order_values=colnames_xsec)
+                    varlists_xsec.append(varlist)
 
                 else: # param card
                     if not processname == 'LQLQ': continue
-                    parser_br = parse.compile(parse_pattern_br)
-                    # print filename
-                    mlq, mps, mch, lambstr, dummy = parser_br.parse(filename)
-                    mlq, mps, mch, lamb = float(mlq), float(mps), float(mch), lambstr_to_float(lambstr)
-                    # if not lamb in self.lambdas: continue
-                    mref = mlq if 'LQLQ' in processname else mch
-                    mdep = mch if 'LQLQ' in processname else mlq
 
-                    fin = open(join(self.crosssecfolder+'/'+processname, filename), 'r')
-                    lines = fin.readlines()
-                    branchingratios = {}
-                    for line in lines:
-                        if line[0:5] == 'DECAY' or line[0] == '#': continue
-                        # remaining lines contain BRs
-                        content = line.split()
-                        br, decaywidth, dau1, dau2 = float(content[0]), float(content[5]), int(content[2]), int(content[3])
-                        dautup = (dau1, dau2)
-                        brtup  = ((br, decaywidth))
-                        branchingratios[dautup] = brtup
-                    if not lamb in brs_per_mref.keys():
-                        brs_per_mref[lamb] = {}
-                    if not mref in brs_per_mref[lamb].keys():
-                        brs_per_mref[lamb][mref] = {}
-                    if not mdep in brs_per_mref[lamb][mref].keys():
-                        brs_per_mref[lamb][mref][mdep] = {}
-                    if not brs_per_mref[lamb][mref][mdep] == {}:
-                        # print mref, mdep
-                        # print brs_per_mref[mref]
-                        # print branchingratios
-                        raise ValueError('M_dep %f is already a key in the dictionary, how did this happen?' % mdep)
-                    brs_per_mref[lamb][mref][mdep] = branchingratios
+                    parse_pattern_br = processname + '_' + filenamepattern_base
+                    parse_pattern_br += '%s_param_card{}' % (self.tag)
+                    infilename = join(self.crosssecfolder+'/'+processname, filename)
 
-            for lamb in tupledicts_per_lambda:
-                for mrefkey in tupledicts_per_lambda[lamb]:
-                    tupledicts_per_lambda[lamb][mrefkey].sort(key=itemgetter(0))
-            for lamb in sorted(tupledicts_per_lambda):
-                total_writelines_cross.append('%s: {\n' % (get_lambdastring_withpoint(lamb)))
-                for mref in sorted(tupledicts_per_lambda[lamb]):
-                    total_writelines_cross.append('    %i: [\n' % (mref))
-                    for tup in tupledicts_per_lambda[lamb][mref]:
-                        total_writelines_cross.append('            ( %s, %s, %s, %s, %s),\n' % (str(int(tup[0])).rjust(4, ' '), str(tup[1]).ljust(9, ' '), str(tup[2]).ljust(4, ' '), str(tup[3]).ljust(4, ' '), tup[4].ljust(4, ' ')))
-                    total_writelines_cross[-1] = total_writelines_cross[-1].replace('),', ')')
-                    total_writelines_cross.append('        ], # closing for this mref\n')
-                total_writelines_cross = total_writelines_cross[:-1]
-                total_writelines_cross.append('        ] # closing for this mref\n')
-                total_writelines_cross.append('    }, # Closing for this lambda\n')
-            total_writelines_cross = total_writelines_cross[:-1]
-            total_writelines_cross.append('    } # Closing for this lambda\n')
-            total_writelines_cross.append('} # Closing for entire dictionary\n')
-
-            # now make writelines for branching ratios
-            if processname == 'LQLQ':
-                for lamb in sorted(brs_per_mref):
-                    total_writelines_br.append('  %s: {\n' % (get_lambdastring_withpoint(lamb)))
-                    for mref in sorted(brs_per_mref[lamb]):
-                        total_writelines_br.append('    %i: {\n' % (mref))
-                        for mdep in sorted(brs_per_mref[lamb][mref]):
-                            total_writelines_br.append('      %i: {\n' % (mdep))
-                            for daus in sorted(brs_per_mref[lamb][mref][mdep]):
-                                total_writelines_br.append('        (%i, %i): (%2.3f, %f),\n' % (daus[0], daus[1], brs_per_mref[lamb][mref][mdep][daus][0], brs_per_mref[lamb][mref][mdep][daus][1]))
-                            total_writelines_br[-1] = total_writelines_br[-1].replace('),', ')')
-                            total_writelines_br.append('      }, # closing for this mdep\n')
-                        total_writelines_br = total_writelines_br[:-1]
-                        total_writelines_br.append('      } # closing for this mdep\n')
-                        total_writelines_br.append('    }, # Closing for this mref\n')
-                    total_writelines_br = total_writelines_br[:-1]
-                    total_writelines_br.append('    } # Closing for this mref\n')
-                    total_writelines_br.append('  }, # Closing for this lambda\n')
-                total_writelines_br = total_writelines_br[:-1]
-                total_writelines_br.append('  } # Closing for this lambda\n')
-                total_writelines_br.append('} # Closing for entire dictionary\n')
-
+                    varlist = readout_branchingratio(infilename=infilename, filenamepattern=parse_pattern_br, variable_order=variable_order, order_settings=setting_list, order_values=colnames_br)
+                    for l in varlist: # can return multiple lists, one for each decay mode
+                        varlists_br.append(l)
 
 
             #finally write the files
             if self.submit:
                 print green('--> Writing cross sections and branching fractions for process: %s' % (processname))
-                outfilename = self.crosssecfolder+'/Crosssections_%s%s.py' % (processname, self.tag)
-                with open(outfilename, 'w') as fout:
-                    for wl in total_writelines_cross:
-                        fout.write(wl)
+                outfilename = self.crosssecfolder+'/Crosssections_%s%s.json' % (processname, self.tag)
+                df = pd.DataFrame(varlists_xsec, columns=colnames_settings+colnames_xsec)
+                df.to_json(outfilename, orient='records', lines=True)
+
                 if processname == 'LQLQ':
-                    outfilename = self.crosssecfolder+'/Branchingratios_%s%s.py' % (processname, self.tag)
-                    with open(outfilename, 'w') as fout:
-                        for wl in total_writelines_br:
-                            fout.write(wl)
+                    outfilename = self.crosssecfolder+'/Branchingratios_%s%s.json' % (processname, self.tag)
+                    df_br = pd.DataFrame(varlists_br, columns=colnames_settings+colnames_br)
+                    df_br.to_json(outfilename, orient='records', lines=True)
             else:
                 print yellow('--> Would write cross sections and branching fractions for process: %s' % (processname))
 
 
-    def RootifyCrossBR(self):
+
+    def RootifyCrosssections(self, variables, graphs_per, forcepoints2d):
         for processname in self.processnames:
-            outfilename_cross = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
-            cross_module = importlib.import_module('crosssections.ChiPsi.Crosssections_%s' % (processname))
-            crosssections = cross_module.crosssection
-            if self.submit:
-                outfile = TFile(outfilename_cross, 'RECREATE')
-            else:
-                print yellow('--> Would have created outfile %s' % (outfilename_cross))
             print green('--> Now at sample %s' % (processname))
-            for lamb in self.lambdas:
-                if not lamb in crosssections: continue
-                print green('  --> Now at lambda: %s' % (get_lambdastring(lamb)))
 
-                xsecs_per_mref = crosssections[lamb]
-                graph2d = TGraph2D()
-                npoints2d=0
-                set_points ={}
-                all_combinations = get_all_combinations(preferred_configurations=preferred_configurations)
-                for mlq in all_combinations:
-                    set_points[mlq] = {}
-                    for mch in all_combinations[mlq]:
-                        set_points[mlq][mch] = False
-                for mref in xsecs_per_mref:
-                    xsecs = xsecs_per_mref[mref]
-                    final_xsecs = []
-                    mdeps  = array('d')
-                    sigmas  = array('d')
-                    tot_los = array('d')
-                    tot_his = array('d')
-                    mdeps_lo = array('d')
-                    mdeps_hi = array('d')
+            # read dataframe from json
+            outfilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
+            df = pd.read_json( self.crosssecfolder+'/Crosssections_%s%s.json' % (processname, self.tag), orient='records', lines=True )
 
-                    for tuple in xsecs:
-                        mdep, sigma, q_lo, q_hi, pdf = tuple
-                        tot_lo = XsecTotErr(sigma, q_lo, pdf)
-                        tot_hi = XsecTotErr(sigma, q_hi, pdf)
-                        final_xsecs.append((mdep, sigma, tot_lo, tot_hi))
-                        mdeps.append(mdep)
-                        sigmas.append(sigma)
-                        tot_los.append(tot_lo)
-                        tot_his.append(tot_hi)
-                        mdeps_lo.append(0.)
-                        mdeps_hi.append(0.)
-                        if 'LQLQ' in processname or 'LQTChannel' in processname:
-                            graph2d.SetPoint(npoints2d, mdep, mref, sigma)
-                            set_points[mdep][mref] = True
-                        elif 'PsiPsi' in processname:
-                            graph2d.SetPoint(npoints2d, mref, mdep, sigma)
-                            set_points[mref][mdep] = True
-                        else:
-                            raise ValueError('processname does not contain \'LQLQ\' or \'PsiPsi\', what kind of process are we looking at here?')
-                        npoints2d += 1
+            # create outfile
+            if self.submit:
+                outfile = TFile(outfilename, 'RECREATE')
+            else:
+                print yellow('--> Would have created outfile %s' % (outfilename))
 
-                    # make TGraph out of it
-                    graph = TGraphAsymmErrors(len(mdeps), mdeps, sigmas, mdeps_lo, mdeps_hi, tot_los, tot_his)
-                    xaxistitle = 'M_{LQ} [GeV]' if ('LQLQ' in processname or 'LQTChannel' in processname) else 'M_{#chi_{1}} [GeV]'
-                    graph.GetXaxis().SetTitle('M_{LQ} [GeV]')
-                    graph.GetYaxis().SetTitle('#sigma [pb]')
-                    graphname = processname
-                    if 'LQLQ' in processname or 'LQTChannel' in processname:
-                        graphname += '_MC1%i' % (mref)
-                    elif 'PsiPsi' in processname:
-                        graphname += '_MLQ%i' % (mref)
-                    else:
-                        raise ValueError('processname does not contain \'LQLQ\' or \'PsiPsi\', what kind of process are we looking at here?')
+            # get list of points that MUST be set
+            if forcepoints2d is not None:
+                set_points = {}
+                for forceval_x in forcepoints2d:
+                    set_points[forceval_x] = {}
+                    for forceval_y in forcepoints2d[forceval_x]:
+                        set_points[forceval_x][forceval_y] = False
 
-                    graphname += '_L%s' % (get_lambdastring(lamb))
-                    graph.SetName(graphname)
-                    # print 'graphname: %s' % (graphname)
-                    graphtitle = processname
-                    if 'LQLQ' in processname or 'LQTChannel' in processname:
-                        graphtitle += ', M_{#chi_{1}} = %i GeV' % (mref)
-                    elif 'PsiPsi' in processname:
-                        graphtitle += ', M_{LQ} = %i GeV' % (mref)
-                    graphtitle += ', #lambda = %s' % (get_lambdastring(lamb).replace('p', '.'))
-                    # print 'graphtitle: %s' % (graphtitle)
-                    graph.SetTitle(graphtitle)
-                    if self.submit:
-                        outfile.cd()
-                        graph.Write()
-                    else:
-                        print yellow('  --> Would have written graph %s to outfile' % (graphname))
+            # inside the loop, we have one DF per combination of values of 'graphs_per', so inside the loop we make one graph as a function of 'variable'
+            for value, grouped_df in df.groupby(graphs_per):
+                grouped_df = grouped_df.sort_values(by=variables)
+                grouped_df['tot_hi'] = grouped_df.apply( lambda x: XsecTotErrPandas(x,'crosssection', 'scale_up', 'pdf'), axis=1 )
+                grouped_df['tot_lo'] = grouped_df.apply( lambda x: XsecTotErrPandas(x,'crosssection', 'scale_down', 'pdf'), axis=1 )
+                grouped_df['x_hi']   = 0
+                grouped_df['x_lo']   = 0
 
-                # fill remaining points in 2d graph with zeros
-                for mlq in set_points:
-                    for mch in set_points[mlq]:
-                        if not set_points[mlq][mch]:
-                            graph2d.SetPoint(npoints2d, mlq, mch, 0.)
-                            npoints2d += 1
-                graph2d.SetName(processname + '_L%s' % (get_lambdastring(lamb)))
-                graph2d.GetXaxis().SetTitle('M_{LQ} [GeV]')
-                graph2d.GetYaxis().SetTitle('M_{#chi_{1}} = %i [GeV]')
-                graph2d.GetZaxis().SetTitle('#sigma [pb]')
-                graph2d.SetTitle(processname + ', #lambda = %s' % (get_lambdastring(lamb).replace('p', '.')))
-                if self.submit:
-                    graph2d.Write()
+                # convert relevant columns to arrays (needed by TGraphs)
+                vararray1    = grouped_df[variables[0]].to_numpy()
+                if len(variables) > 1:
+                    vararray2    = grouped_df[variables[1]].to_numpy()
+                crosssection = grouped_df['crosssection'].to_numpy()
+                tot_lo       = grouped_df['tot_lo'].to_numpy()
+                tot_hi       = grouped_df['tot_hi'].to_numpy()
+                x_lo         = grouped_df['x_lo'].to_numpy()
+                x_hi         = grouped_df['x_hi'].to_numpy()
+
+                # create graph and fill in points
+                if len(variables) == 1:
+                    graph = TGraphAsymmErrors(vararray1.size)
+                    for idx in range(vararray1.size):
+                        graph.SetPoint(idx, vararray1[idx], crosssection[idx])
+                        graph.SetPointError(idx, 0, 0, tot_lo[idx], tot_hi[idx])
                 else:
-                    print yellow('  --> Would have written 2d-graph to outfile')
+                    npoints2d = 0
+                    graph = TGraph2D(vararray1.size, vararray2.size)
+                    for idx in range(vararray1.size):
+                        graph.SetPoint(npoints, vararray1[idx], vararray2[idy], crosssection[idx])
+                        npoints2d += 1
+                        if forcepoints2d is not None:
+                            set_points[vararray1[idx]][vararray2[idx]] = True
+
+                    # now fill all "open" points with 0
+                    for forceval_x in set_points:
+                        for forceval_y in set_points[forceval_x]:
+                            if not set_points[forceval_x][forceval_y]:
+                                graph2d.SetPoint(npoints2d, forceval_x, forceval_y, 0)
+                                npoints2d += 1
+
+                # set axis and graph names, flexibly for 1 and 2-d graphs
+                xaxistitle = variables[0]
+                graph.GetXaxis().SetTitle(xaxistitle)
+                if len(variables) > 1:
+                    graph.GetYaxis().SetTitle(variables[1])
+                    graph.GetZaxis().SetTitle('#sigma [pb]')
+                else:
+                    graph.GetYaxis().SetTitle('#sigma [pb]')
+                graphname = processname
+                for idx in range(len(graphs_per)):
+                    graphname += '_%s%s' % (graphs_per[idx], get_floatstring(value[idx]))
+                print graphname
+                graph.SetName(graphname)
+                graph.SetTitle('')
+
+                # save
+                if self.submit:
+                    outfile.cd()
+                    graph.Write()
+                else:
+                    print yellow('  --> Would have written graph %s to outfile' % (graphname))
+
+            # close file
             if self.submit:
                 outfile.Close()
 
-            # also rootify BRs if we are looking at the LQLQ process without decays (just for fun, could also be any other LQLQ process)
-            if processname == 'LQLQ':
-                outfilename_br = self.crosssecfolder+'/Branchingratios_%s%s.root' % (processname, self.tag)
-                if self.submit:
-                    outfile = TFile(outfilename_br, 'RECREATE')
-                else:
-                    print yellow('--> Would have created outfile %s' % (outfilename_br))
-                br_module = importlib.import_module('crosssections.ChiPsi.Branchingratios_%s' % (processname))
-                allbrs = br_module.branchingratio
-                for lamb in allbrs.keys():
-                    brs = allbrs[lamb]
-                    brs2d = {}
-                    npoints2d = {}
-                    set_points ={}
-                    for mlq in all_combinations:
-                        set_points[mlq] = {}
-                        for mch in all_combinations[mlq]:
-                            set_points[mlq][mch] = {}
-                            for decaymode in decaymode_dict.keys():
-                                set_points[mlq][mch][decaymode] = False
-
-                    decaymodes_present = []
-                    for mlq in sorted(brs):
-                        mchs_per_decaymode = {}
-                        brs_per_decaymode = {}
-                        for mch in sorted(brs[mlq]):
-                            for decaymode in brs[mlq][mch]:
-                                if not decaymode in decaymodes_present:
-                                    decaymodes_present.append(decaymode)
-                                if not decaymode in mchs_per_decaymode.keys(): mchs_per_decaymode[decaymode] = array('d')
-                                if not decaymode in brs_per_decaymode.keys():  brs_per_decaymode[decaymode] = array('d')
-                                # if not decaymode in set_points[mlq][mch].keys():
-                                #     # print mlq, mch, decaymode
-                                #     set_points[mlq][mch][decaymode] = False
-                                if not decaymode in brs2d.keys():
-                                    graphname2d = processname + ('_L%s_%i_%i' % (get_lambdastring(lamb), abs(decaymode[0]), abs(decaymode[1])))
-                                    # print graphname2d
-                                    npoints2d[decaymode] = 0
-                                    brs2d[decaymode] = TGraph2D()
-                                    brs2d[decaymode].SetName(graphname2d)
-                                    brs2d[decaymode].GetXaxis().SetTitle('M_{LQ} [GeV]')
-                                    brs2d[decaymode].GetYaxis().SetTitle('M_{#chi_{1}} = %i [GeV]')
-                                    brs2d[decaymode].GetZaxis().SetTitle('BR (LQLQ#rightarrow%s)' % (decaymode_dict[decaymode]))
-                                    brs2d[decaymode].SetTitle(processname + ', %s' % (decaymode_dict[decaymode]))
-
-                                mchs_per_decaymode[decaymode].append(mch)
-                                brs_per_decaymode[decaymode].append(brs[mlq][mch][decaymode][0])
-                                brs2d[decaymode].SetPoint(npoints2d[decaymode], mlq, mch, brs[mlq][mch][decaymode][0])
-                                set_points[mlq][mch][decaymode] = True
-                                npoints2d[decaymode] += 1
-
-                        for decaymode in mchs_per_decaymode.keys():
-                            graph = TGraph(len(mchs_per_decaymode[decaymode]), mchs_per_decaymode[decaymode], brs_per_decaymode[decaymode])
-                            graphname = processname + ('_MLQ%i_L%s_%i_%i' % (mlq, get_lambdastring(lamb), abs(decaymode[0]), abs(decaymode[1])))
-                            graph.SetName(graphname)
-                            graph.GetXaxis().SetTitle('M_{#chi_{1}} [GeV]')
-                            graph.GetYaxis().SetTitle('BR (LQLQ#rightarrow%s)' % (decaymode_dict[decaymode]))
-                            graph.SetTitle(processname + ', %s' % (decaymode_dict[decaymode]))
-                            if self.submit:
-                                graph.Write()
-                            else:
-                                print yellow('  --> Would have written graph %s to outfile' % (graphname))
-
-                    # fill remaining points in 2d graph with zeros
-                    for mlq in set_points:
-                        for mch in set_points[mlq]:
-                            for decaymode in set_points[mlq][mch]:
-                                if not set_points[mlq][mch][decaymode] and decaymode in decaymodes_present:
-                                    # print decaymode
-                                    # print brs2d.keys()
-                                    # print npoints2d.keys()
-                                    # print 'Setting BR for MLQ=%i, MCH=%i, decay=(%i, %i) to 0' % (mlq, mch, decaymode[0], decaymode[1])
-                                    brs2d[decaymode].SetPoint(npoints2d[decaymode], mlq, mch, 0)
-                                    npoints2d[decaymode] += 1
-                    if self.submit:
-                        for decaymode in brs2d:
-                            brs2d[decaymode].Write()
-                    else:
-                        print yellow('  --> Would have written 2d-graphs to outfile')
-                outfile.Close()
+    #TODO
+    def RootifyBranchingratios():
+        pass
 
 
 
-    def PlotCrossBR(self):
+
+    def PlotCrosssections(self, overlay, overlay_values):
+
+        # make plotting function part of the readout function, and give it option to only plot. Only then the correlations are properly kept without the need for parsing the graphnames and knowing the order. Other people/programs can still plot those cross sections "by hand", but here it needs to be systematic
+
+        # # 'overlay': list of variables to be overlaid on the same plot. If None, make one plot per graph
+        # # 'overlay_values': list of lists, one list per 'overlay' value. Give values for variables to be overlaid (in case there are super many), ignoring the others. If None, take all that are in the file
+        #
+        # make a few sanity checks
+        if overlay is not None:
+            if not len(overlay) == len(overlay_values):
+                raise AttributeError('Different length of variable names and values to overlay. The latter must be one list per element of the former')
+
+
         ensureDirectory(self.crosssecfolder+'/plots')
         for processname in self.processnames:
-
+            print green('--> Now at sample %s' % (processname))
             gROOT.SetBatch(1)
-            print green('--> Plotting cross section and BR plots for process %s' % processname)
 
-            # for a reasonably spaced set of particle masses, find the closest correspondence in the preferred_configurations:
-            if 'PsiPsi' in processname:
-                mrefs_initial = [1000, 2000, 3000, 4500, 6000]
-                xaxis_min = 100
-                xaxis_max = 5000
-                xaxis_title = 'M_{#chi_{1}} [GeV]'
-
+            # open rootfile
+            infilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
+            if self.submit:
+                infile = TFile(infilename, 'READ')
             else:
-                mrefs_initial = [100, 300, 1000, 3000, 10000]
-                xaxis_min = 1000
-                xaxis_max = 10000
-                xaxis_title = 'M_{LQ} [GeV]'
+                print yellow('--> Would have opened inputfile %s' % (outfilename))
 
-            mrefs = []
-            for mref in mrefs_initial:
-                if 'PsiPsi' in processname:
-                    mrefs.append(find_closest(sorted(preferred_configurations), mref))
-                else:
-                    mrefs.append(find_closest(sorted(preferred_configurations[preferred_configurations.keys()[0]]), mref))
 
-            # open rootfile and get corresponding graphs
-            if 'LQLQ' in processname or 'LQTChannel' in processname:
-                rootfilename_brs = self.crosssecfolder+'/Branchingratios_LQLQ%s.root' % (self.tag)
-            else:
-                rootfilename_brs = ''
-            rootfilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
-            infile = TFile(rootfilename, 'READ')
-            print rootfilename
-            for lamb in self.lambdas:
-                ymin = 2E-15 #if 'LQLQ' in processname else 2E-15
-                ymax = 1 if 'LQLQ' in processname else 1E5
-                c = tdrCanvas('c', xaxis_min, xaxis_max, ymin, ymax, xaxis_title, '#sigma (pp #rightarrow %s) [pb]' % (procname_to_latex[processname]), square=True, iPeriod=0, iPos=11)
-                c.SetLogy()
-                leg = tdrLeg(0.55,0.55,0.9,0.9)
-                idx = 0
-                for mref in mrefs:
-                    graphname = processname
-                    if 'PsiPsi' in processname:
-                        graphname += '_MLQ'
+            # parse graphnames to get list of all combinations of variables that exist in the file. The pattern of the graphname is known.
+            graphnames_overlay = []
+            graphnames_all = []
+            for key in ROOT.gDirectory.GetListOfKeys():
+                if ROOT.gROOT.GetClass(key.GetClassName()).InheritsFrom("TGraph"):
+                    graphnames_overlay.append(key.GetName().replace(processname + '_', ''))
+                    graphnames_all.append(key.GetName())
+
+            # remove processname, then split at '_'
+            graphnames_split = [g.split('_') for g in graphnames_overlay]
+
+            graphs_per_plot = {}
+
+
+            # nicely arrange all values per variable in 'overlay' that exist in the file
+            if overlay is not None:
+                var_values_infile = {}
+                for var in overlay:
+                    values = []
+                    for graphparts in graphnames_split:
+                        for part in graphparts:
+                            if not part.startswith(var): continue
+                            val = part.replace(var, '')
+                            if not val in values:
+                                values.append(val)
+                    var_values_infile[var] = values
+
+                # remove those values that are not in 'overlay_values', then we have a dictionary of all settings we want to overlay on each plot.
+                var_values_to_plot = {}
+                for idx in range(len(overlay)):
+                    varname = overlay[idx]
+                    if not varname in var_values_infile:
+                        raise AttributeError('Requesting the overlay of variable %s, which does not exist in the file at all.' % (varname))
+                    if overlay_values[idx] is not None:
+                        varlist = overlay_values[idx]
+                        for var in varlist:
+                            if not var in var_values_infile[varname]:
+                                raise AttributeError('Requesting value %s of variable %s, which does not exist in the file.' % (var, varname))
+                        common_elements = list(set(varlist).intersection(var_values_infile[varname]))
                     else:
-                        graphname += '_MC1'
-                    graphname += '%i_L%s' % (mref, get_lambdastring(lamb))
-                    graph = infile.Get(graphname)
-                    try:
-                        tdrDraw(graph, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
-                        graph.GetXaxis().SetLabelSize(14)
+                        common_elements = var_values_infile[varname]
+                    var_values_to_plot[varname] = common_elements
 
-                        if 'PsiPsi' in processname:
-                            legtext = 'M_{LQ} = %i GeV' % (mref)
-                        else:
-                            legtext = 'M_{#chi_{1}} = %i GeV' % (mref)
-                        leg.AddEntry(graph, legtext, 'lf');
+
+                # get "sum" of values to put in each plot, and construct the tags to search for in graphname
+                tags_per_plot = []
+                for varname in var_values_to_plot:
+                    for val in var_values_to_plot[varname]:
+                        tags_per_plot.append(varname+val)
+
+                # from all graphnames, remove all the tags that are in the 'tags_per_plot'. afterwards, all graphs with the same "remaining name" belong on the same plot.
+                graphnames_and_cleaned_and_tags = []
+                for gn in graphnames_all:
+                    gn_cleaned = gn
+                    tags = ''
+                    for tag in tags_per_plot:
+                        if tag in gn_cleaned:
+                            gn_cleaned = gn_cleaned.replace('_%s' % (tag), '')
+                            tags += '%s_' % (tag)
+                    print tags, tags.strip('_')
+                    tags = tags.strip('_')
+                    for varname in overlay:
+                        print varname, tags
+                        tags = tags.replace(varname, '%s: ' % (varname))
+                        print tags
+                    graphnames_and_cleaned_and_tags.append((gn_cleaned, gn, tags))
+
+                # group graphnames into lists if they have the same cleaned graphname
+                for (gn_cleaned, gn, tag) in graphnames_and_cleaned_and_tags:
+                    if not gn_cleaned in graphs_per_plot:
+                        graphs_per_plot[gn_cleaned] = [(gn, tag)]
+                    else:
+                        graphs_per_plot[gn_cleaned].append((gn, tag))
+
+            else: #no overlay, make one plot per graph
+                for gn in graphnames_all:
+                    graphs_per_plot[gn] = [(gn, processname)]
+            print graphs_per_plot
+
+
+            # now, each key in the dictionary corresponds to one plot to be made. Make them!
+            print graphs_per_plot
+            for plotname in graphs_per_plot:
+
+                graphs_and_legnames = []
+                xmax = ymax = 0
+                xmin = ymin = 1E-10
+                for gn,legname in graphs_per_plot[plotname]:
+                    g = infile.Get(gn)
+                    graphs_and_legnames.append((g, legname))
+                    xmax = max(g.GetXaxis().GetXmax(), xmax)
+                    ymax = max(g.GetHistogram().GetMaximum()*10, ymax)
+                    xmin = min(g.GetXaxis().GetXmin(), xmin)
+                    ymin = min(g.GetHistogram().GetMinimum(), ymin)
+
+
+                c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), '#sigma [pb]', square=True, iPeriod=0, iPos=11)
+                c.SetLogy()
+                legy_high = 0.9
+                entryheight = 0.07
+                legy_low = 0.9-entryheight*len(graphs_and_legnames)
+                leg = tdrLeg(0.35,legy_low,0.9,legy_high, textSize=0.037)
+                idx = 0
+
+                for idx, (g, legname) in enumerate(graphs_and_legnames):
+                    try:
+                        tdrDraw(g, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
+                        g.GetXaxis().SetLabelSize(14)
+                        print legname
+                        legtext = legname.replace('_', ', ')
+                        leg.AddEntry(g, legtext, 'lf')
                     except ReferenceError:
-                        # print 'skip this one'
-                        idx +=1
+                        print 'skip this one'
                         continue
-                    idx += 1
                 leg.Draw('SAME')
-                plotname = self.crosssecfolder+'/plots/Crosssections_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), self.tag)
+                plotname = self.crosssecfolder+'/plots/Crosssections_%s%s.pdf' % (plotname, self.tag)
                 if self.submit:
                     c.SaveAs(plotname)
 
-                if ('LQLQ' in processname) and not processname == 'LQLQ':
-                    infile_brs = TFile(rootfilename_brs, 'READ')
-                    infile_lqlq = TFile(self.crosssecfolder+'/Crosssections_LQLQ.root', 'READ')
-                    decaymodes = procname_to_decaymodes[processname]
-                    graphname_br1 = 'LQLQ_L%s_%i_%i' % (get_lambdastring(lamb), abs(decaymodes[0][0]), abs(decaymodes[0][1]))
-                    graphname_br2 = 'LQLQ_L%s_%i_%i' % (get_lambdastring(lamb), abs(decaymodes[1][0]), abs(decaymodes[1][1]))
-                    graph_br1 = infile_brs.Get(graphname_br1)
-                    graph_br2 = infile_brs.Get(graphname_br2)
 
-                    idx = 0
-                    for mref in mrefs:
-                        c_ratio = tdrDiCanvas('c_ratio', xaxis_min, xaxis_max, ymin, ymax, 0.3, 1.7, xaxis_title, '#sigma (pp #rightarrow %s) [pb]' % (procname_to_latex[processname]), '#sigma (full) / #sigma #times BR', square=True, iPeriod=0, iPos=11)
-                        c_ratio.cd(1)
-                        gPad.SetLogy()
-                        leg_ratio = tdrLeg(0.55,0.8,0.9,0.9)
-                        graphname_top = processname + '_MC1%i_L%s' % (mref, get_lambdastring(lamb))
-                        graph_top = infile.Get(graphname_top)
-                        graphname_xsecbr = 'LQLQ_MC1%i_L%s' % (mref, get_lambdastring(lamb))
-                        graph_xsecbr = infile_lqlq.Get(graphname_xsecbr)
-                        try:
-                            c_ratio.cd(1)
-                            tdrDraw(graph_top, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.2)
-                            graph_top.GetXaxis().SetLabelSize(14)
-                            masses_orig_top = array('d')
-                            y_top_ups = array('d')
-                            y_top_dns = array('d')
-                            for i in range(graph_top.GetN()):
-                                x=Double(0)
-                                y=Double(0)
-                                graph_top.GetPoint(i, x, y)
-                                masses_orig_top.append(x)
-                                y_top_ups.append(Double(graph_top.GetErrorYhigh(i)))
-                                y_top_dns.append(Double(graph_top.GetErrorYlow(i)))
 
-                            nremoved = 0
-                            masses_orig_xsec = array('d')
-                            for i in range(graph_xsecbr.GetN()):
-                                x=Double(0)
-                                y=Double(0)
-                                graph_xsecbr.GetPoint(i-nremoved, x, y)
-                                br1 = graph_br1.Interpolate(x, mref)
-                                br2 = graph_br2.Interpolate(x, mref)
-                                n_channels = 1 if (decaymodes[0] == decaymodes[1]) else 2
-                                newval = y * br1 * br2 * n_channels
-                                if y == 0 or newval == 0:
-                                    graph_xsecbr.RemovePoint(i-nremoved)
-                                    nremoved += 1
-                                else:
-                                    graph_xsecbr.SetPoint(i-nremoved, x, newval)
-                                    masses_orig_xsec.append(x)
-                            tdrDraw(graph_xsecbr, "LX", mcolor=colors[idx], lcolor=colors[idx])
-                            graph_xsecbr.SetLineStyle(2)
 
-                            # calculate ratio
-                            graph_top_up = TGraph(len(masses_orig_top), masses_orig_top, y_top_ups)
-                            graph_top_dn = TGraph(len(masses_orig_top), masses_orig_top, y_top_dns)
-                            xs = array('d')
-                            xs_up = array('d')
-                            xs_dn = array('d')
-                            ys = array('d')
-                            ys_up = array('d')
-                            ys_dn = array('d')
-                            for mass in masses_orig_top:
-                                if mass in masses_orig_xsec:
-                                    xs.append(Double(mass))
-                                    xs_up.append(Double(0))
-                                    xs_dn.append(Double(0))
-                                    ys.append(Double(graph_top.Eval(mass) / graph_xsecbr.Eval(mass)))
-                                    ys_up.append(Double(graph_top_up.Eval(mass) / graph_xsecbr.Eval(mass)))
-                                    ys_dn.append(Double(graph_top_dn.Eval(mass) / graph_xsecbr.Eval(mass)))
-                            graph_ratio = TGraphAsymmErrors(len(xs), xs, ys, xs_dn, xs_up, ys_dn, ys_up)
-                            c_ratio.cd(2)
-                            tdrDraw(graph_ratio, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
-                            legtext_ratio = 'M_{#chi_{1}} = %i GeV' % (mref)
-                            leg_ratio.AddEntry(graph_top, legtext_ratio, 'lf');
-                        except ReferenceError:
-                            idx +=1
-                            continue
-                        idx += 1
-                        plotname_ratio = self.crosssecfolder+'/plots/Crosssections_comparison_%s_MC1%i_L%s%s.pdf' % (processname, mref, get_lambdastring(lamb), self.tag)
-                        if self.submit:
-                            c_ratio.SaveAs(plotname_ratio)
-                    infile_brs.Close()
-                    infile_lqlq.Close()
 
-                graphname2 = processname
-                graphname2 += '_L%s' % (get_lambdastring(lamb))
-                print lamb, graphname2
-                graph2d = infile.Get(graphname2)
-                h2 = TH2D('h2', 'h2', 500, min(preferred_configurations.keys()), max(preferred_configurations.keys()), 500, 100, 21000)
-                graph2d.SetHistogram(h2)
-                c2 = TCanvas('c2', 'c2', 800, 600)
-                graph2d.Draw("COLZ")
-                graph2d.GetHistogram().SetContour(150)
-                graph2d.GetHistogram().GetXaxis().SetNdivisions(505)
-                graph2d.GetHistogram().GetXaxis().SetTitle('M_{LQ} [GeV]')
-                graph2d.GetHistogram().GetYaxis().SetTitle('M_{#chi_{1}} [GeV]')
-                graph2d.GetHistogram().GetZaxis().SetTitle('#sigma (pp#rightarrow %s) [pb]' % (procname_to_latex[processname]))
-                graph2d.GetHistogram().GetZaxis().SetTitleOffset(1.25)
-                graph2d.GetHistogram().GetYaxis().SetTitleOffset(1.0)
-                graph2d.GetHistogram().SetMaximum(1E-1)
-                graph2d.GetHistogram().SetMinimum(2E-19)
-                SetAlternative2DColor(graph2d.GetHistogram())
-                c2.SetLogy()
-                c2.SetLogz()
-                c2.SetRightMargin(0.20)
-                c2.SetLeftMargin(0.13)
-                c2.SetTopMargin(0.05)
-                c2.Update()
-                plotname = self.crosssecfolder+'/plots/Crosssections2d_%s_L%s%s.pdf' % (processname, get_lambdastring(lamb), self.tag)
-                if self.submit:
-                    c2.SaveAs(plotname)
-            infile.Close()
-            for lamb in self.lambdas:
-                if processname == 'LQLQ':
-                    # decaymodes = [(5, -15), (6, -16), (9000009, 9000007), (9000009, 9000008)]
-                    decaymodes = decaymode_dict.keys()
-                    mlqs_initial = [1000, 2000, 3000, 4500, 6000]
-                    xaxis_min = 90
-                    xaxis_max = 20000
-                    xaxis_title = 'M_{#chi_{1}} [GeV]'
-                    mlqs = []
-                    for mlq in mlqs_initial:
-                        mlqs.append(find_closest(sorted(preferred_configurations), mlq))
 
-                    # open rootfile and get corresponding graphs
-                    infile_brs = TFile(rootfilename_brs, 'READ')
-                    print rootfilename_brs
-                    for mlq in mlqs:
-                        c3 = tdrCanvas('c3', xaxis_min, xaxis_max, 0, 1.1, xaxis_title, 'Branching ratio', square=True, iPeriod=0, iPos=11)
-                        c3.SetLogx()
-                        leg3 = tdrLeg(0.55,0.65,0.9,0.9)
-                        legheader3 = 'M_{LQ} = %i GeV' % (mlq)
-                        tdrHeader(leg3, legheader3)
-                        idx = 0
-                        for decaymode in decaymodes:
-                            graphname3 = processname + '_MLQ%i_L%s_%i_%i' % (mlq, get_lambdastring(lamb), abs(decaymode[0]), abs(decaymode[1]))
-                            # print graphname
-                            graph3 = infile_brs.Get(graphname3)
-                            try:
-                                tdrDraw(graph3, "3L", mcolor=colors[idx], lcolor=colors[idx])
-                                graph3.GetXaxis().SetLabelSize(14)
-                                # legtext = 'M_{LQ} = %i GeV' % (mlq)
-                                legtext3 = 'LQ #rightarrow %s' % (decaymode_dict[decaymode])
-                                leg3.AddEntry(graph3, legtext3, 'l');
-                            except ReferenceError:
-                                # print 'skip this one'
-                                idx +=1
-                                continue
-                            idx += 1
-                        leg3.Draw('SAME')
-                        plotname = self.crosssecfolder+'/plots/Branchingratios_%s_MLQ%i_L%s%s.pdf' % (processname, mlq, get_lambdastring(lamb), self.tag)
-                        if self.submit:
-                            print plotname
-                            c3.SaveAs(plotname)
 
-                    for decaymode in decaymodes:
-                        try:
-                            graphname = processname + '_L%s_%i_%i' % (get_lambdastring(lamb), abs(decaymode[0]), abs(decaymode[1]))
-                            graph2d = infile_brs.Get(graphname)
-                            h2 = TH2D('h2', 'h2', 500, min(preferred_configurations.keys()), max(preferred_configurations.keys()), 500, 100, 21000)
-                            print decaymode, lamb, graphname
-                            graph2d.SetHistogram(h2)
-                            c4 = TCanvas('c4', 'c4', 800, 600)
-                            graph2d.Draw("COLZ")
-                            graph2d.GetHistogram().SetContour(150)
-                            graph2d.GetHistogram().GetXaxis().SetNdivisions(505)
-                            graph2d.GetHistogram().GetXaxis().SetTitle('M_{LQ} [GeV]')
-                            graph2d.GetHistogram().GetYaxis().SetTitle('M_{#chi_{1}} [GeV]')
-                            graph2d.GetHistogram().GetZaxis().SetTitle('BR (LQ #rightarrow %s)' % (decaymode_dict[decaymode]))
-                            graph2d.GetHistogram().GetZaxis().SetTitleOffset(1.25)
-                            graph2d.GetHistogram().GetYaxis().SetTitleOffset(1.0)
-                            graph2d.GetHistogram().SetMaximum(0.7)
-                            graph2d.GetHistogram().SetMinimum(0.)
-                            SetAlternative2DColor(graph2d.GetHistogram())
-                            c4.SetLogy()
-                            c4.SetRightMargin(0.20)
-                            c4.SetLeftMargin(0.13)
-                            c4.SetTopMargin(0.05)
-                            c4.Update()
-                            plotname = self.crosssecfolder+'/plots/Branchingratios2d_%s_L%s_%i_%i%s.pdf' % (processname, get_lambdastring(lamb), abs(decaymode[0]), abs(decaymode[1]), self.tag)
-                            if self.submit:
-                                c4.SaveAs(plotname)
-                        except AttributeError:
-                            continue
+# small useful functions only defined in this file, not used elsewhere
 
-                    infile_brs.Close()
+def readout_crossection(infilename, filenamepattern, variable_order, order_settings, order_values):
+    # parse parameters from filename
+    parser_cross = parse.compile(filenamepattern)
+
+    vartuple_string = parser_cross.parse(infilename.split('/')[-1])
+    varlist_string = [itup for itup in vartuple_string if not itup.endswith('.txt')]
+    vardict = {}
+    for i in range(len(variable_order)):
+        if not varlist_string[i] == 'best':
+            vardict[variable_order[i]] = floatstring_to_float(varlist_string[i])
+        else:
+            vardict[variable_order[i]] = varlist_string[i]
+
+    # extract relevant parameters for dataframe from dict
+    varlist = [vardict[param] for param in order_settings]
+
+    # find correct lines to parse and set up the patterns
+    pattern_crosssection = '{}:   {} +- {} pb\n'
+    pattern_scale        = '{}: +{}% -{}%\n'
+    pattern_pdf          = '{}: +{}% -{}%\n'
+    fin = open(infilename, 'r')
+    lines = fin.readlines()
+    line_crosssection = ''
+    line_scale        = 'TEST'
+    line_pdf          = ''
+
+    for line in lines:
+        if 'Cross-section :' in line: line_crosssection = line
+        elif 'scale variation:' in line: line_scale = line
+        elif 'PDF variation:' in line: line_pdf = line
+
+    # do the parsing
+    parser_xsec  = parse.compile(pattern_crosssection)
+    parser_scale = parse.compile(pattern_scale)
+    parser_pdf   = parse.compile(pattern_pdf)
+
+    pre, xsec, xsec_unc = parser_xsec.parse(line_crosssection)
+    pre, scale_up, scale_down = parser_scale.parse(line_scale)
+    pre, pdf_up, pdf_down = parser_pdf.parse(line_pdf)
+
+    # will crash if some unexpected value is requested, which is good.
+    dict = {'crosssection': float(xsec), 'scale_down': float(scale_down), 'scale_up': float(scale_up), 'pdf': float(str(max(float(pdf_up), float(pdf_down))))}
+    for key in order_values:
+        varlist += [dict[key]]
+
+    return varlist
+
+
+def readout_branchingratio(infilename, filenamepattern, variable_order, order_settings, order_values):
+    parser_br = parse.compile(filenamepattern)
+
+    vartuple_string = parser_br.parse(infilename.split('/')[-1])
+    varlist_string = [itup for itup in vartuple_string if not itup.endswith('.txt')]
+    vardict = {}
+    for i in range(len(variable_order)):
+        if not varlist_string[i] == 'best':
+            vardict[variable_order[i]] = floatstring_to_float(varlist_string[i])
+        else:
+            vardict[variable_order[i]] = varlist_string[i]
+
+
+    varlist = [vardict[param] for param in order_settings]
+    # varlist_base = []
+    # for param in self.individual_settings[0].keys():
+    #     key = self.individual_settings[0][param][1]
+    #     varlist_base.append(vardict[key])
+
+    fin = open(infilename, 'r')
+    lines = fin.readlines()
+    result_lists = []
+    for line in lines:
+        if line[0:5] == 'DECAY' or line[0] == '#': continue
+        # remaining lines contain BRs
+        content = line.split()
+        br, decaywidth, dau1, dau2 = float(content[0]), float(content[5]), int(content[2]), int(content[3])
+
+        # will crash if some unexpected value is requested, which is good.
+        dict = {'daughter_1': dau1, 'daughter_2': dau2, 'branchingratio': br, 'decaywidth': decaywidth}
+        for key in order_values:
+            varlist += [dict[key]]
+        result_lists.append(varlist)
+    return result_lists

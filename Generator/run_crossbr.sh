@@ -16,6 +16,15 @@ echo $TARGETFOLDER
 echo $PROCNAME
 echo $NCORES
 echo "<-- End user input."
+echo "SLURM_JOB_ID: $SLURM_JOB_ID"
+if [ -z ${SLURM_JOB_ID+x} ]
+  then
+    echo "SLURM_JOB_ID is unset, setting it to '0'"
+    SLURM_JOB_ID=0
+  else
+    echo "SLURM_JOB_ID is set to '$SLURM_JOB_ID'"
+fi
+
 
 function peval { echo "--> $@"; eval "$@"; }
 
@@ -29,7 +38,8 @@ eval 'export CXXFLAGS="$CXXFLAGS -I$MG_FOLDER/HEPTools/boost/include"' # silly l
 eval 'export PYTHIA8DATA=$MG_FOLDER/HEPTools/pythia8/share/Pythia8/xmldoc'
 
 # create local workdir on /scratch for MG to work in
-WORKDIR="/scratch/$USER/LQDM_CrossBR/$JOBNAME"  # local workdir for slurm
+# WORKDIR="/scratch/$USER/LQDM_CrossBR/$JOBNAME"  # local workdir for slurm
+WORKDIR="/scratch/$USER/LQDM_CrossBR/slurm_$SLURM_JOB_ID"  # local workdir for slurm
 peval "mkdir -p ${WORKDIR}"
 peval "cd ${WORKDIR}"
 
@@ -58,6 +68,9 @@ echo "--> Starting process generation with command:"
 peval "${MG_FOLDER}/bin/mg5_aMC $RELPATH_TO_CARDS/$PROC_CARD"
 # ./bin/mg5_aMC $RELPATH_TO_CARDS/$PROC_CARD
 
+echo "--> current PWD:"
+peval "pwd"
+
 echo "--> copying run_card:"
 peval "cp $RELPATH_TO_CARDS/$RUN_CARD $JOBNAME/Cards/run_card.dat"
 # cp $RELPATH_TO_CARDS/$RUN_CARD $JOBNAME/Cards/run_card.dat
@@ -70,6 +83,7 @@ if [ ${NCORES} -ne 1 ]
     peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
   else
     peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --nb_core=${NCORES}"
+    # peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events"
 fi
 
 # peval "cat $COMMANDFILE | $JOBNAME/bin/generate_events --multicore --nb_core=${NCORES}"
@@ -87,6 +101,7 @@ peval "cp $JOBNAME/Cards/param_card.dat $TARGETFOLDER/$PROCNAME/${JOBNAME}_param
 peval "cd .."
 peval "ls"
 peval "rm -rf $WORKDIR"
+# peval "rm -rf $JOBNAME $COMMANDFILE py.py ME5_debug"
 peval "ls"
 
 
