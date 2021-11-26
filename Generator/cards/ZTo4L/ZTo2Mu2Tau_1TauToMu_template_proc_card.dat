@@ -14,8 +14,6 @@ define l- = e- mu-
 define vl = ve vm vt
 define vl~ = ve~ vm~ vt~
 
-#generate p p > z, (z > mu+ mu- ta+ ta- / h, ta+ > vt~ mu+ vm)
-#add process p p > z, (z > mu+ mu- ta+ ta- / h, ta- > vt mu- vm~)
 generate p p > mu+ mu- ta+ ta-, ta+ > vt~ mu+ vm
 add process p p > mu+ mu- ta+ ta-, ta- > vt mu- vm~
 output $OUTPUT
