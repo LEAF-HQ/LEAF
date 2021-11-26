@@ -99,58 +99,52 @@ T3_path          = os.path.join('/pnfs/psi.ch/cms/trivcat/store/user', username)
 
 
 folderstructure = {
+'UL17':{
     'GENSIM': {
         'pset':            psetfolder+'/pset_01_gensim.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'gensim',
         'outfilenamebase': 'GENSIM',
-        'pathtag':         'GENSIM/' + sampletype
+        'pathtag':         'GENSIM/' + campaign + '/' + sampletype
     },
     'DR': {
         'pset':            psetfolder+'/pset_03_dr.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'dr',
         'outfilenamebase': 'DR',
-        'infilepathtag':   'GENSIM/' + sampletype,
+        'infilepathtag':   'GENSIM/' + campaign + '/' + sampletype,
         'infilenamebase':  'GENSIM',
-        'pathtag':         'DR/' + sampletype
+        'pathtag':         'DR/' + campaign + '/' + sampletype
     },
     'HLT': {
         'pset':            psetfolder+'/pset_04_hlt.py',
         'cmsswtag':        cmssw_tag_hlt,
         'jobnametag':      'hlt',
         'outfilenamebase': 'HLT',
-        'infilepathtag':   'DR/' + sampletype,
+        'infilepathtag':   'DR/' + campaign + '/' + sampletype,
         'infilenamebase':  'DR',
-        'pathtag':         'HLT/' + sampletype
+        'pathtag':         'HLT/' + campaign + '/' + sampletype
     },
     'AOD': {
         'pset':            psetfolder+'/pset_05_aod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'aod',
         'outfilenamebase': 'AOD',
-        'infilepathtag':   'HLT/' + sampletype,
+        'infilepathtag':   'HLT/' + campaign + '/' + sampletype,
         'infilenamebase':  'HLT',
-        'pathtag':         'AOD/' + sampletype
+        'pathtag':         'AOD/' + campaign + '/' + sampletype
     },
     'MINIAOD': {
         'pset':            psetfolder+'/pset_06_miniaod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'miniaod',
         'outfilenamebase': 'MINIAOD',
-        'infilepathtag':   'AOD/' + sampletype,
+        'infilepathtag':   'AOD/' + campaign + '/' + sampletype,
         'infilenamebase':  'AOD',
-        'pathtag':         'MINIAOD/' + sampletype
-    },
-    'NANOAOD': {
-        'pset':            psetfolder+'/pset_07_nanoaod.py',
-        'cmsswtag':        cmssw_tag_sim,
-        'jobnametag':      'nanoaod',
-        'outfilenamebase': 'NANOAOD',
-        'infilepathtag':   'MINIAOD/' + sampletype,
-        'infilenamebase':  'MINIAOD',
-        'pathtag':         'NANOAOD/' + sampletype
+        'pathtag':         'MINIAOD/' + campaign + '/' + sampletype
     }
+}
+
 
 }
 
@@ -161,7 +155,7 @@ ensureDirectory(workdir_slurm)
 submit = True
 
 
-CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
+# CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=600)
 # CrossBRRunner.ShortenCrossBR()
@@ -170,7 +164,7 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individ
 # CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
 # CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA'], overlay_values=[None])
-# CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[None])
+# CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
 # CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
 

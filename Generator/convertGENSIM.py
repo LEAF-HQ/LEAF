@@ -204,9 +204,9 @@ def convertGENSIM(infiles,outfilename,Nmax=-1):
 
   # LOOP OVER EVENTS
   for event in events:
-      # print ' --- NEW EVENT'
-      # print '='*30
-      # print evtid
+      print ' --- NEW EVENT'
+      print '='*30
+      print evtid
       if Nmax>0 and evtid>=Nmax: break
       if evtid>0 and evtid%step==0: print ">>>     processed %4s/%d events, ETA %s"%(evtid,Ntot,ETA(start_proc,evtid+1,Ntot))
       evtid += 1
@@ -248,6 +248,14 @@ def convertGENSIM(infiles,outfilename,Nmax=-1):
       gps_taufromLQ.sort(key=lambda p: p.pt(), reverse=True)
       gps_taucut   = [p for p in gps_tau   if p.pt()>20 and abs(p.eta())<2.5]
       gps_taucut50 = [p for p in gps_tau   if p.pt()>50 and abs(p.eta())<2.5]
+
+      gps_z = [p for p in gps if abs(p.pdgId()) in [23] and isFinal(p)]
+      printDecayChain(gps_z)
+      z = gps_z[0]
+      print 'mass(1,2):', (z.daughter(0).p4() + z.daughter(1).p4()).M(), 'dPhi:', abs(z.daughter(0).phi() - z.daughter(1).phi())
+      print 'mass(3,4):', (z.daughter(2).p4() + z.daughter(3).p4()).M(), 'dPhi:', abs(z.daughter(2).phi() - z.daughter(3).phi())
+      print 'mass(1,2,3,4):', (z.daughter(0).p4() + z.daughter(1).p4() + z.daughter(2).p4() + z.daughter(3).p4()).M()
+
 
       gps_tau_vis = []
       gps_taucut_vis = []
@@ -755,7 +763,7 @@ def isFinalM(p):
   return not (p.numberOfDaughters()==3 and p.daughter(0).pdgId()==p.pdgId())
 
 def printParticle(p):
-  string = "Particle with pdId %9d: status=%2d, pt=%7.2f, eta=%5.2f, phi=%5.2f, final=%5s"%(p.pdgId(),p.status(),p.pt(),p.eta(),p.phi(),isFinal(p))
+  string = "Particle with pdgId %9d: status=%2d, pt=%7.2f, eta=%5.2f, phi=%5.2f, final=%5s"%(p.pdgId(),p.status(),p.pt(),p.eta(),p.phi(),isFinal(p))
   if p.numberOfMothers()>=2:
     string += ", mothers %s, %s"%(p.mother(0).pdgId(),p.mother(1).pdgId())
   elif p.numberOfMothers()==1:
@@ -771,6 +779,7 @@ def printDecayChain(mothers):
     daus   = []
     gdaus  = []
     ggdaus = []
+    gggdaus = []
     print '='*10 + ' New mother:'
     printParticle(m)
     for d_idx in range(m.numberOfDaughters()):
@@ -792,9 +801,6 @@ def printDecayChain(mothers):
     print '-'*10 + ' Great grand daughters:'
     for gg in ggdaus:
       printParticle(gg)
-
-
-
 
   for g_idx in range(d.numberOfDaughters()):
     g = d.daughter(g_idx)

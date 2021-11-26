@@ -290,3 +290,45 @@ def hadd_large_singlearg(arg): #default maxsize: 300GB (standard root: 100), goo
         hadd_large(outfilename=outfilename, infilelist=infilelist, force=force, notree=notree, maxsize=maxsize)
     else:
         hadd_large(outfilename=outfilename, infilelist=infilelist, force=force, notree=notree)
+
+
+def get_intersection(g1, g2):
+
+    # find intersetion between two TGraphs
+
+    result = None
+
+    #find highest and lowest x:
+    xmin = max(g1.GetX()[0], g2.GetX()[0] )
+    xmax = min(g1.GetX()[g1.GetN()-1], g2.GetX()[g2.GetN()-1])
+
+    # iteratively find intersection, by evaluating graphs at xmin, xmax, moving one of them, and repeating
+    # ====================================================================================================
+    y1lo = g1.Eval(xmin)
+    y2lo = g2.Eval(xmin)
+    y1hi = g1.Eval(xmax)
+    y2hi = g2.Eval(xmax)
+    if (y1lo < y2lo and y1hi < y2hi) or (y1lo > y2lo and y1hi > y2hi):
+        # raise ValueError('graphs 1 and 2 either have no or multiple intersections')
+        return None
+
+    # find higher graph at xmin
+    g1_from_top = True if y1lo > y2lo else False
+
+    xmid = xmin + (xmax-xmin)/2.
+    while math.fabs(xmin-xmax) > 1:
+        y1mid = g1.Eval(xmid)
+        y2mid = g2.Eval(xmid)
+        if g1_from_top:
+            if y1mid > y2mid:
+                xmin = xmid
+            else:
+                xmax = xmid
+        elif not g1_from_top:
+            if y1mid > y2mid:
+                xmax = xmid
+            else:
+                xmin = xmid
+        xmid = xmin + (xmax-xmin)/2.
+
+    return xmid

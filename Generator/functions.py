@@ -45,6 +45,9 @@ def get_samplename_flex(ordered_dict, tag=None):
 
     # both value and key will get converted to strings if not already
 
+    if ordered_dict is None:
+        return format_tag(tag)
+
     result = ''
     for key in ordered_dict:
         val = ordered_dict[key][0]
@@ -273,12 +276,12 @@ def make_card_flex(card_template_folder, card_output_folder, processname, tag, i
 
     replacement_dict = general_settings
     replacement_dict['OUTPUT'] = outputfoldername
-    for k in individual_setting:
-        if k == 'LAMBDA' and individual_setting[k][0] == 'best':
-            replacement_dict[k] = get_best_lambda(individual_setting['MLQ'][0])
-        else:
-            replacement_dict[k] = individual_setting[k][0]
-    # print replacement_dict
+    if individual_setting is not None:
+        for k in individual_setting:
+            if k == 'LAMBDA' and individual_setting[k][0] == 'best':
+                replacement_dict[k] = get_best_lambda(individual_setting['MLQ'][0])
+            else:
+                replacement_dict[k] = individual_setting[k][0]
 
 
     # replace values in the cards
