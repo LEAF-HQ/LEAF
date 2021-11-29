@@ -1,4 +1,4 @@
-![Continuous integration](https://github.com/reimersa/LEAF/actions/workflows/main.yml/badge.svg)
+![Setup and compilation](https://github.com/reimersa/LEAF/actions/workflows/main.yml/badge.svg)
 
 # LHC Event Analysis Framework, LEAF
 
