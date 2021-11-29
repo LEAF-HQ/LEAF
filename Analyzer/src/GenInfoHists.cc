@@ -21,6 +21,16 @@ using namespace std;
 GenInfoHists::GenInfoHists(TString dir_) : BaseHists(dir_){
 
 
+
+  string pdfname = "NNPDF31_lo_as_0130";
+  LHAPDF::initPDFSet(1, (std::string)(pdfname+".LHgrid"));
+  pdf = LHAPDF::mkPDF( (std::string) pdfname, 0);
+
+  string pdfname_new = "NNPDF31_nnlo_hessian_pdfas";
+  LHAPDF::initPDFSet(1, (std::string)(pdfname_new+".LHgrid"));
+  pdf_new = LHAPDF::mkPDF( (std::string) pdfname_new, 0);
+
+
   hptmet = book<TH1F>("ptmet", ";E_{T}^{miss} (GenMET) [GeV]; Events / bin", 100, 0, 1000);
   hphimet = book<TH1F>("phimet", ";#phi(E_{T}^{miss} (GenMET)); Events / bin", 60, -3.5, 3.5);
 
@@ -31,51 +41,44 @@ GenInfoHists::GenInfoHists(TString dir_) : BaseHists(dir_){
   hgeninfoxall = book<TH1F>("geninfoxall", ";all x (both partons together); Events / bin", 50, 0, 1);
   hgeninfoxb = book<TH1F>("geninfoxb", ";x of all b(bar) quarks; Events / bin", 50, 0, 1);
   hgeninfoxc = book<TH1F>("geninfoxc", ";x of all c(bar) quarks; Events / bin", 50, 0, 1);
-  hgeninfoxpdf1 = book<TH1F>("geninfoxpdf1", ";xpdf of initial state 1; Events / bin", 100, 0, 20);
-  hgeninfoxpdf2 = book<TH1F>("geninfoxpdf2", ";xpdf of initial state 2; Events / bin", 100, 0, 20);
-  hgeninfoxpdf1_rebin1 = book<TH1F>("geninfoxpdf1_rebin1", ";xpdf of initial state 1; Events / bin", 40, 0, 20);
-  hgeninfoxpdf2_rebin1 = book<TH1F>("geninfoxpdf2_rebin1", ";xpdf of initial state 2; Events / bin", 40, 0, 20);
-  hgeninfoxpdf1_rebin2 = book<TH1F>("geninfoxpdf1_rebin2", ";xpdf of initial state 1; Events / bin", 40, 0, 2);
-  hgeninfoxpdf2_rebin2 = book<TH1F>("geninfoxpdf2_rebin2", ";xpdf of initial state 2; Events / bin", 40, 0, 2);
-  hgeninfoxpdf1_rebin3 = book<TH1F>("geninfoxpdf1_rebin3", ";xpdf of initial state 1; Events / bin", 40, 0, 0.2);
-  hgeninfoxpdf2_rebin3 = book<TH1F>("geninfoxpdf2_rebin3", ";xpdf of initial state 2; Events / bin", 40, 0, 0.2);
-  hgeninfoxpdfall = book<TH1F>("geninfoxpdfall", ";all xpdf (both partons together); Events / bin", 40, 0, 2);
-  hgeninfoxpdfb = book<TH1F>("geninfoxpdfb", ";xpdf of all b(bar) quarks; Events / bin", 40, 0, 2);
-  hgeninfoxpdfc = book<TH1F>("geninfoxpdfc", ";xpdf of all c(bar) quarks; Events / bin", 40, 0, 2);
-  hgeninfoxpdfproduct = book<TH1F>("geninfoxpdfproduct", ";xpdf1 * xpdf2; Events / bin", 100, 0, 20);
-  hgeninfoxpdfproduct_rebin1 = book<TH1F>("geninfoxpdfproduct_rebin1", ";xpdf1 * xpdf2; Events / bin", 40, 0, 20);
-  hgeninfoxpdfproduct_rebin2 = book<TH1F>("geninfoxpdfproduct_rebin2", ";xpdf1 * xpdf2; Events / bin", 40, 0, 2);
-  hgeninfoxpdfproduct_rebin3 = book<TH1F>("geninfoxpdfproduct_rebin3", ";xpdf1 * xpdf2; Events / bin", 40, 0, 0.2);
-  hgeninfoxpdfproduct_rebin4 = book<TH1F>("geninfoxpdfproduct_rebin4", ";xpdf1 * xpdf2; Events / bin", 4000, 0, 20);
+  hgeninfoxpdf1 = book<TH1F>("geninfoxpdf1", ";xpdf of initial state 1(" + (TString)pdfname + "); Events / bin", 100, 0, 20);
+  hgeninfoxpdf2 = book<TH1F>("geninfoxpdf2", ";xpdf of initial state 2(" + (TString)pdfname + "); Events / bin", 100, 0, 20);
+  hgeninfoxpdf1_rebin1 = book<TH1F>("geninfoxpdf1_rebin1", ";xpdf of initial state 1(" + (TString)pdfname + "); Events / bin", 40, 0, 20);
+  hgeninfoxpdf2_rebin1 = book<TH1F>("geninfoxpdf2_rebin1", ";xpdf of initial state 2(" + (TString)pdfname + "); Events / bin", 40, 0, 20);
+  hgeninfoxpdf1_rebin2 = book<TH1F>("geninfoxpdf1_rebin2", ";xpdf of initial state 1(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdf2_rebin2 = book<TH1F>("geninfoxpdf2_rebin2", ";xpdf of initial state 2(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdf1_rebin3 = book<TH1F>("geninfoxpdf1_rebin3", ";xpdf of initial state 1(" + (TString)pdfname + "); Events / bin", 40, 0, 0.2);
+  hgeninfoxpdf2_rebin3 = book<TH1F>("geninfoxpdf2_rebin3", ";xpdf of initial state 2(" + (TString)pdfname + "); Events / bin", 40, 0, 0.2);
+  hgeninfoxpdfall = book<TH1F>("geninfoxpdfall", ";all xpdf (both partons together)(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdfb = book<TH1F>("geninfoxpdfb", ";xpdf of all b(bar) quarks(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdfc = book<TH1F>("geninfoxpdfc", ";xpdf of all c(bar) quarks(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdfproduct = book<TH1F>("geninfoxpdfproduct", ";xpdf1 * xpdf2(" + (TString)pdfname + "); Events / bin", 100, 0, 20);
+  hgeninfoxpdfproduct_rebin1 = book<TH1F>("geninfoxpdfproduct_rebin1", ";xpdf1 * xpdf2(" + (TString)pdfname + "); Events / bin", 40, 0, 20);
+  hgeninfoxpdfproduct_rebin2 = book<TH1F>("geninfoxpdfproduct_rebin2", ";xpdf1 * xpdf2(" + (TString)pdfname + "); Events / bin", 40, 0, 2);
+  hgeninfoxpdfproduct_rebin3 = book<TH1F>("geninfoxpdfproduct_rebin3", ";xpdf1 * xpdf2(" + (TString)pdfname + "); Events / bin", 40, 0, 0.2);
+  hgeninfoxpdfproduct_rebin4 = book<TH1F>("geninfoxpdfproduct_rebin4", ";xpdf1 * xpdf2(" + (TString)pdfname + "); Events / bin", 4000, 0, 20);
 
-  hnewpdf_geninfoxpdf1 = book<TH1F>("newpdf_geninfoxpdf1", ";new xpdf of initial state 1; Events / bin", 100, 0, 20);
-  hnewpdf_geninfoxpdf2 = book<TH1F>("newpdf_geninfoxpdf2", ";new xpdf of initial state 2; Events / bin", 100, 0, 20);
-  hnewpdf_geninfoxpdf1_rebin1 = book<TH1F>("newpdf_geninfoxpdf1_rebin1", ";new xpdf of initial state 1; Events / bin", 40, 0, 20);
-  hnewpdf_geninfoxpdf2_rebin1 = book<TH1F>("newpdf_geninfoxpdf2_rebin1", ";new xpdf of initial state 2; Events / bin", 40, 0, 20);
-  hnewpdf_geninfoxpdf1_rebin2 = book<TH1F>("newpdf_geninfoxpdf1_rebin2", ";new xpdf of initial state 1; Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdf2_rebin2 = book<TH1F>("newpdf_geninfoxpdf2_rebin2", ";new xpdf of initial state 2; Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdf1_rebin3 = book<TH1F>("newpdf_geninfoxpdf1_rebin3", ";new xpdf of initial state 1; Events / bin", 40, 0, 0.2);
-  hnewpdf_geninfoxpdf2_rebin3 = book<TH1F>("newpdf_geninfoxpdf2_rebin3", ";new xpdf of initial state 2; Events / bin", 40, 0, 0.2);
-  hnewpdf_geninfoxpdfall = book<TH1F>("newpdf_geninfoxpdfall", ";all new xpdf (both partons together); Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdfb = book<TH1F>("newpdf_geninfoxpdfb", ";new xpdf of all b(bar) quarks; Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdfc = book<TH1F>("newpdf_geninfoxpdfc", ";new xpdf of all c(bar) quarks; Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdfproduct = book<TH1F>("newpdf_geninfoxpdfproduct", ";new xpdf1 * xpdf2; Events / bin", 100, 0, 20);
-  hnewpdf_geninfoxpdfproduct_rebin1 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin1", ";new xpdf1 * new xpdf2; Events / bin", 40, 0, 20);
-  hnewpdf_geninfoxpdfproduct_rebin2 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin2", ";new xpdf1 * new xpdf2; Events / bin", 40, 0, 2);
-  hnewpdf_geninfoxpdfproduct_rebin3 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin3", ";new xpdf1 * new xpdf2; Events / bin", 40, 0, 0.2);
-  hnewpdf_geninfoxpdfproduct_rebin4 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin4", ";new xpdf1 * new xpdf2; Events / bin", 4000, 0, 20);
+  hnewpdf_geninfoxpdf1 = book<TH1F>("newpdf_geninfoxpdf1", ";new xpdf of initial state 1(" + (TString)pdfname_new + "); Events / bin", 100, 0, 20);
+  hnewpdf_geninfoxpdf2 = book<TH1F>("newpdf_geninfoxpdf2", ";new xpdf of initial state 2(" + (TString)pdfname_new + "); Events / bin", 100, 0, 20);
+  hnewpdf_geninfoxpdf1_rebin1 = book<TH1F>("newpdf_geninfoxpdf1_rebin1", ";new xpdf of initial state 1(" + (TString)pdfname_new + "); Events / bin", 40, 0, 20);
+  hnewpdf_geninfoxpdf2_rebin1 = book<TH1F>("newpdf_geninfoxpdf2_rebin1", ";new xpdf of initial state 2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 20);
+  hnewpdf_geninfoxpdf1_rebin2 = book<TH1F>("newpdf_geninfoxpdf1_rebin2", ";new xpdf of initial state 1(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdf2_rebin2 = book<TH1F>("newpdf_geninfoxpdf2_rebin2", ";new xpdf of initial state 2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdf1_rebin3 = book<TH1F>("newpdf_geninfoxpdf1_rebin3", ";new xpdf of initial state 1(" + (TString)pdfname_new + "); Events / bin", 40, 0, 0.2);
+  hnewpdf_geninfoxpdf2_rebin3 = book<TH1F>("newpdf_geninfoxpdf2_rebin3", ";new xpdf of initial state 2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 0.2);
+  hnewpdf_geninfoxpdfall = book<TH1F>("newpdf_geninfoxpdfall", ";all new xpdf (both partons together)(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdfb = book<TH1F>("newpdf_geninfoxpdfb", ";new xpdf of all b(bar) quarks(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdfc = book<TH1F>("newpdf_geninfoxpdfc", ";new xpdf of all c(bar) quarks(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdfproduct = book<TH1F>("newpdf_geninfoxpdfproduct", ";new xpdf1 * xpdf2(" + (TString)pdfname_new + "); Events / bin", 100, 0, 20);
+  hnewpdf_geninfoxpdfproduct_rebin1 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin1", ";new xpdf1 * new xpdf2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 20);
+  hnewpdf_geninfoxpdfproduct_rebin2 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin2", ";new xpdf1 * new xpdf2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 2);
+  hnewpdf_geninfoxpdfproduct_rebin3 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin3", ";new xpdf1 * new xpdf2(" + (TString)pdfname_new + "); Events / bin", 40, 0, 0.2);
+  hnewpdf_geninfoxpdfproduct_rebin4 = book<TH1F>("newpdf_geninfoxpdfproduct_rebin4", ";new xpdf1 * new xpdf2(" + (TString)pdfname_new + "); Events / bin", 4000, 0, 20);
 
   hgeninfoscalepdf = book<TH1F>("geninfoscalepdf", ";PDF scale; Events / bin", 200, 0, 3000);
 
   hsumweights = book<TH1F>("sumweights", ";bincontent = sum of event weights; Events / bin", 1, 0.5, 1.5);
 
-
-  string pdfname = "NNPDF31_lo_as_0130";
-  LHAPDF::initPDFSet(1, (std::string)(pdfname+".LHgrid"));
-  pdf = LHAPDF::mkPDF( (std::string) pdfname, 0);
-  string pdfname_new = "NNPDF31_nnlo_hessian_pdfas";
-  LHAPDF::initPDFSet(1, (std::string)(pdfname_new+".LHgrid"));
-  pdf_new = LHAPDF::mkPDF( (std::string) pdfname_new, 0);
 
 }
 
