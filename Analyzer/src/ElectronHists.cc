@@ -99,23 +99,15 @@ void ElectronHists::fill(const RecoEvent & event){
 
   size_t nelectrons = event.electrons->size();
 
-  double d_max = 999999.;
-  int gen_origin_closest = -1;
   for(size_t i=0; i<nelectrons; i++){
     Electron e = event.electrons->at(i);
     float gendr_min = 99999.;
-    int gen_origin = -1;
     for(const auto & gp : *event.genparticles_all){
       if(abs(gp.pdgid()) != 11) continue;
       if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
       float dr = deltaR(e, gp);
       if(dr < gendr_min){
         gendr_min = dr;
-        if(gendr_min < 0.2){ // these are updated only for better matches than the previous closest match
-          if(gp.get_statusflag(GenParticle::isDirectHardProcessTauDecayProduct)) gen_origin = 1;
-          else if(gp.get_statusflag(GenParticle::isDirectHadronDecayProduct)) gen_origin = 2;
-          else gen_origin = 0;
-        }
       }
     }
 
