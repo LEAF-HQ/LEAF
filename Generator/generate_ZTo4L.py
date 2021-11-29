@@ -108,39 +108,23 @@ folderstructure = {
         'infilenamebase':  'HLT',
         'pathtag':         'AOD/' + sampletype
     },
-    'MINIAOD': {
-        'pset':            psetfolder+'/pset_06_miniaod.py',
-        'cmsswtag':        cmssw_tag_sim,
+    'MINIAODv2': {
+        'pset':            psetfolder+'/pset_06_miniaodv2.py',
+        'cmsswtag':        'CMSSW_10_6_20',
         'jobnametag':      'miniaod',
         'outfilenamebase': 'MINIAOD',
         'infilepathtag':   'AOD/' + sampletype,
         'infilenamebase':  'AOD',
-        'pathtag':         'MINIAOD/' + sampletype
+        'pathtag':         'MINIAODv2/' + sampletype
     },
     'NANOAOD': {
         'pset':            psetfolder+'/pset_07_nanoaod.py',
         'cmsswtag':        cmssw_tag_sim,
         'jobnametag':      'nanoaod',
         'outfilenamebase': 'NANOAOD',
-        'infilepathtag':   'MINIAOD/' + sampletype,
+        'infilepathtag':   'MINIAODv2/' + sampletype,
         'infilenamebase':  'MINIAOD',
         'pathtag':         'NANOAOD/' + sampletype
-    },
-    'Tuples_GENSIM': {
-        'jobnametag':      'tuples_gensim',
-        'cmsswtag':        cmssw_tag_sim,
-        'outfilenamebase': 'Tuples_GENSIM',
-        'infilepathtag':   'GENSIM/' + sampletype,
-        'infilenamebase':  'GENSIM',
-        'pathtag':         'Tuples_GENSIM/' + sampletype,
-        'tuplizer':        'Tuplizer'
-    },
-    'Tuples_NANOAOD': {
-        'jobnametag':      'tuples_nanoaod',
-        'cmsswtag':        cmssw_tag_sim,
-        'outfilenamebase': 'Tuples_NANOAOD',
-        'pathtag':         'Tuples_NANOAOD/' + sampletype,
-        'tuplizer':        'Tuplizer_NANOAOD'
     }
 
 }
@@ -150,9 +134,6 @@ ensureDirectory(workdir_slurm)
 
 submit = True
 
-
-
-# generate p p > z, (z > mu+ mu- ta+ ta-) / h
 
 
 
@@ -170,10 +151,10 @@ EventGenerator = GensimRunner(processnames=processes, tag=tag, individual_settin
 # EventGenerator.SubmitGenerationStep(generation_step='HLT', ncores=8, runtime=(3,00,00), mode='resubmit')
 # EventGenerator.RemoveSamples(generation_step='DR')
 # EventGenerator.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(2,00,00), mode='new')
-# EventGenerator.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(3,00,00), mode='resubmit')
+# EventGenerator.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(2,00,00), mode='resubmit')
 # EventGenerator.RemoveSamples(generation_step='HLT')
-# EventGenerator.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(1,00,00), mode='new')
-# EventGenerator.SubmitGenerationStep(generation_step='MINIAOD', ncores=2, runtime=(2,00,00), mode='resubmit')
+# EventGenerator.SubmitGenerationStep(generation_step='MINIAODv2', ncores=2, runtime=(1,00,00), mode='new')
+EventGenerator.SubmitGenerationStep(generation_step='MINIAODv2', ncores=2, runtime=(1,00,00), mode='resubmit')
 
 
 
