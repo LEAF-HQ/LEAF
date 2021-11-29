@@ -6,17 +6,13 @@ BINARIES    := $(wildcard $(BINDIR)/*)
 CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
 
 
-all: Tuplizer Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer
+all: Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
 	@for d in $(subdirs); do ( $(MAKE) -C $$d lib ) || exit 1; done
 	@echo "--> Creating Analyzer"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS)
-
-Tuplizer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer.o
-	@echo "--> Creating Tuplizer"
-	@$(CC) $(OBJECTS) $(OBJDIR)/Tuplizer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 Tuplizer_MINIAOD: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Tuplizer_MINIAOD.o
 	@echo "--> Creating Tuplizer_MINIAOD"
