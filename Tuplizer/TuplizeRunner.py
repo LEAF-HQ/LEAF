@@ -121,7 +121,7 @@ class TuplizeRunner:
             arrayend = min(njobs_left, slurm_max_array_size)
             njobs_per_array.append(arrayend)
 
-            command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize_nanoaod.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename, idx_offset)
+            command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, self.config['arch_tag'], join(self.workarea, self.config['cmsswtag']), self.basefolder, outfoldername, commandfilename, idx_offset)
             if njobs > 0:
                 if self.submit:
                     jobid = int(subprocess.check_output(command, shell=True))
