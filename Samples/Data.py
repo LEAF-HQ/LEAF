@@ -59,6 +59,61 @@ datalist = [
         nevents=YearDependentContainer()
     )),
 
+    ('DATA_Met_B', Sample(
+        type='DATA',
+        name='DATA_Met_B',
+        group=YearDependentContainer({'2017': 'DATA_Met'}),
+        minipaths=YearDependentContainer({'2017': Storage_DAS('/MET/Run2017B-09Aug2019_UL2017_rsb-v1/MINIAOD')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Summer20/Tuples_v00_MINIAOD/DATA_Met_B')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Summer20/MINIAOD/DATA_Met_B.xml'}),
+        nevents=YearDependentContainer()
+    )),
+
+    ('DATA_Met_C', Sample(
+        type='DATA',
+        name='DATA_Met_C',
+        group=YearDependentContainer({'2017': 'DATA_Met'}),
+        minipaths=YearDependentContainer({'2017': Storage_DAS('/MET/Run2017C-09Aug2019_UL2017_rsb-v1/MINIAOD')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Summer20/Tuples_v00_MINIAOD/DATA_Met_C')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Summer20/MINIAOD/DATA_Met_C.xml'}),
+        nevents=YearDependentContainer()
+    )),
+
+    ('DATA_Met_D', Sample(
+        type='DATA',
+        name='DATA_Met_D',
+        group=YearDependentContainer({'2017': 'DATA_Met'}),
+        minipaths=YearDependentContainer({'2017': Storage_DAS('/MET/Run2017D-09Aug2019_UL2017_rsb-v1/MINIAOD')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Summer20/Tuples_v00_MINIAOD/DATA_Met_D')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Summer20/MINIAOD/DATA_Met_D.xml'}),
+        nevents=YearDependentContainer()
+    )),
+
+    ('DATA_Met_E', Sample(
+        type='DATA',
+        name='DATA_Met_E',
+        group=YearDependentContainer({'2017': 'DATA_Met'}),
+        minipaths=YearDependentContainer({'2017': Storage_DAS('/MET/Run2017E-09Aug2019_UL2017_rsb-v1/MINIAOD')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Summer20/Tuples_v00_MINIAOD/DATA_Met_E')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Summer20/MINIAOD/DATA_Met_E.xml'}),
+        nevents=YearDependentContainer()
+    )),
+
+    ('DATA_Met_F', Sample(
+        type='DATA',
+        name='DATA_Met_F',
+        group=YearDependentContainer({'2017': 'DATA_Met'}),
+        minipaths=YearDependentContainer({'2017': Storage_DAS('/MET/Run2017F-09Aug2019_UL2017_rsb-v1/MINIAOD')}),
+        tuplepaths=YearDependentContainer({'2017': Storage_T3PSI('/store/user/areimers/UL17/Summer20/Tuples_v00_MINIAOD/DATA_Met_F')}),
+        xsecs=YearDependentContainer(),
+        xmlfiles=YearDependentContainer({'2017': 'datasets/UL17/Summer20/MINIAOD/DATA_Met_F.xml'}),
+        nevents=YearDependentContainer()
+    )),
+
     ('DATA_SingleMuon_B', Sample(
         type='DATA',
         name='DATA_SingleMuon_B',
