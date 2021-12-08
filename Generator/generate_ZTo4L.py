@@ -154,7 +154,7 @@ EventGenerator = GensimRunner(processnames=processes, tag=tag, individual_settin
 # EventGenerator.SubmitGenerationStep(generation_step='AOD', ncores=4, runtime=(2,00,00), mode='resubmit')
 # EventGenerator.RemoveSamples(generation_step='HLT')
 # EventGenerator.SubmitGenerationStep(generation_step='MINIAODv2', ncores=2, runtime=(1,00,00), mode='new')
-EventGenerator.SubmitGenerationStep(generation_step='MINIAODv2', ncores=2, runtime=(1,00,00), mode='resubmit')
+# EventGenerator.SubmitGenerationStep(generation_step='MINIAODv2', ncores=2, runtime=(1,00,00), mode='resubmit')
 
 
 

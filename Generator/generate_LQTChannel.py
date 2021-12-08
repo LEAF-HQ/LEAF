@@ -26,23 +26,24 @@ import tdrstyle_all as TDR
 from CrossSectionRunner import *
 from GensimRunner import *
 
-# processes = ['LQTChannelTauTau_DynamicScale', 'LQTChannelTauNu_DynamicScale', 'LQTChannelTauMu_DynamicScale']
-# processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFO', 'LQTChannelTauNu_DynamicScale_VectorLQUFO', 'LQTChannelTauMu_DynamicScale_VectorLQUFO']
-# processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFOFlex', 'LQTChannelTauNu_DynamicScale_VectorLQUFOFlex', 'LQTChannelTauMu_DynamicScale_VectorLQUFOFlex']
-# processes = ['LQTChannelTauNu_DynamicScale_VectorLQUFOFlexCorrectCouplings', 'LQTChannelTauTau_DynamicScale_VectorLQUFOFlexCorrectCouplings']
-processes = ['LQTChannelTauTau_DynamicScale_VectorLQUFOFlexCorrectCouplings']
+processes = ['LQTChannelTauNu_DynamicScale_VectorLQUFOFlexCorrectCouplings']
 mlqs      = [100, 300, 700, 1000, 3000, 7000, 10000, 15000]
 mlqs_xsec = range(100, 15001, 100)
+# mlqs_xsec = range(100, 15001, 25)
+# mlqs_xsec = [7000]
 
 
 processes_xsec = processes
 lambdas_xsec = [1.0]
 betavalues_xsec = [
-{'B33R':-1.0, 'B33L':1.0, 'B32L':-0.11, 'B31L':0.0, 'B23L':0.11, 'B22L':0.02, 'B21L':0.0, 'B13L':-0.02, 'B12L':0.0, 'B11L':0.0}, # page 8 of 2109.08689, LQDM model choice
-{'B33R':0.0, 'B33L':1.0, 'B32L':1.0, 'B31L':1.0, 'B23L':1.0, 'B22L':1.0, 'B21L':1.0, 'B13L':1.0, 'B12L':1.0, 'B11L':1.0}, # democratic benchmark as discussed with Darius
-{'B33R':-1.0, 'B33L':1.0, 'B32L':-0.21, 'B31L':0.0, 'B23L':0.21, 'B22L':0.03, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0}, # Table 2.3 (3rd section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020),
-{'B33R':0.0, 'B33L':1.0, 'B32L':-0.15, 'B31L':0.0, 'B23L':0.19, 'B22L':0.014, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0} # Table 2.3 (1st section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020)
+# {'B33R':-1.0, 'B33L':1.0, 'B32L':-0.11, 'B31L':0.0, 'B23L':0.11, 'B22L':0.02, 'B21L':0.0, 'B13L':-0.02, 'B12L':0.0, 'B11L':0.0}, # page 8 of 2109.08689, LQDM model choice
+{'B33R':0.0, 'B33L':1.0, 'B32L':1.0, 'B31L':1.0, 'B23L':1.0, 'B22L':1.0, 'B21L':1.0, 'B13L':1.0, 'B12L':1.0, 'B11L':1.0}, # Democratic benchmark as discussed with Darius
+{'B33R':-1.0, 'B33L':1.0, 'B32L':-0.21, 'B31L':0.0, 'B23L':0.21, 'B22L':0.03, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0}, # Table 2.3 (3rd section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020), LH+RH
+{'B33R':0.0, 'B33L':1.0, 'B32L':-0.15, 'B31L':0.0, 'B23L':0.19, 'B22L':0.014, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0} # Table 2.3 (1st section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020), LH-only
 ]
+# betavalues_xsec = [
+# {'B33R':-1.0, 'B33L':1.0, 'B32L':-0.21, 'B31L':0.0, 'B23L':0.21, 'B22L':0.03, 'B21L':0.0, 'B13L':-0.04, 'B12L':0.0, 'B11L':0.0}, # Table 2.3 (3rd section from top) in 2103.16558, using Vtd/Vts = 0.21 (PDG 2020), LH+RH
+# ]
 
 general_settings = {
 'UL17':{
@@ -155,16 +156,16 @@ ensureDirectory(workdir_slurm)
 submit = True
 
 
-# CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
+CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
 # CrossBRRunner.ProduceCards()
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=600)
 # CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True, ignore_br=True, ncores=1, runtime=(01,00,00), maxjobs_per_proc=600)
 # CrossBRRunner.ReadoutCrossBR(ignore_br=True)
-# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
+CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
 # CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA'], overlay_values=[None])
-# CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
+CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
 # CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
 

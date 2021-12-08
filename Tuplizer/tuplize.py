@@ -64,13 +64,8 @@ submit = True
 
 
 # all
-# samplenames = ['QCD_Pt_1800to2400']
-# samplenames = [n for n in backgrounds.keys() if 'QCD_Pt' in n]
-# samplenames = [n for n in signals.keys() if 'LQTChannelTauNu_DynamicScale' in n]
-# samplenames = ['LQTChannelTauNu_MLQ1000_MPS117_MC1100_L1p0', 'LQTChannelTauNu_MLQ2620_MPS117_MC1100_Lbest']
-# samplenames = data.keys()
+samplenames = data.keys()
 # samplenames = backgrounds.keys()
-samplenames = ['DYJetsToLL_M50_Inclusive']
 # samplenames = signals.keys()
 # samplenames = backgrounds.keys() + signals.keys()
 # samplenames = data.keys() + signals.keys()
@@ -80,23 +75,19 @@ samplenames = ['DYJetsToLL_M50_Inclusive']
 
 def main():
     for samplename in samplenames:
-        # if not 'LQTChannelTauMu_DynamicScale' in samplename and not 'LQTChannelMuMu_DynamicScale' in samplename: continue
-        # if not 'DYJetsToLL_M50_Inclusive' == samplename: continue
-        # if samplename == 'TTToSemiLeptonic' or samplename == 'TTTo2L2Nu' or samplename == 'TTToHadronic': continue
         print green('--> Working on sample: \'%s\'' % (samplename))
         s = samples[samplename]
         Tuplizer = TuplizeRunner(sample=s, stage=stage, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.CountEvents(check_missing=True)
-        # break
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='new')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=100000, mode='resubmit')
+        Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=100000, mode='resubmit')
         # Tuplizer.CleanBrokenFiles()
         # Tuplizer.CreateDatasetXMLFile(force_counting=True)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=True)
-    create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
