@@ -62,11 +62,9 @@ class TuplizeRunner:
         elif mode is 'resubmit': commandfilename = join(self.tuplizefolder, 'commands/resubmit_tuplize_%s.txt' % (self.sample.name))
 
         samplename = self.sample.name
-        # print green('--> Working on sample \'%s\'' % (samplename))
         filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year)
         if filedict is False:
             return
-        # outfoldername = self.sample.tuplepaths[self.year].director.replace('root://', 'gsiftp://')+self.sample.tuplepaths[self.year].path
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
 
 
@@ -89,7 +87,6 @@ class TuplizeRunner:
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
             print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
-            # missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='Tuples_%s' % (stagetag), maxindex=len(commands), generation_step='Tuples_%s' % (stagetag)) # only the missing ones -- only works if tuplizing into a new directory
             missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='Tuples', update_missing=True, update_all=False)
 
         njobs = 0
@@ -132,7 +129,7 @@ class TuplizeRunner:
             njobs_left -= arrayend
             narrays += 1
 
-    def CleanBrokenFiles(self, nevt_per_job=200000):
+    def CleanBrokenFiles(self, nevt_per_job=200000, only_check_missing=True):
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year)
         if filedict is False: raise ValueError('Got invalid filedict when trying to delete broken tuples.')
@@ -145,7 +142,7 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             njobs += njobs_thisfile
 
-        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='Tuples', update_missing=True, update_all=False)
+        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.sampleinfofolder, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='Tuples', update_missing=only_check_missing, update_all = not only_check_missing)
 
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
         missing_or_broken_tuples = [os.path.join(outfoldername, 'Tuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
@@ -161,48 +158,42 @@ class TuplizeRunner:
         else:
             print yellow('  --> Would remove up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
             print commands
-        # print missing_indices
-        # print commands
 
 
 
     def CreateDatasetXMLFile(self, force_counting, count_weights=True):
-        # print self.year, self.sample.nevents.has_year(self.year)
-        # print self.sample.nevents[self.year]
         xmlfilename = join(self.macrofolder, self.sample.xmlfiles[self.year])
         inputfilepattern = join(self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, '*.root')
         out = open(xmlfilename, 'w')
-        # l = glob.glob(inputfilepattern)
         l = list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, pattern='*.root')
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(l), self.sample.name))
         l.sort()
         commands = []
-        # idx = 0
+
         n_genevents_sum = 0
         pbar = tqdm(l, desc="  --> Files counted")
         for filename in pbar:
-        # for filename in l:
-            # print filename
-            # idx += 1
-            n_genevents = 0
-            file_ok = True
-            try:
-                f = ROOT.TFile.Open(filename)
-                n_genevents = f.Get('AnalysisTree').GetEntriesFast()
-            except:
-                print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
-                file_ok = False
-            try:
-                f.Close()
-            except:
-                file_ok = False
-            del f
-            n_genevents_sum += n_genevents
-            if n_genevents > 0 and file_ok:
+            # n_genevents = 0
+            # file_ok = True
+            # try:
+            #     f = ROOT.TFile.Open(filename)
+            #     n_genevents = f.Get('AnalysisTree').GetEntriesFast()
+            # except:
+            #     print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
+            #     file_ok = False
+            # try:
+            #     f.Close()
+            # except:
+            #     file_ok = False
+            # del f
+            # n_genevents_sum += n_genevents
+            n_genevents = count_genevents_in_file(filename, treename='AnalysisTree')
+            if n_genevents > 0 and (n_genevents is not None):
                 try:
                     if count_weights:
                         commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
                     out.write('<InputFile FileName="%s"/>\n' % filename)
+                    n_genevents_sum += n_genevents
                 except:
                     print yellow('  --> Couldn\'t read number of weighted events in file \'%s\', skip this one. Will not appear in XML file, so it\'s safe.' % (filename))
 
@@ -231,21 +222,7 @@ class TuplizeRunner:
                 out.write('<!-- Generated number of events: %s -->\n' % str(n_genevents_sum))
                 print green('  --> Only counted events, not weights. Wrote the XML file with number of generated events in sample.')
 
-            # else:
-            #     if count_weights:
-            #         results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
-            #         nevents = sum(float(r[0]) for r in results)
-            #         out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
-            #         if self.sample.nevents.has_year(self.year):
-            #             rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
-            #             if rel_diff < 0.01:
-            #                 print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
-            #             else:
-            #                 print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
-            #         else:
-            #             print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
-            #     else:
-            #         print green('  --> Did not count events. Simply wrote the XML file with number of generated/recorded events in sample.')
+
         out.close()
 
 
@@ -275,8 +252,6 @@ class TuplizeRunner:
 
         cmsrun_command = get_dasxsec_cmsrun_command(minipath=minipath, director=director)
 
-        # print cmsrun_command
-        # cmsrun_output = subprocess.check_output(cmsrun_command, shell=True, stderr=subprocess.STDOUT).split('\n') #
         cmsrun_output = subprocess.check_output(cmsrun_command, shell=True).split('\n') #
         for l in cmsrun_output:
             if l.startswith('After filter: final cross section'):

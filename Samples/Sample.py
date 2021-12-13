@@ -158,15 +158,12 @@ class Sample:
 
         # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
         if stage is 'nano':
-            # nfiles_exp = len(self.nanopaths[year].get_file_list())
             stagetag = 'NANOAOD'
         elif stage is 'mini':
-            # ntuples_expected = len(self.minipaths[year].get_file_list())
             stagetag = 'MINIAOD'
 
         missingfilelist = []
         outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
-        # outfoldername = self.tuplepaths[year].path
         if filelist_json is not False and update_missing: # only check already listed files
             if len(filelist_json) == 0:
                 print green('  --> Sample \'%s\' has all no missing tuples, continue.' % (self.name))
@@ -175,7 +172,7 @@ class Sample:
                 expected_filelist = [os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1))) for i in filelist_json]
                 files_and_events = self.count_events_in_files(expected_filelist, stage=stage, treename='AnalysisTree')
 
-                #find missing entries
+                # find missing entries
                 for i in filelist_json:
                     expected_entry = os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1)))
                     if not expected_entry in files_and_events:
@@ -185,12 +182,10 @@ class Sample:
                 for file in files_and_events:
                     if not (files_and_events[file] > 0):
                         missingfilelist.append(file)
+
         else: # check for all files (again).
             missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='%s_%s' % (tuplebasename, stagetag), maxindex=ntuples_expected, generation_step='%s_%s' % (tuplebasename, stagetag))
             missingfilelist = [os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1))) for i in missing_indices]
-            # expected_filelist = [os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1))) for i in range(nfiles_exp)]
-            # files_and_events = self.count_events_in_files(expected_filelist, stage=stage)
-            # missingfilelist = files_and_events.keys()
 
         # if we reach this point, the missing files JSON needs to be updated.
 
@@ -258,94 +253,10 @@ class Sample:
                 filename = o[1]
                 newdict[filename] = nevt
             except Exception as e:
-                print yellow('  --> Caught exception \'%s\'. Sample \'%s\' is going to miss events.' % (e, self.name))
+                print yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name))
                 # return False
 
 
-        #################################
-
-
-        # pool = Pool(processes=ncores)
-        # # result = pool.map(countEventsInFileGrid, filelist, chunksize)
-        # result = []
-        # for x in tqdm(pool.imap(countEventsInFileGrid, filelist, chunksize), total=len(filelist), file=sys.stdout):
-        #     result.append(x)
-        # pool.terminate()
-        # pool.close()
-        #
-        # # Output the result
-        # newdict = {}
-        # failed_files = []
-        # for d in result:
-        #     if d[d.keys()[0]] is None:
-        #         failed_files.append(d.keys()[0])
-        #     else:
-        #         newdict.update(d)
-        #
-        # idx = 0
-        # while len(failed_files) > 0 and idx < maxtries:
-        #     failed_files_loop = []
-        #
-        #     pool = Pool(processes=ncores)
-        #     # result = pool.map(countEventsInFileGrid, failed_files, chunksize)
-        #     result = []
-        #     for x in tqdm(pool.imap(countEventsInFileGrid, failed_files, 1), total=len(failed_files), file=sys.stdout):
-        #         result.append(x)
-        #     pool.terminate()
-        #     pool.close()
-        #
-        #     for d in result:
-        #         if d[d.keys()[0]] is None:
-        #             failed_files_loop.append(d.keys()[0])
-        #         else:
-        #             newdict.update(d)
-        #     failed_files = failed_files_loop
-        #     idx += 1
-
-
-        #################################
-
-
-            # pbar = tqdm(range(len(failed_files)), desc="Files counted")
-            # for idx in pbar:
-            #     filename = failed_files[idx]
-            #     nevt = countEventsInFileGrid(absolute_filename=filename)
-            #     if nevt is None:
-            #         failed_files_loop.append(filename)
-            #     else:
-            #         newdict[filename]=nevt
-            # failed_files = failed_files_loop
-
-
-
-        #################################
-
-
-
-        # failed_files = []
-        # newdict = {}
-        # pbar = tqdm(range(len(filelist)), desc="Files counted")
-        # for idx in pbar:
-        #     filename = filelist[idx]
-        #     nevt = countEventsInFileGrid(absolute_filename=filename)
-        #     if nevt is None:
-        #         failed_files.append(filename)
-        #     else:
-        #         newdict[filename]=nevt
-        #
-        # idx = 0
-        # keep_going = True
-        # while len(failed_files) > 0 and idx < maxtries:
-        #     failed_files_loop = []
-        #     pbar = tqdm(range(len(failed_files)), desc="Files counted")
-        #     for idx in pbar:
-        #         filename = failed_files[idx]
-        #         nevt = countEventsInFileGrid(absolute_filename=filename)
-        #         if nevt is None:
-        #             failed_files_loop.append(filename)
-        #         else:
-        #             newdict[filename]=nevt
-        #     failed_files = failed_files_loop
 
 
         print green('  --> Successfully counted events in %i files' % (len(newdict)))

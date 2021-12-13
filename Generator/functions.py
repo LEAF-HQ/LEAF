@@ -408,28 +408,30 @@ def get_best_lambda(mlq):
     # calculate lambda and round to 3 decimal points
     return float('%.3f' % float(1.1/2. * (mlq/1000.)))
 
-def findMissingFilesT2(filepath, filename_base, maxindex, generatorfolder, generation_step, treename='Events'):
-    missing_indices = []
-    filename_base = filepath+'/'+filename_base
-    pbar = tqdm(range(maxindex), desc="Files checked")
-    for idx in pbar:
-        filename = filename_base + '_' + str(idx+1) + '.root'
+# def findMissingFilesT2(filepath, filename_base, maxindex, treename='Events'):
+#     missing_indices = []
+#     filename_base = filepath+'/'+filename_base
+#     pbar = tqdm(range(maxindex), desc="Files checked")
+#     for idx in pbar:
+#         filename = filename_base + '_' + str(idx+1) + '.root'
+#
+#         try:
+#             f = TFile.Open(filename)
+#             tree = f.Get(treename)
+#             n_genevents = tree.GetEntriesFast()
+#         except AttributeError:
+#             print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (filename))
+#             missing_indices.append(idx)
+#         except ReferenceError:
+#             print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (filename))
+#             missing_indices.append(idx)
+#         try:
+#             f.Close()
+#         except:
+#             pass
+#     return missing_indices
 
-        try:
-            f = TFile.Open(filename)
-            tree = f.Get(treename)
-            n_genevents = tree.GetEntriesFast()
-        except AttributeError:
-            print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (filename))
-            missing_indices.append(idx)
-        except ReferenceError:
-            print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (filename))
-            missing_indices.append(idx)
-        try:
-            f.Close()
-        except:
-            pass
-    return missing_indices
+
 
 def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
     missing_indices = []
@@ -437,75 +439,42 @@ def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
     pbar = tqdm(range(maxindex), desc="Files checked")
     for idx in pbar:
         filename = filename_base + '_' + str(idx+1) + '.root'
-        # have to check if there is an 'AnalysisTree' in the file, not just 'ls' the file. If not accessible, remove file so that later step will add it to list of missing files
-        try:
-            f = TFile.Open(filename)
-            if not f:
-                print yellow('  --> File is a nullptr, raising error: %s.' % (filename))
-                raise ReferenceError()
-                if f.IsZombie():
-                    print yellow('  --> File is a zombie, raising error: %s.' % (filename))
-                    raise ReferenceError()
-            is_recovered = f.TestBit(ROOT.TFile.kRecovered)
-            if is_recovered:
-                print yellow('  --> File had to be recovered, raising error: %s.' % (filename))
-                raise ReferenceError()
-            tree = f.Get('AnalysisTree')
-            n_genevents = tree.GetEntriesFast()
-        except AttributeError:
-            print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (filename))
+        n_genevents = count_genevents_in_file(filename, treename='AnalysisTree')
+        if n_genevents is None:
             missing_indices.append(idx)
-        except ReferenceError:
-            print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (filename))
-            missing_indices.append(idx)
-        try:
-            f.Close()
-        except:
-            pass
+
     return missing_indices
 
 
-def countEventsInFileGrid(absolute_filename, treename='Events'):
 
-    result = None
+def count_genevents_in_file(filename, treename='Events'):
+    n_genevents = None
     try:
-        f = TFile.Open(absolute_filename)
+        f = TFile.Open(filename)
+        if not f:
+            print yellow('  --> File is a nullptr, raising error: %s.' % (filename))
+            raise ReferenceError()
+        if f.IsZombie():
+            print yellow('  --> File is a zombie, raising error: %s.' % (filename))
+            raise ReferenceError()
+        is_recovered = f.TestBit(ROOT.TFile.kRecovered)
+        if is_recovered:
+            print yellow('  --> File had to be recovered, raising error: %s.' % (filename))
+            raise ReferenceError()
         tree = f.Get(treename)
         n_genevents = tree.GetEntriesFast()
-        result = n_genevents
     except AttributeError:
-        print yellow('  --> Couldn\'t open file or tree, adding it to list of missing indices: %s.' % (absolute_filename))
-        result = None
+        print yellow('  --> Couldn\'t open file or tree: %s.' % (filename))
     except ReferenceError:
-        print yellow('  --> File is damaged, adding it to list of missing indices: %s.' % (absolute_filename))
-        result = None
+        print yellow('  --> File is damaged: %s.' % (filename))
     try:
         f.Close()
+        del f
     except:
-        result = None
-
-    # print 'in function: ', result
-    return {absolute_filename: result}
-    # queue.put({absolute_filename: result})
+        pass
+    return n_genevents
 
 
-# def countEventsInFileGridTimeout(absolute_filename, treename='Events', maxtime=15):
-#
-#     result = {absolute_filename: None}
-#
-#     queue = Queue()
-#     p = Process(target=countEventsInFileGrid, args=(absolute_filename, queue))
-#     p.start()
-#     p.join(maxtime)
-#     if p.is_alive():
-#         print yellow('  --> Timeout! Adding file to list of missing indices: %s.' % (absolute_filename))
-#         # Terminate foo
-#         p.terminate()
-#         p.join()
-#         return result
-#
-#     result = queue.get()
-#     return result
 
 
 
