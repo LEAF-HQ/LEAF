@@ -50,7 +50,7 @@ namespace std {} using namespace std;
 #include "include/constants.h"
 #include "include/GenEvent.h"
 #include "include/FlagSelection.h"
-#include "include/TauIds.h"
+#include "include/EventHists.h"
 #include "include/Met.h"
 #include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
@@ -74,12 +74,12 @@ namespace std {} using namespace std;
 #include "include/BTaggingMCEfficiencyHists.h"
 #include "include/useful_functions.h"
 #include "include/JetIds.h"
-#include "include/PreselectionHists.h"
 #include "include/JetCorrections.h"
 #include "include/ObjectIdUtils.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
 #include "include/BJetHists.h"
+#include "include/TauIds.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
@@ -2300,7 +2300,7 @@ namespace {
 "include/constants.h",
 "include/GenEvent.h",
 "include/FlagSelection.h",
-"include/TauIds.h",
+"include/EventHists.h",
 "include/Met.h",
 "include/GenParticlePrinter.h",
 "include/GenParticleHists.h",
@@ -2324,12 +2324,12 @@ namespace {
 "include/BTaggingMCEfficiencyHists.h",
 "include/useful_functions.h",
 "include/JetIds.h",
-"include/PreselectionHists.h",
 "include/JetCorrections.h",
 "include/ObjectIdUtils.h",
 "include/MuonHists.h",
 "include/Jet.h",
 "include/BJetHists.h",
+"include/TauIds.h",
 "include/LumiblockSelection.h",
 "include/JetHists.h",
 "include/FlagHists.h",
@@ -2396,7 +2396,7 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/constants.h"
 #include "include/GenEvent.h"
 #include "include/FlagSelection.h"
-#include "include/TauIds.h"
+#include "include/EventHists.h"
 #include "include/Met.h"
 #include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
@@ -2420,12 +2420,12 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #include "include/BTaggingMCEfficiencyHists.h"
 #include "include/useful_functions.h"
 #include "include/JetIds.h"
-#include "include/PreselectionHists.h"
 #include "include/JetCorrections.h"
 #include "include/ObjectIdUtils.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
 #include "include/BJetHists.h"
+#include "include/TauIds.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
