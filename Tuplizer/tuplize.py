@@ -61,10 +61,12 @@ config_per_year = {
 year = '2017'
 stage = 'mini'
 submit = True
+nevt_per_job = 100000
 
 
 # all
 samplenames = data.keys()
+# samplenames = ['DATA_SingleMuon_E']
 # samplenames = backgrounds.keys()
 # samplenames = signals.keys()
 # samplenames = backgrounds.keys() + signals.keys()
@@ -79,13 +81,13 @@ def main():
         s = samples[samplename]
         Tuplizer = TuplizeRunner(sample=s, stage=stage, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
         # Tuplizer.CountEvents(check_missing=True)
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='new')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=100000, mode='resubmit')
-        Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=100000, mode='resubmit')
-        # Tuplizer.CleanBrokenFiles()
-        # Tuplizer.CreateDatasetXMLFile(force_counting=True)
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='new')
+        # Tuplizer.CleanBrokenFiles(nevt_per_job=nevt_per_job, only_check_missing=True)
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+        # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+        Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=False)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=True)
     # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
