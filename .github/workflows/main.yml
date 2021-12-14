@@ -68,5 +68,5 @@ jobs:
         run: |
           cd $LEAFPATH
           source setup.sh
-	  cd $ANALYZERPATH
-	  ./createNewAnalysis.py TestAnalysis      
+          cd $ANALYZERPATH
+          ./createNewAnalysis.py TestAnalysis      
