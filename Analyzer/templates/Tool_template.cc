@@ -16,6 +16,8 @@
 #include "Analyzer/include/ElectronIds.h"
 #include "Analyzer/include/TauIds.h"
 
+#include "Analyzer/include/NJetSelection.h"
+
 
 #include "Analyzer/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
 #include "Analyzer/$MYANALYSISNAME/include/$MYHISTNAME.h"
@@ -39,6 +41,9 @@ private:
 
   // Modules used in the analysis
   unique_ptr<JetCleaner> cleaner_jet;
+
+  // Selections used in the analysis
+  unique_ptr<NJetSelection> selection_njets;
 };
 
 
@@ -51,9 +56,11 @@ $MYTOOLNAME::$MYTOOLNAME(const Config & cfg) : BaseTool(cfg){
   MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
   cleaner_jet.reset(new JetCleaner(jet_id));
 
+  selection_njets.reset(new NJetSelection(cfg, 4, -1));
+
 
   // histfolders
-  vector<TString> histtags = {"input", "cleaner"};
+  vector<TString> histtags = {"input", "cleaner", "njets", "nominal"};
   book_histograms(histtags);
 }
 
@@ -76,6 +83,13 @@ bool $MYTOOLNAME::Process(){
   // run example cleaner
   cleaner_jet->process(*event);
   fill_histograms("cleaner");
+
+  // run example selection
+  if(!selection_njets->passes(*event)) return false;
+  fill_histograms("njets");
+
+  // fill one set of histograms called "nominal", which is necessary for PostAnalyzer scripts
+  fill_histograms("nominal");
 
   // store events passing the full selection for the next step
   return true;

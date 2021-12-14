@@ -30,7 +30,9 @@ def main():
         '$MYEVENTCLASS' : '%sEvent' % (name),
         '$MYTOOLNAME' : '%sTool' % (name),
         '$MYHISTNAME' : '%sHists' % (name),
-        '$MYUSERNAME' : os.environ['USER']
+        '$MYUSERNAME' : os.environ['USER'],
+        '$MYANALYZERPATH': os.environ['ANALYZERPATH'],
+        '$MYLEAFPATH': os.environ['LEAFPATH']
     }
 
     # create makefile

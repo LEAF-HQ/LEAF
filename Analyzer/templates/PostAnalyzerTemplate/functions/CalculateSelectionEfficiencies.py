@@ -58,7 +58,6 @@ def CalculateSelectionEfficiencies(self, num_and_denom, signals, backgrounds):
     haxis.Draw('AXIS')
     legend = tdrLeg(0.45,0.65,0.95,0.9, textSize=0.025)
     for i, proc in enumerate(graphs):
-        legtext = legends[proc]
         lstyle = 1
         tdrDraw(graphs[proc], "E", marker=kFullCircle, mcolor=self.samples[proc].color, lcolor=self.samples[proc].color, fstyle=0, lstyle=self.samples[proc].linestyle)
         legend.AddEntry(graphs[proc], self.samples[proc].legendtext, 'LP')

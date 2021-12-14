@@ -20,12 +20,12 @@ def CombineChannels(self):
         finalname_base = os.path.join(self.combineinput_path, 'COMB')
         finalname = finalname_base
         for chan in self.channels:
-            finalname = '_'.join([finalname, chan])
+            finalname = '_'.join([x for x in [finalname, chan] if x is not None])
             for cat in self.histnames_in_out_per_category.keys():
-                indatacardname = '_'.join([self.histnames_in_out_per_category[cat][1], chan, cat, signal]) + '.txt'
+                indatacardname = '_'.join([x for x in [self.histnames_in_out_per_category[cat][1], chan, cat, signal] if x is not None]) + '.txt'
                 datacards.append(os.path.join(self.combineinput_path, indatacardname))
                 # print finalname, cat
-                finalname = '_'.join([finalname, cat])
+                finalname = '_'.join([x for x in [finalname, cat] if x is not None])
         finalname = '_'.join([finalname, signal]) + '.txt'
         command = [combine_dir + '/scripts/combineCards.py']
         command += datacards
@@ -49,9 +49,9 @@ def ExecuteCombineCombination(self):
         combcard_base = os.path.join(self.combineinput_path, 'COMB')
         combcard = combcard_base
         for chan in self.channels:
-            combcard = '_'.join([combcard, chan])
+            combcard = '_'.join([x for x in [combcard, chan] if x is not None])
             for cat in self.histnames_in_out_per_category.keys():
-                combcard = '_'.join([combcard, cat])
+                combcard = '_'.join([x for x in [combcard, cat] if x is not None])
         combcard = '_'.join([combcard, signal]) + '.txt'
 
         parts = signal.split('_')
@@ -193,9 +193,9 @@ def create_datacard(year, signal, variable, category, channel, backgrounds, syst
     if not os.path.exists(os.path.join(combineinput_path, rootfilename)):
         raise RuntimeError('Rootfile %s does not exist.' % (os.path.join(combineinput_path, rootfilename)))
 
-    filename_datacard = '_'.join([variable, channel, category, signal]) + '.txt'
+    filename_datacard = '_'.join([x for x in [variable, channel, category, signal] if x is not None]) + '.txt'
     # print filename_datacard
-    varcat = '_'.join([variable, channel, category])
+    varcat = '_'.join([x for x in [variable, channel, category] if x is not None])
     separator = ['-----------------------------\n']
 
     lines_header = get_lines_datacard_header(variable, category, channel, signal, backgrounds) + separator

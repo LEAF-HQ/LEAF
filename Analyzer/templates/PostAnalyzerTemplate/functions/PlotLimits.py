@@ -62,7 +62,7 @@ def PlotLimits(self, signal_scaled_by=1., draw_observed=False, draw_theory=False
         npoints_68 += 1
         npoints_95 += 1
 
-    # get theory graphs -- plotting theory lines needs to be implemented
+    # get theory graphs -- getting theory lines from files needs to be implemented
     if draw_theory:
         pass
 
@@ -71,8 +71,6 @@ def PlotLimits(self, signal_scaled_by=1., draw_observed=False, draw_theory=False
     c.SetLogy()
     leg = tdrLeg(0.5,0.65,0.85,0.9, textSize=0.042)
     tdrHeader(leg, '95% CL upper limits')
-    leg_theory = tdrLeg(0.5,0.4,0.85,0.65, textSize=0.042)
-    tdrHeader(leg_theory, 'Theory prediction')
     tdrDraw(g_95, "3 SAME", mcolor=kOrange, lcolor=kOrange, fcolor=kOrange)
     tdrDraw(g_68, "3 SAME", mcolor=kGreen+1, lcolor=kGreen+1, fcolor=kGreen+1)
     tdrDraw(g_expected, "L SAME", mcolor=kBlack, lcolor=kBlack, fcolor=kBlack, lstyle=2)
@@ -82,10 +80,12 @@ def PlotLimits(self, signal_scaled_by=1., draw_observed=False, draw_theory=False
     leg.AddEntry(g_68, '68% expected', 'F')
     leg.AddEntry(g_95, '95% expected', 'F')
     leg.Draw('SAME')
-    if draw_theory:
+    if draw_theory: # adding theory lines to legend needs to be implemented
+        leg_theory = tdrLeg(0.5,0.4,0.85,0.65, textSize=0.042)
+        tdrHeader(leg_theory, 'Theory prediction')
         leg_theory.Draw('SAME')
     c.RedrawAxis()
     outname = os.path.join(self.plotoutput_path, 'Limits.pdf')
     c.SaveAs(outname)
-    if draw_theory:
-        xsecinfile.Close()
+    if draw_theory: # closing cross section input file needs to be implemented
+        pass
