@@ -3,10 +3,11 @@
 
 
 <!ENTITY TargetLumi  "1" >
-<!ENTITY outfilepath "/work/areimers/test" >
+<!ENTITY outfilepath "/pnfs/psi.ch/cms/trivcat/store/user/$MYUSERNAME/2017/Preselection/InitialSetup" >
 
 
-<!ENTITY LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0        SYSTEM "/work/areimers/LQDM/macros/datasets/UL17/Recolevel/LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0.xml"        >
+<!ENTITY LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0   SYSTEM "/work/areimers/LEAF/Analyzer/datasets/UL17/Summer20/MINIAOD/LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0.xml" >
+<!ENTITY TTToSemiLeptonic                        SYSTEM "/work/areimers/LEAF/Analyzer/datasets/UL17/Summer20/MINIAOD/TTToSemiLeptonic.xml" >
 
 ]>
 
@@ -16,9 +17,8 @@
   <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" Walltime="01:00:00" />
 
   <InputDatasets>
-    <Dataset Name="LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0"         Lumi="100000"  Type="MC" Group="None" Year="2017" >
-      &LQLQToBTau_MLQ1000_MPS574_MC1427_L1p0;
-    </Dataset>
+    <Dataset Name="LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0"  Lumi="100000"         Year="2017"  Type="MC"  Group="None"  >    &LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0;    </Dataset>
+    <Dataset Name="TTToSemiLeptonic"                       Lumi="294008201.8"    Year="2017"  Type="MC"  Group="TT" >       &TTToSemiLeptonic;                         </Dataset>
   </InputDatasets>
 
   <AdditionalVariables>
