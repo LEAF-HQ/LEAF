@@ -26,10 +26,11 @@ def main():
 
     # define placeholders and desired replacements
     placeholder_dict = {
-    '$MYANALYSISNAME': name,
-    '$MYEVENTCLASS' : '%sEvent' % (name),
-    '$MYTOOLNAME' : '%sTool' % (name),
-    '$MYHISTNAME' : '%sHists' % (name)
+        '$MYANALYSISNAME': name,
+        '$MYEVENTCLASS' : '%sEvent' % (name),
+        '$MYTOOLNAME' : '%sTool' % (name),
+        '$MYHISTNAME' : '%sHists' % (name),
+        '$MYUSERNAME' : os.environ['USER']
     }
 
     # create makefile
@@ -43,6 +44,9 @@ def main():
 
     # create all new source files
     createNewConfigs(name, placeholder_dict)
+
+    # create all new source files
+    createNewPostAnalyzer(name, placeholder_dict)
 
     # update Makefile.local
     need_to_update = True
@@ -104,6 +108,12 @@ def createNewConfigs(name, placeholders):
     os.system(command)
 
     replace_placeholders('%s/config/%s.xml' % (name, placeholders['$MYANALYSISNAME']), placeholders)
+
+def createNewPostAnalyzer(name, placeholders):
+    command = 'cp -r templates/PostAnalyzerTemplate %s/PostAnalyzer' % (name)
+    os.system(command)
+
+    replace_placeholders('%s/PostAnalyzer/steer.py' % (name), placeholders)
 
 def replace_placeholders(filename, placeholder_dict):
     newlines = []
