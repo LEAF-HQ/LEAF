@@ -63,3 +63,10 @@ jobs:
           echo $PATH
           sleep 2
           source $PWD/get_leaf.sh
+
+      - name: Set up test analysis
+        run: |
+          cd $LEAFPATH
+          source setup.sh
+	  cd $ANALYZERPATH
+	  ./createNewAnalysis.py TestAnalysis      
