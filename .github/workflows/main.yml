@@ -63,9 +63,18 @@ jobs:
           echo $PATH
           sleep 2
           source $PWD/get_leaf.sh
+          echo $PWD
+          ls -lrth
+          echo $LEAFPATH
+          echo $ANALYZERPATH
 
       - name: Set up test analysis
         run: |
+          set -x
+          echo $LEAFPATH
+          echo $ANALYZERPATH
+          echo $PWD
+          ls -lrth
           cd $LEAFPATH
           source $PWD/setup.sh
           cd $ANALYZERPATH
