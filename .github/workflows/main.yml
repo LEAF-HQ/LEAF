@@ -67,7 +67,13 @@ jobs:
       - name: Set up test analysis
         run: |
           set -x
-          cd LEAF
+          shopt -s expand_aliases
+          export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
+          export SCRAM_ARCH=slc7_amd64_gcc700
+          source /cvmfs/cms.cern.ch/cmsset_default.sh
+          cd CMSSW_10_6_12/src
+          eval `scramv1 runtime -sh`
+          cd ../../LEAF
           source $PWD/setup.sh
           cd $ANALYZERPATH
           ./createNewAnalysis.py TestAnalysis      
