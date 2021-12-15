@@ -67,6 +67,6 @@ jobs:
       - name: Set up test analysis
         run: |
           cd $LEAFPATH
-          source setup.sh
+          source $PWD/setup.sh
           cd $ANALYZERPATH
           ./createNewAnalysis.py TestAnalysis      
