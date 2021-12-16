@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE PlotterConfiguration PUBLIC "" "PlotterConfiguration.dtd"[]>
+
+
+<PlotterConfiguration>
+
+<!-- InputDirectory  = "/pnfs/psi.ch/cms/trivcat/store/user/areimers/TestAnalysis/2017/Preselection/InitialSetup" -->
+  <FileConfiguration
+    InputDirectory  = "/work/areimers/test/TestAnalysis/2017/Preselection/InitialSetup"
+    OutputDirectory = "/work/areimers/test/TestAnalysis/2017/Preselection/InitialSetup/plots/distributions"
+    PreFix          = "TestAnalysis_"
+    SEDirector      = "root://t3dcachedb03.psi.ch/"
+  />
+
+  <PlottingConfiguration
+    lumitext   = "41.5 fb^{-1} (13 TeV)"
+    blind      = "false"
+    logY       = "true"
+    normalize  = "false"
+    singlePDF  = "false"
+    numerator  = ""
+  />
+
+  <InputDatasets>
+    <Dataset Name="LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0"  Stack="false"  Color="636"  Linestyle="1"   Legend="LQLQ#rightarrow b#tau b#tau (1 TeV)"     Type="MC" />
+    <Dataset Name="LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0"  Stack="false"  Color="633"  Linestyle="1"   Legend="LQLQ#rightarrow b#tau b#tau (1.36 TeV)"  Type="MC" />
+    <Dataset Name="WJetsToLNu_Inclusive"                   Stack="true"   Color="814"  Linestyle="0"   Legend="W+jets #rightarrow l#nu"                 Type="MC" />
+    <Dataset Name="QCD_Had"                                Stack="true"   Color="429"  Linestyle="0"   Legend="QCD"                                     Type="MC" />
+    <Dataset Name="VV"                                     Stack="true"   Color="880"  Linestyle="0"   Legend="VV"                                      Type="MC" />
+    <Dataset Name="TT"                                     Stack="true"   Color="810"  Linestyle="0"   Legend="t#bar{t}"                                Type="MC" />
+    <Dataset Name="ST"                                     Stack="true"   Color="858"  Linestyle="0"   Legend="Single t"                                Type="MC" />
+    <Dataset Name="DYJets"                                 Stack="true"   Color="798"  Linestyle="0"   Legend="DY #rightarrow ll"                       Type="MC" />
+    <Dataset Name="Data_SingleMuon"                        Stack="false"  Color="1"    Linestyle="0"   Legend="Data"                                    Type="DATA" />
+  </InputDatasets>
+
+
+<!--
+kWhite    0,
+kBlack    1,
+kYellow   400
+kGreen    416
+kCyan     432
+kBlue     600
+kMagenta  616
+kRed      632
+kOrange   800
+kSpring   820
+kTeal     840
+kAzure    860
+kViolet   880
+kPink     900
+kGray     920
+
+-->
+
+
+
+</PlotterConfiguration>
