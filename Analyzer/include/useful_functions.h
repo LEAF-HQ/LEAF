@@ -62,8 +62,74 @@ inline void sort_by_pt(std::vector<P> & particles){
     std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
 }
 
-void validateConfigFile(const char *filename);
-xmlNode* findNodeByName(xmlNode* rootnode, TString name);
+inline void validateConfigFile(const char *filename){
+  xmlTextReaderPtr reader;
+  int ret;
+
+
+  /* default DTD attributes */  /* substitute entities */  /* validate with the DTD */
+  reader = xmlReaderForFile(filename, NULL, XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
+  if (reader != NULL) {
+    ret = xmlTextReaderRead(reader);
+    while (ret == 1) {
+      ret = xmlTextReaderRead(reader);
+    }
+    /*
+    * Once the document has been fully parsed check the validation results
+    */
+    if (xmlTextReaderIsValid(reader) != 1) {
+      fprintf(stderr, "Document %s does not validate\n", filename);
+      throw std::runtime_error("Couldn't validate config file. Abort.");
+    }
+    xmlFreeTextReader(reader);
+    if (ret != 0) {
+      throw std::runtime_error("failed to parse. Abort.");
+    }
+  }
+  else {
+    throw std::runtime_error("Unable to open xml file. Abort.");
+    return;
+  }
+  std::cout << green << "--> XML file validated." << reset << std::endl;
+}
+
+inline xmlNode* findNodeByName(xmlNode* rootnode, TString name){
+  std::string s_nn = (std::string)name;
+  const xmlChar* nodename = (xmlChar*)(s_nn.c_str());
+
+  xmlNode* node = rootnode;
+  if(node == NULL){
+    std::cout << red << "Document is empty!" << reset << std::endl;
+    return NULL;
+  }
+  while(node != NULL){
+
+    if(node->type != XML_ELEMENT_NODE){
+      node = node->next;
+      continue;
+    }
+
+    if(!xmlStrcmp(node->name, nodename)){
+      return node;
+    }
+    else if(node->children != NULL){
+      // node = node->children;
+      xmlNode* intNode =  findNodeByName(node->children, name);
+      if(intNode != NULL){
+        return intNode;
+      }
+    }
+    node = node->next;
+  }
+  return NULL;
+}
+
+inline std::string getNodeProperty(xmlNode* node, const char* property){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)property);
+  std::string result = (const char*)prop;
+  return result;
+
+}
 
 float getDatasetLumi(xmlNode* node);
 TString getDatasetName(xmlNode* node);

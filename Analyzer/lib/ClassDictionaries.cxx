@@ -37,63 +37,63 @@
 namespace std {} using namespace std;
 
 // Header files passed as explicit arguments
-#include "include/Event.h"
+#include "include/GenEvent.h"
 #include "include/BTagCalibrationStandalone.h"
-#include "include/STMETSelection.h"
+#include "include/ObjectIdUtils.h"
 #include "include/MuonIds.h"
 #include "include/massconfig.h"
-#include "include/NElectronSelection.h"
-#include "include/ScaleFactorApplicator.h"
+#include "include/Flags.h"
+#include "include/STMETSelection.h"
 #include "include/Particle.h"
-#include "include/NTauSelection.h"
+#include "include/ElectronHists.h"
+#include "include/Registry.h"
 #include "include/GenInfo.h"
-#include "include/constants.h"
-#include "include/GenEvent.h"
-#include "include/FlagSelection.h"
+#include "include/BaseHists.h"
+#include "include/Config.h"
+#include "include/Selection.h"
 #include "include/EventHists.h"
-#include "include/Met.h"
+#include "include/Electron.h"
+#include "include/NMuonSelection.h"
 #include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
+#include "include/Met.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
-#include "include/Tau.h"
-#include "include/ElectronHists.h"
-#include "include/Config.h"
+#include "include/constants.h"
+#include "include/BTaggingMCEfficiencyHists.h"
 #include "include/CleaningModules.h"
-#include "include/TauHists.h"
+#include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/MinvSelections.h"
 #include "include/ElectronIds.h"
-#include "include/Flags.h"
-#include "include/Selection.h"
 #include "include/LumiWeightApplicator.h"
 #include "include/FlavorParticle.h"
-#include "include/NMuonSelection.h"
-#include "include/BaseTool.h"
-#include "include/BTaggingMCEfficiencyHists.h"
-#include "include/useful_functions.h"
+#include "include/FlagSelection.h"
+#include "include/Tau.h"
 #include "include/JetIds.h"
-#include "include/JetCorrections.h"
-#include "include/ObjectIdUtils.h"
+#include "include/NElectronSelection.h"
+#include "include/BJetHists.h"
+#include "include/BaseTool.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
-#include "include/BJetHists.h"
+#include "include/NTauSelection.h"
+#include "include/TriggerObject.h"
+#include "include/JetCorrections.h"
 #include "include/TauIds.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
-#include "include/Electron.h"
 #include "include/RecoEvent.h"
 #include "include/BTaggingScaleFactorApplicator.h"
 #include "include/ElectronScaleFactorApplicator.h"
-#include "include/BaseHists.h"
+#include "include/ScaleFactorApplicator.h"
 #include "include/GenInfoHists.h"
 #include "include/Muon.h"
 #include "include/METSelection.h"
 #include "include/MuonScaleFactorApplicator.h"
-#include "include/Registry.h"
-#include "include/TriggerObject.h"
+#include "include/TauHists.h"
+#include "include/useful_functions.h"
 
 // Header files passed via #pragma extra_include
 
@@ -2287,63 +2287,63 @@ namespace ROOT {
 namespace {
   void TriggerDictionaryInitialization_ClassDictionaries_Impl() {
     static const char* headers[] = {
-"include/Event.h",
+"include/GenEvent.h",
 "include/BTagCalibrationStandalone.h",
-"include/STMETSelection.h",
+"include/ObjectIdUtils.h",
 "include/MuonIds.h",
 "include/massconfig.h",
-"include/NElectronSelection.h",
-"include/ScaleFactorApplicator.h",
+"include/Flags.h",
+"include/STMETSelection.h",
 "include/Particle.h",
-"include/NTauSelection.h",
+"include/ElectronHists.h",
+"include/Registry.h",
 "include/GenInfo.h",
-"include/constants.h",
-"include/GenEvent.h",
-"include/FlagSelection.h",
+"include/BaseHists.h",
+"include/Config.h",
+"include/Selection.h",
 "include/EventHists.h",
-"include/Met.h",
+"include/Electron.h",
+"include/NMuonSelection.h",
 "include/GenParticlePrinter.h",
 "include/GenParticleHists.h",
+"include/Met.h",
 "include/GenJet.h",
 "include/NJetSelection.h",
-"include/Tau.h",
-"include/ElectronHists.h",
-"include/Config.h",
+"include/constants.h",
+"include/BTaggingMCEfficiencyHists.h",
 "include/CleaningModules.h",
-"include/TauHists.h",
+"include/Event.h",
 "include/AnalysisModule.h",
 "include/GenParticle.h",
 "include/MinvSelections.h",
 "include/ElectronIds.h",
-"include/Flags.h",
-"include/Selection.h",
 "include/LumiWeightApplicator.h",
 "include/FlavorParticle.h",
-"include/NMuonSelection.h",
-"include/BaseTool.h",
-"include/BTaggingMCEfficiencyHists.h",
-"include/useful_functions.h",
+"include/FlagSelection.h",
+"include/Tau.h",
 "include/JetIds.h",
-"include/JetCorrections.h",
-"include/ObjectIdUtils.h",
+"include/NElectronSelection.h",
+"include/BJetHists.h",
+"include/BaseTool.h",
 "include/MuonHists.h",
 "include/Jet.h",
-"include/BJetHists.h",
+"include/NTauSelection.h",
+"include/TriggerObject.h",
+"include/JetCorrections.h",
 "include/TauIds.h",
 "include/LumiblockSelection.h",
 "include/JetHists.h",
 "include/FlagHists.h",
-"include/Electron.h",
 "include/RecoEvent.h",
 "include/BTaggingScaleFactorApplicator.h",
 "include/ElectronScaleFactorApplicator.h",
-"include/BaseHists.h",
+"include/ScaleFactorApplicator.h",
 "include/GenInfoHists.h",
 "include/Muon.h",
 "include/METSelection.h",
 "include/MuonScaleFactorApplicator.h",
-"include/Registry.h",
-"include/TriggerObject.h",
+"include/TauHists.h",
+"include/useful_functions.h",
 0
     };
     static const char* includePaths[] = {
@@ -2357,23 +2357,23 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  GenParticle;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/GenParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenParticle;
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  GenJet;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/TriggerObject.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  TriggerObject;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Jet;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Tau;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Muon;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Electron.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Electron;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  RecoEvent;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenEvent.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  GenEvent;
-class __attribute__((annotate("$clingAutoload$include/Event.h")))  Event;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Met.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  Met;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Flags.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  Flags;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/GenInfo.h")))  __attribute__((annotate("$clingAutoload$include/STMETSelection.h")))  GenInfo;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/FlavorParticle.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  FlavorParticle;
-class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  __attribute__((annotate("$clingAutoload$include/Event.h")))  Particle;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/GenJet.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenJet;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/TriggerObject.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  TriggerObject;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Jet.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Jet;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Tau.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Tau;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Muon.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Muon;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Electron.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Electron;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/RecoEvent.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  RecoEvent;
+class __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  GenEvent;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Event.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Event;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Met.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Met;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Flags.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  Flags;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/GenInfo.h")))  __attribute__((annotate("$clingAutoload$include/ObjectIdUtils.h")))  GenInfo;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/FlavorParticle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  FlavorParticle;
+class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  __attribute__((annotate("$clingAutoload$include/GenEvent.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "ClassDictionaries dictionary payload"
@@ -2383,63 +2383,63 @@ class __attribute__((annotate("$clingAutoload$Analyzer/include/Particle.h")))  _
 #endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
-#include "include/Event.h"
+#include "include/GenEvent.h"
 #include "include/BTagCalibrationStandalone.h"
-#include "include/STMETSelection.h"
+#include "include/ObjectIdUtils.h"
 #include "include/MuonIds.h"
 #include "include/massconfig.h"
-#include "include/NElectronSelection.h"
-#include "include/ScaleFactorApplicator.h"
+#include "include/Flags.h"
+#include "include/STMETSelection.h"
 #include "include/Particle.h"
-#include "include/NTauSelection.h"
+#include "include/ElectronHists.h"
+#include "include/Registry.h"
 #include "include/GenInfo.h"
-#include "include/constants.h"
-#include "include/GenEvent.h"
-#include "include/FlagSelection.h"
+#include "include/BaseHists.h"
+#include "include/Config.h"
+#include "include/Selection.h"
 #include "include/EventHists.h"
-#include "include/Met.h"
+#include "include/Electron.h"
+#include "include/NMuonSelection.h"
 #include "include/GenParticlePrinter.h"
 #include "include/GenParticleHists.h"
+#include "include/Met.h"
 #include "include/GenJet.h"
 #include "include/NJetSelection.h"
-#include "include/Tau.h"
-#include "include/ElectronHists.h"
-#include "include/Config.h"
+#include "include/constants.h"
+#include "include/BTaggingMCEfficiencyHists.h"
 #include "include/CleaningModules.h"
-#include "include/TauHists.h"
+#include "include/Event.h"
 #include "include/AnalysisModule.h"
 #include "include/GenParticle.h"
 #include "include/MinvSelections.h"
 #include "include/ElectronIds.h"
-#include "include/Flags.h"
-#include "include/Selection.h"
 #include "include/LumiWeightApplicator.h"
 #include "include/FlavorParticle.h"
-#include "include/NMuonSelection.h"
-#include "include/BaseTool.h"
-#include "include/BTaggingMCEfficiencyHists.h"
-#include "include/useful_functions.h"
+#include "include/FlagSelection.h"
+#include "include/Tau.h"
 #include "include/JetIds.h"
-#include "include/JetCorrections.h"
-#include "include/ObjectIdUtils.h"
+#include "include/NElectronSelection.h"
+#include "include/BJetHists.h"
+#include "include/BaseTool.h"
 #include "include/MuonHists.h"
 #include "include/Jet.h"
-#include "include/BJetHists.h"
+#include "include/NTauSelection.h"
+#include "include/TriggerObject.h"
+#include "include/JetCorrections.h"
 #include "include/TauIds.h"
 #include "include/LumiblockSelection.h"
 #include "include/JetHists.h"
 #include "include/FlagHists.h"
-#include "include/Electron.h"
 #include "include/RecoEvent.h"
 #include "include/BTaggingScaleFactorApplicator.h"
 #include "include/ElectronScaleFactorApplicator.h"
-#include "include/BaseHists.h"
+#include "include/ScaleFactorApplicator.h"
 #include "include/GenInfoHists.h"
 #include "include/Muon.h"
 #include "include/METSelection.h"
 #include "include/MuonScaleFactorApplicator.h"
-#include "include/Registry.h"
-#include "include/TriggerObject.h"
+#include "include/TauHists.h"
+#include "include/useful_functions.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";

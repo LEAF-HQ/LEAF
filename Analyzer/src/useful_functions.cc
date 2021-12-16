@@ -66,68 +66,6 @@ double deltaR(const Particle & p1, const Particle & p2){
 }
 
 
-void validateConfigFile(const char *filename){
-  xmlTextReaderPtr reader;
-  int ret;
-
-
-  /* default DTD attributes */  /* substitute entities */  /* validate with the DTD */
-  reader = xmlReaderForFile(filename, NULL, XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
-  if (reader != NULL) {
-    ret = xmlTextReaderRead(reader);
-    while (ret == 1) {
-      ret = xmlTextReaderRead(reader);
-    }
-    /*
-    * Once the document has been fully parsed check the validation results
-    */
-    if (xmlTextReaderIsValid(reader) != 1) {
-      fprintf(stderr, "Document %s does not validate\n", filename);
-      throw runtime_error("Couldn't validate config file. Abort.");
-    }
-    xmlFreeTextReader(reader);
-    if (ret != 0) {
-      throw runtime_error("failed to parse. Abort.");
-    }
-  }
-  else {
-    throw runtime_error("Unable to open xml file. Abort.");
-    return;
-  }
-  cout << green << "--> XML file validated." << reset << endl;
-}
-
-xmlNode* findNodeByName(xmlNode* rootnode, TString name){
-  string s_nn = (string)name;
-  const xmlChar* nodename = (xmlChar*)(s_nn.c_str());
-
-  xmlNode* node = rootnode;
-  if(node == NULL){
-    cout << red << "Document is empty!" << reset << endl;
-    return NULL;
-  }
-  while(node != NULL){
-
-    if(node->type != XML_ELEMENT_NODE){
-      node = node->next;
-      continue;
-    }
-
-    if(!xmlStrcmp(node->name, nodename)){
-      return node;
-    }
-    else if(node->children != NULL){
-      // node = node->children;
-      xmlNode* intNode =  findNodeByName(node->children, name);
-      if(intNode != NULL){
-        return intNode;
-      }
-    }
-    node = node->next;
-  }
-  return NULL;
-}
-
 float getDatasetLumi(xmlNode* node){
   xmlChar* prop = xmlGetProp(node, (xmlChar*)"Lumi");
   string s_lumi = (const char*)prop;
