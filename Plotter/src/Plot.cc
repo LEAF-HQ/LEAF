@@ -19,186 +19,145 @@
 
 using namespace std;
 
-void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug = false);
-void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug = false);
-vector<TString> produce_infilenames(TString infolder, vector<TString> samples);
-vector<TString> get_foldernames(TFile* infile);
-vector<TString> get_histnames(TFile* infile, TString foldername);
+void make_plots(vector<PlottingDataset*>& datasets_all, TString numerator, TString infolder, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, bool debug = false);
+
+// void plot_folder(vector<TFile*> infiles_single, vector<TFile*> infiles_stack, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug = false);
+void plot_folder(vector<PlottingDataset*>& datasets_stack, vector<PlottingDataset*>& datasets_single, PlottingDataset* dataset_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, bool do_stack, bool do_ratio, bool debug = false);
+// vector<TString> produce_infilenames(TString infolder, vector<PlottingDataset> samples);
+// vector<TString> get_foldernames(TFile* infile);
+vector<TString> get_foldernames(PlottingDataset* dataset);
+// vector<TString> get_histnames(TFile* infile, TString foldername);
+vector<TString> get_histnames(PlottingDataset* dataset, TString foldername);
 void do_cosmetics(TH1F* hist, double minimum, double maximum, int color, int linestyle, bool ratio=false);
 
 
 
-void PlottingTool::Plot(bool blind, bool normalize, bool logy, bool singlePDF){
+void PlottingTool::Plot(){
   cout << endl << endl << green << "--> Now plotting with settings:" << reset << endl;
-  cout << green << "    blind :     " << blind << reset << endl;
-  cout << green << "    normalize : " << normalize << reset << endl;
-  cout << green << "    logy :      " << logy << reset << endl;
-  cout << green << "    singlePDF : " << singlePDF << reset << endl;
+  cout << green << "    blind :     " << PlottingTool::blind << reset << endl;
+  cout << green << "    normalize : " << PlottingTool::normalize << reset << endl;
+  cout << green << "    logy :      " << PlottingTool::logY << reset << endl;
+  cout << green << "    singlePDF : " << PlottingTool::singlePDF << reset << endl;
 
   TString infolder = PlottingTool::base_path_analysisfiles;
-  vector<TString> samples       = {};
-  for(const auto & s : PlottingTool::samples){
-    if(blind && s.Contains("DATA")) continue;
-    samples.emplace_back(s);
+  vector<PlottingDataset*> datasets       = {};
+  for(PlottingDataset & dataset : PlottingTool::datasets){
+    if(PlottingTool::blind && dataset.type.Contains("DATA")) continue;
+    datasets.emplace_back(&dataset);
   }
 
-  map<TString, TString> labels  = PlottingTool::labels;
-  map<TString, int> colors      = PlottingTool::colors;
-  map<TString, int> linestyles  = PlottingTool::linestyles;
-  vector<TString> stacks        = PlottingTool::stacks;
+  // find dataset that will be the numerator
   TString numerator             = PlottingTool::numerator;
-  if(blind && numerator.Contains("DATA")) numerator = "";
+  bool already_found_numerator = false;
+  for(PlottingDataset dataset : PlottingTool::datasets){
+    if(dataset.name == numerator){
+      if(already_found_numerator) throw runtime_error("There seem to be at least 2 datasets with the same name, which is also equal to the numerator name: " + numerator + ".");
+      if(PlottingTool::blind && dataset.type.Contains("DATA")) numerator = "";
+      already_found_numerator = true;
+    }
+  }
+
   TString outfolder             = PlottingTool::base_path_plots;
   TString outnameprefix         = PlottingTool::prefix_plots;
-  if(blind) outnameprefix += "blind_";
-  TString lumitext              = PlottingTool::lumitext;
+  if(PlottingTool::blind) outnameprefix += "blind_";
 
   TString mkdircommand = "mkdir -p " + outfolder;
   system((const char*)mkdircommand);
 
 
 
+  // samples, stacks, labels, colors, linestyles
 
 
 
-
-  make_plots(infolder, samples, stacks, numerator, outfolder, outnameprefix, lumitext, singlePDF, normalize, logy, labels, colors, linestyles, debug);
+  make_plots(datasets, numerator, infolder, outfolder, outnameprefix, PlottingTool::lumitext, PlottingTool::singlePDF, PlottingTool::normalize, PlottingTool::logY, PlottingTool::debug);
 
 
 }
 
-void make_plots(TString infolder, vector<TString> samples, vector<TString> stacks, TString numerator, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, map<TString, TString> labels, map<TString, int> colors, map<TString, int> linestyles, bool debug){
+void make_plots(vector<PlottingDataset*>& datasets_all, TString numerator, TString infolder, TString outfolder, TString outnameprefix, TString lumitext, bool singlePDF, bool normalize, bool logy, bool debug ){
 
+  // Split the list of all datasets into "stack" and "single", and also find the numerator
   bool do_stack = false;
-  if(stacks.size() > 0) do_stack = true;
+  bool already_found_numerator = false;
+  vector<PlottingDataset*> datasets_stack, datasets_single = {};
+  PlottingDataset* dataset_numerator;
+  for(PlottingDataset* dataset : datasets_all){
+    if(dataset->stack){
+      do_stack = true;
+      datasets_stack.emplace_back(dataset);
+      cout << "name_stack: " << dataset->name << endl;
+    }
+    else{
+      datasets_single.emplace_back(dataset);
+      cout << "name_single: " << dataset->name << endl;
+    }
+    if(dataset->name == numerator){
+      if(already_found_numerator) throw runtime_error("There seem to be at least 2 datasets with the same name, which is also equal to the numerator name: " + numerator + ".");
+      dataset_numerator = dataset;
+      already_found_numerator = true;
+      cout << "name_numerator: " << dataset->name << endl;
+    }
+  }
 
-  vector<TString> infilenames_all = produce_infilenames(infolder, samples);
-  vector<TString> infilenames_stack = produce_infilenames(infolder, stacks);
-  vector<TString> infilenames_numerator = {};
-  if(do_stack && numerator != "") infilenames_numerator = produce_infilenames(infolder, {numerator});
-  if(infilenames_numerator.size() > 1) throw runtime_error("In make_plots(): vector of infilenames for the numerator should contain at most 1 element, but now it contains more. How did this happen?");
+  // Some sanity checks
+  if(!do_stack && already_found_numerator) throw runtime_error("Found the numerator, but won't stack. This is not supported at the moment, ratios can right now only be made between a stack and a histogram.");
+  if(numerator != "" && !already_found_numerator) throw runtime_error("A numerator name was given, but it couldn't be found. Please check.");
+  if(datasets_stack.size() == 0 && datasets_single.size() == 0) throw runtime_error("List of both single histograms and for stacks is empty. What should even be plotted?");
+  if(datasets_all.size() != (datasets_single.size() + datasets_stack.size())) throw runtime_error("Number of all datasets is not the same as number of single + number of stacked datasets. Did something get lost?");
+
 
   gErrorIgnoreLevel = kError;
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
 
-  // Reorder infilenames to get the stacking order right. Always start with stacks and then do the rest.
-  vector<TString> infilenames_single, infilenames_stack_ordered = {};
-  vector<TString> labels_single, labels_stack = {};
-  vector<int> colors_single, colors_stack, colors_numerator = {};
-  vector<int> linestyles_single, linestyles_stack, linestyles_numerator = {};
-  for(size_t i=0; i<infilenames_all.size(); i++){
-    if(find(infilenames_stack.begin(), infilenames_stack.end(), infilenames_all[i]) != infilenames_stack.end()) {
-      infilenames_stack_ordered.emplace_back(infilenames_all[i]);
-      labels_stack.emplace_back(labels[samples[i]]);
-      colors_stack.emplace_back(colors[samples[i]]);
-      linestyles_stack.emplace_back(linestyles[samples[i]]);
-      // cout << "added to stacking values: " << samples[i] << endl;
-    }
-    else{
-      infilenames_single.emplace_back(infilenames_all[i]);
-      labels_single.emplace_back(labels[samples[i]]);
-      colors_single.emplace_back(colors[samples[i]]);
-      linestyles_single.emplace_back(linestyles[samples[i]]);
-    }
-    if (infilenames_numerator.size() > 0){
-      if(infilenames_all[i] == infilenames_numerator[0]){
-        colors_numerator.emplace_back(colors[samples[i]]);
-        linestyles_numerator.emplace_back(linestyles[samples[i]]);
-      }
-    }
-  }
-
-  // Get remaining infile pointers. Skip if already present in infilenames_stack
-  vector<TFile*> infiles_single, infiles_stack, infiles_numerator = {};
-  for(size_t i=0; i<infilenames_single.size(); i++){
-    infiles_single.emplace_back(new TFile(infilenames_single[i], "READ"));
-  }
-  for(size_t i=0; i<infilenames_stack_ordered.size(); i++){
-    infiles_stack.emplace_back(new TFile(infilenames_stack_ordered[i], "READ"));
-  }
-  for(size_t i=0; i<infilenames_numerator.size(); i++){
-    infiles_numerator.emplace_back(new TFile(infilenames_numerator[i], "READ"));
-  }
-
   // Get foldernames from first infile as blueprint
-  vector<TString> foldernames = {};
-  if(infiles_single.size() > 0) foldernames = get_foldernames(infiles_single[0]);
-  else if(infiles_stack.size() > 0) foldernames = get_foldernames(infiles_stack[0]);
-  else throw runtime_error("In make_plots(): infile-list for both single histograms and for stacks is empty. What should even be plotted?");
+  vector<TString> foldernames = get_foldernames(datasets_all[0]);
 
-  for(size_t i=0; i<infiles_single.size(); i++){
-    delete infiles_single[i];
-  }
-  for(size_t i=0; i<infiles_stack.size(); i++){
-    delete infiles_stack[i];
-  }
-  for(size_t i=0; i<infiles_numerator.size(); i++){
-    delete infiles_numerator[i];
+  for(PlottingDataset* dataset : datasets_all){
+    dataset->PopulateInfile();
   }
 
   // Plot plots in each folder
   for(size_t i=0; i<foldernames.size(); i++){
 
-    // Get remaining infile pointers. Skip if already present in infilenames_stack
-    vector<TFile*> infiles_single, infiles_stack, infiles_numerator = {};
-    for(size_t i=0; i<infilenames_single.size(); i++){
-      infiles_single.emplace_back(new TFile(infilenames_single[i], "READ"));
-    }
-    for(size_t i=0; i<infilenames_stack_ordered.size(); i++){
-      infiles_stack.emplace_back(new TFile(infilenames_stack_ordered[i], "READ"));
-    }
-    for(size_t i=0; i<infilenames_numerator.size(); i++){
-      infiles_numerator.emplace_back(new TFile(infilenames_numerator[i], "READ"));
-    }
-
     TString foldername = foldernames[i];
-    plot_folder(infiles_stack, infiles_single, infiles_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, labels_stack, colors_stack, linestyles_stack, labels_single, colors_single, linestyles_single, colors_numerator, linestyles_numerator, debug);
+    plot_folder(datasets_stack, datasets_single, dataset_numerator, outfolder, outnameprefix, lumitext, foldername, singlePDF, normalize, logy, do_stack, already_found_numerator, debug);
 
-
-    for(size_t i=0; i<infiles_single.size(); i++){
-      delete infiles_single[i];
-    }
-    for(size_t i=0; i<infiles_stack.size(); i++){
-      delete infiles_stack[i];
-    }
-    for(size_t i=0; i<infiles_numerator.size(); i++){
-      delete infiles_numerator[i];
-    }
   }
 
   cout << green << "--> Wrote plots to folder: " << outfolder << ", now cleaning up..." << reset << endl;
 
-  // for(size_t i=0; i<infiles_single.size(); i++){
-  //   delete infiles_single[i];
-  // }
-  // for(size_t i=0; i<infiles_stack.size(); i++){
-  //   delete infiles_stack[i];
-  // }
-  // for(size_t i=0; i<infiles_numerator.size(); i++){
-  //   delete infiles_numerator[i];
-  // }
+  for(PlottingDataset* dataset : datasets_all){
+    dataset->ClearInfile();
+  }
   cout << green << "--> Cleaned up!" << reset << endl;
 }
 
+
+
 // Function to plot plots in a single folder
-void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, vector<TFile*> infiles_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, vector<TString> labels_stack, vector<int> colors_stack, vector<int> linestyles_stack, vector<TString> labels_single, vector<int> colors_single, vector<int> linestyles_single, vector<int> colors_numerator, vector<int> linestyles_numerator, bool debug){
+void plot_folder(vector<PlottingDataset*>& datasets_stack, vector<PlottingDataset*>& datasets_single, PlottingDataset* dataset_numerator, TString outfolder, TString outnameprefix, TString lumitext, TString foldername, bool singlePDF, bool normalize, bool logy, bool do_stack, bool do_ratio, bool debug){
 
   cout << green << "    --> Folder: " << foldername << reset << endl;
 
-  // check if we need to make a ratio plot
-  bool do_stack = false;
-  if(infiles_stack.size() > 0) do_stack = true;
-  bool do_ratio = false;
-  if(infiles_numerator.size() == 1) do_ratio = true;
-  else if(infiles_numerator.size() > 1) throw runtime_error("In plot_folder(): infile-list for numerator contains more than one element. This should have been caught by an earlier check, what happened?");
+
+
 
   // get names of histograms in this folder
-  vector<TString> histnames = get_histnames(infiles_single[0], foldername);
+
+  vector<TString> histnames = {};
+  if(datasets_single.size() > 0){
+    histnames = get_histnames(datasets_single[0], foldername);
+  }
+  else{
+    histnames = get_histnames(datasets_stack[0], foldername);
+  }
 
 
   // make sure outfolder exists
   mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+  outfolder += "/";
   if(singlePDF){
     outfolder += "SinglePDF/";
     mkdir(outfolder, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
@@ -220,14 +179,13 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     pad_top->Draw();
   }
 
-
   // loop over histograms and plot each
   for(size_t i=0; i<histnames.size(); i++){
     TString histname = histnames[i];
 
     // Find number of legend entries to format it properly
     int n_legentries_per_col = 6;
-    int n_legentries = infiles_single.size() + infiles_stack.size();
+    int n_legentries = datasets_single.size() + datasets_stack.size();
     int n_legcols = (n_legentries-1)/n_legentries_per_col + 1;
     float leg_colwidth = 0.37;
     float leg_x_high = 0.9;
@@ -238,19 +196,17 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     float height_per_legitem = 0.055;
     if(!do_ratio) height_per_legitem *=0.66666;
     float leg_y_high = 0.915;
-    // float leg_y_low  = leg_y_high - height_per_legitem * (infiles_stack.size() + infiles_single.size());
     int max_num_entries_per_col = ceil((double)n_legentries/n_legcols);
     float leg_y_low  = leg_y_high - height_per_legitem * max_num_entries_per_col;
 
     TLegend* leg = new TLegend(leg_x_low, leg_y_low, leg_x_high, leg_y_high);
-    // leg->SetTextAlign(32);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(43);
     leg->SetTextSize(10);
     leg->SetNColumns(n_legcols);
 
-    //defaults fo cosmetics
+    //defaults for cosmetics
     double minimum = 0.;
     if(normalize) minimum = 5E-1;
     if(logy){
@@ -266,44 +222,47 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
 
     // find histograms to be stacked
     THStack* stack = new THStack("stack", "");
-    for(size_t j=0; j<infiles_stack.size(); j++){
-      TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
+    for(PlottingDataset* dataset : datasets_stack){
+      TH1F* hist = ((TH1F*)dataset->infile->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
-      hist->SetFillColor(colors_stack[j]);
+      hist->SetFillColor(dataset->color);
       hist->SetLineWidth(0);
       stack->Add(hist);
       stack->SetHistogram(hist);
     }
 
     vector<bool> is_data = {};
-    for(size_t j=0; j<infiles_single.size(); j++){
-      if(((TString)infiles_single[j]->GetName()).Contains("DATA")) is_data.emplace_back(true);
+    for(PlottingDataset* dataset : datasets_single){
+      if(dataset->type.Contains("DATA")) is_data.emplace_back(true);
       else is_data.emplace_back(false);
-      TH1F* hist = ((TH1F*)infiles_single[j]->Get(foldername + "/" + histname));
-      if(is_data[j]) {
-        leg->AddEntry(hist, labels_single[j], "lp");
+      TH1F* hist = (TH1F*)(dataset->infile->Get(foldername + "/" + histname));
+      if(dataset->type.Contains("DATA")) {
+        leg->AddEntry(hist, dataset->legend, "lp");
       }
-      delete hist;
-    }
-
-    for(int j=infiles_stack.size()-1; j>=0; j--){
-      TH1F* hist = ((TH1F*)infiles_stack[j]->Get(foldername + "/" + histname));
-      hist->SetFillColor(colors_stack[j]);
-      leg->AddEntry(hist, labels_stack[j], "f");
+      else{
+        delete hist;
+      }
 
     }
-    if(infiles_stack.size() > 0){
+
+    for(int j=datasets_stack.size()-1; j>=0; j--){
+      TH1F* hist = ((TH1F*)datasets_stack[j]->infile->Get(foldername + "/" + histname));
+      hist->SetFillColor(datasets_stack[j]->color);
+      leg->AddEntry(hist, datasets_stack[j]->legend, "f");
+    }
+
+    if(datasets_stack.size() > 0){
       maximum = max(max(maximum, ((TH1*)(stack->GetStack()->Last()))->GetMaximum()), 1E-4);
     }
 
     //get single histograms from each file and apply cosmetics
     vector<TH1F*> hists_single = {};
-    for(size_t j=0; j<infiles_single.size(); j++){
-      TH1F* hist = ((TH1F*)infiles_single[j]->Get(foldername + "/" + histname));
+    for(size_t j=0; j<datasets_single.size(); j++){
+      TH1F* hist = ((TH1F*)datasets_single[j]->infile->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
       maximum = max(max(maximum, hist->GetMaximum()), 1E-4);
       hists_single.emplace_back(hist);
-      if(!is_data[j]) leg->AddEntry(hist, labels_single[j], "l");
+      if(!is_data[j]) leg->AddEntry(hist, datasets_single[j]->legend, "l");
     }
 
     pad_top->Clear();
@@ -312,12 +271,11 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     // first draw a histogram (if any)
     size_t nsingle = 0;
     for(size_t j=0; j<hists_single.size(); j++){
-      do_cosmetics(hists_single[j], minimum, maximum*maxscale, colors_single[j], linestyles_single[j]);
+      do_cosmetics(hists_single[j], minimum, maximum*maxscale, datasets_single[j]->color, datasets_single[j]->linestyle);
       if(normalize) hists_single[j]->GetYaxis()->SetTitle("Event fraction");
       if(is_data[j]){
         hists_single[j]->SetMarkerStyle(20);
         hists_single[j]->SetMarkerSize(0.75);
-
       }
 
       TString opt = "HIST";
@@ -349,94 +307,92 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
     for(size_t j=0; j<hists_single.size(); j++){
       TString opt = "HIST";
       if (is_data[j]) opt = "E";
-      if(nsingle > 0 || stack) opt += " SAME";
+      if(j > 0 || stack) opt += " SAME";
       hists_single[j]->Draw(opt);
     }
 
     pad_top->RedrawAxis();
     leg->Draw();
-    if(logy) pad_top->SetLogy(true);
+      if(logy) pad_top->SetLogy(true);
 
-    // write texts, like the lumi, CMS tags, etc.
-    TLatex *latex_lumitext = new TLatex(1, 1, lumitext);
-    latex_lumitext->SetNDC();
-    latex_lumitext->SetTextAlign(33);
-    latex_lumitext->SetX(0.95);
-    latex_lumitext->SetTextFont(42);
-    float lumitextsize = 0.06;
-    if(!do_ratio) lumitextsize *= 0.66666;
-    latex_lumitext->SetTextSize(lumitextsize);
-    latex_lumitext->SetY(1.);
-    latex_lumitext->Draw();
+      // write texts, like the lumi, CMS tags, etc.
+      TLatex *latex_lumitext = new TLatex(1, 1, lumitext);
+      latex_lumitext->SetNDC();
+      latex_lumitext->SetTextAlign(33);
+      latex_lumitext->SetX(0.95);
+      latex_lumitext->SetTextFont(42);
+      float lumitextsize = 0.06;
+      if(!do_ratio) lumitextsize *= 0.66666;
+      latex_lumitext->SetTextSize(lumitextsize);
+      latex_lumitext->SetY(1.);
+      latex_lumitext->Draw();
 
 
 
-    // now handle all the ratio business
+      // now handle all the ratio business
 
-    TH1F* h_numerator = new TH1F();
-    TH1F* h_denom = new TH1F();
-    if(do_ratio){
-      // if(false){
+      TH1F* h_numerator = new TH1F();
+      TH1F* h_denom = new TH1F();
+      if(do_ratio){
+        // if(false){
 
-      delete h_numerator;
-      delete h_denom;
+        delete h_numerator;
+        delete h_denom;
 
-      // numerator is given, denominator will be the stack.
-      h_numerator = new TH1F(*(TH1F*)(infiles_numerator[0]->Get(foldername + "/" + histname)));
-      // ((TH1F*)(infiles_numerator[0]->Get(foldername + "/" + histname)))->Copy(*h_numerator);
-      h_denom = new TH1F(*(TH1F*)((stack->GetStack()->Last())));
-      // ((TH1F*)((stack->GetStack()->Last())))->Copy(*h_denom);
+        // numerator is given, denominator will be the stack.
+        h_numerator = new TH1F(*(TH1F*)(dataset_numerator->infile->Get(foldername + "/" + histname)));
+        h_denom = new TH1F(*(TH1F*)((stack->GetStack()->Last())));
 
-      if(h_denom->GetNbinsX() != h_numerator->GetNbinsX()) throw runtime_error("Data and stack have different number of bins, ratio cannot be calculated.");
-      size_t nbins = h_denom->GetNbinsX();
-      for(size_t j=1; j<nbins+1; j++){
-        double val_n = h_numerator->GetBinContent(j);
-        double err_n = h_numerator->GetBinError(j);
-        double val_d = h_denom->GetBinContent(j);
-        double err_d = h_denom->GetBinError(j);
+        if(h_denom->GetNbinsX() != h_numerator->GetNbinsX()) throw runtime_error("Data and stack have different number of bins, ratio cannot be calculated.");
+        size_t nbins = h_denom->GetNbinsX();
+        for(size_t j=1; j<nbins+1; j++){
+          double val_n = h_numerator->GetBinContent(j);
+          double err_n = h_numerator->GetBinError(j);
+          double val_d = h_denom->GetBinContent(j);
+          double err_d = h_denom->GetBinError(j);
 
-        if(val_d > 0){
-          h_denom->SetBinContent(j, 1.);
-          h_denom->SetBinError(j, err_d/val_d);
-          h_numerator->SetBinContent(j, val_n/val_d);
-          h_numerator->SetBinError(j, err_n/val_d);
+          if(val_d > 0){
+            h_denom->SetBinContent(j, 1.);
+            h_denom->SetBinError(j, err_d/val_d);
+            h_numerator->SetBinContent(j, val_n/val_d);
+            h_numerator->SetBinError(j, err_n/val_d);
+          }
+          else{
+            h_denom->SetBinContent(j, 0.);
+            h_denom->SetBinError(j, 0.);
+            h_numerator->SetBinContent(j, 0.);
+            h_numerator->SetBinError(j, 0.);
+          }
         }
-        else{
-          h_denom->SetBinContent(j, 0.);
-          h_denom->SetBinError(j, 0.);
-          h_numerator->SetBinContent(j, 0.);
-          h_numerator->SetBinError(j, 0.);
-        }
+        h_denom->SetMarkerStyle(0);
+        h_denom->SetMarkerSize(0);
+        h_denom->SetLineColor(kGray+1);
+        h_denom->SetFillColor(kGray+1);
+        do_cosmetics(h_numerator, 0.3, 1.7, dataset_numerator->color, dataset_numerator->linestyle, true);
+        h_numerator->GetYaxis()->SetTitle("Data / Pred.");
+        h_numerator->SetMarkerStyle(20);
+        h_numerator->SetMarkerSize(0.75);
+
+
+        // draw it!
+        pad_ratio->Clear();
+        pad_ratio->cd();
+        pad_ratio->SetLogy(0);
+        pad_ratio->SetLogx(0);
+        h_numerator->Draw("AXIS");
+        h_denom->Draw("E2 SAME");
+        h_numerator->Draw("SAME");
+
+        double xmin = h_numerator->GetBinLowEdge(1);
+        double xmax = h_numerator->GetBinLowEdge(h_numerator->GetNbinsX()+1);
+        TLine* l_unity = new TLine(xmin, 1, xmax, 1);
+        l_unity->SetLineColor(kBlack);
+        l_unity->SetLineWidth(2);
+        l_unity->SetLineStyle(2);
+        l_unity->Draw("SAME");
+        pad_ratio->RedrawAxis();
+
       }
-      h_denom->SetMarkerStyle(0);
-      h_denom->SetMarkerSize(0);
-      h_denom->SetLineColor(kGray+1);
-      h_denom->SetFillColor(kGray+1);
-      do_cosmetics(h_numerator, 0.3, 1.7, colors_numerator[0], linestyles_numerator[0], true);
-      h_numerator->GetYaxis()->SetTitle("Data / Pred.");
-      h_numerator->SetMarkerStyle(20);
-      h_numerator->SetMarkerSize(0.75);
-
-
-      // draw it!
-      pad_ratio->Clear();
-      pad_ratio->cd();
-      pad_ratio->SetLogy(0);
-      pad_ratio->SetLogx(0);
-      h_numerator->Draw("AXIS");
-      h_denom->Draw("E2 SAME");
-      h_numerator->Draw("SAME");
-
-      double xmin = h_numerator->GetBinLowEdge(1);
-      double xmax = h_numerator->GetBinLowEdge(h_numerator->GetNbinsX()+1);
-      TLine* l_unity = new TLine(xmin, 1, xmax, 1);
-      l_unity->SetLineColor(kBlack);
-      l_unity->SetLineWidth(2);
-      l_unity->SetLineStyle(2);
-      l_unity->Draw("SAME");
-      pad_ratio->RedrawAxis();
-
-    }
 
     TString outfilename = "";
     if(singlePDF){
@@ -444,7 +400,6 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       if(!logy) outfilename.ReplaceAll(".pdf", "_linY.pdf");
       if(normalize) outfilename.ReplaceAll(".pdf", "_norm.pdf");
       c->Print(outfilename);
-      // cout << "outfilename: " << outfilename << endl;
     }
     else{
       outfilename = outfolder + outnameprefix + foldername + ".pdf";
@@ -455,21 +410,22 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
       c->Print(outfilename, "pdf");
     }
 
-    if(do_ratio){
-      delete h_numerator;
-      delete h_denom;
-    }
 
-    if(do_stack){
-      delete h_err;
-    }
+      if(do_ratio){
+        delete h_numerator;
+        delete h_denom;
+      }
 
-    for(size_t j=0; j<hists_single.size(); j++){
-      delete hists_single[j];
-    }
+      if(do_stack){
+        delete h_err;
+      }
 
-    delete leg;
-    delete stack;
+      for(size_t j=0; j<hists_single.size(); j++){
+        delete hists_single[j];
+      }
+
+      delete leg;
+      delete stack;
 
 
   }
@@ -482,18 +438,12 @@ void plot_folder(vector<TFile*> infiles_stack, vector<TFile*> infiles_single, ve
 
 // Utility functions
 // =================
+vector<TString> get_foldernames(PlottingDataset* dataset){
 
-vector<TString> produce_infilenames(TString infolder, vector<TString> samples){
-  vector<TString> result = {};
-  for(size_t i=0; i<samples.size(); i++){
-    result.emplace_back(infolder + samples[i] + ".root");
-  }
-  return result;
-}
-
-vector<TString> get_foldernames(TFile* infile){
-
-  infile->cd();
+  // unique_ptr<TFile> infile;
+  // infile.reset(new TFile(dataset.infilename, "READ"));
+  dataset->PopulateInfile();
+  dataset->infile->cd();
   TDirectory* dir = gDirectory;
   TIter iter(dir->GetListOfKeys());
   TKey *key;
@@ -507,12 +457,15 @@ vector<TString> get_foldernames(TFile* infile){
       result.emplace_back(name);
     }
   }
-
+  dataset->ClearInfile();
   return result;
 }
 
-vector<TString> get_histnames(TFile* infile, TString foldername){
-  infile->cd(foldername);
+vector<TString> get_histnames(PlottingDataset* dataset, TString foldername){
+  bool was_populated = dataset->is_infile_populated;
+  if(!was_populated) dataset->PopulateInfile();
+
+  dataset->infile->cd(foldername);
   TDirectory* dir = gDirectory;
   TIter iter(dir->GetListOfKeys());
   TKey *key;
@@ -526,6 +479,7 @@ vector<TString> get_histnames(TFile* infile, TString foldername){
     }
   }
 
+  if(!was_populated) dataset->ClearInfile();
   return result;
 
 }
