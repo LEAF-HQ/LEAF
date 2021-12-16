@@ -3,9 +3,27 @@
 #include <iostream>
 
 #include "Plotter/include/PlottingTool.h"
+#include "Plotter/include/PlotterConfig.h"
 #include "Analyzer/include/useful_functions.h"
 
 using namespace std;
 
-PlottingTool::PlottingTool(bool debug_) : debug(debug_){
+PlottingTool::PlottingTool(const PlotterConfig cfg, bool debug_) : debug(debug_){
+
+  std::vector<TString> samples, stacks;
+  std::map<TString, TString> labels;
+  std::map<TString, int> colors, linestyles;
+
+  base_path_analysisfiles = cfg.input_directory();
+  base_path_plots         = cfg.output_directory();
+  prefix_plots            = cfg.prefix();
+  lumitext                = cfg.lumitext();
+  numerator               = cfg.numerator();
+  datasets                = cfg.datasets();
+
+  blind = cfg.blind();
+  logY = cfg.logY();
+  normalize = cfg.normalize();
+  singlePDF = cfg.singlePDF();
+
 }
