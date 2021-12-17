@@ -50,26 +50,13 @@ def main():
     # create all new source files
     createNewPostAnalyzer(name, placeholder_dict)
 
+    # create all new source files
+    createNewPlotterXMLs(name, placeholder_dict)
+
     # update Makefile.local
-    need_to_update = True
-    newlines = []
-    if os.path.isfile('Makefile.local'):
-        with open('Makefile.local', 'r') as f:
-            lines = f.readlines()
-            for l in lines:
-                if 'subdirs := %s' % (placeholder_dict['$MYANALYSISNAME']) in l or 'subdirs += %s' % (placeholder_dict['$MYANALYSISNAME']) in l:
-                    need_to_update = False
-                newlines.append(l)
-    # print need_to_update
-    if need_to_update:
-        if len(newlines) is 0:
-            newline = 'subdirs := %s' % (placeholder_dict['$MYANALYSISNAME'])
-        else:
-            newline = 'subdirs += %s' % (placeholder_dict['$MYANALYSISNAME'])
-        newlines.append(newline)
-        with open('Makefile.local', 'w') as f:
-            for l in newlines:
-                f.write(l)
+    updateMakefileLocal(name)
+
+
 
 
 def createNewMakefile(name, placeholders):
@@ -116,6 +103,38 @@ def createNewPostAnalyzer(name, placeholders):
     os.system(command)
 
     replace_placeholders('%s/PostAnalyzer/steer.py' % (name), placeholders)
+
+def createNewPlotterXMLs(name, placeholders):
+    command = 'cp -r templates/PlotterXML %s/%s' % (os.environ['PLOTTERPATH'], name)
+    os.system(command)
+    command = 'mv %s/%s/Template.xml %s/%s/Default.xml' % (os.environ['PLOTTERPATH'], name, os.environ['PLOTTERPATH'], name)
+    os.system(command)
+
+    replace_placeholders('%s/%s/Default.xml' % (os.environ['PLOTTERPATH'], name), placeholders)
+
+
+def updateMakefileLocal(name):
+    need_to_update = True
+    newlines = []
+    if os.path.isfile('Makefile.local'):
+        with open('Makefile.local', 'r') as f:
+            lines = f.readlines()
+            for l in lines:
+                if 'subdirs := %s' % (name) in l or 'subdirs += %s' % (name) in l:
+                    need_to_update = False
+                newlines.append(l)
+
+    if need_to_update:
+        if len(newlines) is 0:
+            newline = 'subdirs := %s' % (name)
+        else:
+            newline = 'subdirs += %s' % (name)
+        newlines.append(newline)
+        with open('Makefile.local', 'w') as f:
+            for l in newlines:
+                f.write(l)
+
+    
 
 def replace_placeholders(filename, placeholder_dict):
     newlines = []
