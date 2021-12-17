@@ -4,6 +4,7 @@ theme: cinder
 nav:
     - Home: README.md
     - Installation: installation.md
+    - Quickstart: quickstart.md
     - Packages:
       - Generator: packages/generator.md
       - Tuplizer: packages/tuplizer.md
