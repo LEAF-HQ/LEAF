@@ -3,12 +3,23 @@
 
 
 <!ENTITY TargetLumi  "1" >
-<!ENTITY outfilepath "/pnfs/psi.ch/cms/trivcat/store/user/$MYUSERNAME/$MYANALYSISNAME/2017/Preselection/InitialSetup" >
+<!ENTITY outfilepath "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup" >
+<!-- can also use the storage elements like this example below. If a path starts with "/pnfs/", the Analyzer will prepend the "SEDirector" specified below
+<!ENTITY outfilepath "/pnfs/psi.ch/cms/trivcat/store/user/$MYUSERNAME/$MYANALYSISNAME/InitialSetup" >
+-->
 
 
+<!-- real datasets are here
 <!ENTITY LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0   SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0.xml" >
 <!ENTITY LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0   SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0.xml" >
 <!ENTITY WJetsToLNu_Inclusive                    SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/WJetsToLNu_Inclusive.xml" >
+-->
+
+<!-- some mock-up samples -->
+<!ENTITY TestSignal              SYSTEM "$MYLEAFPATH/.testsamples/TestSignal.xml" >
+<!ENTITY TestBackground_Sample1  SYSTEM "$MYLEAFPATH/.testsamples/TestBackground.xml" >
+<!ENTITY TestData_Sample1        SYSTEM "$MYLEAFPATH/.testsamples/TestData.xml" >
+
 
 ]>
 
@@ -18,9 +29,9 @@
   <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" Walltime="01:00:00" />
 
   <InputDatasets>
-    <Dataset Name="LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0"  Lumi="100000"         Year="2017"  Type="MC"  Group="None"  >    &LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0;    </Dataset>
-    <Dataset Name="LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0"  Lumi="100000"         Year="2017"  Type="MC"  Group="None"  >    &LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0;    </Dataset>
-    <Dataset Name="WJetsToLNu_Inclusive"                   Lumi="19997.57806"    Year="2017"  Type="MC"  Group="WJets" >    &WJetsToLNu_Inclusive;                     </Dataset>
+    <Dataset Name="TestSignal"              Lumi="100000"    Year="2017"  Type="MC"    Group="None"  >              &TestSignal;               </Dataset>
+    <Dataset Name="TestBackground_Sample1"  Lumi="100000"    Year="2017"  Type="MC"    Group="TestBackground"  >    &TestBackground_Sample1;   </Dataset>
+    <Dataset Name="TestData_Sample1"        Lumi="1"         Year="2017"  Type="DATA"  Group="TestData" >           &TestData_Sample1;         </Dataset>
   </InputDatasets>
 
   <AdditionalVariables>
