@@ -5,8 +5,8 @@
 <PlotterConfiguration>
 
   <FileConfiguration
-    InputDirectory  = "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup"
-    OutputDirectory = "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup/plots/distributions"
+    InputDirectory  = "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup"
+    OutputDirectory = "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup/plots/distributions"
     PreFix          = "TestAnalysis_"
     SEDirector      = "root://t3dcachedb03.psi.ch/"
   />
@@ -21,9 +21,10 @@
   />
 
   <InputDatasets>
-    <Dataset Name="TestSignal"     Stack="false"  Color="636"  Linestyle="1"   Legend="Test signal"      Type="MC" />
-    <Dataset Name="TestBackground" Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"  Type="MC" />
-    <Dataset Name="TestData"       Stack="false"  Color="1"    Linestyle="0"   Legend="Test data"        Type="DATA" />
+    <Dataset Name="TestSignal_M1000"   Stack="false"  Color="1"    Linestyle="2"   Legend="Test signal (M = 1000 GeV)"   Type="MC" />
+    <Dataset Name="TestSignal_M2000"   Stack="false"  Color="1"    Linestyle="1"   Legend="Test signal (M = 2000 GeV)"   Type="MC" />
+    <Dataset Name="TestBackground"    Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"              Type="MC" />
+    <Dataset Name="TestData"          Stack="false"  Color="1"    Linestyle="0"   Legend="Test data"                    Type="DATA" />
   </InputDatasets>
 
 

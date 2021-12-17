@@ -11,3 +11,6 @@ nav:
       - Analyzer: packages/analyzer.md
       - Plotter: packages/plotter.md
       - Submitter: packages/submitter.md
+
+markdown_extensions:
+    - admonition

@@ -3,7 +3,7 @@
 
 
 <!ENTITY TargetLumi  "1" >
-<!ENTITY outfilepath "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup" >
+<!ENTITY outfilepath "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup" >
 <!-- can also use the storage elements like this example below. If a path starts with "/pnfs/", the Analyzer will prepend the "SEDirector" specified below
 <!ENTITY outfilepath "/pnfs/psi.ch/cms/trivcat/store/user/$MYUSERNAME/$MYANALYSISNAME/InitialSetup" >
 -->
@@ -16,7 +16,8 @@
 -->
 
 <!-- some mock-up samples -->
-<!ENTITY TestSignal              SYSTEM "$MYLEAFPATH/.testsamples/TestSignal.xml" >
+<!ENTITY TestSignal_M1000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M1000.xml" >
+<!ENTITY TestSignal_M2000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M2000.xml" >
 <!ENTITY TestBackground_Sample1  SYSTEM "$MYLEAFPATH/.testsamples/TestBackground.xml" >
 <!ENTITY TestData_Sample1        SYSTEM "$MYLEAFPATH/.testsamples/TestData.xml" >
 
@@ -29,7 +30,8 @@
   <SubmissionSettings EventsPerJob="-1" FilesPerJob="-1" Walltime="01:00:00" />
 
   <InputDatasets>
-    <Dataset Name="TestSignal"              Lumi="100000"    Year="2017"  Type="MC"    Group="None"  >              &TestSignal;               </Dataset>
+    <Dataset Name="TestSignal_M1000"        Lumi="100000"    Year="2017"  Type="MC"    Group="None"  >              &TestSignal_M1000;         </Dataset>
+    <Dataset Name="TestSignal_M2000"        Lumi="100000"    Year="2017"  Type="MC"    Group="None"  >              &TestSignal_M2000;         </Dataset>
     <Dataset Name="TestBackground_Sample1"  Lumi="100000"    Year="2017"  Type="MC"    Group="TestBackground"  >    &TestBackground_Sample1;   </Dataset>
     <Dataset Name="TestData_Sample1"        Lumi="1"         Year="2017"  Type="DATA"  Group="TestData" >           &TestData_Sample1;         </Dataset>
   </InputDatasets>

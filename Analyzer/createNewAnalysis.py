@@ -106,12 +106,15 @@ def createTestSampleXMLs(name, placeholders):
     os.system(command)
     command = 'cp templates/TestBackground.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
     os.system(command)
-    command = 'cp templates/TestSignal.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
+    command = 'cp templates/TestSignal_M1000.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
+    os.system(command)
+    command = 'cp templates/TestSignal_M2000.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
     os.system(command)
 
     replace_placeholders('%s/.testsamples/TestData.xml' % (os.environ['LEAFPATH']), placeholders)
     replace_placeholders('%s/.testsamples/TestBackground.xml' % (os.environ['LEAFPATH']), placeholders)
-    replace_placeholders('%s/.testsamples/TestSignal.xml' % (os.environ['LEAFPATH']), placeholders)
+    replace_placeholders('%s/.testsamples/TestSignal_M1000.xml' % (os.environ['LEAFPATH']), placeholders)
+    replace_placeholders('%s/.testsamples/TestSignal_M2000.xml' % (os.environ['LEAFPATH']), placeholders)
 
 def createNewPostAnalyzer(name, placeholders):
     command = 'cp -r templates/PostAnalyzerTemplate %s/PostAnalyzer' % (name)

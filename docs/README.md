@@ -1,10 +1,12 @@
 # LEAF: An LHC Event Analysis Framework
 Welcome to the documentation for the LHC event analysis framework (LEAF)! If you have not used LEAF before, it is advisable to read the intoduction below, it will give an overview over the different purposes LEAF can be used for. Otherwise, you might as well just skip it and refer to the documentation of the individual packages for in-depth information.
 
+tl;dr: [Install LEAF](installation.md) and follow the [quickstart example](quickstart.md)
+
 ## Introduction
 LEAF is a versatile, relatively lightweight framework that allows to perform multiple steps common to about every LHC data analysis. It has several "packages", each of which may be used for a different task analysts might encounter on their way from a theoretical model to a full publication. LEAF may currently only be used for CMS data analysis, as it is specific to the data format adopted in the CMS Collaboration. Additionally, it is only configured for use with the PSI Tier-3 SLURM cluster, but it is possible to extend it to different infrastructures.
 
-Instructions on how to install and complie LEAF can be found on the [Installation](installation.md) page. Brief introductions to all packages are given below on this page, in-depth information can be found in the pages linked in the respective section. The typical workflow from zero to a full physics result usually follows the order in which packages are introduced here.
+Instructions on how to install and complie LEAF can be found on the [Installation](installation.md) page. Brief introductions to all packages are given below on this page, in-depth information can be found in the pages linked in the respective section. The typical workflow from zero to a full physics result usually follows the order in which packages are introduced here. A [quickstart example](quickstart.md) of an analysis is available here.
 
 ## Generator
 The [Generator](packages/generator.md) package is used in the very beginning of an analysis to generate signal samples from a theoretical model in the UFO format using the MadGraph5_aMCatNLO event generator. A UFO model is often provided by authors of phenomenological papers. With the Generator, it is possible to privately generate events of whatever process the model is able to simulate and to process them down the chain of all data formats employed by CMS.

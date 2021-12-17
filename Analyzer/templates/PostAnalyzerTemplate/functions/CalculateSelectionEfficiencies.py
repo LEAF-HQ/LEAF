@@ -53,7 +53,7 @@ def CalculateSelectionEfficiencies(self, num_and_denom, signals, backgrounds):
     c.SetRightMargin(0.07)
 
     haxis = graphs[graphs.keys()[0]]
-    haxis.SetMaximum(1.2)
+    haxis.SetMaximum(1.5)
     haxis.SetMinimum(0.)
     haxis.Draw('AXIS')
     legend = tdrLeg(0.45,0.65,0.95,0.9, textSize=0.025)
