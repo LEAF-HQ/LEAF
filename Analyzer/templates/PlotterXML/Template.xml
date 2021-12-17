@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE PlotterConfiguration PUBLIC "" "PlotterConfiguration.dtd"[]>
+
+
+<PlotterConfiguration>
+
+  <FileConfiguration
+    InputDirectory  = "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup"
+    OutputDirectory = "$MYLEAFPATH/../$MYANALYSISNAME/InitialSetup/plots/distributions"
+    PreFix          = "TestAnalysis_"
+    SEDirector      = "root://t3dcachedb03.psi.ch/"
+  />
+
+  <PlottingConfiguration
+    lumitext   = "41.5 fb^{-1} (13 TeV)"
+    blind      = "false"
+    logY       = "true"
+    normalize  = "false"
+    singlePDF  = "false"
+    numerator  = "TestData"
+  />
+
+  <InputDatasets>
+    <Dataset Name="TestSignal" Stack="false"  Color="636"  Linestyle="1"       Legend="Test signal"      Type="MC" />
+    <Dataset Name="TestBackground" Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"  Type="MC" />
+    <Dataset Name="TestData"       Stack="false"  Color="1"    Linestyle="0"   Legend="Test data"        Type="DATA" />
+  </InputDatasets>
+
+
+<!--
+kWhite    0,
+kBlack    1,
+kYellow   400
+kGreen    416
+kCyan     432
+kBlue     600
+kMagenta  616
+kRed      632
+kOrange   800
+kSpring   820
+kTeal     840
+kAzure    860
+kViolet   880
+kPink     900
+kGray     920
+
+-->
+
+
+
+</PlotterConfiguration>

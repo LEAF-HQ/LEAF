@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+
+<!ELEMENT PlotterConfiguration (FileConfiguration, PlottingConfiguration,InputDatasets)>
+
+
+<!ELEMENT FileConfiguration EMPTY>
+<!ATTLIST  FileConfiguration
+    OutputDirectory      CDATA            #REQUIRED
+    InputDirectory       CDATA            #REQUIRED
+    SEDirector           CDATA            #REQUIRED
+    PreFix               CDATA            ""
+>
+
+<!ELEMENT PlottingConfiguration EMPTY>
+<!ATTLIST  PlottingConfiguration
+    blind         CDATA     #REQUIRED
+    logY          CDATA     #REQUIRED
+    normalize     CDATA     #REQUIRED
+    singlePDF     CDATA     #REQUIRED
+    lumitext      CDATA     #REQUIRED
+    numerator     CDATA     #REQUIRED
+>
+
+
+<!ELEMENT InputDatasets (Dataset+)>
+
+<!ELEMENT Dataset EMPTY>
+<!ATTLIST Dataset
+    Name        CDATA         #REQUIRED
+    Color       CDATA         #REQUIRED
+    Linestyle   CDATA         #REQUIRED
+    Legend      CDATA         #REQUIRED
+    Type        (MC|DATA)     #REQUIRED
+    Stack       (true|false)  #REQUIRED
+>
