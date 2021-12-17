@@ -48,6 +48,9 @@ def main():
     createNewConfigs(name, placeholder_dict)
 
     # create all new source files
+    createTestSampleXMLs(name, placeholder_dict)
+
+    # create all new source files
     createNewPostAnalyzer(name, placeholder_dict)
 
     # create all new source files
@@ -98,6 +101,18 @@ def createNewConfigs(name, placeholders):
 
     replace_placeholders('%s/config/%s.xml' % (name, placeholders['$MYANALYSISNAME']), placeholders)
 
+def createTestSampleXMLs(name, placeholders):
+    command = 'cp templates/TestData.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
+    os.system(command)
+    command = 'cp templates/TestBackground.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
+    os.system(command)
+    command = 'cp templates/TestSignal.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
+    os.system(command)
+
+    replace_placeholders('%s/.testsamples/TestData.xml' % (os.environ['LEAFPATH']), placeholders)
+    replace_placeholders('%s/.testsamples/TestBackground.xml' % (os.environ['LEAFPATH']), placeholders)
+    replace_placeholders('%s/.testsamples/TestSignal.xml' % (os.environ['LEAFPATH']), placeholders)
+
 def createNewPostAnalyzer(name, placeholders):
     command = 'cp -r templates/PostAnalyzerTemplate %s/PostAnalyzer' % (name)
     os.system(command)
@@ -134,7 +149,7 @@ def updateMakefileLocal(name):
             for l in newlines:
                 f.write(l)
 
-    
+
 
 def replace_placeholders(filename, placeholder_dict):
     newlines = []
