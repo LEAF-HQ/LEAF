@@ -2,12 +2,12 @@
 
 ## Getting the code (once)
 
-Getting the LEAF code is easy, there is a script that takes care of everything for you. It will set up LEAF and a CMSSW version in the directory the script is executed from. You will need access to /cvmfs in order for the compilation to work.
+Getting the LEAF code is easy, there is a script that takes care of everything for you. It will set up LEAF and a CMSSW version in the directory the script is executed from. You will need access to /cvmfs in order for the compilation to work. The latest tag that has been tested extensively is used.
 
 After downloading the code and checking out the necessary repositories, most notably the `JECDatabase`, `JRDatabase`, and `Combine`, some packages of LEAF will be compiled to generate all executables used in the various steps of a data analysis. This is all done automatically, so nothing to worry about. The following snippet will install LEAF and several versions of `CMSSW` in the folder the snippet below is executed from. It will reuse existing installations of `CMSSW` of the correct versions, if there are any. Make sure to run in a clean shell:
 
 ```bash
-wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
+wget https://github.com/reimersa/LEAF/blob/v1.0/get_leaf.sh
 source get_leaf.sh   
 ```
 
