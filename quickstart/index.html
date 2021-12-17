@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     
-    <title>Installation - LEAF</title>
+    <title>Quickstart - LEAF</title>
     
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
@@ -75,14 +75,14 @@
                 
                 
                 
-                    <li class="active">
-                        <a href="./">Installation</a>
+                    <li >
+                        <a href="../installation/">Installation</a>
                     </li>
                 
                 
                 
-                    <li >
-                        <a href="../quickstart/">Quickstart</a>
+                    <li class="active">
+                        <a href="./">Quickstart</a>
                     </li>
                 
                 
@@ -134,12 +134,12 @@
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="..">
+                        <a rel="prev" href="../installation/">
                             <i class="fas fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="next" href="../quickstart/">
+                        <a rel="next" href="../packages/generator/">
                             Next <i class="fas fa-arrow-right"></i>
                         </a>
                     </li>
@@ -153,42 +153,80 @@
         
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="first-level active"><a href="#installation">Installation</a></li>
-            <li class="second-level"><a href="#getting-the-code-once">Getting the code (once)</a></li>
+        <li class="first-level active"><a href="#quickstart-guide">Quickstart guide</a></li>
+            <li class="second-level"><a href="#prerequisites">Prerequisites</a></li>
                 
-            <li class="second-level"><a href="#setup-every-time">Setup (every time)</a></li>
+            <li class="second-level"><a href="#event-selection-and-histogram-production">Event selection and histogram production</a></li>
                 
-            <li class="second-level"><a href="#setting-up-a-new-analysis-once">Setting up a new analysis (once)</a></li>
+            <li class="second-level"><a href="#plotting-distributions">Plotting distributions</a></li>
+                
+            <li class="second-level"><a href="#post-analysis">Post-analysis</a></li>
+                
+            <li class="second-level"><a href="#conclusion">Conclusion</a></li>
                 
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
 
-<h1 id="installation">Installation</h1>
-<h2 id="getting-the-code-once">Getting the code (once)</h2>
-<p>Getting the LEAF code is easy, there is a script that takes care of everything for you. It will set up LEAF and a CMSSW version in the directory the script is executed from. You will need access to /cvmfs in order for the compilation to work.</p>
-<p>After downloading the code and checking out the necessary repositories, most notably the <code>JECDatabase</code>, <code>JRDatabase</code>, and <code>Combine</code>, some packages of LEAF will be compiled to generate all executables used in the various steps of a data analysis. This is all done automatically, so nothing to worry about. The following snippet will install LEAF and several versions of <code>CMSSW</code> in the folder the snippet below is executed from. It will reuse existing installations of <code>CMSSW</code> of the correct versions, if there are any. Make sure to run in a clean shell:</p>
-<pre><code class="bash">wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
-source get_leaf.sh   
+<h1 id="quickstart-guide">Quickstart guide</h1>
+<p>Welcome to the quickstart guide for performing an analysis using LEAF! The steps below will introduce some essential features of any data analysis.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This guide assumes you have just installed LEAF and created a fresh analysis following the instructions in the <a href="../installation/">installation guide</a>. For this guide, we will assume the new analysis was named <code>MyAnalysis</code>. If you chose a different name, please adjust your commands accordingly. Note that you will not need to modify code, but only the commands to be executed. If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.</p>
+<h2 id="event-selection-and-histogram-production">Event selection and histogram production</h2>
+<p>The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the <code>AnalysisTool</code> class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in <code>LEAF/Analyzer/MyAnalysis/src/MyAnalysisTool.cc</code>.</p>
+<p>The settings of the job, such as the files to run over or the input/output paths are configured in an <code>xml</code> file, which can be found in <code>LEAF/Analyzer/MyAnalysis/config/MyAnalysis.xml</code>. Be sure to have a look into both files and understand what is going on.</p>
+<p>The configuration file is already prepared to run over the test samples (in <code>LEAF/.testsamples/*.root</code>), so we can simply run the <code>Analyzer</code> executable locally, passing the configuration file as an argument:</p>
+<pre><code class="bash">cd MyAnalysis/config
+Analyzer MyAnalysis.xml
 </code></pre>
 
-<p>At this point, LEAF is fully functional and all its packages can be used. You should now close this shell and start again in a fresh one. If it is intended to perform a usual data analysis, it is necessary to set up a new analysis skeleton, which can be modified and extended according to each user's needs and wishes. Simply follow the remaining steps on this page.</p>
-<h2 id="setup-every-time">Setup (every time)</h2>
-<p>Each package of LEAF can be used more or less standalone, even though there are some interconnections between the packages. To set up LEAF in a fresh shell, simply <code>cd</code> into your LEAF folder and source the setup script:</p>
-<pre><code class="bash">cd &lt;PATH/TO/LEAF&gt;
-source setup.sh
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The above command can be run from anywhere, then the relative (or absolute, if preferred) path to the <code>xml</code> file must be adjusted accordingly. However, this is not true for all programs along the way, so it is best to execute all commands from within the folder that contains the file passed as an argument.</p>
+</div>
+<p>The default configuration file will instruct the <code>Analyzer</code> to store the output root files in a folder on the same level as the main LEAF folder, <code>MyAnalysis/2017/Preselection/InitialSetup</code>. To get there, do</p>
+<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
 </code></pre>
 
-<h2 id="setting-up-a-new-analysis-once">Setting up a new analysis (once)</h2>
-<p>There is a handy macro that creates all structures needed for a new analysis and integrates it into the LEAF compilation workflow. All that needs to be done (in an environment where LEAF has already been <a href="#setup-(every-time)">set up</a>) is</p>
-<pre><code class="bash">cd $LEAFPATH/Analyzer
-./createNewAnalysis.py &lt;NewAnalysisName&gt;
-make clean
-make -j
+<p>You will find four root files in that folder, one for each of the samples we processed.</p>
+<p>In a real analysis, a given process will often be split into different samples binned in a certain variable (for example HT, PT, or M). In order to merge samples adding up to the same process, we will use the <code>Submitter</code>:</p>
+<pre><code class="bash">cd $LEAFPATH/Analyzer/MyAnalysis/config
+submit.py MyAnalysis.xml -p
 </code></pre>
 
-<p>This will create all necessary files and folders for the new analysis to be compiled and linked automatically when comiling the Analyzer package. See the <a href="../packages/analyzer/">Analyzer documentation</a> for details. It is advisable to choose a concise name for <code>&lt;NewAnalysisName&gt;</code>, it will be typed frequently. Also make sure the first few letters are convenient to type.</p>
-<p>If you are new to LEAF, you can follow the <a href="../quickstart/">quickstart guide</a> to run a small, self-contained test analysis, introducing some essential features. If you already know what you are doing, you are all set. Detailed information can be found in the documentation of each LEAF package, which is linked from the top navigation bar and from the <a href="..">homepage</a>.</p></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this exercise, this step would not really be necessary, but in a full-fledged analysis it will be.</p>
+</div>
+<p>You can see two new files created, one for data and one for background. Note that the names of the new samples are slightly changed.</p>
+<h2 id="plotting-distributions">Plotting distributions</h2>
+<p>The next step will be to visualize the events processed by plotting distributions of relevant observables and comparing different processes. The <code>Plotter</code> package takes care of this. Just like the <code>Analyzer</code> executable, also the <code>Plotter</code> executable is configured through an <code>xml</code> file, which contains information on the datasets to be plotted.</p>
+<p>When creating the new analysis, a corresponding configuration file for the <code>Plotter</code> has already been created, so simply plot the distributions:</p>
+<pre><code class="bash">cd $LEAFPATH/Plotter/MyAnalysis
+Plotter Default.xml
+</code></pre>
+
+<p>The distributions will be created in the folder containing the output root files of the previous step, which is on the same level as the main LEAF folder: <code>MyAnalysis/2017/Preselection/InitialSetup/plots/distributions</code>. To get there, do</p>
+<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions
+</code></pre>
+
+<p>Feel free to inspect the plots before moving on. Also feel free to try and add some new event selection steps and plot the default distributions after those. Adding more observables could be useful as well.</p>
+<h2 id="post-analysis">Post-analysis</h2>
+<p>After having selected events and plotted distributions at the different stages of the event selection, now we will perform some further analysis to understand our selection and finally infer the presence or absence of a signal over the standard model expectation.</p>
+<p>Together with the new analysis came a basic collection of analysis scripts, with are contained in the <code>PostAnalyzer</code> folder. It contains one main executable script. Let us execute it:</p>
+<pre><code class="bash">cd $LEAFPATH/Analyzer/MyAnalysis/PostAnalyzer
+./steer.py
+</code></pre>
+
+<p>The</p>
+<p>This will produce two results at the moment. They are new plots to be found in the usual output folder. To get there, do</p>
+<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots
+</code></pre>
+
+<p>The first are two plots of the efficiency of each selection step applied in the beginning of this quickstart, one with a linear and one with a logarithmic y-axis scale. This type of plot is useful for monitoring the behavior of the event selections applied.</p>
+<p>The second new result is the expected upper limit on our test signal cross section, as extracted from the selected background and signal. Note that the data are not considered here for the moment.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this short example, you have performed a pre-defined event selection, you have visualized the intermediate steps and the final outcome. Last, you have run additional scripts on your fully selected events to compute the selection efficiency of each step and expected upper limits on the signal production cross section. Details on each LEAF package can be found in this documentation as well, see the links in <a href="..">here</a>.</p></div>
         
         
     </div>

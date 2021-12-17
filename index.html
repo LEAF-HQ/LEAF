@@ -81,6 +81,12 @@
                 
                 
                 
+                    <li >
+                        <a href="quickstart/">Quickstart</a>
+                    </li>
+                
+                
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Packages <b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -166,9 +172,10 @@
 
 <h1 id="leaf-an-lhc-event-analysis-framework">LEAF: An LHC Event Analysis Framework</h1>
 <p>Welcome to the documentation for the LHC event analysis framework (LEAF)! If you have not used LEAF before, it is advisable to read the intoduction below, it will give an overview over the different purposes LEAF can be used for. Otherwise, you might as well just skip it and refer to the documentation of the individual packages for in-depth information.</p>
+<p>tl;dr: <a href="installation/">Install LEAF</a> and follow the <a href="quickstart/">quickstart example</a></p>
 <h2 id="introduction">Introduction</h2>
 <p>LEAF is a versatile, relatively lightweight framework that allows to perform multiple steps common to about every LHC data analysis. It has several "packages", each of which may be used for a different task analysts might encounter on their way from a theoretical model to a full publication. LEAF may currently only be used for CMS data analysis, as it is specific to the data format adopted in the CMS Collaboration. Additionally, it is only configured for use with the PSI Tier-3 SLURM cluster, but it is possible to extend it to different infrastructures.</p>
-<p>Instructions on how to install and complie LEAF can be found on the <a href="installation/">Installation</a> page. Brief introductions to all packages are given below on this page, in-depth information can be found in the pages linked in the respective section. The typical workflow from zero to a full physics result usually follows the order in which packages are introduced here.</p>
+<p>Instructions on how to install and complie LEAF can be found on the <a href="installation/">Installation</a> page. Brief introductions to all packages are given below on this page, in-depth information can be found in the pages linked in the respective section. The typical workflow from zero to a full physics result usually follows the order in which packages are introduced here. A <a href="quickstart/">quickstart example</a> of an analysis is available here.</p>
 <h2 id="generator">Generator</h2>
 <p>The <a href="packages/generator/">Generator</a> package is used in the very beginning of an analysis to generate signal samples from a theoretical model in the UFO format using the MadGraph5_aMCatNLO event generator. A UFO model is often provided by authors of phenomenological papers. With the Generator, it is possible to privately generate events of whatever process the model is able to simulate and to process them down the chain of all data formats employed by CMS.</p>
 <h2 id="tuplizer">Tuplizer</h2>
@@ -284,5 +291,5 @@
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2021-06-01 17:26:46
+Build Date UTC : 2021-12-17 18:19:51
 -->
