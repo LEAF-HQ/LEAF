@@ -86,17 +86,14 @@ void make_plots(vector<PlottingDataset*>& datasets_all, TString numerator, TStri
     if(dataset->stack){
       do_stack = true;
       datasets_stack.emplace_back(dataset);
-      cout << "name_stack: " << dataset->name << endl;
     }
     else{
       datasets_single.emplace_back(dataset);
-      cout << "name_single: " << dataset->name << endl;
     }
     if(dataset->name == numerator){
       if(already_found_numerator) throw runtime_error("There seem to be at least 2 datasets with the same name, which is also equal to the numerator name: " + numerator + ".");
       dataset_numerator = dataset;
       already_found_numerator = true;
-      cout << "name_numerator: " << dataset->name << endl;
     }
   }
 
