@@ -21,7 +21,7 @@
   />
 
   <InputDatasets>
-    <Dataset Name="TestSignal" Stack="false"  Color="636"  Linestyle="1"       Legend="Test signal"      Type="MC" />
+    <Dataset Name="TestSignal"     Stack="false"  Color="636"  Linestyle="1"   Legend="Test signal"      Type="MC" />
     <Dataset Name="TestBackground" Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"  Type="MC" />
     <Dataset Name="TestData"       Stack="false"  Color="1"    Linestyle="0"   Legend="Test data"        Type="DATA" />
   </InputDatasets>
