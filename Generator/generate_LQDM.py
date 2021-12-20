@@ -108,8 +108,8 @@ for mlq in mlqs_lqtch_taunu:
 
 
 
-# processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi', 'LQTChannelTauNu', 'LQTChannelTauTau', 'LQTChannelTauMu', 'LQTChannelMuMu']
-processes_xsec = ['LQTChannelTauNu_DynamicScale', 'LQTChannelTauMu_DynamicScale', 'LQTChannelMuMu_DynamicScale']
+# processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi']
+processes_xsec = ['PsiPsi']
 lambdas_xsec = [1.0, 'best']
 
 
@@ -234,6 +234,14 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, sampletype=sampl
 # CrossBRRunner.ReadoutCrossBR()
 # CrossBRRunner.RootifyCrossBR()
 # CrossBRRunner.PlotCrossBR()
+
+# CrossBRRunner.ReadoutCrossBR(ignore_br=True)
+CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
+# CrossBRRunner.PlotCrosssections(overlay=['LAMBDA'], overlay_values=[None])
+CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
+# CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
+# CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
 
 
 

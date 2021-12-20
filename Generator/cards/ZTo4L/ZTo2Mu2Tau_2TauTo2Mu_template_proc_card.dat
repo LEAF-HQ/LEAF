@@ -1,0 +1,2 @@
+generate p p > z, (z > mu+ mu- ta+ ta-) / h
+output $OUTPUT

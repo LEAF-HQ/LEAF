@@ -7,7 +7,6 @@
 *.root
 */commands/*.txt
 */*/commands/*.txt
-*.dat
 .nfs*
 *DS_Store
 .fuse*
