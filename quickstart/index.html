@@ -171,7 +171,12 @@
 <h1 id="quickstart-guide">Quickstart guide</h1>
 <p>Welcome to the quickstart guide for performing an analysis using LEAF! The steps below will introduce some essential features of any data analysis.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>This guide assumes you have just installed LEAF and created a fresh analysis following the instructions in the <a href="../installation/">installation guide</a>. For this guide, we will assume the new analysis was named <code>MyAnalysis</code>. If you chose a different name, please adjust your commands accordingly. Note that you will not need to modify code, but only the commands to be executed. If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.</p>
+<p>This guide assumes you have just installed LEAF and created a fresh analysis following the instructions in the <a href="../installation/">installation guide</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For this guide, we will assume the new analysis was named <code>MyAnalysis</code>. If you chose a different name, please adjust all the commands below accordingly. You will not need to modify any code, but only the commands to be executed</p>
+</div>
+<p>If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.</p>
 <h2 id="event-selection-and-histogram-production">Event selection and histogram production</h2>
 <p>The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the <code>AnalysisTool</code> class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in <code>LEAF/Analyzer/MyAnalysis/src/MyAnalysisTool.cc</code>.</p>
 <p>The settings of the job, such as the files to run over or the input/output paths are configured in an <code>xml</code> file, which can be found in <code>LEAF/Analyzer/MyAnalysis/config/MyAnalysis.xml</code>. Be sure to have a look into both files and understand what is going on.</p>
@@ -218,7 +223,6 @@ Plotter Default.xml
 ./steer.py
 </code></pre>
 
-<p>The</p>
 <p>This will produce two results at the moment. They are new plots to be found in the usual output folder. To get there, do</p>
 <pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots
 </code></pre>
