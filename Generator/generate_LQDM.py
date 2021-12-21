@@ -109,8 +109,38 @@ for mlq in mlqs_lqtch_taunu:
 
 
 # processes_xsec = ['LQLQ', 'LQLQToBTau', 'LQLQToBTauPsiChi', 'LQLQToPsiChi', 'PsiPsi']
-processes_xsec = ['PsiPsi']
+processes_xsec = ['LQLQ', 'PsiPsi']
 lambdas_xsec = [1.0, 'best']
+
+general_settings = {
+'UL17':{
+    'BWCUTOFF': 15,
+    'PDF':      315200
+    }
+}
+
+configs = []
+
+    for mlq in preferred_configurations.keys():
+        for mch in preferred_configurations[mlq].keys():
+            config = {}
+            config['mlq'] = mlq
+            config['mch'] = mch
+            if not is_config_excluded_for_process(config=config, processname=processname, preferred_configurations=preferred_configurations):
+                configs.append(config)
+    return configs
+
+individual_settings_xsec = []
+for lamb in lambdas_xsec:
+    for mlq in preferred_configurations.keys():
+        for mch in preferred_configurations[mlq].keys():
+            dict = OrderedDict()
+            # dict keys: what to replace in cards
+            # dict value tuples: (value, "name of parameter in samplename")
+            dict['MLQ'] = (mlq, 'MLQ')
+            dict['MCH'] = (mlq, 'MCH')
+            dict['LAMBDA'] = (lamb, 'L')
+            individual_settings_xsec.append(dict)
 
 
 tag = ''                # tags are auto-formatted to '_XXXX'
@@ -226,22 +256,25 @@ ensureDirectory(workdir_slurm)
 submit = True
 
 
-CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, sampletype=sampletype, tag=tag, lambdas=lambdas_xsec, cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
-# CrossBRRunner.ProduceCards()
+CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individual_settings=individual_settings_xsec, general_settings=general_settings[campaign], cardfolder=cardfolder, crosssecfolder=crosssecfolder, generatorfolder=generatorfolder, mgfolder_local=mgfolder_local, workarea=workarea, cmssw_tag_sim=cmssw_tag_sim, workdir_slurm=workdir_slurm, submit=submit)
+CrossBRRunner.ProduceCards()
 # CrossBRRunner.RunMG(only_resubmit=False, ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
 # CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True,  ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
-# CrossBRRunner.ReadoutCrossBR()
-# CrossBRRunner.RootifyCrossBR()
+
+# CrossBRRunner.ReadoutCrossBR(ignore_br=False)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
 # CrossBRRunner.PlotCrossBR()
 
 # CrossBRRunner.ReadoutCrossBR(ignore_br=True)
-CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
-# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
+
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA'], overlay_values=[None])
-CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
+# CrossBRRunner.PlotCrosssections(overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
 # CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
+
+
 
 
 
