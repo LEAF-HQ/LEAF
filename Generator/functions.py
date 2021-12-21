@@ -52,6 +52,8 @@ def get_samplename_flex(ordered_dict, tag=None):
     for key in ordered_dict:
         val = ordered_dict[key][0]
         namepart = ordered_dict[key][1]
+        if namepart is None:
+            continue
         if isinstance(val, float) or isinstance(val, int):
             val = get_floatstring(val)
         result += '%s%s_' % (str(namepart), str(val))
