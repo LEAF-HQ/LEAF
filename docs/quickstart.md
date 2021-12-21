@@ -4,7 +4,12 @@ Welcome to the quickstart guide for performing an analysis using LEAF! The steps
 
 ## Prerequisites
 
-This guide assumes you have just installed LEAF and created a fresh analysis following the instructions in the [installation guide](installation.md). For this guide, we will assume the new analysis was named `MyAnalysis`. If you chose a different name, please adjust your commands accordingly. Note that you will not need to modify code, but only the commands to be executed. If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.
+This guide assumes you have just installed LEAF and created a fresh analysis following the instructions in the [installation guide](installation.md).
+
+!!! note
+    For this guide, we will assume the new analysis was named `MyAnalysis`. If you chose a different name, please adjust all the commands below accordingly. You will not need to modify any code, but only the commands to be executed
+
+If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.
 
 ## Event selection and histogram production
 
@@ -71,8 +76,6 @@ Together with the new analysis came a basic collection of analysis scripts, with
 cd $LEAFPATH/Analyzer/MyAnalysis/PostAnalyzer
 ./steer.py
 ```
-
-The
 
 This will produce two results at the moment. They are new plots to be found in the usual output folder. To get there, do
 ```bash

@@ -11,6 +11,9 @@ wget https://raw.githubusercontent.com/reimersa/LEAF/v1.0/get_leaf.sh
 source get_leaf.sh   
 ```
 
+!!! note
+    You should now close the current shell and continue in a fresh one.
+
 At this point, LEAF is fully functional and all its packages can be used. You should now close this shell and start again in a fresh one. If it is intended to perform a usual data analysis, it is necessary to set up a new analysis skeleton, which can be modified and extended according to each user's needs and wishes. Simply follow the remaining steps on this page.
 
 ## Setup (every time)
