@@ -391,6 +391,36 @@ def tdrCanvas(canvName, x_min, x_max, y_min, y_max, nameXaxis, nameYaxis, square
   #
   return canv
 
+
+
+
+def tdrCanvas2d(canvName, square=True):
+  setTDRStyle()
+
+  W = 600 if square else 800
+  H = 600 if square else 600
+
+  W_ref = 600 if square else 800
+  H_ref = 600 if square else 600
+
+  # references for T, B, L, R
+  T = 0.07*H_ref if square else 0.08*H_ref
+  B = 0.13*H_ref if square else 0.12*H_ref
+  L = 0.15*H_ref if square else 0.16*H_ref
+  R = 0.24*H_ref if square else 0.05*H_ref
+
+  canv = rt.TCanvas(canvName,canvName,50,50,W,H)
+  canv.SetFillColor(0)
+  canv.SetBorderMode(0)
+  canv.SetFrameFillStyle(0)
+  canv.SetFrameBorderMode(0)
+  canv.SetLeftMargin( L/W )
+  canv.SetRightMargin( R/W )
+  canv.SetTopMargin( T/H )
+  canv.SetBottomMargin( B/H )
+
+  return canv
+
 #################
 # end tdrCanvas #
 #################
@@ -523,6 +553,24 @@ def tdrDraw(h, opt, marker=rt.kFullCircle, mcolor=rt.kBlack, lstyle=rt.kSolid, l
   h.SetLineColor(mcolor if lcolor==-1 else lcolor)
   h.SetFillStyle(fstyle)
   h.SetFillColorAlpha(fcolor, alpha)
+
+def tdrDraw2d(h, opt, nbinsx, xmin, xmax, nbinsy, ymin, ymax, ncontour, zmin, zmax, axistitles):
+
+  h2 = rt.TH2D('h2', 'h2', nbinsx, xmin, xmax, nbinsy, ymin, ymax)
+  h2.GetXaxis().SetTitle(axistitles[0])
+  h2.GetYaxis().SetTitle(axistitles[1])
+  h2.GetZaxis().SetTitle(axistitles[2])
+  h2.GetZaxis().SetTitleOffset(1.25)
+  SetAlternative2DColor(h2)
+  h.SetHistogram(h2)
+
+  HistCosmetics(h)
+  h.Draw('AXIS')
+  h.Draw(opt)
+  h.GetZaxis().SetRangeUser(zmin, zmax)
+  h2.SetContour(ncontour)
+  rt.gPad.RedrawAxis()
+
 
 def tdrLeg(x1, y1, x2, y2, textSize=0.045, textFont=42, textColor=rt.kBlack):
   leg = rt.TLegend(x1, y1, x2, y2, "", "brNDC")

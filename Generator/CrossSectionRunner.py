@@ -104,7 +104,7 @@ class CrossSectionRunner:
                 idx_offset = slurm_max_array_size*narrays
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
-                command = 'sbatch --parsable -a 1-%i%%%i -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i --ntasks-per-core 1 submit_crossbr_array.sh %s %i' % (arrayend, maxjobs_per_proc, slurmjobname, queue, runtime_str, ncores*4, commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i%%%i -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i --ntasks-per-core 1 submit_crossbr_array.sh %s %i' % (arrayend, maxjobs_per_proc, slurmjobname, queue, runtime_str, ncores*2, commandfilename, idx_offset)
                 if self.submit:
                     jobid = int(subprocess.check_output(command.split(' ')))
                     print green("--> Submitted an array of %i jobs for process %s. Master-jobid: %i"%(njobs_per_array[narrays], processname, int(jobid)))
@@ -191,8 +191,12 @@ class CrossSectionRunner:
                 variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
 
             elif 'PsiPsi' in processname:
-                filenamepattern_base = 'MLQ{}_MPS{}_MC1{}_L{}'
-                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+                # filenamepattern_base = 'MLQ{}_MCH{}_MPS{}_L{}'
+                # variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+                variable_order = [self.individual_settings[0][key][1] for key in self.individual_settings[0].keys() if self.individual_settings[0][key][1] is not None]
+                filenamepattern_base = '_'.join(['%s{}' % (x) for x in variable_order])
+                # print variable_order
+                # print filenamepattern_base
             else:
                 raise ValueError('processname does not contain \'LQLQ\' or \'LQTChannel\' or \'PsiPsi\', what kind of process are we looking at here?')
 
@@ -205,10 +209,6 @@ class CrossSectionRunner:
             varlists_xsec  = []
             varlists_br    = []
 
-            setting_list = []
-            for param in colnames_settings:
-                setting_list.append(self.individual_settings[0][param][1])
-
             for filename in filenames:
                 is_param_card = True if 'param_card' in filename else False
                 if not is_param_card:
@@ -216,7 +216,7 @@ class CrossSectionRunner:
                     parse_pattern_cross = processname + '_' + filenamepattern_base
                     parse_pattern_cross += '%s_crosssection{}' % (self.tag)
                     infilename = join(self.crosssecfolder+'/'+processname, filename)
-                    varlist = readout_crossection(infilename=infilename, filenamepattern=parse_pattern_cross, variable_order=variable_order, order_settings=setting_list, order_values=colnames_xsec)
+                    varlist = readout_crossection(infilename=infilename, filenamepattern=parse_pattern_cross, variable_order=variable_order, order_settings=variable_order, order_values=colnames_xsec)
                     varlists_xsec.append(varlist)
 
                 else: # param card
@@ -226,21 +226,24 @@ class CrossSectionRunner:
                     parse_pattern_br += '%s_param_card{}' % (self.tag)
                     infilename = join(self.crosssecfolder+'/'+processname, filename)
 
-                    varlist = readout_branchingratio(infilename=infilename, filenamepattern=parse_pattern_br, variable_order=variable_order, order_settings=setting_list, order_values=colnames_br)
+                    varlist = readout_branchingratio(infilename=infilename, filenamepattern=parse_pattern_br, variable_order=variable_order, order_settings=variable_order, order_values=colnames_br)
                     for l in varlist: # can return multiple lists, one for each decay mode
                         varlists_br.append(l)
+
+            varlists_xsec.sort(key=lambda x: x[4])
 
 
             #finally write the files
             if self.submit:
                 print green('--> Writing cross sections and branching fractions for process: %s' % (processname))
                 outfilename = self.crosssecfolder+'/Crosssections_%s%s.json' % (processname, self.tag)
-                df = pd.DataFrame(varlists_xsec, columns=colnames_settings+colnames_xsec)
-                df.to_json(outfilename, orient='records', lines=True)
+                df = pd.DataFrame(varlists_xsec, columns=variable_order+colnames_xsec)
+                print df
+                df.to_json(outfilename, orient='records', lines=True, double_precision=15)
 
                 if processname == 'LQLQ':
                     outfilename = self.crosssecfolder+'/Branchingratios_%s%s.json' % (processname, self.tag)
-                    df_br = pd.DataFrame(varlists_br, columns=colnames_settings+colnames_br)
+                    df_br = pd.DataFrame(varlists_br, columns=variable_order+colnames_br)
                     df_br.to_json(outfilename, orient='records', lines=True)
             else:
                 print yellow('--> Would write cross sections and branching fractions for process: %s' % (processname))
@@ -252,8 +255,9 @@ class CrossSectionRunner:
             print green('--> Now at sample %s' % (processname))
 
             # read dataframe from json
-            outfilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
+            outfilename = self.crosssecfolder+'/Crosssections_%s%s_vs_%s.root' % (processname, self.tag, '_'.join(variables))
             df = pd.read_json( self.crosssecfolder+'/Crosssections_%s%s.json' % (processname, self.tag), orient='records', lines=True )
+            print df
 
             # create outfile
             if self.submit:
@@ -295,9 +299,9 @@ class CrossSectionRunner:
                         graph.SetPointError(idx, 0, 0, tot_lo[idx], tot_hi[idx])
                 else:
                     npoints2d = 0
-                    graph = TGraph2D(vararray1.size, vararray2.size)
+                    graph = TGraph2D()
                     for idx in range(vararray1.size):
-                        graph.SetPoint(npoints, vararray1[idx], vararray2[idy], crosssection[idx])
+                        graph.SetPoint(npoints2d, vararray1[idx], vararray2[idx], crosssection[idx])
                         npoints2d += 1
                         if forcepoints2d is not None:
                             set_points[vararray1[idx]][vararray2[idx]] = True
@@ -306,21 +310,25 @@ class CrossSectionRunner:
                     for forceval_x in set_points:
                         for forceval_y in set_points[forceval_x]:
                             if not set_points[forceval_x][forceval_y]:
-                                graph2d.SetPoint(npoints2d, forceval_x, forceval_y, 0)
+                                graph.SetPoint(npoints2d, forceval_x, forceval_y, 0)
                                 npoints2d += 1
 
                 # set axis and graph names, flexibly for 1 and 2-d graphs
                 xaxistitle = variables[0]
-                graph.GetXaxis().SetTitle(xaxistitle)
+                graph.GetHistogram().GetXaxis().SetTitle(xaxistitle)
                 if len(variables) > 1:
-                    graph.GetYaxis().SetTitle(variables[1])
-                    graph.GetZaxis().SetTitle('#sigma [pb]')
+                    graph.GetHistogram().GetYaxis().SetTitle(variables[1])
+                    graph.GetHistogram().GetZaxis().SetTitle('#sigma [pb]')
                 else:
                     graph.GetYaxis().SetTitle('#sigma [pb]')
                 graphname = processname
-                for idx in range(len(graphs_per)):
-                    graphname += '_%s%s' % (graphs_per[idx], get_floatstring(value[idx]))
-                print graphname
+                if len(graphs_per) == 1:
+                    graphname += '_%s%s' % (graphs_per[0], get_floatstring(value))
+                else:
+                    for idx in range(len(graphs_per)):
+                        graphname += '_%s%s' % (graphs_per[idx], get_floatstring(value[idx]))
+
+                # print graphname
                 graph.SetName(graphname)
                 graph.SetTitle('')
 
@@ -342,7 +350,7 @@ class CrossSectionRunner:
 
 
 
-    def PlotCrosssections(self, overlay, overlay_values):
+    def PlotCrosssections(self, variables, overlay, overlay_values):
 
         # make plotting function part of the readout function, and give it option to only plot. Only then the correlations are properly kept without the need for parsing the graphnames and knowing the order. Other people/programs can still plot those cross sections "by hand", but here it needs to be systematic
 
@@ -361,11 +369,17 @@ class CrossSectionRunner:
             gROOT.SetBatch(1)
 
             # open rootfile
-            infilename = self.crosssecfolder+'/Crosssections_%s%s.root' % (processname, self.tag)
+            infilename = self.crosssecfolder+'/Crosssections_%s%s_vs_%s.root' % (processname, self.tag, '_'.join(variables))
             if self.submit:
                 infile = TFile(infilename, 'READ')
             else:
                 print yellow('--> Would have opened inputfile %s' % (outfilename))
+
+            # sanity check
+            if len(variables) > 1 and overlay is not None:
+                raise AttributeError('Requesting higher dimension than 1, in this case nothing can be overlaid. Please only use this option with \'overlay=None\'.')
+            if len(variables) > 2:
+                raise AttributeError('Requesting higher dimension than 2, this is not possible.')
 
 
             # parse graphnames to get list of all combinations of variables that exist in the file. The pattern of the graphname is known.
@@ -375,6 +389,11 @@ class CrossSectionRunner:
                 if ROOT.gROOT.GetClass(key.GetClassName()).InheritsFrom("TGraph"):
                     graphnames_overlay.append(key.GetName().replace(processname + '_', ''))
                     graphnames_all.append(key.GetName())
+                if len(variables) > 1:
+                    if ROOT.gROOT.GetClass(key.GetClassName()).InheritsFrom("TGraph2D"):
+                        graphnames_all.append(key.GetName())
+
+
 
             # remove processname, then split at '_'
             graphnames_split = [g.split('_') for g in graphnames_overlay]
@@ -418,7 +437,7 @@ class CrossSectionRunner:
                     for val in var_values_to_plot[varname]:
                         tags_per_plot.append(varname+val)
 
-                # from all graphnames, remove all the tags that are in the 'tags_per_plot'. afterwards, all graphs with the same "remaining name" belong on the same plot.
+                # from all graphnames, remove all the tags that are in the 'tags_per_plot'. afterwards, all graphs with the same "remaining name" (gn_cleaned) belong on the same plot.
                 graphnames_and_cleaned_and_tags = []
                 for gn in graphnames_all:
                     gn_cleaned = gn
@@ -426,13 +445,11 @@ class CrossSectionRunner:
                     for tag in tags_per_plot:
                         if tag in gn_cleaned:
                             gn_cleaned = gn_cleaned.replace('_%s' % (tag), '')
-                            tags += '%s_' % (tag)
-                    print tags, tags.strip('_')
-                    tags = tags.strip('_')
+                            tags += '_%s' % (tag)
                     for varname in overlay:
-                        print varname, tags
-                        tags = tags.replace(varname, '%s: ' % (varname))
-                        print tags
+
+                        tags = tags.replace('_%s' % (varname), ', %s: ' % (varname))
+                    tags = tags.strip(', ')
                     graphnames_and_cleaned_and_tags.append((gn_cleaned, gn, tags))
 
                 # group graphnames into lists if they have the same cleaned graphname
@@ -445,47 +462,16 @@ class CrossSectionRunner:
             else: #no overlay, make one plot per graph
                 for gn in graphnames_all:
                     graphs_per_plot[gn] = [(gn, processname)]
-            print graphs_per_plot
 
 
             # now, each key in the dictionary corresponds to one plot to be made. Make them!
-            print graphs_per_plot
             for plotname in graphs_per_plot:
+                thisplotname = self.crosssecfolder+'/plots/Crosssections_%s_vs_%s%s.pdf'%(plotname, '_'.join(variables), self.tag)
 
-                graphs_and_legnames = []
-                xmax = ymax = 0
-                xmin = ymin = 1E-10
-                for gn,legname in graphs_per_plot[plotname]:
-                    g = infile.Get(gn)
-                    graphs_and_legnames.append((g, legname))
-                    xmax = max(g.GetXaxis().GetXmax(), xmax)
-                    ymax = max(g.GetHistogram().GetMaximum()*10, ymax)
-                    xmin = min(g.GetXaxis().GetXmin(), xmin)
-                    ymin = min(g.GetHistogram().GetMinimum(), ymin)
-
-
-                c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), '#sigma [pb]', square=True, iPeriod=0, iPos=11)
-                c.SetLogy()
-                legy_high = 0.9
-                entryheight = 0.07
-                legy_low = 0.9-entryheight*len(graphs_and_legnames)
-                leg = tdrLeg(0.35,legy_low,0.9,legy_high, textSize=0.037)
-                idx = 0
-
-                for idx, (g, legname) in enumerate(graphs_and_legnames):
-                    try:
-                        tdrDraw(g, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
-                        g.GetXaxis().SetLabelSize(14)
-                        print legname
-                        legtext = legname.replace('_', ', ')
-                        leg.AddEntry(g, legtext, 'lf')
-                    except ReferenceError:
-                        print 'skip this one'
-                        continue
-                leg.Draw('SAME')
-                plotname = self.crosssecfolder+'/plots/Crosssections_%s%s.pdf' % (plotname, self.tag)
-                if self.submit:
-                    c.SaveAs(plotname)
+                if len(variables) == 1:
+                    plot_xsec_1d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], plotname=thisplotname)
+                elif len(variables) == 2:
+                    plot_xsec_2d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], axistitles=[variables[0], variables[1], '#sigma [pb]'], plotname=thisplotname)
 
 
 
@@ -500,7 +486,9 @@ def readout_crossection(infilename, filenamepattern, variable_order, order_setti
     parser_cross = parse.compile(filenamepattern)
 
     vartuple_string = parser_cross.parse(infilename.split('/')[-1])
+    # print vartuple_string
     varlist_string = [itup for itup in vartuple_string if not itup.endswith('.txt')]
+    # print varlist_string
     vardict = {}
     for i in range(len(variable_order)):
         if not varlist_string[i] == 'best':
@@ -509,6 +497,9 @@ def readout_crossection(infilename, filenamepattern, variable_order, order_setti
             vardict[variable_order[i]] = varlist_string[i]
 
     # extract relevant parameters for dataframe from dict
+    # print order_settings
+    # print vardict
+    # print order_settings
     varlist = [vardict[param] for param in order_settings]
 
     # find correct lines to parse and set up the patterns
@@ -540,6 +531,7 @@ def readout_crossection(infilename, filenamepattern, variable_order, order_setti
     for key in order_values:
         varlist += [dict[key]]
 
+    # print varlist
     return varlist
 
 
@@ -577,3 +569,63 @@ def readout_branchingratio(infilename, filenamepattern, variable_order, order_se
             varlist += [dict[key]]
         result_lists.append(varlist)
     return result_lists
+
+
+def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, plotname, colors=[kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2]):
+
+    graphs_and_legnames = []
+    xmax = ymax = 0
+    xmin = ymin = 1E-10
+    for gn, legname in graphnames_and_legends_for_canvas:
+        g = infile.Get(gn)
+        graphs_and_legnames.append((g, legname))
+        xmax = max(g.GetXaxis().GetXmax(), xmax)
+        ymax = max(g.GetHistogram().GetMaximum()*10, ymax)
+        xmin = min(g.GetXaxis().GetXmin(), xmin)
+        ymin = max(min(g.GetHistogram().GetMinimum(), ymin), 1E-10)
+
+    c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), '#sigma [pb]', square=True, iPeriod=0, iPos=11)
+    c.SetLogy()
+    legy_high = 0.9
+    entryheight = 0.07
+    legy_low = 0.9-entryheight*len(graphs_and_legnames)
+    leg = tdrLeg(0.35,legy_low,0.9,legy_high, textSize=0.037)
+
+    idx = 0
+    for idx, (g, legname) in enumerate(graphs_and_legnames):
+        try:
+            tdrDraw(g, "3L", mcolor=colors[idx], lcolor=colors[idx], fcolor=colors[idx], alpha=0.4)
+            g.GetXaxis().SetLabelSize(14)
+            legtext = legname.replace('_', ', ')
+            leg.AddEntry(g, legtext, 'lf')
+        except ReferenceError:
+            print 'skip this one'
+            continue
+
+    leg.Draw('SAME')
+    c.SaveAs(plotname)
+
+def plot_xsec_2d(infile, graphnames_and_legends_for_canvas, axistitles, plotname, colors=[kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2]):
+    if not len(graphnames_and_legends_for_canvas) == 1:
+        raise AttributeError('Not exactly one 2-d plot given to overlay on the same canvas, this is not possible.')
+    if not len(axistitles) == 3:
+        raise AttributeError('Must pass exactly 3 axistitles to plot_xsec_2d().')
+
+    gn, legname = graphnames_and_legends_for_canvas[0]
+    xmin = ymin = zmin = 1E-19
+    zmax = 1E3
+
+    g = infile.Get(gn)
+    xmax = g.GetXaxis().GetXmax()
+    ymax = g.GetYaxis().GetXmax()
+    xmin = g.GetXaxis().GetXmin()
+    ymin = max(g.GetYaxis().GetXmin(), ymin)
+
+    c = tdrCanvas2d('c', square=True)
+    c.SetLogy()
+    c.SetLogz()
+    tdrDraw2d(g, 'COLZ', 500, xmin, xmax, 500, ymin, ymax, 150, zmin, zmax, axistitles)
+
+
+
+    c.SaveAs(plotname)
