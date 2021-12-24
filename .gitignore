@@ -10,12 +10,14 @@
 .nfs*
 *DS_Store
 .fuse*
+.testsamples/Test*.xml
 Generator/crosssections/ChiPsi/LQLQ/*
 Generator/crosssections/ChiPsi/LQLQToBTau/*
 Generator/crosssections/ChiPsi/LQLQToBTauPsiChi/*
 Generator/crosssections/ChiPsi/LQLQToPsiChi/*
 Generator/crosssections/ChiPsi/PsiPsi/*
 Generator/cards/ChiPsi/CrossBR/PsiPsi/*
+Generator/cards/ChiPsi/CrossBR/LQLQ/*
 Generator/crosssections/ChiPsi/LQTChannelTauNu/*
 Generator/crosssections/ChiPsi/LQTChannelTauTau/*
 Generator/crosssections/ChiPsi/LQTChannelMuMu/*
