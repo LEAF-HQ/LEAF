@@ -178,27 +178,29 @@ class CrossSectionRunner:
     def ReadoutCrossBR(self, ignore_br=True):
         for processname in self.processnames:
 
-            if 'LQLQ' in processname:
-                filenamepattern_base = 'MLQ{}_MPS{}_MC1{}_L{}'
-                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
-
-            elif 'LQTChannel' in processname and not 'UFOFlex' in processname:
-                filenamepattern_base = 'MLQ{}_L{}_B33R{}_B33L{}_B23L{}_B32L{}'
-                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
-
-            elif 'LQTChannel' in processname and 'UFOFlex' in processname:
-                filenamepattern_base = 'MLQ{}_L{}_B12L{}_B33R{}_B11L{}_B23L{}_B22L{}_B13L{}_B21L{}_B33L{}_B31L{}_B32L{}'
-                variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
-
-            elif 'PsiPsi' in processname:
-                # filenamepattern_base = 'MLQ{}_MCH{}_MPS{}_L{}'
-                # variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
-                variable_order = [self.individual_settings[0][key][1] for key in self.individual_settings[0].keys() if self.individual_settings[0][key][1] is not None]
-                filenamepattern_base = '_'.join(['%s{}' % (x) for x in variable_order])
-                # print variable_order
-                # print filenamepattern_base
-            else:
-                raise ValueError('processname does not contain \'LQLQ\' or \'LQTChannel\' or \'PsiPsi\', what kind of process are we looking at here?')
+            # if 'LQLQ' in processname:
+            #     filenamepattern_base = 'MLQ{}_MPS{}_MC1{}_L{}'
+            #     variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+            #
+            # elif 'LQTChannel' in processname and not 'UFOFlex' in processname:
+            #     filenamepattern_base = 'MLQ{}_L{}_B33R{}_B33L{}_B23L{}_B32L{}'
+            #     variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+            #
+            # elif 'LQTChannel' in processname and 'UFOFlex' in processname:
+            #     filenamepattern_base = 'MLQ{}_L{}_B12L{}_B33R{}_B11L{}_B23L{}_B22L{}_B13L{}_B21L{}_B33L{}_B31L{}_B32L{}'
+            #     variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+            #
+            # elif 'PsiPsi' in processname:
+            #     # filenamepattern_base = 'MLQ{}_MCH{}_MPS{}_L{}'
+            #     # variable_order = [x.replace('{}', '') for x in filenamepattern_base.split('_')]
+            #     variable_order = [self.individual_settings[0][key][1] for key in self.individual_settings[0].keys() if self.individual_settings[0][key][1] is not None]
+            #     filenamepattern_base = '_'.join(['%s{}' % (x) for x in variable_order])
+            #     # print variable_order
+            #     # print filenamepattern_base
+            # else:
+            #     raise ValueError('processname does not contain \'LQLQ\' or \'LQTChannel\' or \'PsiPsi\', what kind of process are we looking at here?')
+            variable_order = [self.individual_settings[0][key][1] for key in self.individual_settings[0].keys() if self.individual_settings[0][key][1] is not None]
+            filenamepattern_base = '_'.join(['%s{}' % (x) for x in variable_order])
 
             filenames = get_filelist_crossbr(filepath=self.crosssecfolder+'/'+processname, short=True, tag=self.tag)
             if ignore_br:
@@ -235,16 +237,16 @@ class CrossSectionRunner:
 
             #finally write the files
             if self.submit:
-                print green('--> Writing cross sections and branching fractions for process: %s' % (processname))
+                print green('--> Writing cross sections and branching fractions for process: %s...' % (processname))
                 outfilename = self.crosssecfolder+'/Crosssections_%s%s.json' % (processname, self.tag)
                 df = pd.DataFrame(varlists_xsec, columns=variable_order+colnames_xsec)
-                print df
                 df.to_json(outfilename, orient='records', lines=True, double_precision=15)
 
                 if processname == 'LQLQ':
                     outfilename = self.crosssecfolder+'/Branchingratios_%s%s.json' % (processname, self.tag)
                     df_br = pd.DataFrame(varlists_br, columns=variable_order+colnames_br)
                     df_br.to_json(outfilename, orient='records', lines=True)
+                print green('--> Done: Wrote cross sections and branching fractions for process: %s' % (processname))
             else:
                 print yellow('--> Would write cross sections and branching fractions for process: %s' % (processname))
 
