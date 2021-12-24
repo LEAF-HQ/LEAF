@@ -100,15 +100,12 @@ void Config::process_datasets(){
 
 
     // make sure outdir exists
-    TString mkdircommand = "mkdir -p ";
+    TString mkdircommand = "(eval `scram unsetenv -sh`; gfal-mkdir -p ";
     TString outfolder = output_directory();
     if(outfolder.Contains("/pnfs")){
-      outfolder = se_director() + outfolder;
-      // (eval `scram unsetenv -sh`; gfal-ls .)
-      mkdircommand = "(eval `scram unsetenv -sh`; gfal-mkdir -p ";
+      mkdircommand += se_director();
     }
-    mkdircommand += outfolder;
-    mkdircommand += ")";
+    mkdircommand += outfolder + ")";
     system((const char*)mkdircommand);
 
     // create output file and handle exception for /pnfs storage that is not immediately writeable
