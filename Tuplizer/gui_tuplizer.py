@@ -38,7 +38,7 @@ macrofolder = join(basefolder, 'macros')
 config_per_year = {
     '2017': {
         'arch_tag': 'slc7_amd64_gcc700',
-        'cmsswtag': 'CMSSW_10_6_12'
+        'cmsswtag': 'CMSSW_10_6_28'
     }
 }
 
