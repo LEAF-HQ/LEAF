@@ -3,8 +3,6 @@
 name: Setup and compilation
 
 on:
-  push:
-
   pull_request:
 
   workflow_dispatch:
