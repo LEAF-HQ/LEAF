@@ -26,7 +26,7 @@ public:
 
 protected:
   int m_pdgid;
-  int m_charge;
+  float m_charge;
 
 
 };
