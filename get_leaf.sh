@@ -40,7 +40,7 @@ scram b
 cd ../../
 
 # download LEAF
-git clone https://github.com/reimersa/LEAF.git LEAF
+git clone https://github.com/LEAF-HQ/LEAF.git LEAF
 cd LEAF
 export LEAFPATH=$(readlink -f .)
 
