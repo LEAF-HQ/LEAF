@@ -15,6 +15,7 @@
 #include "Analyzer/include/Muon.h"
 #include "Analyzer/include/Electron.h"
 #include "Analyzer/include/TriggerObject.h"
+#include "Analyzer/include/PFCandidate.h"
 #include "Analyzer/include/constants.h"
 
 using namespace std;
@@ -34,6 +35,7 @@ public:
     taus = new vector<Tau>;
     muons = new vector<Muon>;
     electrons = new vector<Electron>;
+    pfcands = new vector<PFCandidate>;
     is_data = false;
     run = -1;
     lumiblock = -1;
@@ -57,6 +59,7 @@ public:
     delete taus;
     delete muons;
     delete electrons;
+    delete pfcands;
   }
 
   void clear(){
@@ -70,6 +73,7 @@ public:
     delete taus;
     delete muons;
     delete electrons;
+    delete pfcands;
     geninfo = 0;
     flags = 0;
     met = 0;
@@ -79,6 +83,7 @@ public:
     taus = 0;
     muons = 0;
     electrons = 0;
+    pfcands = 0;
   }
 
   void reset(){
@@ -92,6 +97,7 @@ public:
     delete taus;
     delete muons;
     delete electrons;
+    delete pfcands;
     geninfo = new GenInfo;
     flags = new Flags;
     met = new Met;
@@ -101,6 +107,7 @@ public:
     taus = new vector<Tau>;
     muons = new vector<Muon>;
     electrons = new vector<Electron>;
+    pfcands = new vector<PFCandidate>;
     is_data = false;
     run = -1;
     lumiblock = -1;
@@ -131,6 +138,7 @@ public:
   vector<Tau>* taus; //
   vector<Muon>* muons; //
   vector<Electron>* electrons; //
+  vector<PFCandidate>* pfcands; //
   bool is_data;//
   unsigned int run, lumiblock;//
   int npv, npv_good; //
