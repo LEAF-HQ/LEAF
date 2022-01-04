@@ -59,7 +59,7 @@ jobs:
           export SCRAM_ARCH=slc7_amd64_gcc700
           shopt -s expand_aliases
           source /cvmfs/cms.cern.ch/cmsset_default.sh
-          wget https://raw.githubusercontent.com/reimersa/LEAF/master/get_leaf.sh
+          wget https://raw.githubusercontent.com/LEAF-HQ/LEAF/master/get_leaf.sh 
           echo $PATH
           sleep 2
           source $PWD/get_leaf.sh
