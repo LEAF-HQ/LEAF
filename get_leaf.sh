@@ -4,12 +4,12 @@
 export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
-# get CMSSW_10_6_12 for UL
-if [ -r CMSSW_10_6_12/src ] ; then
- echo "Release CMSSW_10_6_12 already exists, using that."
+# get CMSSW_10_6_28 for UL
+if [ -r CMSSW_10_6_28/src ] ; then
+ echo "Release CMSSW_10_6_28 already exists, using that."
 else
-  echo "Setting up CMSSW_10_6_12."
-  cmsrel CMSSW_10_6_12
+  echo "Setting up CMSSW_10_6_28."
+  cmsrel CMSSW_10_6_28 
 fi
 
 # get CMSSW_10_2_13 for Combine
@@ -34,7 +34,7 @@ eval `scramv1 runtime -sh`
 scram b
 cd ../../
 
-cd CMSSW_10_6_12/src
+cd CMSSW_10_6_28/src
 eval `scramv1 runtime -sh`
 scram b
 cd ../../
