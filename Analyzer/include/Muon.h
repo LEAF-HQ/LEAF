@@ -7,7 +7,6 @@
 
 using namespace std;
 
-// Basically a Particle with a pdgId
 class Muon : public FlavorParticle {
 
 public:
@@ -95,13 +94,9 @@ public:
   };
 
   Muon(){
-    m_charge = 0;
     m_selector_bits = 0;
     m_gen_part_flav = GenPartFlav::Other;
     m_sim_type = SimType::Unknown;
-    // m_is_global = 0;
-    // m_is_pf = 0;
-    // m_is_tracker = 0;
     m_charge = 0;
     m_dxy = -1;
     m_dz = -1;
@@ -109,8 +104,6 @@ public:
     m_edxy = -1;
     m_edz = -1;
     m_ed0 = -1;
-    // m_iso_mini = 0;
-    // m_iso_mini_charged = 0;
     m_iso_rel_04 = -1;
     m_iso_rel_03 = -1;
     m_iso_rel_03_charged = -1;
@@ -120,7 +113,6 @@ public:
     m_sumnhet = -1.;
     m_sumphpt = -1.;
     m_sumpupt = -1.;
-    // m_pt_rel_tunep = 0;
     m_tunep_pt = -1;
     m_tunep_pt_err = -1;
     m_tunep_eta = -1;
@@ -157,10 +149,6 @@ public:
   const int sim_pdgid() const {return m_sim_pdgid;};
   const int sim_mother_pdgid() const {return m_sim_mother_pdgid;};
   const int sim_heaviestmother_flav() const {return m_sim_heaviestmother_flav;};
-  // const bool is_global() const {return m_is_global;};
-  // const bool is_pf() const {return m_is_pf;};
-  // const bool is_tracker() const {return m_is_tracker;};
-  const int charge() const {return m_charge;};
   const int jetidx() const {return m_jetidx;};
   const float dxy() const {return m_dxy;};
   const float dz() const {return m_dz;};
@@ -168,8 +156,6 @@ public:
   const float edxy() const {return m_edxy;};
   const float edz() const {return m_edz;};
   const float ed0() const {return m_ed0;};
-  // const float iso_mini() const {return m_iso_mini;};
-  // const float iso_mini_charged() const {return m_iso_mini_charged;};
   const float iso_rel_04() const {return m_iso_rel_04;};
   const float iso_rel_03() const {return m_iso_rel_03;};
   const float iso_rel_03_charged() const {return m_iso_rel_03_charged;};
@@ -179,7 +165,6 @@ public:
   const float sumnhet() const {return m_sumnhet;};
   const float sumphpt() const {return m_sumphpt;};
   const float sumpupt() const {return m_sumpupt;};
-  // const float pt_rel_tunep() const {return m_pt_rel_tunep;};
   const float tunep_pt() const {return m_tunep_pt;};
   const float tunep_pt_err() const {return m_tunep_pt_err;};
   const float tunep_eta() const {return m_tunep_eta;};
@@ -206,10 +191,6 @@ public:
   void set_sim_pdgid(int x){m_sim_pdgid = x;};
   void set_sim_mother_pdgid(int x){m_sim_mother_pdgid = x;};
   void set_sim_heaviestmother_flav(int x){m_sim_heaviestmother_flav = x;};
-  // void set_is_global(bool x){m_is_global = x;};
-  // void set_is_pf(bool x){m_is_pf = x;};
-  // void set_is_tracker(bool x){m_is_tracker = x;};
-  void set_charge(int x){m_charge = x;};
   void set_jetidx(int x){m_jetidx = x;};
   void set_dxy(float x){m_dxy = x;};
   void set_dz(float x){m_dz = x;};
@@ -217,8 +198,6 @@ public:
   void set_edxy(float x){m_edxy = x;};
   void set_edz(float x){m_edz = x;};
   void set_ed0(float x){m_ed0 = x;};
-  // void set_iso_mini(float x){m_iso_mini = x;};
-  // void set_iso_mini_charged(float x){m_iso_mini_charged = x;};
   void set_iso_rel_04(float x){m_iso_rel_04 = x;};
   void set_iso_rel_03(float x){m_iso_rel_03 = x;};
   void set_iso_rel_03_charged(float x){m_iso_rel_03_charged = x;};
@@ -228,7 +207,6 @@ public:
   void set_sumnhet(float x){m_sumnhet = x;};
   void set_sumphpt(float x){m_sumphpt = x;};
   void set_sumpupt(float x){m_sumpupt = x;};
-  // void set_pt_rel_tunep(float x){m_pt_rel_tunep = x;};
   void set_tunep_pt(float x){m_tunep_pt = x;};
   void set_tunep_pt_err(float x){m_tunep_pt_err = x;};
   void set_tunep_eta(float x){m_tunep_eta = x;};
@@ -256,10 +234,6 @@ protected:
   int m_sim_pdgid;
   int m_sim_mother_pdgid;
   int m_sim_heaviestmother_flav;
-  // bool m_is_global;
-  // bool m_is_pf;
-  // bool m_is_tracker;
-  int m_charge;
   int m_jetidx;
   float m_dxy;
   float m_dz;
@@ -267,8 +241,6 @@ protected:
   float m_edxy;
   float m_edz;
   float m_ed0;
-  // float m_iso_mini;
-  // float m_iso_mini_charged;
   float m_iso_rel_04;
   float m_iso_rel_03;
   float m_iso_rel_03_charged;
@@ -282,7 +254,6 @@ protected:
   float m_sumpupt;
 
   // TuneP track variables
-  // float m_pt_rel_tunep;
   float m_tunep_pt;
   float m_tunep_pt_err;
   float m_tunep_eta;

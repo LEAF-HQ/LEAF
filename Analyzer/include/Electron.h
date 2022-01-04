@@ -27,7 +27,6 @@ public:
   };
 
   Electron(){
-    m_charge = 0;
     m_jetidx = -1;
     m_selector_bits = 0;
     // m_id_bitmap = -1;
@@ -74,12 +73,9 @@ public:
 
   const uint64_t selector_bits() const {return m_selector_bits;};
   const int jetidx() const {return m_jetidx;};
-  const int charge() const {return m_charge;};
-  // const int id_bitmap() const {return m_id_bitmap;};
   const int lost_hits() const {return m_lost_hits;};
   const bool conv_veto() const {return m_conv_veto;};
   const bool is_pf() const {return m_is_pf;};
-  // const float delta_eta_sc() const {return m_delta_eta_sc;};
 
   const float sumchpt() const {return m_sumchpt;};
   const float sumnhet() const {return m_sumnhet;};
@@ -109,12 +105,9 @@ public:
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
   void set_jetidx(int x){m_jetidx = x;};
-  void set_charge(int x){m_charge = x;};
-  // void set_id_bitmap(int x){m_id_bitmap = x;};
   void set_lost_hits(int x){m_lost_hits = x;};
   void set_conv_veto(bool x){m_conv_veto = x;};
   void set_is_pf(bool x){m_is_pf = x;};
-  // void set_delta_eta_sc(float x){m_delta_eta_sc = x;};
 
   void set_sumchpt(float x){m_sumchpt = x;};
   void set_sumnhet(float x){m_sumnhet = x;};
@@ -145,12 +138,9 @@ public:
 protected:
   uint64_t m_selector_bits;
   int m_jetidx;
-  int m_charge;
-  // int m_id_bitmap;
   int m_lost_hits;
   bool m_conv_veto;
   bool m_is_pf;
-  // float m_delta_eta_sc;
 
   // PFiso components (dR < 0.3) (for muons it's 0.4) -- this is used in the cut-based IDs
   float m_sumchpt;

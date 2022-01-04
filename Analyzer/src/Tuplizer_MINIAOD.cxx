@@ -262,6 +262,7 @@ int main(int argc, char* argv[]){
         GenParticle gp;
         gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
         gp.set_pdgid(minigp.pdgId());
+        gp.set_charge(minigp.charge());
         int motherid = -1;
         if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef(0).key();
         gp.set_mother_identifier(motherid);

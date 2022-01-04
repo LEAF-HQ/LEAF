@@ -562,7 +562,7 @@ namespace ROOT {
       ::Tau *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Tau));
       static ::ROOT::TGenericClassInfo 
-         instance("Tau", "include/Tau.h", 11,
+         instance("Tau", "include/Tau.h", 10,
                   typeid(::Tau), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &Tau_Dictionary, isa_proxy, 4,
                   sizeof(::Tau) );
@@ -607,7 +607,7 @@ namespace ROOT {
       ::Muon *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::Muon));
       static ::ROOT::TGenericClassInfo 
-         instance("Muon", "include/Muon.h", 11,
+         instance("Muon", "include/Muon.h", 10,
                   typeid(::Muon), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &Muon_Dictionary, isa_proxy, 4,
                   sizeof(::Muon) );

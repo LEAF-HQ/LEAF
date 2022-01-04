@@ -7,7 +7,6 @@
 
 using namespace std;
 
-// Basically a Particle with a pdgId
 class Tau : public FlavorParticle {
 
 public:
@@ -39,7 +38,6 @@ public:
   // Constructors, destructor
   Tau(){
     m_selector_bits = 0;
-    m_charge = 0;
     m_jetidx = -1;
     m_decay_mode = 0;
     m_gen_part_flav = -1;
@@ -66,7 +64,6 @@ public:
 
   const uint64_t selector_bits() const {return m_selector_bits;};
   const int jetidx() const {return m_jetidx;};
-  const int charge() const {return m_charge;};
   const int decay_mode() const {return m_decay_mode;};
   const int gen_part_flav() const {return m_gen_part_flav;};
   const float charged_iso() const {return m_charged_iso;};
@@ -82,7 +79,6 @@ public:
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
   void set_jetidx(int x){m_jetidx = x;};
-  void set_charge(int x){m_charge = x;};
   void set_decay_mode(int x){m_decay_mode = x;};
   void set_gen_part_flav(int x){m_gen_part_flav = x;};
   void set_charged_iso(float x){m_charged_iso = x;};
@@ -100,7 +96,6 @@ public:
 protected:
   uint64_t m_selector_bits;
   int m_jetidx;
-  int m_charge;
   int m_decay_mode;
   int m_gen_part_flav;
   float m_charged_iso;
