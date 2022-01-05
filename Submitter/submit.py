@@ -30,9 +30,8 @@ def main():
     if not xmlfilename.endswith('.xml'):
         raise ValueError(red('The name of the xml-file does not end with \'.xml\'. I don\'t believe you...'))
 
-    # ROOT.gErrorIgnoreLevel = kError
-    RunLocal  = args.ncores is not None
-    isToAdd   = args.add or args.forceadd or args.notreeadd
+    run_local = args.ncores is not None
+    is_to_add = args.add or args.forceadd or args.notreeadd
     nargs     = sum([1 for x in vars(args) if vars(args)[x] is True])
 
     # Build submitter object, this will already parse the XML file
@@ -46,8 +45,8 @@ def main():
     if args.divide:     submitter.Divide()
     if args.output:     submitter.Output()
     if args.submit:     submitter.Submit()
-    if RunLocal:        submitter.RunLocal(ncores=args.ncores)
-    if isToAdd:         submitter.Add(force=args.forceadd, ignoretree=args.notreeadd)
+    if run_local:       submitter.RunLocal(ncores=args.ncores)
+    if is_to_add:       submitter.Add(force=args.forceadd, ignoretree=args.notreeadd)
     if args.hadd:       submitter.Hadd()
 
 
