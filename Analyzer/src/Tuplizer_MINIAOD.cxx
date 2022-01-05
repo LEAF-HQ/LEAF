@@ -129,6 +129,8 @@ int main(int argc, char* argv[]){
   fwlite::Handle< edm::TriggerResults > handle_hltresults;
   fwlite::Handle< edm::TriggerResults > handle_metfilterresults;
   // fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
+  fwlite::Handle< std::vector<pat::PackedCandidate>> handle_pfcands;
+
 
 
 
@@ -152,6 +154,8 @@ int main(int argc, char* argv[]){
     if(!is_mc) metfilterstep = "RECO";
     handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
     // handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
+    handle_pfcands.getByLabel(ev, "packedPFCandidates");
+
     if(is_mc){
       handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
       handle_genjets.getByLabel(ev, "slimmedGenJets");
@@ -177,6 +181,7 @@ int main(int argc, char* argv[]){
     const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
     const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
     // const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
+    const vector<pat::PackedCandidate>* pfcands = handle_pfcands.product();
 
     const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus;
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>* genjets;
@@ -492,6 +497,23 @@ int main(int argc, char* argv[]){
     //   }
     // }
 
+
+    // Do PF candidates
+    // ================
+    // for(size_t i=0; i<pfcands->size(); i++){
+    //   pat::PackedCandidate patcand = pfcands->at(i);
+    //   PFCandidate p;
+    //   p.set_pt(patcand.pt());
+    //   p.set_eta(patcand.eta());
+    //   p.set_phi(patcand.phi());
+    //   p.set_m(patcand.mass());
+    //   p.set_charge(patcand.charge());
+    //   p.set_pdgid(patcand.pdgId());
+    //   p.set_puppiweight(patcand.puppiWeight());
+    //   p.set_puppiweight_nolep(patcand.puppiWeightNoLep());
+    //
+    //   event.pfcands->emplace_back(p);
+    // }
 
 
     // Do MET
