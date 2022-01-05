@@ -1,6 +1,7 @@
 import os, sys, math, copy
 from ROOT import TFile
 import subprocess
+from utils import yellow
 
 def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
     nevents = 0
@@ -49,6 +50,8 @@ def clean_haddlist(haddlist, use_se=False):
             if not (returncode > 0): # ls succeeded
                 result.append(file)
     DEVNULL.close()
+    if len(haddlist)!= len(result):
+        print yellow('--> Some files are discarted by clean_haddlist and will not be hadded')
     return result
 
 
