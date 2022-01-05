@@ -30,7 +30,7 @@ def main():
     if not xmlfilename.endswith('.xml'):
         raise ValueError(red('The name of the xml-file does not end with \'.xml\'. I don\'t believe you...'))
 
-    ROOT.gErrorIgnoreLevel = kError
+    # ROOT.gErrorIgnoreLevel = kError
     RunLocal  = args.ncores is not None
     isToAdd   = args.add or args.forceadd or args.notreeadd
     nargs     = sum([1 for x in vars(args) if vars(args)[x] is True])
