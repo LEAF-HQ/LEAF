@@ -2,4 +2,4 @@
 
 # LHC Event Analysis Framework, LEAF
 
-The documentation can be found here: [LEAF documentation](https://leaf-hq.github.io/LEAF/).
+the documentation can be found here: [LEAF documentation](https://leaf-hq.github.io/LEAF/).
