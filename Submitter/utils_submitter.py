@@ -1,6 +1,7 @@
 import os, sys, math, copy
 from ROOT import TFile
 import subprocess
+from utils import yellow
 
 def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
     nevents = 0
@@ -20,12 +21,12 @@ def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
 
 
 
-def order_haddlist(haddlist):
+def order_haddlist(haddlist, treename='AnalysisTree'):
     # make sure the first element in the list actually contains an AnalysisTree. Will return an unchanged list if none of the elements contains an AnalysisTree.
     result = copy.deepcopy(haddlist)
 
     for idx, file in enumerate(haddlist):
-        if file_contains_tree(filename=file, treename='AnalysisTree'):
+        if file_contains_tree(filename=file, treename=treename):
             # print 'will move element no. %i to the front. ' % (idx)
             result.insert(0, result.pop(idx))
             break
@@ -49,6 +50,8 @@ def clean_haddlist(haddlist, use_se=False):
             if not (returncode > 0): # ls succeeded
                 result.append(file)
     DEVNULL.close()
+    if len(haddlist)!= len(result):
+        print yellow('--> Some files are discarded by clean_haddlist and will not be hadded')
     return result
 
 
