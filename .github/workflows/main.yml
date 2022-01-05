@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    if: !contains(github.event.pull_request.title, '[ci skip]')
     runs-on: ubuntu-latest
 
     container:
