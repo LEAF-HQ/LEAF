@@ -71,10 +71,6 @@ class Submitter:
     def RunLocal(self, ncores):
         print green('--> Locally running jobs on %i cores' % (ncores))
         missing_files_per_dataset = self.Output()
-
-        # njobs = -1
-        # with open(self.missing_files_txt, 'r') as f:
-        #     njobs = len(f.readlines())
         commands = []
         for datasetname in missing_files_per_dataset:
             missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
@@ -85,6 +81,7 @@ class Submitter:
         print green('  --> Going to run %i jobs locally on %i cores.' % (len(commands), ncores))
         execute_commands_parallel(commands, ncores)
         print green('  --> Finished running missing jobs locally.')
+        self.Output()
 
 
     @timeit
@@ -95,8 +92,6 @@ class Submitter:
         missing_files_per_dataset = self.find_missing_files(expected_files=expected_files)
         missing_files_all = []
         for datasetname in missing_files_per_dataset:
-            # for item in missing_files_per_dataset[datasetname]:
-            #     missing_files_all.append(item)
             commands = [self.get_command_for_file(filename_expected=filename_expected) for filename_expected in missing_files_per_dataset[datasetname]]
             with open(os.path.join(self.workdir_local, datasetname, self.missing_files_name), 'wr') as f:
                 for command in commands:
@@ -332,8 +327,6 @@ class Submitter:
         if (not is_filesplit and not is_eventsplit) or (is_filesplit and is_eventsplit):
             raise ValueError(red('In the XML file, either both or neither of "EventsPerJob" and "FilesPerJob" is >0. This is not supported, please choose one of the two options to split jobs.'))
 
-        # all_datasets = deepcopy(self.xmlinfo.datasets)
-
         # handle filesplit
         njobs_and_type_per_dataset = OrderedDict()
         if is_filesplit:
@@ -359,7 +352,6 @@ class Submitter:
                 njobs = int(math.ceil(nevents/float(nevents_per_job)))
                 for i in range(njobs):
                     self.write_single_xml(datasetname=datasetname, index=i+1, nevents_per_job=nevents_per_job)
-                    # self.xmlinfo.datasets = all_datasets
                     njobs_this_dataset += 1
                 njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
 
@@ -466,7 +458,6 @@ class Submitter:
 
         DEVNULL = open(os.devnull, 'wb')
         missing_files_per_dataset = OrderedDict()
-        # nmissing_per_dataset = OrderedDict()
         for datasetname in expected_files:
             nmissing = 0
             missing = []
@@ -482,7 +473,6 @@ class Submitter:
                     missing.append(file)
                     nmissing += 1
             missing_files_per_dataset[datasetname] = missing
-            # nmissing_per_dataset[datasetname] = nmissing
         DEVNULL.close()
         return missing_files_per_dataset
 
