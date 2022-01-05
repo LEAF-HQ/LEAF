@@ -30,10 +30,12 @@ class Submitter:
 
         self.workdir_remote = str(os.path.join('/', *path_parts_remote))
 
-        self.missing_files_txt = os.path.join(self.workdir_local, 'commands_missing_files.txt')
+        self.expected_files_name = 'expected_files.txt'
+        self.missing_files_name = 'commands_missing_files.txt'
+        self.missing_files_txt = os.path.join(self.workdir_local, self.missing_files_name)
 
 
-
+    @timeit
     def Divide(self):
         print green('--> Dividing and preparing jobs')
 
@@ -45,7 +47,7 @@ class Submitter:
         self.Output()
 
 
-
+    @timeit
     def Submit(self):
         print green('--> Submitting jobs')
 
@@ -54,7 +56,7 @@ class Submitter:
         (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
 
         for datasetname in missing_files_per_dataset:
-            missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
+            missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
             with open(missing_files, 'r') as f:
                 njobs = len(f.readlines())
             if njobs < 1: continue
@@ -65,17 +67,13 @@ class Submitter:
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
 
 
-
+    @timeit
     def RunLocal(self, ncores):
         print green('--> Locally running jobs on %i cores' % (ncores))
         missing_files_per_dataset = self.Output()
-
-        # njobs = -1
-        # with open(self.missing_files_txt, 'r') as f:
-        #     njobs = len(f.readlines())
         commands = []
         for datasetname in missing_files_per_dataset:
-            missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
+            missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
             with open(missing_files, 'r') as f:
                 for line in f.readlines():
                     commands.append(line)
@@ -83,22 +81,18 @@ class Submitter:
         print green('  --> Going to run %i jobs locally on %i cores.' % (len(commands), ncores))
         execute_commands_parallel(commands, ncores)
         print green('  --> Finished running missing jobs locally.')
+        self.Output()
 
 
-
-
-
+    @timeit
     def Output(self):
         print green('--> Checking outputs and updating list of missing files')
 
         expected_files = self.read_expected_files()
         missing_files_per_dataset = self.find_missing_files(expected_files=expected_files)
-        missing_files_all = []
         for datasetname in missing_files_per_dataset:
-            # for item in missing_files_per_dataset[datasetname]:
-            #     missing_files_all.append(item)
             commands = [self.get_command_for_file(filename_expected=filename_expected) for filename_expected in missing_files_per_dataset[datasetname]]
-            with open(os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt'), 'wr') as f:
+            with open(os.path.join(self.workdir_local, datasetname, self.missing_files_name), 'wr') as f:
                 for command in commands:
                     f.write(command + '\n')
 
@@ -128,7 +122,7 @@ class Submitter:
         return missing_files_per_dataset
 
 
-
+    @timeit
     def Clean(self):
         print green('--> Cleaning up (removing) local and remote workdir')
 
@@ -141,6 +135,7 @@ class Submitter:
         print green('--> Cleaned up (removed) local and remote workdir')
 
 
+    @timeit
     def Add(self, force=False, ignoretree=False, nchunks=9):
         print green('--> Adding finished samples')
 
@@ -227,7 +222,7 @@ class Submitter:
             print green('--> Added newly completed files, if any')
 
 
-
+    @timeit
     def Hadd(self):
         print green('--> Hadding samples into groups. Assuming all samples have been processed entirely.')
 
@@ -300,7 +295,7 @@ class Submitter:
             ensureDirectory(os.path.join(self.workdir_local, samplename))
 
             # copy .dtd file
-            copy(os.path.join(self.configdir, 'Configuration.dtd'), os.path.join(self.workdir_local, samplename))
+            copy(os.path.join(self.configdir, self.xmlinfo.config_name), os.path.join(self.workdir_local, samplename))
         print green('  --> Created local workdir \'%s\'' % (self.workdir_local))
 
 
@@ -331,36 +326,26 @@ class Submitter:
         if (not is_filesplit and not is_eventsplit) or (is_filesplit and is_eventsplit):
             raise ValueError(red('In the XML file, either both or neither of "EventsPerJob" and "FilesPerJob" is >0. This is not supported, please choose one of the two options to split jobs.'))
 
-        # all_datasets = deepcopy(self.xmlinfo.datasets)
-
-        # handle filesplit
         njobs_and_type_per_dataset = OrderedDict()
-        if is_filesplit:
-            for dataset in self.xmlinfo.datasets:
-                datasetname = str(dataset.settings.Name)
-                print green('    --> Dividing sample %s' % (datasetname))
-                njobs_this_dataset = 0
+        for dataset in self.xmlinfo.datasets:
+            datasetname = str(dataset.settings.Name)
+            print green('    --> Dividing sample %s' % (datasetname))
+            njobs_this_dataset = 0
+            # handle filesplit
+            if is_filesplit:
                 nfiles = len(dataset.infiles)
                 njobs = int(math.ceil(nfiles/float(nfiles_per_job)))
-                for i in range(njobs):
-                    self.write_single_xml(datasetname=datasetname, index=i+1, nfiles_per_job=nfiles_per_job)
-                    # self.xmlinfo.datasets = all_datasets
-                    njobs_this_dataset += 1
-                njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
-
-        # handle eventsplit
-        else:
-            for dataset in self.xmlinfo.datasets:
-                datasetname = str(dataset.settings.Name)
-                print green('    --> Dividing sample %s' % (datasetname))
-                njobs_this_dataset = 0
+            # handle eventsplit
+            else:
                 nevents = get_number_events_in_dataset(dataset=dataset)
                 njobs = int(math.ceil(nevents/float(nevents_per_job)))
-                for i in range(njobs):
+            for i in range(njobs):
+                if is_filesplit:
+                    self.write_single_xml(datasetname=datasetname, index=i+1, nfiles_per_job=nfiles_per_job)
+                else:
                     self.write_single_xml(datasetname=datasetname, index=i+1, nevents_per_job=nevents_per_job)
-                    # self.xmlinfo.datasets = all_datasets
-                    njobs_this_dataset += 1
-                njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
+                njobs_this_dataset += 1
+            njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
 
         print green('  --> Divided XML files')
         return njobs_and_type_per_dataset
@@ -382,7 +367,7 @@ class Submitter:
                 filename = '%s__%s_%i.root\n' % (datasettype, datasetname, i+1)
                 expected_files.append(os.path.join(outpath, filename))
 
-            outfilename = os.path.join(self.workdir_local, datasetname, 'expected_files.txt')
+            outfilename = os.path.join(self.workdir_local, datasetname, self.expected_files_name)
             with open(outfilename, 'wr') as f:
                 for file in expected_files:
                     f.write(file)
@@ -409,14 +394,12 @@ class Submitter:
         if nfiles_per_job > 0 and nevents_per_job > 0:
             raise ValueError(red('It seems like the new XML files should be written both in filesplit and eventsplit mode. Exit.'))
 
-
-        outfilename = os.path.join(self.workdir_local, datasetname, '%s_%i.xml' % (datasetname, index))\
+        outfilename = os.path.join(self.workdir_local, datasetname, '%s_%i.xml' % (datasetname, index))
 
         # throw away all other datasets but the one we specified as a parameter here
         self.xmlinfo.datasets_to_write = [deepcopy(ds) for ds in self.xmlinfo.datasets if ds.settings.Name == datasetname]
         if len(self.xmlinfo.datasets_to_write) != 1:
             raise ValueError(red('Found != 1 datasets with name \'%s\'' % (datasetname)))
-
 
         # filesplit mode
         if nfiles_per_job > 0:
@@ -440,11 +423,8 @@ class Submitter:
 
         # write new xml file
         with open(outfilename, 'wr') as f:
-
             # header
-            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-            f.write('<!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[]>\n')
-
+            f.write(self.xmlinfo.config_info)
             # main body (everything except for header)
             f.write(self.xmlinfo.get_XML_document().toprettyxml())
 
@@ -454,15 +434,12 @@ class Submitter:
         files_per_dataset = OrderedDict()
         for dataset in self.xmlinfo.datasets:
             datasetname = str(dataset.settings.Name)
-            infilename = os.path.join(self.workdir_local, datasetname, 'expected_files.txt')
+            infilename = os.path.join(self.workdir_local, datasetname, self.expected_files_name)
 
             with open(infilename, 'r') as f:
                 lines = f.readlines()
-            filenames_expected = []
-            for filename in lines:
-                if filename.endswith('\n'):
-                    filenames_expected.append(filename[:-len('\n')])
-            files_per_dataset[datasetname] = filenames_expected
+                filenames_expected = [x.strip('\n') for x in lines]
+                files_per_dataset[datasetname] = filenames_expected
         return files_per_dataset
 
 
@@ -470,10 +447,9 @@ class Submitter:
 
         DEVNULL = open(os.devnull, 'wb')
         missing_files_per_dataset = OrderedDict()
-        # nmissing_per_dataset = OrderedDict()
         for datasetname in expected_files:
             nmissing = 0
-            missing = []
+            missing_files_per_dataset[datasetname] = []
             for file in expected_files[datasetname]:
                 # print file
                 lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
@@ -483,10 +459,8 @@ class Submitter:
                 output = result.communicate()[0]
                 returncode = result.returncode
                 if returncode > 0: # opening failed
-                    missing.append(file)
+                    missing_files_per_dataset[datasetname].append(file)
                     nmissing += 1
-            missing_files_per_dataset[datasetname] = missing
-            # nmissing_per_dataset[datasetname] = nmissing
         DEVNULL.close()
         return missing_files_per_dataset
 
