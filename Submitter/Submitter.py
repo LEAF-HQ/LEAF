@@ -90,7 +90,6 @@ class Submitter:
 
         expected_files = self.read_expected_files()
         missing_files_per_dataset = self.find_missing_files(expected_files=expected_files)
-        missing_files_all = []
         for datasetname in missing_files_per_dataset:
             commands = [self.get_command_for_file(filename_expected=filename_expected) for filename_expected in missing_files_per_dataset[datasetname]]
             with open(os.path.join(self.workdir_local, datasetname, self.missing_files_name), 'wr') as f:
