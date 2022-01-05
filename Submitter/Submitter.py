@@ -35,7 +35,7 @@ class Submitter:
         self.missing_files_txt = os.path.join(self.workdir_local, self.missing_files_name)
 
 
-
+    @timeit
     def Divide(self):
         print green('--> Dividing and preparing jobs')
 
@@ -47,7 +47,7 @@ class Submitter:
         self.Output()
 
 
-
+    @timeit
     def Submit(self):
         print green('--> Submitting jobs')
 
@@ -67,7 +67,7 @@ class Submitter:
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
 
 
-
+    @timeit
     def RunLocal(self, ncores):
         print green('--> Locally running jobs on %i cores' % (ncores))
         missing_files_per_dataset = self.Output()
@@ -87,9 +87,7 @@ class Submitter:
         print green('  --> Finished running missing jobs locally.')
 
 
-
-
-
+    @timeit
     def Output(self):
         print green('--> Checking outputs and updating list of missing files')
 
@@ -130,7 +128,7 @@ class Submitter:
         return missing_files_per_dataset
 
 
-
+    @timeit
     def Clean(self):
         print green('--> Cleaning up (removing) local and remote workdir')
 
@@ -143,6 +141,7 @@ class Submitter:
         print green('--> Cleaned up (removed) local and remote workdir')
 
 
+    @timeit
     def Add(self, force=False, ignoretree=False, nchunks=9):
         print green('--> Adding finished samples')
 
@@ -229,7 +228,7 @@ class Submitter:
             print green('--> Added newly completed files, if any')
 
 
-
+    @timeit
     def Hadd(self):
         print green('--> Hadding samples into groups. Assuming all samples have been processed entirely.')
 
