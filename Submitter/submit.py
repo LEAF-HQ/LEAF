@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--add', '-a', action='store_true', default=False, dest='add', help='Add split files back together for samples that are fully processed. Incomplete samples are not added.')
     parser.add_argument('--forceadd', '-f', action='store_true', default=False, dest='forceadd', help='Force hadding with hadd\'s \'-f\' flag. Also has an effect if used without \'--add\'.')
     parser.add_argument('--notreeadd', '-t', action='store_true', default=False, dest='notreeadd', help='Add split files without adding the trees. By default does not apply the force-add')
-    parser.add_argument('--ignorefiles', '-i', action='store_true', default=False, dest='ignorefiles', help='Ignore the non-existent files and does the hadd nonetheless')
+    parser.add_argument('--allowincomplete"', '-i', action='store_true', default=False, dest='allowincomplete', help='Ignore the non-existent files and does the hadd nonetheless')
     parser.add_argument('--plothadd', '-p', action='store_true', default=False, dest='hadd', help='Hadd files to groups used for plotting and further analysis. Will always force.')
     parser.add_argument('--clean', '-c', action='store_true', default=False, dest='clean', help='Clean up: remove the local and the remote workdir')
     parser.add_argument('--local', '-l', action='store', type=int, dest='ncores', help='Run split jobs locally on NCORES cores')
@@ -47,7 +47,7 @@ def main():
     if args.output:     submitter.Output()
     if args.submit:     submitter.Submit()
     if run_local:       submitter.RunLocal(ncores=args.ncores)
-    if is_to_add:       submitter.Add(force=args.forceadd, ignoretree=args.notreeadd, ignorefiles=args.ignorefiles)
+    if is_to_add:       submitter.Add(force=args.forceadd, ignoretree=args.notreeadd, allowincomplete=args.allowincomplete)
     if args.hadd:       submitter.Hadd()
 
 

@@ -134,7 +134,7 @@ class Submitter:
 
 
     @timeit
-    def Add(self, force=False, ignoretree=False, ignorefiles = False, nchunks=9):
+    def Add(self, force=False, ignoretree=False, allowincomplete= False, nchunks=9):
         print green('--> Adding finished samples')
 
         # update list of missing files
@@ -143,7 +143,7 @@ class Submitter:
         # find datasets that are already done
         expected_files = self.read_expected_files()
         missing_files = self.find_missing_files(expected_files=expected_files)
-        if ignorefiles:
+        if allowincomplete:
             datasetnames_complete = expected_files.keys()
             datasetnames_skip     = []
         else:
