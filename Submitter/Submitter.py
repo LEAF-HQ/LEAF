@@ -326,33 +326,26 @@ class Submitter:
         if (not is_filesplit and not is_eventsplit) or (is_filesplit and is_eventsplit):
             raise ValueError(red('In the XML file, either both or neither of "EventsPerJob" and "FilesPerJob" is >0. This is not supported, please choose one of the two options to split jobs.'))
 
-        # handle filesplit
         njobs_and_type_per_dataset = OrderedDict()
-        if is_filesplit:
-            for dataset in self.xmlinfo.datasets:
-                datasetname = str(dataset.settings.Name)
-                print green('    --> Dividing sample %s' % (datasetname))
-                njobs_this_dataset = 0
+        for dataset in self.xmlinfo.datasets:
+            datasetname = str(dataset.settings.Name)
+            print green('    --> Dividing sample %s' % (datasetname))
+            njobs_this_dataset = 0
+            # handle filesplit
+            if is_filesplit:
                 nfiles = len(dataset.infiles)
                 njobs = int(math.ceil(nfiles/float(nfiles_per_job)))
-                for i in range(njobs):
-                    self.write_single_xml(datasetname=datasetname, index=i+1, nfiles_per_job=nfiles_per_job)
-                    # self.xmlinfo.datasets = all_datasets
-                    njobs_this_dataset += 1
-                njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
-
-        # handle eventsplit
-        else:
-            for dataset in self.xmlinfo.datasets:
-                datasetname = str(dataset.settings.Name)
-                print green('    --> Dividing sample %s' % (datasetname))
-                njobs_this_dataset = 0
+            # handle eventsplit
+            else:
                 nevents = get_number_events_in_dataset(dataset=dataset)
                 njobs = int(math.ceil(nevents/float(nevents_per_job)))
-                for i in range(njobs):
+            for i in range(njobs):
+                if is_filesplit:
+                    self.write_single_xml(datasetname=datasetname, index=i+1, nfiles_per_job=nfiles_per_job)
+                else:
                     self.write_single_xml(datasetname=datasetname, index=i+1, nevents_per_job=nevents_per_job)
-                    njobs_this_dataset += 1
-                njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
+                njobs_this_dataset += 1
+            njobs_and_type_per_dataset[datasetname] = (njobs_this_dataset, str(dataset.settings.Type))
 
         print green('  --> Divided XML files')
         return njobs_and_type_per_dataset
@@ -445,11 +438,8 @@ class Submitter:
 
             with open(infilename, 'r') as f:
                 lines = f.readlines()
-            filenames_expected = []
-            for filename in lines:
-                if filename.endswith('\n'):
-                    filenames_expected.append(filename[:-len('\n')])
-            files_per_dataset[datasetname] = filenames_expected
+                filenames_expected = [x.strip('\n') for x in lines]
+                files_per_dataset[datasetname] = filenames_expected
         return files_per_dataset
 
 
@@ -459,7 +449,7 @@ class Submitter:
         missing_files_per_dataset = OrderedDict()
         for datasetname in expected_files:
             nmissing = 0
-            missing = []
+            missing_files_per_dataset[datasetname] = []
             for file in expected_files[datasetname]:
                 # print file
                 lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
@@ -469,9 +459,8 @@ class Submitter:
                 output = result.communicate()[0]
                 returncode = result.returncode
                 if returncode > 0: # opening failed
-                    missing.append(file)
+                    missing_files_per_dataset[datasetname].append(file)
                     nmissing += 1
-            missing_files_per_dataset[datasetname] = missing
         DEVNULL.close()
         return missing_files_per_dataset
 
