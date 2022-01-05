@@ -5,7 +5,7 @@
 <!ATTLIST Configuration
     TargetLumi           CDATA            #REQUIRED
     OutputDirectory      CDATA            #REQUIRED
-    SEDirector           CDATA            #REQUIRED
+    SEDirector           CDATA            ""
     PostFix              CDATA            ""
     AnalysisTool         CDATA            #REQUIRED
     NEventsMax           CDATA            "-1"

@@ -20,12 +20,12 @@ def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
 
 
 
-def order_haddlist(haddlist):
+def order_haddlist(haddlist, treename='AnalysisTree'):
     # make sure the first element in the list actually contains an AnalysisTree. Will return an unchanged list if none of the elements contains an AnalysisTree.
     result = copy.deepcopy(haddlist)
 
     for idx, file in enumerate(haddlist):
-        if file_contains_tree(filename=file, treename='AnalysisTree'):
+        if file_contains_tree(filename=file, treename=treename):
             # print 'will move element no. %i to the front. ' % (idx)
             result.insert(0, result.pop(idx))
             break
