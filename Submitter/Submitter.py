@@ -301,7 +301,7 @@ class Submitter:
             ensureDirectory(os.path.join(self.workdir_local, samplename))
 
             # copy .dtd file
-            copy(os.path.join(self.configdir, self.xmlinfo.ConfigName), os.path.join(self.workdir_local, samplename))
+            copy(os.path.join(self.configdir, self.xmlinfo.config_name), os.path.join(self.workdir_local, samplename))
         print green('  --> Created local workdir \'%s\'' % (self.workdir_local))
 
 
@@ -440,7 +440,7 @@ class Submitter:
         # write new xml file
         with open(outfilename, 'wr') as f:
             # header
-            f.write(self.xmlinfo.ConfigInfo)
+            f.write(self.xmlinfo.config_info)
             # main body (everything except for header)
             f.write(self.xmlinfo.get_XML_document().toprettyxml())
 
