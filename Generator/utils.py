@@ -7,6 +7,7 @@ from preferred_configurations import *
 from bisect import bisect_left
 from constants import *
 import distutils
+import functools
 
 from multiprocessing import Pool, Queue
 import ROOT
@@ -332,3 +333,18 @@ def get_intersection(g1, g2):
         xmid = xmin + (xmax-xmin)/2.
 
     return xmid
+
+def timeit(method):
+    @functools.wraps(method)
+    def timed(*args, **kw):
+        print(blue('--> Start of %r' %(method.__name__)))
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        if 'log_time' in kw:
+            name = kw.get('log_name', method.__name__.upper())
+            kw['log_time'][name] = int((te - ts))
+        else:
+            print(blue('--> End of %r: %2.2f s' % (method.__name__, (te - ts))))
+        return result
+    return timed

@@ -36,12 +36,6 @@
     FileName    CDATA       #REQUIRED
 >
 
-
-<!ELEMENT AnalysisTool EMPTY>
-<!ATTLIST AnalysisTool
-    Name        CDATA       #REQUIRED
->
-
 <!ELEMENT AdditionalVariables (Variable*)>
 
 <!ELEMENT Variable EMPTY>

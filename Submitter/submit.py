@@ -29,35 +29,25 @@ def main():
     xmlfilename = os.path.abspath(args.xmlfilename[0])
     if not xmlfilename.endswith('.xml'):
         raise ValueError(red('The name of the xml-file does not end with \'.xml\'. I don\'t believe you...'))
-    divide = args.divide
-    output = args.output
-    submit = args.submit
-    add    = args.add
-    forceadd = args.forceadd
-    notreeadd = args.notreeadd
-    hadd = args.hadd
-    clean = args.clean
-    ncores = args.ncores
-    nargs = sum([1 for x in vars(args) if vars(args)[x] is True])
 
-    ROOT.gErrorIgnoreLevel = kError
-
+    run_local = args.ncores is not None
+    is_to_add = args.add or args.forceadd or args.notreeadd
+    nargs     = sum([1 for x in vars(args) if vars(args)[x] is True])
 
     # Build submitter object, this will already parse the XML file
     submitter = Submitter(xmlfilename=xmlfilename)
 
     # create workdir locally and remotely (for output), create txt file with expected output files, split XML file into many smaller ones for individual jobs
-
-    if clean:
+    if args.clean:
         if nargs > 1:
             raise AttributeError('More than one argument given together with \'-c\' option. This is unsafe.')
         submitter.Clean()
-    if divide:                       submitter.Divide()
-    if output:                       submitter.Output()
-    if submit:                       submitter.Submit()
-    if add or forceadd or notreeadd: submitter.Add(force=forceadd, ignoretree=notreeadd)
-    if hadd:                         submitter.Hadd()
-    if ncores is not None:           submitter.RunLocal(ncores=ncores)
+    if args.divide:     submitter.Divide()
+    if args.output:     submitter.Output()
+    if args.submit:     submitter.Submit()
+    if run_local:       submitter.RunLocal(ncores=args.ncores)
+    if is_to_add:       submitter.Add(force=args.forceadd, ignoretree=args.notreeadd)
+    if args.hadd:       submitter.Hadd()
 
 
 
