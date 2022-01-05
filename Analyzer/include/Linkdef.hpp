@@ -11,6 +11,7 @@
 #pragma link C++ class TriggerObject+;
 #pragma link C++ class Particle+;
 #pragma link C++ class FlavorParticle+;
+#pragma link C++ class PFCandidate+;
 #pragma link C++ class GenParticle+;
 #pragma link C++ class GenJet+;
 #pragma link C++ class GenInfo+;
@@ -26,6 +27,7 @@
 #pragma link C++ class std::vector<TriggerObject>+;
 #pragma link C++ class std::vector<Particle>+;
 #pragma link C++ class std::vector<FlavorParticle>+;
+#pragma link C++ class std::vector<PFCandidate>+;
 #pragma link C++ class std::vector<GenParticle>+;
 #pragma link C++ class std::vector<GenJet>+;
 #pragma link C++ class std::vector<GenInfo>+;
