@@ -253,7 +253,7 @@ def execute_function_parallel(func, argumentlist, ncores=10):
 
 
 
-def hadd_large(outfilename, infilelist, force, notree, maxsize=int(5E11)): #default maxsize: 300GB (standard root: 100)
+def hadd_large(outfilename, infilelist, force, notree, maxsize=int(5E11)): #default maxsize: 500GB (standard root: 100)
     ROOT.TTree.SetMaxTreeSize(maxsize)
     rm = ROOT.TFileMerger(False)
     rm.SetFastMethod(True)
@@ -267,7 +267,7 @@ def hadd_large(outfilename, infilelist, force, notree, maxsize=int(5E11)): #defa
 
 
 
-def hadd_large_singlearg(arg): #default maxsize: 300GB (standard root: 100), good to be used with 'execute_function_parallel'
+def hadd_large_singlearg(arg): #default maxsize: 500GB (standard root: 100), good to be used with 'execute_function_parallel'
     singleargs = arg.split('---')
     outfilename = singleargs[0]
     infilestring = singleargs[1]

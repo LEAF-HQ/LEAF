@@ -51,7 +51,7 @@ def clean_haddlist(haddlist, use_se=False):
                 result.append(file)
     DEVNULL.close()
     if len(haddlist)!= len(result):
-        print yellow('--> Some files are discarted by clean_haddlist and will not be hadded')
+        print yellow('--> Some files are discarded by clean_haddlist and will not be hadded')
     return result
 
 
