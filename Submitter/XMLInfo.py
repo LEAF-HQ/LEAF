@@ -10,9 +10,12 @@ class XMLInfo:
         self.xmlfilename = xmlfilename
         command = 'xmllint --noent --dtdattr %s' % (xmlfilename)
         xmlstring = StringIO.StringIO(subprocess.check_output(command.split(' ')))
+        self.ConfigInfo = '\n'.join(xmlstring.read().split('\n')[0:2])+']>\n'
+        self.ConfigName = self.ConfigInfo[self.ConfigInfo[:self.ConfigInfo.find('.dtd')+len('.dtd')].rfind('"')+1:self.ConfigInfo.find('.dtd')+len('.dtd')]
+        xmlstring = StringIO.StringIO(subprocess.check_output(command.split(' ')))
         sax_parser = xml.sax.make_parser()
         self.xmlparsed = minidom.parse(xmlstring,sax_parser)
-        self.rootnode = self.xmlparsed.getElementsByTagName('Configuration')[0]
+        self.rootnode = self.xmlparsed.getElementsByTagName(self.ConfigName.strip(".dtd"))[0]
         self.configsettings = self.read_configuration_settings()
         self.submissionsettings = self.read_submission_settings()
         self.additionalvars = self.read_additional_variables()
@@ -22,7 +25,7 @@ class XMLInfo:
 
     def get_XML_document(self):
         doc = minidom.Document()
-        rootnode = doc.createElement("Configuration")
+        rootnode = doc.createElement(self.ConfigName.strip(".dtd"))
 
         self.write_configuration_settings(rootnode)
         self.write_submission_settings(doc, rootnode)

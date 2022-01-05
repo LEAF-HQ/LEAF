@@ -30,7 +30,9 @@ class Submitter:
 
         self.workdir_remote = str(os.path.join('/', *path_parts_remote))
 
-        self.missing_files_txt = os.path.join(self.workdir_local, 'commands_missing_files.txt')
+        self.expected_files_name = 'expected_files.txt'
+        self.missing_files_name = 'commands_missing_files.txt'
+        self.missing_files_txt = os.path.join(self.workdir_local, self.missing_files_name)
 
 
 
@@ -54,7 +56,7 @@ class Submitter:
         (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
 
         for datasetname in missing_files_per_dataset:
-            missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
+            missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
             with open(missing_files, 'r') as f:
                 njobs = len(f.readlines())
             if njobs < 1: continue
@@ -75,7 +77,7 @@ class Submitter:
         #     njobs = len(f.readlines())
         commands = []
         for datasetname in missing_files_per_dataset:
-            missing_files = os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt')
+            missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
             with open(missing_files, 'r') as f:
                 for line in f.readlines():
                     commands.append(line)
@@ -98,7 +100,7 @@ class Submitter:
             # for item in missing_files_per_dataset[datasetname]:
             #     missing_files_all.append(item)
             commands = [self.get_command_for_file(filename_expected=filename_expected) for filename_expected in missing_files_per_dataset[datasetname]]
-            with open(os.path.join(self.workdir_local, datasetname, 'commands_missing_files.txt'), 'wr') as f:
+            with open(os.path.join(self.workdir_local, datasetname, self.missing_files_name), 'wr') as f:
                 for command in commands:
                     f.write(command + '\n')
 
@@ -300,7 +302,7 @@ class Submitter:
             ensureDirectory(os.path.join(self.workdir_local, samplename))
 
             # copy .dtd file
-            copy(os.path.join(self.configdir, 'Configuration.dtd'), os.path.join(self.workdir_local, samplename))
+            copy(os.path.join(self.configdir, self.xmlinfo.ConfigName), os.path.join(self.workdir_local, samplename))
         print green('  --> Created local workdir \'%s\'' % (self.workdir_local))
 
 
@@ -382,7 +384,7 @@ class Submitter:
                 filename = '%s__%s_%i.root\n' % (datasettype, datasetname, i+1)
                 expected_files.append(os.path.join(outpath, filename))
 
-            outfilename = os.path.join(self.workdir_local, datasetname, 'expected_files.txt')
+            outfilename = os.path.join(self.workdir_local, datasetname, self.expected_files_name)
             with open(outfilename, 'wr') as f:
                 for file in expected_files:
                     f.write(file)
@@ -409,14 +411,12 @@ class Submitter:
         if nfiles_per_job > 0 and nevents_per_job > 0:
             raise ValueError(red('It seems like the new XML files should be written both in filesplit and eventsplit mode. Exit.'))
 
-
-        outfilename = os.path.join(self.workdir_local, datasetname, '%s_%i.xml' % (datasetname, index))\
+        outfilename = os.path.join(self.workdir_local, datasetname, '%s_%i.xml' % (datasetname, index))
 
         # throw away all other datasets but the one we specified as a parameter here
         self.xmlinfo.datasets_to_write = [deepcopy(ds) for ds in self.xmlinfo.datasets if ds.settings.Name == datasetname]
         if len(self.xmlinfo.datasets_to_write) != 1:
             raise ValueError(red('Found != 1 datasets with name \'%s\'' % (datasetname)))
-
 
         # filesplit mode
         if nfiles_per_job > 0:
@@ -440,11 +440,8 @@ class Submitter:
 
         # write new xml file
         with open(outfilename, 'wr') as f:
-
             # header
-            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-            f.write('<!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[]>\n')
-
+            f.write(self.xmlinfo.ConfigInfo)
             # main body (everything except for header)
             f.write(self.xmlinfo.get_XML_document().toprettyxml())
 
@@ -454,7 +451,7 @@ class Submitter:
         files_per_dataset = OrderedDict()
         for dataset in self.xmlinfo.datasets:
             datasetname = str(dataset.settings.Name)
-            infilename = os.path.join(self.workdir_local, datasetname, 'expected_files.txt')
+            infilename = os.path.join(self.workdir_local, datasetname, self.expected_files_name)
 
             with open(infilename, 'r') as f:
                 lines = f.readlines()
