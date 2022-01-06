@@ -142,7 +142,7 @@ def createNewPlotterXMLs(basefolder, name, placeholders):
 def updateMakefileLocal(basefolder, name):
     need_to_update = True
     newlines = []
-    fullmakefilepath = os.path.join(basefolder, Analyzer, 'Makefile.local')
+    fullmakefilepath = os.path.join(basefolder, 'Analyzer', 'Makefile.local')
     if os.path.isfile(fullmakefilepath):
         with open(fullmakefilepath, 'r') as f:
             lines = f.readlines()
