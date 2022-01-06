@@ -109,10 +109,9 @@ int main(int argc, char* argv[]){
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
   tree->Branch("Events", &event);
 
-  // int n_total = ((TTree*)infile->Get("Events"))->GetEntries();
-  // cout << green << "--> Total number of events to be processed: " << n_total << reset << endl;
+  int n_total = ((TTree*)infile->Get("Events"))->GetEntries();
+  cout << green << "--> Total number of events in inputfile: " << n_total << reset << endl;
 
-  // TTreeReader reader("Events", infile);
 
   fwlite::Handle<std::vector<pat::Jet> > handle_jets;
   fwlite::Handle<std::vector<pat::Muon>> handle_muons;
@@ -129,7 +128,7 @@ int main(int argc, char* argv[]){
   fwlite::Handle< edm::TriggerResults > handle_hltresults;
   fwlite::Handle< edm::TriggerResults > handle_metfilterresults;
   // fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
-  fwlite::Handle< std::vector<pat::PackedCandidate>> handle_pfcands;
+  // fwlite::Handle< std::vector<pat::PackedCandidate>> handle_pfcands;
 
 
 
@@ -154,7 +153,7 @@ int main(int argc, char* argv[]){
     if(!is_mc) metfilterstep = "RECO";
     handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
     // handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
-    handle_pfcands.getByLabel(ev, "packedPFCandidates");
+    // handle_pfcands.getByLabel(ev, "packedPFCandidates");
 
     if(is_mc){
       handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
@@ -181,7 +180,7 @@ int main(int argc, char* argv[]){
     const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
     const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
     // const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
-    const vector<pat::PackedCandidate>* pfcands = handle_pfcands.product();
+    // const vector<pat::PackedCandidate>* pfcands = handle_pfcands.product();
 
     const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus;
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>* genjets;
@@ -860,9 +859,9 @@ int main(int argc, char* argv[]){
         }
 
       }
-      t.set_score_deeptau_vse(pattau.tauID("byDeepTau2017v2VSeraw")); // needs to become v2p1 once added to tuples
-      t.set_score_deeptau_vsmu(pattau.tauID("byDeepTau2017v2VSmuraw")); // needs to become v2p1 once added to tuples
-      t.set_score_deeptau_vsjet(pattau.tauID("byDeepTau2017v2VSjetraw")); // needs to become v2p1 once added to tuples
+      t.set_score_deeptau_vse(pattau.tauID("byDeepTau2017v2p1VSeraw")); // needs to become v2p1 once added to tuples
+      t.set_score_deeptau_vsmu(pattau.tauID("byDeepTau2017v2p1VSmuraw")); // needs to become v2p1 once added to tuples
+      t.set_score_deeptau_vsjet(pattau.tauID("byDeepTau2017v2p1VSjetraw")); // needs to become v2p1 once added to tuples
       t.set_comb_iso(pattau.tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits"));
       t.set_comb_iso_dr03((pattau.tauID("chargedIsoPtSumdR03")+max(0.,pattau.tauID("neutralIsoPtSumdR03")-0.072*pattau.tauID("puCorrPtSum"))));
 
@@ -906,26 +905,26 @@ int main(int argc, char* argv[]){
       t.set_gen_part_flav(gen_part_flav);
 
       //set ID bits
-      t.set_selector(Tau::DeepTauVsJetVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetVVLoose, pattau.tauID("byVVLooseDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetVLoose, pattau.tauID("byVLooseDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetLoose, pattau.tauID("byLooseDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetMedium, pattau.tauID("byMediumDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetTight, pattau.tauID("byTightDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetVTight, pattau.tauID("byVTightDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsJetVVTight, pattau.tauID("byVVTightDeepTau2017v2VSjet"));
-      t.set_selector(Tau::DeepTauVsEleVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleVVLoose, pattau.tauID("byVVLooseDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleVLoose, pattau.tauID("byVLooseDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleLoose, pattau.tauID("byLooseDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleMedium, pattau.tauID("byMediumDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleTight, pattau.tauID("byTightDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleVTight, pattau.tauID("byVTightDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsEleVVTight, pattau.tauID("byVVTightDeepTau2017v2VSe"));
-      t.set_selector(Tau::DeepTauVsMuVLoose, pattau.tauID("byVLooseDeepTau2017v2VSmu"));
-      t.set_selector(Tau::DeepTauVsMuLoose, pattau.tauID("byLooseDeepTau2017v2VSmu"));
-      t.set_selector(Tau::DeepTauVsMuMedium, pattau.tauID("byMediumDeepTau2017v2VSmu"));
-      t.set_selector(Tau::DeepTauVsMuTight, pattau.tauID("byTightDeepTau2017v2VSmu"));
+      t.set_selector(Tau::DeepTauVsJetVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVVLoose, pattau.tauID("byVVLooseDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVLoose, pattau.tauID("byVLooseDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetLoose, pattau.tauID("byLooseDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetMedium, pattau.tauID("byMediumDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetTight, pattau.tauID("byTightDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVTight, pattau.tauID("byVTightDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsJetVVTight, pattau.tauID("byVVTightDeepTau2017v2p1VSjet"));
+      t.set_selector(Tau::DeepTauVsEleVVVLoose, pattau.tauID("byVVVLooseDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleVVLoose, pattau.tauID("byVVLooseDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleVLoose, pattau.tauID("byVLooseDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleLoose, pattau.tauID("byLooseDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleMedium, pattau.tauID("byMediumDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleTight, pattau.tauID("byTightDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleVTight, pattau.tauID("byVTightDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsEleVVTight, pattau.tauID("byVVTightDeepTau2017v2p1VSe"));
+      t.set_selector(Tau::DeepTauVsMuVLoose, pattau.tauID("byVLooseDeepTau2017v2p1VSmu"));
+      t.set_selector(Tau::DeepTauVsMuLoose, pattau.tauID("byLooseDeepTau2017v2p1VSmu"));
+      t.set_selector(Tau::DeepTauVsMuMedium, pattau.tauID("byMediumDeepTau2017v2p1VSmu"));
+      t.set_selector(Tau::DeepTauVsMuTight, pattau.tauID("byTightDeepTau2017v2p1VSmu"));
 
 
 
