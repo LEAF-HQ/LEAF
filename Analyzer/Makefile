@@ -10,7 +10,7 @@ all: Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
 Analyzer: libClassDictionaries.so $(OBJECTS) $(OBJDIR)/Analyzer.o
-	@for d in $(subdirs); do ( $(MAKE) -C $$d lib ) || exit 1; done
+	@for d in $(subdirs); do ( $(MAKE) -C $(LEAFPATH)/$$d/Analyzer lib ) || exit 1; done
 	@echo "--> Creating Analyzer"
 	@$(CC) $(OBJECTS) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS)
 
@@ -47,6 +47,6 @@ $(LIBDIR)/ClassDictionaries.cxx: $(INCLUDES) include/Linkdef.hpp
 
 
 clean:
-	@for d in $(subdirs); do ( $(MAKE) -C $$d clean ) || exit 1; done
+	@for d in $(subdirs); do ( $(MAKE) -C $(LEAFPATH)/$$d/Analyzer clean ) || exit 1; done
 	@echo "--> cleaning top-level folders $(OBJDIR)/, $(LIBDIR)/, and $(BINDIR)/"
 	@rm -f $(wildcard $(OBJDIR)/*.o) $(LIBOBJS) $(BINARIES)

@@ -13,14 +13,14 @@ If you have not yet set up your own analysis, either complete the installation a
 
 ## Event selection and histogram production
 
-The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the `AnalysisTool` class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in `LEAF/Analyzer/MyAnalysis/src/MyAnalysisTool.cc`.
+The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the `AnalysisTool` class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in `LEAF/MyAnalysis/Analyzer/src/MyAnalysisTool.cc`.
 
-The settings of the job, such as the files to run over or the input/output paths are configured in an `xml` file, which can be found in `LEAF/Analyzer/MyAnalysis/config/MyAnalysis.xml`. Be sure to have a look into both files and understand what is going on.
+The settings of the job, such as the files to run over or the input/output paths are configured in an `xml` file, which can be found in `LEAF/MyAnalysis/Analyzer/config/MyAnalysis.xml`. Be sure to have a look into both files and understand what is going on.
 
 The configuration file is already prepared to run over the test samples (in `LEAF/.testsamples/*.root`), so we can simply run the `Analyzer` executable locally, passing the configuration file as an argument:
 
 ```bash
-cd MyAnalysis/config
+cd $LEAFPATH/MyAnalysis/Analyzer/config
 Analyzer MyAnalysis.xml
 ```
 
@@ -40,7 +40,7 @@ cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
 In a real analysis, a given process will often be split into different samples binned in a certain variable (for example HT, PT, or M). In order to merge samples adding up to the same process, we will use the `Submitter`:
 
 ```bash
-cd $LEAFPATH/Analyzer/MyAnalysis/config
+cd $LEAFPATH/MyAnalysis/Analyzer/config
 submit.py MyAnalysis.xml -p
 ```
 
@@ -56,7 +56,7 @@ The next step will be to visualize the events processed by plotting distribution
 When creating the new analysis, a corresponding configuration file for the `Plotter` has already been created, so simply plot the distributions:
 
 ```bash
-cd $LEAFPATH/Plotter/MyAnalysis
+cd $LEAFPATH/MyAnalysis/Plotter
 Plotter Default.xml
 ```
 
@@ -73,7 +73,7 @@ After having selected events and plotted distributions at the different stages o
 
 Together with the new analysis came a basic collection of analysis scripts, with are contained in the `PostAnalyzer` folder. It contains one main executable script. Let us execute it:
 ```bash
-cd $LEAFPATH/Analyzer/MyAnalysis/PostAnalyzer
+cd $LEAFPATH/MyAnalysis/Analyzer/PostAnalyzer
 ./steer.py
 ```
 

@@ -1,4 +1,4 @@
-#include "Analyzer/$MYANALYSISNAME/include/$MYHISTNAME.h"
+#include "$MYANALYSISNAME/Analyzer/include/$MYHISTNAME.h"
 #include "Analyzer/include/constants.h"
 #include "Analyzer/include/useful_functions.h"
 #include <TH1F.h>
