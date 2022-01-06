@@ -109,10 +109,9 @@ int main(int argc, char* argv[]){
   TTree* tree = new TTree("AnalysisTree", "AnalysisTree");
   tree->Branch("Events", &event);
 
-  // int n_total = ((TTree*)infile->Get("Events"))->GetEntries();
-  // cout << green << "--> Total number of events to be processed: " << n_total << reset << endl;
+  int n_total = ((TTree*)infile->Get("Events"))->GetEntries();
+  cout << green << "--> Total number of events in inputfile: " << n_total << reset << endl;
 
-  // TTreeReader reader("Events", infile);
 
   fwlite::Handle<std::vector<pat::Jet> > handle_jets;
   fwlite::Handle<std::vector<pat::Muon>> handle_muons;
@@ -129,7 +128,7 @@ int main(int argc, char* argv[]){
   fwlite::Handle< edm::TriggerResults > handle_hltresults;
   fwlite::Handle< edm::TriggerResults > handle_metfilterresults;
   // fwlite::Handle< std::vector<pat::TriggerObjectStandAlone>> handle_triggerobjects;
-  fwlite::Handle< std::vector<pat::PackedCandidate>> handle_pfcands;
+  // fwlite::Handle< std::vector<pat::PackedCandidate>> handle_pfcands;
 
 
 
@@ -154,7 +153,7 @@ int main(int argc, char* argv[]){
     if(!is_mc) metfilterstep = "RECO";
     handle_metfilterresults.getByLabel(ev, "TriggerResults", "", metfilterstep.Data());
     // handle_triggerobjects.getByLabel(ev, "slimmedPatTrigger");
-    handle_pfcands.getByLabel(ev, "packedPFCandidates");
+    // handle_pfcands.getByLabel(ev, "packedPFCandidates");
 
     if(is_mc){
       handle_pus      .getByLabel(ev, "slimmedAddPileupInfo");
@@ -181,7 +180,7 @@ int main(int argc, char* argv[]){
     const edm::TriggerResults* metfilterresults = handle_metfilterresults.product();
     const edm::TriggerNames &metfilternames = ev.triggerNames(*metfilterresults);
     // const vector<pat::TriggerObjectStandAlone>* triggerobjects = handle_triggerobjects.product();
-    const vector<pat::PackedCandidate>* pfcands = handle_pfcands.product();
+    // const vector<pat::PackedCandidate>* pfcands = handle_pfcands.product();
 
     const std::vector<PileupSummaryInfo, std::allocator<PileupSummaryInfo>>* pus;
     const std::vector<reco::GenJet, std::allocator<reco::GenJet>>* genjets;
