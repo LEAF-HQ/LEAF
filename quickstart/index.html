@@ -178,10 +178,10 @@
 </div>
 <p>If you have not yet set up your own analysis, either complete the installation and setup of a new analysis first, or make sure to adjust the commands and file contents shown below to your structure.</p>
 <h2 id="event-selection-and-histogram-production">Event selection and histogram production</h2>
-<p>The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the <code>AnalysisTool</code> class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in <code>LEAF/Analyzer/MyAnalysis/src/MyAnalysisTool.cc</code>.</p>
-<p>The settings of the job, such as the files to run over or the input/output paths are configured in an <code>xml</code> file, which can be found in <code>LEAF/Analyzer/MyAnalysis/config/MyAnalysis.xml</code>. Be sure to have a look into both files and understand what is going on.</p>
+<p>The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the <code>AnalysisTool</code> class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in <code>LEAF/MyAnalysis/Analyzer/src/MyAnalysisTool.cc</code>.</p>
+<p>The settings of the job, such as the files to run over or the input/output paths are configured in an <code>xml</code> file, which can be found in <code>LEAF/MyAnalysis/Analyzer/config/MyAnalysis.xml</code>. Be sure to have a look into both files and understand what is going on.</p>
 <p>The configuration file is already prepared to run over the test samples (in <code>LEAF/.testsamples/*.root</code>), so we can simply run the <code>Analyzer</code> executable locally, passing the configuration file as an argument:</p>
-<pre><code class="bash">cd MyAnalysis/config
+<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
 Analyzer MyAnalysis.xml
 </code></pre>
 
@@ -195,7 +195,7 @@ Analyzer MyAnalysis.xml
 
 <p>You will find four root files in that folder, one for each of the samples we processed.</p>
 <p>In a real analysis, a given process will often be split into different samples binned in a certain variable (for example HT, PT, or M). In order to merge samples adding up to the same process, we will use the <code>Submitter</code>:</p>
-<pre><code class="bash">cd $LEAFPATH/Analyzer/MyAnalysis/config
+<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
 submit.py MyAnalysis.xml -p
 </code></pre>
 
@@ -207,7 +207,7 @@ submit.py MyAnalysis.xml -p
 <h2 id="plotting-distributions">Plotting distributions</h2>
 <p>The next step will be to visualize the events processed by plotting distributions of relevant observables and comparing different processes. The <code>Plotter</code> package takes care of this. Just like the <code>Analyzer</code> executable, also the <code>Plotter</code> executable is configured through an <code>xml</code> file, which contains information on the datasets to be plotted.</p>
 <p>When creating the new analysis, a corresponding configuration file for the <code>Plotter</code> has already been created, so simply plot the distributions:</p>
-<pre><code class="bash">cd $LEAFPATH/Plotter/MyAnalysis
+<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Plotter
 Plotter Default.xml
 </code></pre>
 
@@ -219,7 +219,7 @@ Plotter Default.xml
 <h2 id="post-analysis">Post-analysis</h2>
 <p>After having selected events and plotted distributions at the different stages of the event selection, now we will perform some further analysis to understand our selection and finally infer the presence or absence of a signal over the standard model expectation.</p>
 <p>Together with the new analysis came a basic collection of analysis scripts, with are contained in the <code>PostAnalyzer</code> folder. It contains one main executable script. Let us execute it:</p>
-<pre><code class="bash">cd $LEAFPATH/Analyzer/MyAnalysis/PostAnalyzer
+<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/PostAnalyzer
 ./steer.py
 </code></pre>
 
