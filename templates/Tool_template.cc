@@ -19,8 +19,8 @@
 #include "Analyzer/include/NJetSelection.h"
 
 
-#include "Analyzer/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
-#include "Analyzer/$MYANALYSISNAME/include/$MYHISTNAME.h"
+#include "$MYANALYSISNAME/Analyzer/include/$MYEVENTCLASS.h"
+#include "$MYANALYSISNAME/Analyzer/include/$MYHISTNAME.h"
 
 using namespace std;
 

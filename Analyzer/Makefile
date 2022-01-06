@@ -3,7 +3,7 @@
 
 
 BINARIES    := $(wildcard $(BINDIR)/*)
-CUSTOMLIBS  := $(foreach subdir,$(subdirs), -l$(subdir))
+CUSTOMLIBS  := $(foreach subdir,$(subdirs), -L$(subdir))
 
 
 all: Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights Analyzer

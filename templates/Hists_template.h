@@ -5,7 +5,7 @@
 #include <map>
 #include <TTreeReader.h>
 #include <TROOT.h>
-#include "Analyzer/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
+#include "$MYANALYSISNAME/Analyzer/include/$MYEVENTCLASS.h"
 #include "Analyzer/include/BaseHists.h"
 
 using namespace std;
