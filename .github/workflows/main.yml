@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    if: ${{ !contains(github.event.pull_request.title, '[ci skip]') }} && ${{ !contains(github.event.pull_request.title, '[skip ci]') }} && ${{ !contains(github.event.pull_request.title, '[no ci]') }}
+    if: ${{ !contains(github.event.pull_request.title, '[ci skip]') && !contains(github.event.pull_request.title, '[skip ci]') && !contains(github.event.pull_request.title, '[no ci]') }}
     runs-on: ubuntu-latest
 
     container:
