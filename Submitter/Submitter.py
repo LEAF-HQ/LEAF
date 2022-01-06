@@ -22,9 +22,7 @@ class Submitter:
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
         self.se_director = self.xmlinfo.configsettings.SEDirector
-        self.use_se = False
-        if self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and not ('t3dcachedb03.psi.ch' in self.se_director):
-            self.use_se = True
+        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != "")
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
 
@@ -136,19 +134,21 @@ class Submitter:
 
 
     @timeit
-    def Add(self, force=False, ignoretree=False, nchunks=9):
+    def Add(self, force=False, ignoretree=False, allowincomplete= False, nchunks=9):
         print green('--> Adding finished samples')
 
         # update list of missing files
         self.Output()
 
         # find datasets that are already done
-        datasetnames_complete = []
         expected_files = self.read_expected_files()
         missing_files = self.find_missing_files(expected_files=expected_files)
-        for datasetname in missing_files:
-            if len(missing_files[datasetname]) == 0:
-                datasetnames_complete.append(datasetname)
+        if allowincomplete:
+            datasetnames_complete = expected_files.keys()
+            datasetnames_skip     = []
+        else:
+            datasetnames_complete = OrderedDict(filter(lambda elem: len(elem[1]) == 0,missing_files.items())).keys()
+            datasetnames_skip     = OrderedDict(filter(lambda elem: len(elem[1]) != 0,missing_files.items())).keys()
 
         # add all completed datasets
         for datasetname in datasetnames_complete:
@@ -179,33 +179,23 @@ class Submitter:
 
             else:
                 chunkoutnames = []
-                commands = []
                 argumentlist = []
                 for idx, chunk in enumerate(chunks(expected_files[datasetname], chunklength)):
                     chunkoutname = outfilepath_and_name.replace('.root', '_tmp%i.root' % (idx))
-                    chunkoutnames.append(chunkoutname)
 
                     # order expected files such that the first has an AnalysisTree (if any of the files has one).
                     expected_files_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=chunk, use_se=self.use_se))
                     expected_files_ordered_str = ' '.join(expected_files_ordered)
 
+                    if len(expected_files_ordered)==0:
+                        continue
                     if os.path.isfile(outfilepath_and_name) and not force:
                         continue
 
-                    command = 'hadd'
-                    if force: command += ' -f'
-                    if ignoretree: command += ' -T'
-                    command += ' %s' % (chunkoutname)
-                    command += ' ' + expected_files_ordered_str
-                    commands.append(command)
-
-                    # print force, ignoretree
                     singleargument = '%s---%s---%s---%s' % (chunkoutname, expected_files_ordered_str, str(force), str(ignoretree))
-                    # print singleargument
                     argumentlist.append(singleargument)
+                    chunkoutnames.append(chunkoutname)
 
-
-                # execute_commands_parallel(commands)
                 execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
                 chunkoutnames_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=chunkoutnames, use_se=self.use_se))
                 chunkoutnames_str = ' '.join(order_haddlist(haddlist=clean_haddlist(haddlist=chunkoutnames, use_se=self.use_se)))
@@ -215,6 +205,8 @@ class Submitter:
                     command = 'rm -rf %s' % (chunkoutname)
                     os.system(command)
 
+        for datasetname in datasetnames_skip:
+            print yellow('--> Skipping %s as not completed' %(datasetname))
 
         if force:
             print green('--> Added all completed files')
@@ -231,13 +223,10 @@ class Submitter:
 
         datasets_per_group = OrderedDict()
         for ds in self.xmlinfo.datasets:
-            datasetname = str(ds.settings.Name)
             group = str(ds.settings.Group)
             datasettype = str(ds.settings.Type)
-            if group in datasets_per_group:
-                datasets_per_group[group][1].append(datasetname)
-            else:
-                datasets_per_group[group] = (datasettype, [datasetname])
+            datasetname = str(ds.settings.Name)
+            datasets_per_group.setdefault(group, (datasettype, []))[1].append(datasetname)
 
         commands = []
         argumentlist = []
@@ -251,21 +240,12 @@ class Submitter:
             else:
                 outpath = str(os.path.join('/', *outpath_parts))
             outfilepath_and_name = os.path.join(outpath, outfilename)
-            files_to_add = []
-            for filename in datasets_per_group[group][1]:
-                files_to_add.append(os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)))
+            files_to_add = [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]]
             files_to_add_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=files_to_add, use_se=self.use_se))
             sourcestring = ' '.join( files_to_add_ordered )
-            # sourcestring = ' '.join( [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]] )
-
-            # command = 'hadd -f -T %s %s' % (outfilepath_and_name, sourcestring)
-            # commands.append(command)
-
             singleargument = '%s---%s---%s---%s' % (outfilepath_and_name, sourcestring, 'True', 'True')
-            # print singleargument
             argumentlist.append(singleargument)
 
-        # execute_commands_parallel(commands)
         execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
         print green('--> Added datasets into groups.')
 

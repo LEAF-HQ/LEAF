@@ -3,10 +3,6 @@ from Storage import *
 from collections import OrderedDict
 
 
-# backgrounds = {
-# backgrounds = OrderedDict()
-
-# def populate_backgrounds(dict):
 
 # List of tuples ('samplename', sample itself) to be inserted orderly into an OrderedDict
 backgroundlist = [
