@@ -1,7 +1,6 @@
 from Sample import *
 from Storage import *
 
-# data = {
 datalist = [
 
     ('DATA_Tau_B', Sample(
