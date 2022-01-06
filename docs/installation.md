@@ -28,8 +28,9 @@ source setup.sh
 There is a handy macro that creates all structures needed for a new analysis and integrates it into the LEAF compilation workflow. All that needs to be done (in an environment where LEAF has already been [set up](#setup-(every-time))) is
 
 ```bash
-cd $LEAFPATH/Analyzer
+cd $LEAFPATH
 ./createNewAnalysis.py <NewAnalysisName>
+cd Analyzer
 make clean
 make -j
 ```
