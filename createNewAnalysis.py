@@ -147,15 +147,15 @@ def updateMakefileLocal(basefolder, name):
         with open(fullmakefilepath, 'r') as f:
             lines = f.readlines()
             for l in lines:
-                if 'subdirs := %s' % (os.path.join(basefolder, name, 'Analyzer')) in l or 'subdirs += %s' % (os.path.join(basefolder, name, 'Analyzer')) in l:
+                if 'subdirs := %s' % (name) in l or 'subdirs += %s' % (name) in l:
                     need_to_update = False
                 newlines.append(l)
 
     if need_to_update:
         if len(newlines) is 0:
-            newline = 'subdirs := %s' % (os.path.join(basefolder, name, 'Analyzer'))
+            newline = 'subdirs := %s' % (name)
         else:
-            newline = 'subdirs += %s' % (os.path.join(basefolder, name, 'Analyzer'))
+            newline = 'subdirs += %s' % (name)
         newlines.append(newline)
         with open(fullmakefilepath, 'w') as f:
             for l in newlines:
