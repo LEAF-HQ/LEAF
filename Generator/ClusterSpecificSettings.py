@@ -6,7 +6,7 @@ from collections import OrderedDict
 @total_ordering
 class TimeFormat():
     def __init__(self, *args, **kwargs):
-        self.time = {'g':0,'h':0,'m':0,'s':0}
+        self.time = {'d':0,'h':0,'m':0,'s':0}
         if len(args)!=0 and len(kwargs)!=0:
             raise ValueError(red('Unsupported input format for TimeFormat. Both args and kwargs given.'))
         elif len(kwargs) != 0:
@@ -17,7 +17,7 @@ class TimeFormat():
             elif type(args[0])== str:
                 parts = args[0].split(':')
                 if '-' in parts[0]:
-                    self.time['g'], self.time['h'] = (int(parts[0].split('-')[0]),int(parts[0].split('-')[1]))
+                    self.time['d'], self.time['h'] = (int(parts[0].split('-')[0]),int(parts[0].split('-')[1]))
                 else:
                     self.time['h'] = int(parts[0])
                 self.time['m'], self.time['s'] = (int(parts[1]), int(parts[2]))
@@ -27,7 +27,7 @@ class TimeFormat():
                 if len(args[0])==3:
                     self.time.update(dict(zip(['h','m','s'],args[0])))
                 if len(args[0])==4:
-                    self.time.update(dict(zip(['g','h','m','s'],args[0])))
+                    self.time.update(dict(zip(['d','h','m','s'],args[0])))
             else:
                 raise ValueError(red('Unsupported input format for TimeFormat. Args is not a list nor a dict.'))
         else:
@@ -36,16 +36,16 @@ class TimeFormat():
 
     def __repr__(self):
         time_str = '%02i:%02i:%02i' % (self.time['h'], self.time['m'], self.time['s'])
-        if self.time['g']!=0:
-            time_str = ('%02i-' %(self.time['g']))+time_str
+        if self.time['d']!=0:
+            time_str = ('%02i-' %(self.time['d']))+time_str
         return time_str
 
     def __eq__(self, other):
         return self.time == other.time
 
     def __lt__(self, other):
-        if self.time['g'] < other.time['g']:   return True
-        elif self.time['g'] > other.time['g']: return False
+        if self.time['d'] < other.time['d']:   return True
+        elif self.time['d'] > other.time['d']: return False
         elif self.time['h'] < other.time['h']: return True
         elif self.time['h'] > other.time['h']: return False
         elif self.time['m'] < other.time['m']: return True
