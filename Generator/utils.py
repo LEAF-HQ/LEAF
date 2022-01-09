@@ -47,13 +47,13 @@ def blue(string):
 def bold(string):
     return "\033[1m%s\033[0m"%string
 
-def prettydic(d, indent=8, color=blue):
+def prettydict(d, indent=8, color=blue):
     space = max([0]+[len(str(x)) for x in d])+2
     for key, value in d.items():
         print(color(" "*indent + str(key))),
         if isinstance(value, dict):
             print ""
-            prettydic(value, len(" "*indent + str(key)+" "*(space+1-len(str(key)))))
+            prettydict(value, len(" "*indent + str(key)+" "*(space+1-len(str(key)))))
         else:
             print(color(" "*(space-len(str(key))) + str(value)))
 

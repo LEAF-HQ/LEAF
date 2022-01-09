@@ -1,0 +1,6 @@
+{
+    "cluster": "htcondor", 
+    "email": "first.lastname@cern.ch", 
+    "username": "username", 
+    "xml": "SUBMITTERPATH/Settings_username.xml"
+}

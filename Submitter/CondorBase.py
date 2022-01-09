@@ -1,21 +1,27 @@
 import os, json
 import htcondor
-from utils import *
+from utils import blue, ensureDirectory, prettydict
 
-import htcondor
+from ClusterSpecificSettings import *
+from UserSpecificSettings import *
 
 class CondorBase():
-    def __init__(self, JobName = 'test', Memory = 2, Disk = 1):
+    def __init__(self, JobName = 'test', Memory = 2, Disk = 1, Time = '00:00:00'):
+        self.JobName = JobName
+        user_settings = UserSpecificSettings(os.getenv('USER'))
+        user_settings.LoadXml()
+        self.email = user_settings.Get('email')
+        cluster_settings = ClusterSpecificSettings(user_settings.Get('cluster'))
+        cluster_settings.setJobTimeUpperLimit(ref_time = Time)
+        self.RequestTime, self.Time = cluster_settings.getSettings()['MaxRunTime']
         self.Memory = str(int(Memory)*1024)
         self.Disk   = str(int(Disk)*1024*1024)
-        self.JobName = JobName
-        self.UserEmail = 'andrea.malara@cern.ch'
         self.CreateShedd()
 
     def CreateShedd(self):
         self.schedd = htcondor.Schedd(htcondor.Collector().locate(htcondor.DaemonTypes.Schedd))
 
-    def CreateJobInfo(self, executable="", arguments=""):
+    def CreateJobInfo(self, executable='', arguments=''):
         if not hasattr(self, 'JobInfo'): self.JobInfo = {}
         outputname = str(self.JobName)+'_$(ClusterId)_$(ProcId)'
         self.JobInfo = {
@@ -32,37 +38,39 @@ class CondorBase():
             'RequestCpus':          '1',                           # requested number of CPUs (cores)
             'RequestMemory':        self.Memory,                   # memory in GB
             'RequestDisk':          self.Disk,                     # disk space in GB
-            'notify_user':          self.UserEmail,                  # send an email to the user if the notification condition is set. Doens't work FIXME
+            'notify_user':          self.email,                    # send an email to the user if the notification condition is set. Doens't work FIXME
             'notification':         'Always',                        # Always/Error/Done Doens't work FIXME
             'getenv':               'True',                        # port the local environment to the cluster
             'hold': 'True',                                        # to start jobs in hold (eg. debugging)
             # 'transfer_executable':  'True',                        # copy the executable to the cluster Doens't work FIXME
-            'WhenToTransferOutput': 'ON_EXIT_OR_EVICT',                     # specify when to transfer the outout back. Not tested yet
-            # 'requirements':          "OpSysAndVer == 'CentOS7'",   # additional requirements. Not tested yet
+            'WhenToTransferOutput': 'ON_EXIT_OR_EVICT',            # specify when to transfer the outout back. Not tested yet
+            # 'requirements':          'OpSysAndVer == "CentOS7"'',   # additional requirements. Not tested yet
             # '+RequestRuntime':       str(int(nHours*60*60)),       # requested run time. Not tested yet
             }
+        if self.RequestTime!='':
+            self.ModifyJobInfo(self.RequestTime,self.Time)          # Time requested
 
     def ModifyJobInfo(self,name,info):
         if not hasattr(self, 'JobInfo'): self.CreateJobInfo()
         self.JobInfo[name] = info
 
     def SubmitJob(self):
-        if self.JobInfo['executable'] == "":
-            raise ValueError("No executable passed. Please check")
-        ensureDirectory(self.JobInfo["outdir"])
+        if self.JobInfo['executable'] == '':
+            raise ValueError('No executable passed. Please check')
+        ensureDirectory(self.JobInfo['outdir'])
         submit_result = self.schedd.submit(htcondor.Submit(self.JobInfo)) # submit the job
         ClusterId = str(submit_result.cluster())
         ProcId = str(submit_result.first_proc())
         self.ModifyJobInfo('ClusterId', ClusterId)
         self.ModifyJobInfo('ProcId', ProcId)
-        self.StoreJobInfo(extrainfo="_"+str(ClusterId)+"_"+str(ProcId))
+        self.StoreJobInfo(extrainfo='_'+str(ClusterId)+'_'+str(ProcId))
 
     def SubmitManyJobs(self, job_args = [], job_exes = []):
-        ensureDirectory(self.JobInfo["outdir"])
+        ensureDirectory(self.JobInfo['outdir'])
         sub = htcondor.Submit(self.JobInfo)
         if len(job_exes) == 0:
-            if self.JobInfo['executable'] == "":
-                raise ValueError("No executable passed. Please check")
+            if self.JobInfo['executable'] == '':
+                raise ValueError('No executable passed. Please check')
             jobs = [ {'arguments': arg } for arg in job_args]
         elif len(job_exes) == len(job_args):
             jobs = [ {'arguments': job_args[n], 'executable': job_exes[n], } for n in range(len(job_args))]
@@ -70,8 +78,6 @@ class CondorBase():
             raise ValueError(red('Something is wrong in the SubmitManyJobs parameters'))
         with self.schedd.transaction() as txn:
             submit_result = sub.queue_with_itemdata(txn,1,iter(jobs))
-            print submit_result.clusterad()['RequestDisk']
-            print submit_result.clusterad()['RequestMemory']
             self.ModifyJobInfo('ClusterId',str(submit_result.cluster()))
             self.ModifyJobInfo('ExtraInfo', jobs)
             self.StoreJobInfo()
@@ -80,14 +86,14 @@ class CondorBase():
         for job in self.schedd.xquery(constraint = 'ClusterId == {}'.format(self.JobInfo['ClusterId']), ):
             print(repr(job))
 
-    def StoreJobInfo(self, extrainfo=""):
+    def StoreJobInfo(self, extrainfo=''):
         with open(self.JobInfo['outdir']+'JobInfo'+extrainfo+'.json', 'w') as f:
             json.dump(self.JobInfo, f, sort_keys=True, indent=4)
 
     def LoadJobInfo(self):
         with open(filename, 'r') as f:
-            self.JobInfo = json.load(fp)
+            self.JobInfo = json.load(f)
 
     def PrintJobInfo(self):
-        print(blue("--> JobInfo"))
-        prettydic(self.JobInfo)
+        print(blue('--> JobInfo'))
+        prettydict(self.JobInfo)
