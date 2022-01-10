@@ -181,24 +181,21 @@
 <p>The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the <code>AnalysisTool</code> class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in <code>LEAF/MyAnalysis/Analyzer/src/MyAnalysisTool.cc</code>.</p>
 <p>The settings of the job, such as the files to run over or the input/output paths are configured in an <code>xml</code> file, which can be found in <code>LEAF/MyAnalysis/Analyzer/config/MyAnalysis.xml</code>. Be sure to have a look into both files and understand what is going on.</p>
 <p>The configuration file is already prepared to run over the test samples (in <code>LEAF/.testsamples/*.root</code>), so we can simply run the <code>Analyzer</code> executable locally, passing the configuration file as an argument:</p>
-<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
+<pre><code class="language-bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
 Analyzer MyAnalysis.xml
 </code></pre>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The above command can be run from anywhere, then the relative (or absolute, if preferred) path to the <code>xml</code> file must be adjusted accordingly. However, this is not true for all programs along the way, so it is best to execute all commands from within the folder that contains the file passed as an argument.</p>
 </div>
 <p>The default configuration file will instruct the <code>Analyzer</code> to store the output root files in a folder on the same level as the main LEAF folder, <code>MyAnalysis/2017/Preselection/InitialSetup</code>. To get there, do</p>
-<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
+<pre><code class="language-bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
 </code></pre>
-
 <p>You will find four root files in that folder, one for each of the samples we processed.</p>
 <p>In a real analysis, a given process will often be split into different samples binned in a certain variable (for example HT, PT, or M). In order to merge samples adding up to the same process, we will use the <code>Submitter</code>:</p>
-<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
+<pre><code class="language-bash">cd $LEAFPATH/MyAnalysis/Analyzer/config
 submit.py MyAnalysis.xml -p
 </code></pre>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In this exercise, this step would not really be necessary, but in a full-fledged analysis it will be.</p>
@@ -207,26 +204,22 @@ submit.py MyAnalysis.xml -p
 <h2 id="plotting-distributions">Plotting distributions</h2>
 <p>The next step will be to visualize the events processed by plotting distributions of relevant observables and comparing different processes. The <code>Plotter</code> package takes care of this. Just like the <code>Analyzer</code> executable, also the <code>Plotter</code> executable is configured through an <code>xml</code> file, which contains information on the datasets to be plotted.</p>
 <p>When creating the new analysis, a corresponding configuration file for the <code>Plotter</code> has already been created, so simply plot the distributions:</p>
-<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Plotter
+<pre><code class="language-bash">cd $LEAFPATH/MyAnalysis/Plotter
 Plotter Default.xml
 </code></pre>
-
 <p>The distributions will be created in the folder containing the output root files of the previous step, which is on the same level as the main LEAF folder: <code>MyAnalysis/2017/Preselection/InitialSetup/plots/distributions</code>. To get there, do</p>
-<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions
+<pre><code class="language-bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions
 </code></pre>
-
 <p>Feel free to inspect the plots before moving on. Also feel free to try and add some new event selection steps and plot the default distributions after those. Adding more observables could be useful as well.</p>
 <h2 id="post-analysis">Post-analysis</h2>
 <p>After having selected events and plotted distributions at the different stages of the event selection, now we will perform some further analysis to understand our selection and finally infer the presence or absence of a signal over the standard model expectation.</p>
 <p>Together with the new analysis came a basic collection of analysis scripts, with are contained in the <code>PostAnalyzer</code> folder. It contains one main executable script. Let us execute it:</p>
-<pre><code class="bash">cd $LEAFPATH/MyAnalysis/Analyzer/PostAnalyzer
+<pre><code class="language-bash">cd $LEAFPATH/MyAnalysis/Analyzer/PostAnalyzer
 ./steer.py
 </code></pre>
-
 <p>This will produce two results at the moment. They are new plots to be found in the usual output folder. To get there, do</p>
-<pre><code class="bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots
+<pre><code class="language-bash">cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots
 </code></pre>
-
 <p>The first are two plots of the efficiency of each selection step applied in the beginning of this quickstart, one with a linear and one with a logarithmic y-axis scale. This type of plot is useful for monitoring the behavior of the event selections applied.</p>
 <p>The second new result is the expected upper limit on our test signal cross section, as extracted from the selected background and signal. Note that the data are not considered here for the moment.</p>
 <h2 id="conclusion">Conclusion</h2>
