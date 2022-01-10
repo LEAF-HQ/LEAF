@@ -156,7 +156,7 @@
         <li class="first-level active"><a href="#submitter">Submitter</a></li>
             <li class="second-level"><a href="#supported-clusters">Supported clusters</a></li>
                 
-            <li class="second-level"><a href="#create-user-specific-settings">Create User specific settings</a></li>
+            <li class="second-level"><a href="#create-user-specific-settings">Create user specific settings</a></li>
                 
             <li class="second-level"><a href="#usage">Usage</a></li>
                 
@@ -168,22 +168,23 @@
         <div class="col-md-9" role="main">
 
 <h1 id="submitter">Submitter</h1>
-<p>The Submitter package is a helper tool for the <a href="packages/analyzer.md">Analyzer</a>. It allows for convenient yet efficient submission submission of jobs to the local cluster.</p>
+<p>The Submitter package is a helper tool for the <a href="https://leaf-hq.github.io/LEAF/packages/submitter/analyzer.md">Analyzer</a>. It allows for convenient yet efficient submission submission of jobs to the local cluster.</p>
 <h2 id="supported-clusters">Supported clusters</h2>
 <p>These are the current supproted clusters. Links to tutorials and settings are provided.</p>
 <ul>
 <li><a href="https://support.ceci-hpc.be/doc/_contents/QuickStart/SubmittingJobs/SlurmTutorial.html">SLURM</a><ul>
-<li><a href="https://www.psi.ch/en/lin-no-computing/cluster-usage">PSI guide</a></li>
+<li><a href="https://wiki.chipp.ch/twiki/bin/view/CmsTier3/SlurmUsage">PSI guide</a></li>
 </ul>
 </li>
 <li><a href="https://htcondor.readthedocs.io/en/latest/users-manual/quick-start-guide.html">HTCondor</a><ul>
 <li>@CERN (<a href="https://batchdocs.web.cern.ch/local/quick.html">guide</a>)</li>
-<li>@Desy (<a href="https://confluence.desy.de/pages/viewpage.action?pageId=81094361">guide</a>)</li>
+<li>@ULB
+<!-- - @Desy (<a href="https://confluence.desy.de/pages/viewpage.action?pageId=81094361">guide</a>) --></li>
 </ul>
 </li>
 </ul>
 <p>It takes care of the parallelized (re-)submission of Analyzer jobs, retrieving the output, merging individual and groups of processes and prepare them for plotting. No coding should be necessary for a user of LEAF here.</p>
-<h2 id="create-user-specific-settings">Create User specific settings</h2>
+<h2 id="create-user-specific-settings">Create user specific settings</h2>
 <p>This allows to store user-specific options to run the jobs into the cluster. The output in the form of a dictionary is store in a json inside the <code>$SUBMITTERPATH</code> folder. An example is given in <code>$SUBMITTERPATH/Settings_exampleuser.json</code>.</p>
 <p>To create your personal setting, you can simply create your own json (The path and naming scheme MUST be the same. Just place you username instead of exampleuser.), or run the following command.</p>
 <pre><code class="language-bash">./createUserSettings.py -u &lt;username&gt; -k &lt;cluster&gt;  -e &lt;email&gt;
@@ -193,7 +194,7 @@
 <p>This command should be done only once, or anytime one wants to update its own settings.</p>
 </div>
 <h2 id="usage">Usage</h2>
-<p>Once you set up your own <a href="#create">user settings</a>, you can simply run you xml file as:</p>
+<p>Once you set up your own <a href="#create-user-specific-settings">user settings</a>, you can simply run you xml file as:</p>
 <pre><code class="language-bash">submit.py MyAnalysis.xml &lt;option-1&gt; &lt;option-2&gt; &lt;arg-option-2&gt; &lt;option-3&gt;
 </code></pre>
 <p>Multiple options, available in the <code>Submitter</code> class are allowed:</p>
