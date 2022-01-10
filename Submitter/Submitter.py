@@ -54,7 +54,7 @@ class Submitter:
             from UserSpecificSettings import *
 
             user_settings = UserSpecificSettings(os.getenv('USER'))
-            user_settings.LoadXml()
+            user_settings.LoadJSON()
             cluster = user_settings.Get('cluster')
 
         # from ClusterSpecificSettings import *

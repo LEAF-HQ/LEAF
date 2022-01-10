@@ -1,6 +1,5 @@
 {
-    "cluster": "htcondor", 
+    "cluster": "htcondor_ulb", 
     "email": "andrea.malara@cern.ch", 
     "username": "anmalara", 
-    "xml": "/user/anmalara/WorkingArea/LEAF/Submitter/Settings_anmalara.xml"
 }

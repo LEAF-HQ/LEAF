@@ -62,7 +62,7 @@ class ClusterSpecificSettings():
             self.htcondor_lxplus()
         if 'htcondor_ulb' in cluster.lower():
             self.htcondor_ulb()
-        elif 'slurm_PSI' in cluster.lower():
+        elif 'slurm_psi' in cluster.lower():
             self.slurm_PSI()
 
     def getSettings(self):
@@ -73,38 +73,41 @@ class ClusterSpecificSettings():
 
     def slurm_PSI(self):
         self.slurmGeneral()
-        self.Settings['MaxRunTime'] = ('queue','00:00:00')
-        self.Settings['queue'] = OrderedDict()
-        self.Settings['queue']['short'] = TimeFormat('1:00:00')
-        self.Settings['queue']['standard'] = TimeFormat('12:00:00')
-        self.Settings['queue']['long'] = TimeFormat('24:00:00')
+        self.Settings['MaxRunTime'] = ('queue', None)
+        timedictName = self.Settings['MaxRunTime'][0]
+        self.Settings[timedictName] = OrderedDict()
+        self.Settings[timedictName]['short'] = TimeFormat('1:00:00')
+        self.Settings[timedictName]['standard'] = TimeFormat('12:00:00')
+        self.Settings[timedictName]['long'] = TimeFormat('24:00:00')
 
     def htcondorGeneral(self):
         self.Settings['Cluster'] = 'htcondor'
 
     def htcondor_lxplus(self):
         self.htcondorGeneral()
-        self.Settings['MaxRunTime'] = ('JobFlavour','00:00:00')
-        self.Settings['JobFlavour'] = OrderedDict()
-        self.Settings['JobFlavour']['espresso'] = TimeFormat('00:20:00')
-        self.Settings['JobFlavour']['microcentury'] = TimeFormat('01:00:00')
-        self.Settings['JobFlavour']['longlunch'] = TimeFormat('02:00:00')
-        self.Settings['JobFlavour']['workday'] = TimeFormat('08:00:00')
-        self.Settings['JobFlavour']['tomorrow'] = TimeFormat('1-00:00:00')
-        self.Settings['JobFlavour']['testmatch'] = TimeFormat('3-00:00:00')
-        self.Settings['JobFlavour']['nextweek'] = TimeFormat('7-00:00:00')
+        self.Settings['MaxRunTime'] = ('JobFlavour', None)
+        timedictName = self.Settings['MaxRunTime'][0]
+        self.Settings[timedictName] = OrderedDict()
+        self.Settings[timedictName]['espresso'] = TimeFormat('00:20:00')
+        self.Settings[timedictName]['microcentury'] = TimeFormat('01:00:00')
+        self.Settings[timedictName]['longlunch'] = TimeFormat('02:00:00')
+        self.Settings[timedictName]['workday'] = TimeFormat('08:00:00')
+        self.Settings[timedictName]['tomorrow'] = TimeFormat('1-00:00:00')
+        self.Settings[timedictName]['testmatch'] = TimeFormat('3-00:00:00')
+        self.Settings[timedictName]['nextweek'] = TimeFormat('7-00:00:00')
 
     def htcondor_ulb(self):
         self.htcondorGeneral()
-        # self.Settings['MaxRunTime'] = ('RunTime','00:00:00')
-        # self.Settings['RunTime'] = OrderedDict()
-        # self.Settings['RunTime']['standard'] = TimeFormat('01:00:00')
-        # self.Settings['RunTime']['long'] = TimeFormat('08:00:00')
+        # self.Settings['MaxRunTime'] = ('RunTime', None)
+        timedictName = self.Settings['MaxRunTime'][0]
+        # self.Settings[timedictName] = OrderedDict()
+        # self.Settings[timedictName]['standard'] = TimeFormat('01:00:00')
+        # self.Settings[timedictName]['long'] = TimeFormat('08:00:00')
 
     def setJobTimeUpperLimit(self, ref_time = '01:00:00'):
         ref_time_ = TimeFormat(ref_time)
         if not 'MaxRunTime' in self.Settings:
-            self.Settings['MaxRunTime'] = ('','00:00:00')
+            self.Settings['MaxRunTime'] = (None, None)
             return
         timedict = self.Settings[self.Settings['MaxRunTime'][0]]
         for time_ in timedict:

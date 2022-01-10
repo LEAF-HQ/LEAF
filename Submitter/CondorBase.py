@@ -13,7 +13,7 @@ class CondorBase():
         self.email = user_settings.Get('email')
         cluster_settings = ClusterSpecificSettings(user_settings.Get('cluster'))
         cluster_settings.setJobTimeUpperLimit(ref_time = Time)
-        self.RequestTime, self.Time = cluster_settings.getSettings()['MaxRunTime']
+        self.RequestTimeSettingName, self.Time = cluster_settings.getSettings()['MaxRunTime']
         self.Memory = str(int(Memory)*1024)
         self.Disk   = str(int(Disk)*1024*1024)
         self.CreateShedd()
@@ -47,8 +47,8 @@ class CondorBase():
             # 'requirements':          'OpSysAndVer == "CentOS7"'',   # additional requirements. Not tested yet
             # '+RequestRuntime':       str(int(nHours*60*60)),       # requested run time. Not tested yet
             }
-        if self.RequestTime!='':
-            self.ModifyJobInfo(self.RequestTime,self.Time)          # Time requested
+        if self.RequestTimeSettingName!='':
+            self.ModifyJobInfo(self.RequestTimeSettingName,self.Time)          # Time requested
 
     def ModifyJobInfo(self,name,info):
         if not hasattr(self, 'JobInfo'): self.CreateJobInfo()
