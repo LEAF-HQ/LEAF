@@ -10,7 +10,6 @@ from prettytable import PrettyTable
 import shutil
 
 
-
 class Submitter:
     def __init__(self, xmlfilename):
         self.xmlinfo = XMLInfo(xmlfilename)
@@ -22,7 +21,7 @@ class Submitter:
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
         self.se_director = self.xmlinfo.configsettings.SEDirector
-        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != "")
+        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '')
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
 
@@ -46,23 +45,56 @@ class Submitter:
 
 
     @timeit
-    def Submit(self):
+    def Submit(self, cluster=''):
         print green('--> Submitting jobs')
 
         missing_files_per_dataset = self.Output()
 
+        if cluster == '':
+            from UserSpecificSettings import *
+
+            user_settings = UserSpecificSettings(os.getenv('USER'))
+            user_settings.LoadJSON()
+            cluster = user_settings.Get('cluster')
+
+        # from ClusterSpecificSettings import *
+        # cluster_settings = ClusterSpecificSettings(cluster)
+        # cluster_settings.setJobTimeUpperLimit(ref_time = str(self.xmlinfo.submissionsettings.Walltime))
+        # queue, runtime_str = cluster_settings.getSettings()['MaxRunTime']
         (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
+
 
         for datasetname in missing_files_per_dataset:
             missing_files = os.path.join(self.workdir_local, datasetname, self.missing_files_name)
+            joboutput_path = os.path.join(self.workdir_local, datasetname, 'joboutput')
             with open(missing_files, 'r') as f:
-                njobs = len(f.readlines())
+                lines = f.readlines()
+            njobs = len(lines)
             if njobs < 1: continue
-            environ_path = os.getenv('PATH')
-            environ_ld_lib_path = os.getenv('LD_LIBRARY_PATH')
-            command = 'sbatch -a 1-%i -J %s -p %s --chdir %s -t %s submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, queue, os.path.join(self.workdir_local, datasetname, 'joboutput'), runtime_str, missing_files, environ_path, environ_ld_lib_path)
-            jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
+
+            if 'slurm' in cluster.lower():
+                environ_path = os.getenv('PATH')
+                environ_ld_lib_path = os.getenv('LD_LIBRARY_PATH')
+                command = 'sbatch -a 1-%i -J %s -p %s --chdir %s -t %s submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, queue, joboutput_path, runtime_str, missing_files, environ_path, environ_ld_lib_path)
+                jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
+            elif 'htcondor' in cluster.lower():
+                from CondorBase import *
+                CB = CondorBase(JobName=datasetname, Time=str(self.xmlinfo.submissionsettings.Walltime))
+                CB.CreateJobInfo()
+                CB.ModifyJobInfo('outdir', joboutput_path+'/')
+                jobs = {'executables': [], 'arguments':[]}
+                for line in lines:
+                    exe, arg = line.split()
+                    jobs['executables'].append(os.getenv('ANALYZERPATH')+'/bin/'+exe)
+                    jobs['arguments'].append(arg)
+                CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
+                jobid = int(CB.JobInfo['ClusterId'])
+            else:
+                raise ValueError(red('Submission to the %s cluster is not implemented.' %(cluster)))
+
             print green('  --> Submitted array of %i jobs for dataset %s. JobID: %i' % (njobs, datasetname, jobid))
+
+
 
 
     @timeit
