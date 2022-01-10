@@ -1,6 +1,6 @@
 # Submitter
 
-The Submitter package is a helper tool for the [Analyzer](packages/analyzer.md). It allows for convenient yet efficient submission submission of jobs to the local cluster.
+The Submitter package is a helper tool for the [Analyzer](https://leaf-hq.github.io/LEAF/packages/submitter/analyzer.md). It allows for convenient yet efficient submission submission of jobs to the local cluster.
 
 
 ## Supported clusters
@@ -8,14 +8,15 @@ The Submitter package is a helper tool for the [Analyzer](packages/analyzer.md).
 These are the current supproted clusters. Links to tutorials and settings are provided.
 
 - [SLURM](https://support.ceci-hpc.be/doc/_contents/QuickStart/SubmittingJobs/SlurmTutorial.html)
-    - [PSI guide](https://www.psi.ch/en/lin-no-computing/cluster-usage)
+    - [PSI guide](https://wiki.chipp.ch/twiki/bin/view/CmsTier3/SlurmUsage)
 - [HTCondor](https://htcondor.readthedocs.io/en/latest/users-manual/quick-start-guide.html)
     - @CERN ([guide](https://batchdocs.web.cern.ch/local/quick.html))
-    - @Desy ([guide](https://confluence.desy.de/pages/viewpage.action?pageId=81094361))
+    - @ULB
+    <!-- - @Desy ([guide](https://confluence.desy.de/pages/viewpage.action?pageId=81094361)) -->
 
 It takes care of the parallelized (re-)submission of Analyzer jobs, retrieving the output, merging individual and groups of processes and prepare them for plotting. No coding should be necessary for a user of LEAF here.
 
-## Create User specific settings
+## Create user specific settings
 
 This allows to store user-specific options to run the jobs into the cluster. The output in the form of a dictionary is store in a json inside the `$SUBMITTERPATH` folder. An example is given in `$SUBMITTERPATH/Settings_exampleuser.json`.
 
@@ -31,7 +32,7 @@ To create your personal setting, you can simply create your own json (The path a
 
 ## Usage
 
-Once you set up your own [user settings](#create), you can simply run you xml file as:
+Once you set up your own [user settings](#create-user-specific-settings), you can simply run you xml file as:
 
 ```bash
 submit.py MyAnalysis.xml <option-1> <option-2> <arg-option-2> <option-3>
