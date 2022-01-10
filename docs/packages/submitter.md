@@ -1,6 +1,6 @@
 # Submitter
 
-The Submitter package is a helper tool for the [Analyzer](https://leaf-hq.github.io/LEAF/packages/analyzer.md). It allows for convenient yet efficient submission submission of jobs to the local cluster.
+The Submitter package is a helper tool for the [Analyzer](packages/analyzer.md). It allows for convenient yet efficient submission submission of jobs to the local cluster.
 
 
 ## Supported clusters
