@@ -61,7 +61,7 @@ class Submitter:
         # cluster_settings = ClusterSpecificSettings(cluster)
         # cluster_settings.setJobTimeUpperLimit(ref_time = str(self.xmlinfo.submissionsettings.Walltime))
         # queue, runtime_str = cluster_settings.getSettings()['MaxRunTime']
-         (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
+        (hms, queue, runtime_str) = tuplize_runtime(str(self.xmlinfo.submissionsettings.Walltime))
 
 
         for datasetname in missing_files_per_dataset:

@@ -2,14 +2,14 @@ import os, json
 import htcondor
 from utils import blue, ensureDirectory, prettydict
 
-from ClusterSpecificSettings import *
-from UserSpecificSettings import *
+from ClusterSpecificSettings import ClusterSpecificSettings
+from UserSpecificSettings import UserSpecificSettings
 
 class CondorBase():
     def __init__(self, JobName = 'test', Memory = 2, Disk = 1, Time = '00:00:00'):
         self.JobName = JobName
         user_settings = UserSpecificSettings(os.getenv('USER'))
-        user_settings.LoadXml()
+        user_settings.LoadJSON()
         self.email = user_settings.Get('email')
         cluster_settings = ClusterSpecificSettings(user_settings.Get('cluster'))
         cluster_settings.setJobTimeUpperLimit(ref_time = Time)
@@ -38,16 +38,15 @@ class CondorBase():
             'RequestCpus':          '1',                           # requested number of CPUs (cores)
             'RequestMemory':        self.Memory,                   # memory in GB
             'RequestDisk':          self.Disk,                     # disk space in GB
-            'notify_user':          self.email,                    # send an email to the user if the notification condition is set. Doens't work FIXME
-            'notification':         'Always',                        # Always/Error/Done Doens't work FIXME
+            'notify_user':          self.email,                    # send an email to the user if the notification condition is set
+            'notification':         'Always',                      # Always/Error/Done
             'getenv':               'True',                        # port the local environment to the cluster
-            'hold': 'True',                                        # to start jobs in hold (eg. debugging)
-            # 'transfer_executable':  'True',                        # copy the executable to the cluster Doens't work FIXME
             'WhenToTransferOutput': 'ON_EXIT_OR_EVICT',            # specify when to transfer the outout back. Not tested yet
+            # 'transfer_executable':  'True',                        # copy the executable to the cluster Doens't work FIXME
             # 'requirements':          'OpSysAndVer == "CentOS7"'',   # additional requirements. Not tested yet
             # '+RequestRuntime':       str(int(nHours*60*60)),       # requested run time. Not tested yet
             }
-        if self.RequestTimeSettingName!='':
+        if self.RequestTimeSettingName:
             self.ModifyJobInfo(self.RequestTimeSettingName,self.Time)          # Time requested
 
     def ModifyJobInfo(self,name,info):
@@ -67,6 +66,7 @@ class CondorBase():
 
     def SubmitManyJobs(self, job_args = [], job_exes = []):
         ensureDirectory(self.JobInfo['outdir'])
+        self.PrintJobInfo()
         sub = htcondor.Submit(self.JobInfo)
         if len(job_exes) == 0:
             if self.JobInfo['executable'] == '':

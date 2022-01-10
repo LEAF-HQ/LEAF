@@ -99,7 +99,7 @@ class ClusterSpecificSettings():
     def htcondor_ulb(self):
         self.htcondorGeneral()
         # self.Settings['MaxRunTime'] = ('RunTime', None)
-        timedictName = self.Settings['MaxRunTime'][0]
+        # timedictName = self.Settings['MaxRunTime'][0]
         # self.Settings[timedictName] = OrderedDict()
         # self.Settings[timedictName]['standard'] = TimeFormat('01:00:00')
         # self.Settings[timedictName]['long'] = TimeFormat('08:00:00')

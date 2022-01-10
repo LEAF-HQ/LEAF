@@ -1,25 +1,25 @@
-import os, json
+import os, json, argparse
 
 class UserSpecificSettings():
     """docstring for UserSpecificSettings."""
 
-    def __init__(self, name, email='', cluster=''):
+    def __init__(self, username, email='', cluster=''):
         self.UserInfo = {
-            'username': name,
+            'username': username,
             'email':    email,
             'cluster':  cluster,
             }
 
-    def GetJSONPath(self,name):
-        return os.getenv('SUBMITTERPATH')+'/Settings_'+name+'.json'
+    def GetJSONPath(self,username):
+        return os.getenv('SUBMITTERPATH')+'/Settings_'+username+'.json'
 
     def LoadJSON(self, name=''):
-        json_name = name if name !='' else self.GetJSONPath(name)
+        json_name = name if name !='' else self.GetJSONPath(self.UserInfo['username'])
         with open(json_name, 'r') as f:
             self.UserInfo = json.load(f)
 
     def SaveJSON(self):
-        with open(self.GetJSONPath(name), 'w') as f:
+        with open(self.GetJSONPath(self.UserInfo['username']), 'w') as f:
             json.dump(self.UserInfo, f, sort_keys=True, indent=4)
 
     def Set(self,name,info):
@@ -27,3 +27,17 @@ class UserSpecificSettings():
 
     def Get(self,name):
         return self.UserInfo[name]
+
+
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Create JSON files for user, when providing a minimal set of settings.')
+    parser.add_argument('--username', '-u', action='store', type=str, dest='username')
+    parser.add_argument('--email',    '-e', action='store', type=str, dest='email')
+    parser.add_argument('--cluster',  '-k', action='store', type=str, dest='cluster')
+
+    args = parser.parse_args()
+
+    UserSpecificSettings(username=args.username, email=args.email, cluster=args.cluster).SaveJSON()
