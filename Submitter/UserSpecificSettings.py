@@ -1,4 +1,4 @@
-import os, json, argparse
+import os, json
 
 class UserSpecificSettings():
     """docstring for UserSpecificSettings."""
@@ -27,17 +27,3 @@ class UserSpecificSettings():
 
     def Get(self,name):
         return self.UserInfo[name]
-
-
-
-
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description='Create JSON files for user, when providing a minimal set of settings.')
-    parser.add_argument('--username', '-u', action='store', type=str, dest='username')
-    parser.add_argument('--email',    '-e', action='store', type=str, dest='email')
-    parser.add_argument('--cluster',  '-k', action='store', type=str, dest='cluster')
-
-    args = parser.parse_args()
-
-    UserSpecificSettings(username=args.username, email=args.email, cluster=args.cluster).SaveJSON()
