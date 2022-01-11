@@ -6,7 +6,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 
-#include "Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/RecoEvent.h"
 
 using namespace std;
 

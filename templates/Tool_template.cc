@@ -3,24 +3,24 @@
 #include <TChain.h>
 #include <iostream>
 
-#include "Analyzer/include/BaseTool.h"
-#include "Analyzer/include/useful_functions.h"
+#include "LEAF/Analyzer/include/BaseTool.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 #include <sys/stat.h>
-#include "Analyzer/include/Registry.h"
-#include "Analyzer/include/JetHists.h"
-#include "Analyzer/include/MuonHists.h"
-#include "Analyzer/include/ElectronHists.h"
-#include "Analyzer/include/TauHists.h"
-#include "Analyzer/include/JetIds.h"
-#include "Analyzer/include/MuonIds.h"
-#include "Analyzer/include/ElectronIds.h"
-#include "Analyzer/include/TauIds.h"
+#include "LEAF/Analyzer/include/Registry.h"
+#include "LEAF/Analyzer/include/JetHists.h"
+#include "LEAF/Analyzer/include/MuonHists.h"
+#include "LEAF/Analyzer/include/ElectronHists.h"
+#include "LEAF/Analyzer/include/TauHists.h"
+#include "LEAF/Analyzer/include/JetIds.h"
+#include "LEAF/Analyzer/include/MuonIds.h"
+#include "LEAF/Analyzer/include/ElectronIds.h"
+#include "LEAF/Analyzer/include/TauIds.h"
 
-#include "Analyzer/include/NJetSelection.h"
+#include "LEAF/Analyzer/include/NJetSelection.h"
 
 
-#include "$MYANALYSISNAME/Analyzer/include/$MYEVENTCLASS.h"
-#include "$MYANALYSISNAME/Analyzer/include/$MYHISTNAME.h"
+#include "LEAF/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
+#include "LEAF/$MYANALYSISNAME/include/$MYHISTNAME.h"
 
 using namespace std;
 

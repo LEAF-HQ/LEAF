@@ -5,8 +5,8 @@
 #include <map>
 #include <TTreeReader.h>
 #include <TROOT.h>
-#include "Analyzer/include/RecoEvent.h"
-#include "Analyzer/include/BaseHists.h"
+#include "LEAF/Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/BaseHists.h"
 #include <LHAPDF/LHAPDF.h>
 
 using namespace std;

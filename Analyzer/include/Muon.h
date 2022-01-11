@@ -3,7 +3,7 @@
 #include <TString.h>
 #include <TH1F.h>
 #include <map>
-#include "FlavorParticle.h"
+#include "LEAF/Analyzer/include/FlavorParticle.h"
 
 using namespace std;
 

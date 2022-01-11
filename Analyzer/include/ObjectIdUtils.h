@@ -1,8 +1,8 @@
 #pragma once
 
 #include <functional>
-#include "Analyzer/include/RecoEvent.h"
-#include "Analyzer/include/GenEvent.h"
+#include "LEAF/Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/GenEvent.h"
 
 template <typename T>
 using GenID = std::function<bool (const T &, const GenEvent &)>;

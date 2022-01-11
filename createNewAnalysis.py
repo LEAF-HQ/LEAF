@@ -19,7 +19,7 @@ def main():
 
 
     # create main folder and Analyzer/Plotter/Generator/Tuplizer subfolders
-    ensureDirectory(os.path.join(leafpath, name, 'Analyzer'))
+    # ensureDirectory(os.path.join(leafpath, name, 'Analyzer'))
     ensureDirectory(os.path.join(leafpath, name, 'Plotter'))
     ensureDirectory(os.path.join(leafpath, name, 'Generator'))
     ensureDirectory(os.path.join(leafpath, name, 'Tuplizer'))
@@ -27,7 +27,7 @@ def main():
     # create necessary subfolders
     subfolders = ['include', 'src', 'lib', 'obj', 'config']
     for folder in subfolders:
-        ensureDirectory('%s' % (os.path.join(leafpath, name, 'Analyzer', folder)))
+        ensureDirectory('%s' % (os.path.join(leafpath, name, folder)))
 
     # define placeholders and desired replacements
     placeholder_dict = {
@@ -43,7 +43,7 @@ def main():
 
 
     # create makefile
-    createNewMakefile(leafpath, name, placeholder_dict)
+    createNewMakefileAndBuildfile(leafpath, name, placeholder_dict)
 
     # create all new header files
     createNewIncludes(leafpath, name, placeholder_dict)
@@ -69,44 +69,48 @@ def main():
 
 
 
-def createNewMakefile(basefolder, name, placeholders):
-    command = 'cp templates/Makefile_template %s/Makefile' % (os.path.join(basefolder, name, 'Analyzer'))
+def createNewMakefileAndBuildfile(basefolder, name, placeholders):
+    command = 'cp templates/Makefile_template %s/Makefile' % (os.path.join(basefolder, name))
     os.system(command)
-    replace_placeholders('%s/Makefile' % (os.path.join(basefolder, name, 'Analyzer')), placeholders)
+    command = 'cp templates/BuildFile_template.xml %s/BuildFile.xml' % (os.path.join(basefolder, name))
+    os.system(command)
+
+    replace_placeholders('%s/Makefile' % (os.path.join(basefolder, name)), placeholders)
+    replace_placeholders('%s/BuildFile.xml' % (os.path.join(basefolder, name)), placeholders)
 
 def createNewIncludes(basefolder, name, placeholders):
-    command = 'cp templates/Linkdef_template.hpp %s/include/Linkdef.hpp' % (os.path.join(basefolder, name, 'Analyzer'))
+    command = 'cp templates/Linkdef_template.hpp %s/include/Linkdef.hpp' % (os.path.join(basefolder, name))
     os.system(command)
 
-    command = 'cp templates/Event_template.h %s/include/%s.h' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYEVENTCLASS'])
+    command = 'cp templates/Event_template.h %s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS'])
     os.system(command)
 
-    command = 'cp templates/Hists_template.h %s/include/%s.h' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYHISTNAME'])
+    command = 'cp templates/Hists_template.h %s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME'])
     os.system(command)
 
-    replace_placeholders('%s/include/Linkdef.hpp' % (os.path.join(basefolder, name, 'Analyzer')), placeholders)
-    replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYEVENTCLASS']), placeholders)
-    replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYHISTNAME']), placeholders)
+    replace_placeholders('%s/include/Linkdef.hpp' % (os.path.join(basefolder, name)), placeholders)
+    replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS']), placeholders)
+    replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME']), placeholders)
 
 def createNewSources(basefolder, name, placeholders):
-    command = 'cp templates/Event_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYEVENTCLASS'])
+    command = 'cp templates/Event_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS'])
     os.system(command)
-    command = 'cp templates/Tool_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYTOOLNAME'])
+    command = 'cp templates/Tool_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYTOOLNAME'])
     os.system(command)
-    command = 'cp templates/Hists_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYHISTNAME'])
+    command = 'cp templates/Hists_template.cc %s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME'])
     os.system(command)
 
-    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYEVENTCLASS']), placeholders)
-    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYTOOLNAME']), placeholders)
-    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYHISTNAME']), placeholders)
+    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS']), placeholders)
+    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYTOOLNAME']), placeholders)
+    replace_placeholders('%s/src/%s.cc' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME']), placeholders)
 
 def createNewConfigs(basefolder, name, placeholders):
-    command = 'cp templates/config_template.xml %s/config/%s.xml' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYANALYSISNAME'])
+    command = 'cp templates/config_template.xml %s/config/%s.xml' % (os.path.join(basefolder, name), placeholders['$MYANALYSISNAME'])
     os.system(command)
-    command = 'cp templates/Configuration.dtd %s/config/' % (os.path.join(basefolder, name, 'Analyzer'))
+    command = 'cp templates/Configuration.dtd %s/config/' % (os.path.join(basefolder, name))
     os.system(command)
 
-    replace_placeholders('%s/config/%s.xml' % (os.path.join(basefolder, name, 'Analyzer'), placeholders['$MYANALYSISNAME']), placeholders)
+    replace_placeholders('%s/config/%s.xml' % (os.path.join(basefolder, name), placeholders['$MYANALYSISNAME']), placeholders)
 
 def createTestSampleXMLs(basefolder, name, placeholders):
     command = 'cp templates/TestData.xml %s/.testsamples/' % (os.environ['LEAFPATH'])
@@ -124,10 +128,10 @@ def createTestSampleXMLs(basefolder, name, placeholders):
     replace_placeholders('%s/.testsamples/TestSignal_M2000.xml' % (os.environ['LEAFPATH']), placeholders)
 
 def createNewPostAnalyzer(basefolder, name, placeholders):
-    command = 'cp -r templates/PostAnalyzerTemplate %s/PostAnalyzer' % (os.path.join(basefolder, name, 'Analyzer'))
+    command = 'cp -r templates/PostAnalyzerTemplate %s/PostAnalyzer' % (os.path.join(basefolder, name))
     os.system(command)
 
-    replace_placeholders('%s/PostAnalyzer/steer.py' % (os.path.join(basefolder, name, 'Analyzer')), placeholders)
+    replace_placeholders('%s/PostAnalyzer/steer.py' % (os.path.join(basefolder, name)), placeholders)
 
 def createNewPlotterXMLs(basefolder, name, placeholders):
     ensureDirectory(os.path.join(basefolder, name, 'Plotter'))

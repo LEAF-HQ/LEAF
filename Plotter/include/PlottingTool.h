@@ -7,7 +7,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 
-#include "Plotter/include/PlotterConfig.h"
+#include "LEAF/Plotter/include/PlotterConfig.h"
 
 class PlottingTool {
 

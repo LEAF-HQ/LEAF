@@ -14,7 +14,7 @@ export SAMPLESPATH=${LEAFPATH}/Samples
 # Set up correct CMSSW version and scram architecure
 export SCRAM_ARCH=slc7_amd64_gcc700
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd $LEAFPATH/../CMSSW_10_6_28/src
+cd $LEAFPATH/..
 eval `scramv1 runtime -sh`
 cd $LEAFPATH
 
@@ -32,7 +32,7 @@ export LHAPDFINC=`scram tool tag lhapdf INCLUDE`
 cd $LEAFPATH
 
 # Combine
-export CMSSW_COMBINE_BASE=${LEAFPATH}/../CMSSW_10_2_13
+export CMSSW_COMBINE_BASE=${LEAFPATH}/../../../CMSSW_10_2_13
 export COMBINEPATH=${LEAFPATH}/HiggsAnalysis/CombinedLimit
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:

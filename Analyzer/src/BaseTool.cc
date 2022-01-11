@@ -3,10 +3,10 @@
 #include <TChain.h>
 #include <iostream>
 
-#include "Analyzer/include/BaseTool.h"
-#include "Analyzer/include/useful_functions.h"
+#include "LEAF/Analyzer/include/BaseTool.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 #include <sys/stat.h>
-#include "Analyzer/include/Registry.h"
+#include "LEAF/Analyzer/include/Registry.h"
 
 using namespace std;
 

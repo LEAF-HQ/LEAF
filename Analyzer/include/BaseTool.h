@@ -7,12 +7,12 @@
 #include <TChain.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
-#include "Analyzer/include/Event.h"
-#include "Analyzer/include/BaseHists.h"
-#include "Analyzer/include/CleaningModules.h"
-#include "Analyzer/include/Config.h"
-#include "Analyzer/include/Registry.h"
-#include "Analyzer/include/Jet.h"
+#include "LEAF/Analyzer/include/Event.h"
+#include "LEAF/Analyzer/include/BaseHists.h"
+#include "LEAF/Analyzer/include/CleaningModules.h"
+#include "LEAF/Analyzer/include/Config.h"
+#include "LEAF/Analyzer/include/Registry.h"
+#include "LEAF/Analyzer/include/Jet.h"
 #include <chrono>
 
 class BaseTool {
@@ -20,7 +20,7 @@ class BaseTool {
 public:
   // Constructors, destructor
   BaseTool(const Config & cfg);
-  ~BaseTool() = default;
+  virtual ~BaseTool() = default;
 
   // Base functions
   template <class M, class E>
