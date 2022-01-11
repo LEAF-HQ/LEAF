@@ -77,40 +77,31 @@ class Sample:
 
         # first try to read it from the json
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
-        if filedict is not False:
-            if not check_missing:
+
+        if filedict and not check_missing:
                 return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
         filelist = self.get_var_for_year(stage+"paths",year).get_file_list()
 
-
-        if filedict is not False:
+        if filedict:
             filelist = list(set(filelist) - set(filedict.keys()))
             if len(filelist) == 0:
                 print green('  --> Sample \'%s\' has all files counted, continue.' % (self.name))
                 return filedict
-        filedict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
+        missingfiledict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
 
+        if filedict and check_missing:
+            if len(set(missingfiledict.keys()).intersection(set(filedict.keys())))!=0:
+                raise ValueError('Trying to insert counted files, but they exist already: %s' % (missingfiledict.keys()))
 
-        if not check_missing:
-            self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=filedict)
-        else:
-            if self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year) is not False: # can't use filedict here, has been overwritten above.
-                dict_from_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
-                for filename in filedict:
-                    if filename in dict_from_json:
-                        raise ValueError('Trying to insert counted file, but it exists already: %s' % (filename))
-                    dict_from_json[filename] = filedict[filename]
-                self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=dict_from_json)
-            else:
-                # raise ValueError('Asked for check_missing mode, but the json file does not exist (or the entry for this sample). Intended?')
-                self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=filedict)
+        filedict.update(missingfiledict)
+        self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=filedict)
 
         # get from json to make sure it's always ordered in the same way
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
 
-        if filedict is not False:
+        if filedict:
             return filedict
         else:
             raise ValueError('Unable to get filedict for sample %s.' % (self.name))
@@ -124,7 +115,7 @@ class Sample:
 
         # first try to read it from the json
         filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-        if filelist_json is not False:
+        if filelist_json:
             if not update_missing and not update_all:
                 return filelist_json
 
@@ -136,7 +127,7 @@ class Sample:
 
         missingfilelist = []
         outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
-        if filelist_json is not False and update_missing: # only check already listed files
+        if filelist_json and update_missing: # only check already listed files
             if len(filelist_json) == 0:
                 print green('  --> Sample \'%s\' has all no missing tuples, continue.' % (self.name))
                 missingfilelist = []
@@ -181,7 +172,7 @@ class Sample:
                 dict_in_json = safe_load(j)
             if self.name in dict_in_json.keys():
                 return dict_in_json[self.name]
-        return False
+        return {}
 
 
     def update_filedict_in_json(self, sampleinfofolder, stage, year, filedict, basename='filelist'):
@@ -213,8 +204,6 @@ class Sample:
                 newdict[filename] = nevt
             except Exception as e:
                 print yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name))
-                # return False
-
 
         print green('  --> Successfully counted events in %i files' % (len(newdict)))
         return newdict
