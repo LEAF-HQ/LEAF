@@ -13,6 +13,11 @@
 <use name="DataFormats/TrackReco"/>
 <use name="SimDataFormats/PileupSummaryInfo"/>
 <use name="DataFormats/PatCandidates"/>
+<use name="DataFormats/JetReco"/>
+<use name="SimDataFormats/GeneratorProducts"/>
+<use name="PhysicsTools/HepMCCandAlgos"/>
+<use name="DataFormats/Common"/>
+<use name="PhysicsTools/​JetMCUtils"/>
 
 
 

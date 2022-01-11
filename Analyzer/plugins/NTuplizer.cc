@@ -35,6 +35,8 @@
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
 
 #include "DataFormats/MuonReco/interface/MuonSelectors.h"
 #include "DataFormats/MuonReco/interface/MuonQuality.h"
@@ -51,6 +53,12 @@
 #include "DataFormats/PatCandidates/interface/MET.h"
 
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "PhysicsTools/HepMCCandAlgos/interface/GenParticlesHelper.h"
+#include "DataFormats/Common/interface/RefToPtr.h"
+#include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"
 
 #include "LEAF/Analyzer/include/RecoEvent.h"
 
@@ -77,6 +85,10 @@ private:
   edm::EDGetTokenT<std::vector<reco::Vertex>> token_primary_vertices;
   edm::EDGetTokenT<double> token_rho, token_l1prefiring, token_l1prefiring_up, token_l1prefiring_down;
   edm::EDGetTokenT<std::vector<PileupSummaryInfo> > token_pus;
+  edm::EDGetTokenT<std::vector<reco::GenJet>> token_genjets;
+  edm::EDGetTokenT<std::vector<reco::GenParticle>> token_genparticles;
+  edm::EDGetTokenT<GenEventInfoProduct> token_geninfo;
+  edm::EDGetTokenT<LHEEventProduct> token_lhe;
 
 
   TString outfilename;
@@ -108,6 +120,10 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   token_l1prefiring_up   = consumes<double>(iConfig.getParameter<edm::InputTag>("l1prefiring_up"));
   token_l1prefiring_down = consumes<double>(iConfig.getParameter<edm::InputTag>("l1prefiring_down"));
   token_pus              = consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileup"));
+  token_genjets          = consumes<std::vector<reco::GenJet>>(iConfig.getParameter<edm::InputTag>("genjets"));
+  token_genparticles     = consumes<std::vector<reco::GenParticle>>(iConfig.getParameter<edm::InputTag>("genparticles")) ;
+  token_geninfo          = consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("geninfo")) ;
+  token_lhe              = consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("lhe")) ;
 
 }
 
@@ -131,8 +147,23 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   iEvent.getByToken(token_l1prefiring_down, l1prefiring_down);
 
   edm::Handle<std::vector<PileupSummaryInfo>> pus;
+  edm::Handle<std::vector<reco::GenJet>> genjets;
+  edm::Handle<std::vector<reco::GenParticle>> genparticles;
+  edm::Handle<GenEventInfoProduct> geninfo;
+  edm::Handle<LHEEventProduct> lhe;
+
+  bool has_lhe = is_mc;
   if(is_mc){
     iEvent.getByToken(token_pus, pus);
+    iEvent.getByToken(token_genjets, genjets);
+    iEvent.getByToken(token_genparticles, genparticles);
+    iEvent.getByToken(token_geninfo, geninfo);
+    try{
+      iEvent.getByToken(token_lhe, lhe);
+    }
+    catch(...){
+      has_lhe = false;
+    }
   }
 
 
@@ -176,175 +207,175 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     event.genmet->set_phi(mets->at(0).genMET()->phi());
 
     // GenJets
-    // for(size_t i=0; i<genjets->size(); i++){
-    //   GenJet gj;
-    //   reco::GenJet minigj = genjets->at(i);
-    //   gj.set_p4(minigj.pt(), minigj.eta(), minigj.phi(), minigj.mass());
-    //   gj.set_n_constituents(minigj.chargedHadronMultiplicity() + minigj.neutralHadronMultiplicity() + minigj.chargedEmMultiplicity() + minigj.neutralEmMultiplicity() + minigj.muonMultiplicity());
-    //   event.genjets->emplace_back(gj);
-    // }
+    for(size_t i=0; i<genjets->size(); i++){
+      GenJet gj;
+      reco::GenJet minigj = genjets->at(i);
+      gj.set_p4(minigj.pt(), minigj.eta(), minigj.phi(), minigj.mass());
+      gj.set_n_constituents(minigj.chargedHadronMultiplicity() + minigj.neutralHadronMultiplicity() + minigj.chargedEmMultiplicity() + minigj.neutralEmMultiplicity() + minigj.muonMultiplicity());
+      event.genjets->emplace_back(gj);
+    }
 
     // GenParticles
-    // for(size_t i=0; i<genparticles->size(); i++){
-    //   reco::GenParticle minigp = genparticles->at(i);
-    //   GenParticle gp;
-    //   gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
-    //   gp.set_pdgid(minigp.pdgId());
-    //   gp.set_charge(minigp.charge());
-    //   int motherid = -1;
-    //   if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef(0).key();
-    //   gp.set_mother_identifier(motherid);
-    //   gp.set_identifier(i);
-    //   gp.set_status(minigp.status());
-    //   gp.set_statusflag(GenParticle::isPrompt, minigp.statusFlags().isPrompt());
-    //   gp.set_statusflag(GenParticle::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
-    //   gp.set_statusflag(GenParticle::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
-    //   gp.set_statusflag(GenParticle::isHardProcess, minigp.statusFlags().isHardProcess());
-    //   gp.set_statusflag(GenParticle::fromHardProcess, minigp.statusFlags().fromHardProcess());
-    //   gp.set_statusflag(GenParticle::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
-    //   gp.set_statusflag(GenParticle::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
-    //   gp.set_statusflag(GenParticle::isFirstCopy, minigp.statusFlags().isFirstCopy());
-    //   gp.set_statusflag(GenParticle::isLastCopy, minigp.statusFlags().isLastCopy());
-    //   gp.set_statusflag(GenParticle::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
-    //   event.genparticles_all->emplace_back(gp);
-    // }
+    for(size_t i=0; i<genparticles->size(); i++){
+      reco::GenParticle minigp = genparticles->at(i);
+      GenParticle gp;
+      gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
+      gp.set_pdgid(minigp.pdgId());
+      gp.set_charge(minigp.charge());
+      int motherid = -1;
+      if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef(0).key();
+      gp.set_mother_identifier(motherid);
+      gp.set_identifier(i);
+      gp.set_status(minigp.status());
+      gp.set_statusflag(GenParticle::isPrompt, minigp.statusFlags().isPrompt());
+      gp.set_statusflag(GenParticle::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
+      gp.set_statusflag(GenParticle::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
+      gp.set_statusflag(GenParticle::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
+      gp.set_statusflag(GenParticle::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
+      gp.set_statusflag(GenParticle::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
+      gp.set_statusflag(GenParticle::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
+      gp.set_statusflag(GenParticle::isHardProcess, minigp.statusFlags().isHardProcess());
+      gp.set_statusflag(GenParticle::fromHardProcess, minigp.statusFlags().fromHardProcess());
+      gp.set_statusflag(GenParticle::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
+      gp.set_statusflag(GenParticle::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
+      gp.set_statusflag(GenParticle::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
+      gp.set_statusflag(GenParticle::isFirstCopy, minigp.statusFlags().isFirstCopy());
+      gp.set_statusflag(GenParticle::isLastCopy, minigp.statusFlags().isLastCopy());
+      gp.set_statusflag(GenParticle::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
+      event.genparticles_all->emplace_back(gp);
+    }
 
     // GenVisTaus
-    // vector<reco::GenJet> genTauJets = {};
-    // reco::GenParticleRefVector allStatus2Taus;
-    // GenParticlesHelper::findParticles(*genparticles, allStatus2Taus, 15, 2);
-    //
-    // for (reco::GenParticleRefVector::const_iterator iTau = allStatus2Taus.begin(); iTau != allStatus2Taus.end(); ++iTau) {
-    //   // look for all status 1 (stable) descendents
-    //   reco::GenParticleRefVector descendents;
-    //   GenParticlesHelper::findDescendents(*iTau, descendents, 1);
-    //
-    //   // CV: skip status 2 taus that radiate-off a photon
-    //   //    --> have a status 2 tau lepton in the list of descendents
-    //   reco::GenParticleRefVector status2TauDaughters;
-    //   GenParticlesHelper::findDescendents(*iTau, status2TauDaughters, 2, 15);
-    //   if (!status2TauDaughters.empty())
-    //   continue;
-    //
-    //   // loop on descendents, and take all except neutrinos
-    //   math::XYZTLorentzVector sumVisMom;
-    //   reco::Particle::Charge charge = 0;
-    //   reco::Jet::Constituents constituents;
-    //
-    //   for (reco::GenParticleRefVector::const_iterator igr = descendents.begin(); igr != descendents.end(); ++igr) {
-    //     int absPdgId = abs((*igr)->pdgId());
-    //
-    //     // skip neutrinos
-    //     if (absPdgId == 12 || absPdgId == 14 || absPdgId == 16)
-    //     continue;
-    //
-    //     charge += (*igr)->charge();
-    //     sumVisMom += (*igr)->p4();
-    //     constituents.push_back(refToPtr(*igr));
-    //   }
-    //
-    //   math::XYZPoint vertex;
-    //   reco::GenJet::Specific specific;
-    //
-    //   reco::GenJet jet(sumVisMom, vertex, specific, constituents);
-    //
-    //   jet.setCharge(charge);
-    //   genTauJets.push_back(jet);
-    // }
+    vector<reco::GenJet> genTauJets = {};
+    reco::GenParticleRefVector allStatus2Taus;
+    GenParticlesHelper::findParticles(*genparticles, allStatus2Taus, 15, 2);
 
-    // for (const auto& genTauJet : genTauJets) {
-    //   std::string decayMode_string = JetMCTagUtils::genTauDecayMode(genTauJet);
-    //   // CV: store hadronic tau decays only
-    //   if (decayMode_string == "electron" || decayMode_string == "muon")
-    //   continue;
-    //   int decayMode = reco::PFTau::kNull;
-    //   if (decayMode_string == "oneProng0Pi0")
-    //   decayMode = reco::PFTau::kOneProng0PiZero;
-    //   else if (decayMode_string == "oneProng1Pi0")
-    //   decayMode = reco::PFTau::kOneProng1PiZero;
-    //   else if (decayMode_string == "oneProng2Pi0")
-    //   decayMode = reco::PFTau::kOneProng2PiZero;
-    //   else if (decayMode_string == "threeProng0Pi0")
-    //   decayMode = reco::PFTau::kThreeProng0PiZero;
-    //   else if (decayMode_string == "threeProng1Pi0")
-    //   decayMode = reco::PFTau::kThreeProng1PiZero;
-    //   else
-    //   decayMode = reco::PFTau::kRareDecayMode;
-    //
-    //   int pdgId = (genTauJet.charge() > 0) ? -15 : +15;
-    //
-    //   // CV: store decayMode in status flag of GenParticle object
-    //   reco::GenParticle genVisTau(genTauJet.charge(), genTauJet.p4(), genTauJet.vertex(), pdgId, decayMode, true);
-    //
-    //   // CV: find tau lepton "mother" particle
-    //   for (size_t idxGenParticle = 0; idxGenParticle < genparticles->size(); ++idxGenParticle) {
-    //     const reco::GenParticle& genTau = (*genparticles)[idxGenParticle];
-    //     if (abs(genTau.pdgId()) == 15 && genTau.status() == 2) {
-    //       reco::Candidate::LorentzVector daughterVisP4;
-    //       for (const reco::GenParticleRef& daughter : genTau.daughterRefVector()) {
-    //         int abs_pdgId = abs(daughter->pdgId());
-    //         // CV: skip neutrinos
-    //         if (abs_pdgId == 12 || abs_pdgId == 14 || abs_pdgId == 16)
-    //         continue;
-    //         daughterVisP4 += daughter->p4();
-    //       }
-    //       double dR2 = deltaR2(daughterVisP4, genVisTau);
-    //       if (dR2 < 1.e-4) {
-    //         genVisTau.addMother(reco::GenParticleRef(genparticles, idxGenParticle));
-    //         break;
-    //       }
-    //     }
-    //   }
-    //
-    // reco_genvistaus.emplace_back(genVisTau);
-    // here the source genvistau is complete, ready to translate to LEAF format
-    // GenParticle gvt;
-    // gvt.set_p4(genVisTau.pt(), genVisTau.eta(), genVisTau.phi(), genVisTau.mass());
-    // gvt.set_pdgid(genVisTau.pdgId());
-    // int gvtmotherid = -1;
-    // if(genVisTau.numberOfMothers() > 0) gvtmotherid = genVisTau.motherRef(0).key();
-    // gvt.set_mother_identifier(gvtmotherid);
-    // gvt.set_status(genVisTau.status());
-    // event.genparticles_visibletaus->emplace_back(gvt);
-    // }
+    for (reco::GenParticleRefVector::const_iterator iTau = allStatus2Taus.begin(); iTau != allStatus2Taus.end(); ++iTau) {
+      // look for all status 1 (stable) descendents
+      reco::GenParticleRefVector descendents;
+      GenParticlesHelper::findDescendents(*iTau, descendents, 1);
+
+      // CV: skip status 2 taus that radiate-off a photon
+      //    --> have a status 2 tau lepton in the list of descendents
+      reco::GenParticleRefVector status2TauDaughters;
+      GenParticlesHelper::findDescendents(*iTau, status2TauDaughters, 2, 15);
+      if (!status2TauDaughters.empty())
+      continue;
+
+      // loop on descendents, and take all except neutrinos
+      math::XYZTLorentzVector sumVisMom;
+      reco::Particle::Charge charge = 0;
+      reco::Jet::Constituents constituents;
+
+      for (reco::GenParticleRefVector::const_iterator igr = descendents.begin(); igr != descendents.end(); ++igr) {
+        int absPdgId = abs((*igr)->pdgId());
+
+        // skip neutrinos
+        if (absPdgId == 12 || absPdgId == 14 || absPdgId == 16)
+        continue;
+
+        charge += (*igr)->charge();
+        sumVisMom += (*igr)->p4();
+        constituents.push_back(refToPtr(*igr));
+      }
+
+      math::XYZPoint vertex;
+      reco::GenJet::Specific specific;
+
+      reco::GenJet jet(sumVisMom, vertex, specific, constituents);
+
+      jet.setCharge(charge);
+      genTauJets.push_back(jet);
+    }
+
+    for (const auto& genTauJet : genTauJets) {
+      std::string decayMode_string = JetMCTagUtils::genTauDecayMode(genTauJet);
+      // CV: store hadronic tau decays only
+      if (decayMode_string == "electron" || decayMode_string == "muon")
+      continue;
+      int decayMode = reco::PFTau::kNull;
+      if (decayMode_string == "oneProng0Pi0")
+      decayMode = reco::PFTau::kOneProng0PiZero;
+      else if (decayMode_string == "oneProng1Pi0")
+      decayMode = reco::PFTau::kOneProng1PiZero;
+      else if (decayMode_string == "oneProng2Pi0")
+      decayMode = reco::PFTau::kOneProng2PiZero;
+      else if (decayMode_string == "threeProng0Pi0")
+      decayMode = reco::PFTau::kThreeProng0PiZero;
+      else if (decayMode_string == "threeProng1Pi0")
+      decayMode = reco::PFTau::kThreeProng1PiZero;
+      else
+      decayMode = reco::PFTau::kRareDecayMode;
+
+      int pdgId = (genTauJet.charge() > 0) ? -15 : +15;
+
+      // CV: store decayMode in status flag of GenParticle object
+      reco::GenParticle genVisTau(genTauJet.charge(), genTauJet.p4(), genTauJet.vertex(), pdgId, decayMode, true);
+
+      // CV: find tau lepton "mother" particle
+      for (size_t idxGenParticle = 0; idxGenParticle < genparticles->size(); ++idxGenParticle) {
+        const reco::GenParticle& genTau = (*genparticles)[idxGenParticle];
+        if (abs(genTau.pdgId()) == 15 && genTau.status() == 2) {
+          reco::Candidate::LorentzVector daughterVisP4;
+          for (const reco::GenParticleRef& daughter : genTau.daughterRefVector()) {
+            int abs_pdgId = abs(daughter->pdgId());
+            // CV: skip neutrinos
+            if (abs_pdgId == 12 || abs_pdgId == 14 || abs_pdgId == 16)
+            continue;
+            daughterVisP4 += daughter->p4();
+          }
+          double dR2 = deltaR2(daughterVisP4, genVisTau);
+          if (dR2 < 1.e-4) {
+            genVisTau.addMother(reco::GenParticleRef(genparticles, idxGenParticle));
+            break;
+          }
+        }
+      }
+
+      reco_genvistaus.emplace_back(genVisTau);
+      // here the source genvistau is complete, ready to translate to LEAF format
+      GenParticle gvt;
+      gvt.set_p4(genVisTau.pt(), genVisTau.eta(), genVisTau.phi(), genVisTau.mass());
+      gvt.set_pdgid(genVisTau.pdgId());
+      int gvtmotherid = -1;
+      if(genVisTau.numberOfMothers() > 0) gvtmotherid = genVisTau.motherRef(0).key();
+      gvt.set_mother_identifier(gvtmotherid);
+      gvt.set_status(genVisTau.status());
+      event.genparticles_visibletaus->emplace_back(gvt);
+    }
 
 
     // global gen info
-    // event.weight = geninfo->weight(); // equivalent to geninfo->weights().at(0), always returns the 0th element
-    // event.geninfo->set_weight(geninfo->weight());
-    // const gen::PdfInfo* pdf = geninfo->pdf();
-    // if(pdf){
-    //   event.geninfo->set_id1(pdf->id.first);
-    //   event.geninfo->set_id2(pdf->id.second);
-    //   event.geninfo->set_x1(pdf->x.first);
-    //   event.geninfo->set_x2(pdf->x.second);
-    //   event.geninfo->set_scale_pdf(pdf->scalePDF);
-    //   event.geninfo->set_xpdf1(pdf->xPDF.first);
-    //   event.geninfo->set_xpdf2(pdf->xPDF.second);
-    // }
-    // else{
-    //   event.geninfo->set_id1(-999);
-    //   event.geninfo->set_id2(-999);
-    //   event.geninfo->set_x1(-999);
-    //   event.geninfo->set_x2(-999);
-    //   event.geninfo->set_scale_pdf(-999);
-    //   event.geninfo->set_xpdf1(-999);
-    //   event.geninfo->set_xpdf2(-999);
-    // }
-    //
-    // vector<double> systweights = {};
-    // if(has_lhe){
-    //   event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
-    //   for(unsigned int i=0; i<lhe->weights().size(); i++){
-    //     systweights.emplace_back(lhe->weights().at(i).wgt);
-    //   }
-    // }
-    // event.geninfo->set_systweights(systweights);
+    event.weight = geninfo->weight(); // equivalent to geninfo->weights().at(0), always returns the 0th element
+    event.geninfo->set_weight(geninfo->weight());
+    const gen::PdfInfo* pdf = geninfo->pdf();
+    if(pdf){
+      event.geninfo->set_id1(pdf->id.first);
+      event.geninfo->set_id2(pdf->id.second);
+      event.geninfo->set_x1(pdf->x.first);
+      event.geninfo->set_x2(pdf->x.second);
+      event.geninfo->set_scale_pdf(pdf->scalePDF);
+      event.geninfo->set_xpdf1(pdf->xPDF.first);
+      event.geninfo->set_xpdf2(pdf->xPDF.second);
+    }
+    else{
+      event.geninfo->set_id1(-999);
+      event.geninfo->set_id2(-999);
+      event.geninfo->set_x1(-999);
+      event.geninfo->set_x2(-999);
+      event.geninfo->set_scale_pdf(-999);
+      event.geninfo->set_xpdf1(-999);
+      event.geninfo->set_xpdf2(-999);
+    }
+
+    vector<double> systweights = {};
+    if(has_lhe){
+      event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
+      for(unsigned int i=0; i<lhe->weights().size(); i++){
+        systweights.emplace_back(lhe->weights().at(i).wgt);
+      }
+    }
+    event.geninfo->set_systweights(systweights);
   }
   else{
     event.weight = 1.;

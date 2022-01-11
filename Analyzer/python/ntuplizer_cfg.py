@@ -24,18 +24,22 @@ process.source = cms.Source("PoolSource",
 )
 
 
-
 process.ntuplizer = cms.EDFilter('NTuplizer',
-   muons = cms.InputTag("slimmedMuons"),
-   primary_vertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-   rho = cms.InputTag('fixedGridRhoFastjetAll'),
-   l1prefiring = cms.InputTag('prefiringweight', 'nonPrefiringProb'),
-   l1prefiring_up = cms.InputTag('prefiringweight', 'nonPrefiringProbUp'),
-   l1prefiring_down = cms.InputTag('prefiringweight', 'nonPrefiringProbDown'),
-   MET = cms.InputTag('slimmedMETs'),
-   pileup = cms.InputTag('slimmedAddPileupInfo'),
-   outfilename = cms.string("NTuples.root"),
-   is_mc = cms.bool(True),
+   muons             = cms.InputTag("slimmedMuons"),
+   primary_vertices  = cms.InputTag('offlineSlimmedPrimaryVertices'),
+   rho               = cms.InputTag('fixedGridRhoFastjetAll'),
+   l1prefiring       = cms.InputTag('prefiringweight', 'nonPrefiringProb'),
+   l1prefiring_up    = cms.InputTag('prefiringweight', 'nonPrefiringProbUp'),
+   l1prefiring_down  = cms.InputTag('prefiringweight', 'nonPrefiringProbDown'),
+   MET               = cms.InputTag('slimmedMETs'),
+   pileup            = cms.InputTag('slimmedAddPileupInfo'),
+   genjets           = cms.InputTag('slimmedGenJets'),
+   genparticles      = cms.InputTag('prunedGenParticles'),
+   geninfo           = cms.InputTag('generator'),
+   lhe               = cms.InputTag('externalLHEProducer'),
+
+   outfilename       = cms.string("NTuples.root"),
+   is_mc             = cms.bool(True),
 )
 
 
