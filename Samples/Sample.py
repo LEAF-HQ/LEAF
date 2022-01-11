@@ -1,57 +1,39 @@
 #! /usr/bin/env python
 
-import os, sys, math
-from os.path import isfile, join
-import subprocess
-import time
-import parse
-from operator import itemgetter
-import importlib
+import os
 from utils import *
 from functions import *
 import json
 from yaml import safe_load
-from multiprocessing import Pool
-
-import ROOT
-from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
-                 kBlack, kRed, kBlue, kAzure, kCyan, kGreen, kGreen, kYellow, kOrange, kMagenta, kViolet,\
-                 kSolid, kDashed, kDotted
-from math import sqrt, log, floor, ceil
-from array import array
-
-# from preferred_configurations import *
-from tdrstyle_all import *
-import tdrstyle_all as TDR
 
 class YearDependentContainer():
     def __init__(self, vals={}):
-        self.dict = {
+        self.__dict = {
             '2016': None,
             '2017': None,
             '2018': None
         }
         for key in vals.keys():
-            if key in self.dict.keys():
-                self.dict[key] = vals[key]
+            if key in self.__dict.keys():
+                self.__dict[key] = vals[key]
             else:
                 raise AttributeError('Invalid key %s for year-dependent object.' % str(key))
 
     def __getitem__(self, year):
         if self.has_year(year):
-            return self.dict[year]
+            return self.__dict[year]
         else:
             return None
 
     def has_year(self, year):
-        if year in self.dict.keys():
-            if self.dict[year] is not None:
+        if year in self.__dict.keys():
+            if self.__dict[year] is not None:
                 return True
         return False
 
     def __setitem__(self, year, value):
         if not self.has_year(year):
-            self.dict = {year: value}
+            self.__dict = {year: value}
         else:
             raise AttributeError('Year-dependent dict already has an entry for year %s' % (str(year)))
 
@@ -91,8 +73,7 @@ class Sample:
 
 
     def get_filedict(self, sampleinfofolder, stage, year, check_missing=False):
-        if stage is not 'nano' and stage is not 'mini':
-            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        self.VerifyStage(stage)
 
         # first try to read it from the json
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
@@ -101,14 +82,11 @@ class Sample:
                 return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
-        if stage is 'nano':
-            filelist = self.nanopaths[year].get_file_list()
-        elif stage is 'mini':
-            filelist = self.minipaths[year].get_file_list()
-
+        filelist = self.getattr(stage+"paths")[year].get_file_list()
+        
 
         if filedict is not False:
-            if len(filedict) == len(filelist):
+            if len(filedict) == len(filelist) and len(list(set(filedict) - set(filelist))) == 0:
                 print green('  --> Sample \'%s\' has all files counted, continue.' % (self.name))
                 return filedict
             else:
@@ -116,6 +94,7 @@ class Sample:
                 for file in filelist:
                     if file not in filedict:
                         missingfilelist.append(file)
+                print missingfilelist
                 filelist = missingfilelist
         filedict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
 
@@ -145,8 +124,7 @@ class Sample:
 
 
     def get_missing_tuples(self, sampleinfofolder, stage, year, tuplebasename, ntuples_expected, update_missing=True, update_all=False):
-        if stage is not 'nano' and stage is not 'mini':
-            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        self.VerifyStage(stage)
         if update_missing and update_all:
             raise AttributeError('Both update_missing and update_all are true. Can only choose one of them or neither, but not both.')
 
@@ -202,24 +180,18 @@ class Sample:
 
 
     def get_filedict_from_json(self, sampleinfofolder, stage, year, basename='filelist'):
-        if stage is not 'nano' and stage is not 'mini':
-            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        self.VerifyStage(stage)
         jsonname = os.path.join(sampleinfofolder, '%s_%s_%s.json' % (basename, stage, year))
-        dict_in_json = {}
-
-        if not os.path.exists(jsonname):
-            return False
-        with open(jsonname, 'r') as j:
-            dict_in_json = safe_load(j)
-
-        if not self.name in dict_in_json.keys():
-            return False
-        return dict_in_json[self.name]
+        if os.path.exists(jsonname):
+            with open(jsonname, 'r') as j:
+                dict_in_json = safe_load(j)
+            if self.name in dict_in_json.keys():
+                return dict_in_json[self.name]
+        return False
 
 
     def update_filedict_in_json(self, sampleinfofolder, stage, year, filedict, basename='filelist'):
-        if stage is not 'nano' and stage is not 'mini':
-            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        self.VerifyStage(stage)
         jsonname = os.path.join(sampleinfofolder, '%s_%s_%s.json' % (basename, stage, year))
         dict_in_json = {}
         if os.path.exists(jsonname):
@@ -233,17 +205,10 @@ class Sample:
 
 
     def count_events_in_files(self, filelist, stage, treename='Events', ncores=10, chunksize=5, maxtries=3):
-        if stage is not 'nano' and stage is not 'mini':
-            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+        self.VerifyStage(stage)
         print green('  --> Going to count events in %i files' % (len(filelist)))
 
-
-        commands = []
-        for i, filename in enumerate(filelist):
-
-            # get number of events
-            command = 'Counter_NANOAOD %s %s' % (filename, treename)
-            commands.append((command, filename))
+        commands = [('Counter_NANOAOD %s %s' % (filename, treename), filename) for filename in filelist]
         outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
 
         newdict = {}
@@ -257,7 +222,9 @@ class Sample:
                 # return False
 
 
-
-
         print green('  --> Successfully counted events in %i files' % (len(newdict)))
         return newdict
+
+    def VerifyStage(self,stage):
+        if stage is not 'nano' and stage is not 'mini':
+            raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
