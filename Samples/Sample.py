@@ -82,20 +82,14 @@ class Sample:
                 return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
-        filelist = self.getattr(stage+"paths")[year].get_file_list()
-        
+        filelist = self.get_var_for_year(stage+"paths",year).get_file_list()
+
 
         if filedict is not False:
-            if len(filedict) == len(filelist) and len(list(set(filedict) - set(filelist))) == 0:
+            filelist = list(set(filelist) - set(filedict.keys()))
+            if len(filelist) == 0:
                 print green('  --> Sample \'%s\' has all files counted, continue.' % (self.name))
                 return filedict
-            else:
-                missingfilelist = []
-                for file in filelist:
-                    if file not in filedict:
-                        missingfilelist.append(file)
-                print missingfilelist
-                filelist = missingfilelist
         filedict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
 
 
