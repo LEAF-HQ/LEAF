@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
-#include "Plotter/include/PlottingTool.h"
-#include "Plotter/include/PlotterConfig.h"
+#include "LEAF/Plotter/include/PlottingTool.h"
+#include "LEAF/Plotter/include/PlotterConfig.h"
 #include <TString.h>
 
 using namespace std;

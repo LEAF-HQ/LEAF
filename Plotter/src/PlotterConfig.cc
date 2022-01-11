@@ -3,8 +3,8 @@
 #include <iostream>
 #include <sys/stat.h>
 
-#include "Plotter/include/PlotterConfig.h"
-#include "Analyzer/include/useful_functions.h"
+#include "LEAF/Plotter/include/PlotterConfig.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>

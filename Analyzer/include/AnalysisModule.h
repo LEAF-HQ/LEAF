@@ -1,6 +1,6 @@
 #pragma once
-#include "Analyzer/include/RecoEvent.h"
-#include "Analyzer/include/GenEvent.h"
+#include "LEAF/Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/GenEvent.h"
 
 template <class E>
 class AnalysisModule {

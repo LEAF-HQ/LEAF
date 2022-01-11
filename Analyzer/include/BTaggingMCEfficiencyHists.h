@@ -3,9 +3,9 @@
 #include <TString.h>
 #include <TH2D.h>
 #include <map>
-#include "Analyzer/include/RecoEvent.h"
-#include "Analyzer/include/BaseHists.h"
-#include "Analyzer/include/JetIds.h"
+#include "LEAF/Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/BaseHists.h"
+#include "LEAF/Analyzer/include/JetIds.h"
 
 
 class BTaggingMCEfficiencyHists: public BaseHists {

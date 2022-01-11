@@ -5,8 +5,8 @@
 #include <TString.h>
 #include <TFile.h>
 
-#include "Analyzer/include/useful_functions.h"
-#include "Plotter/include/PlottingDataset.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
+#include "LEAF/Plotter/include/PlottingDataset.h"
 
 // struct plotting_dataset{
 //   TString name                = "";

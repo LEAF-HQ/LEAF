@@ -1,5 +1,13 @@
 CC = g++
 
+INCDIR   = include
+SRCDIR   = src
+OBJDIR   = obj
+LIBDIR   = lib
+LIBDIR_CMSSW = ${CMSSW_BASE}/lib/${SCRAM_ARCH}
+BINDIR   = bin
+EXECDIR  = execs
+
 #This assumes the last element of CMSSW_FWLITE_INCLUDE_PATH is the path to the external boost include directory
 BOOSTINC := $(lastword $(subst :, ,$(CMSSW_FWLITE_INCLUDE_PATH)))
 LIBINCLUDES := $(subst :, -L,$(ANALYZERLIBPATH))
@@ -7,25 +15,23 @@ CLHEPINC := $(CLHEP_PARAM_PATH)/include
 ROOT_INCLUDE_PATH_INCS = $(subst :, ,$(ROOT_INCLUDE_PATH))
 
 
-CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I${LEAFPATH} -I${LHAPDFINC} `xml2-config --cflags`
-CFLAGSDICT = -std=c++17 -fPIC -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I. -I${LEAFPATH} -I${LHAPDFINC} `xml2-config --cflags`
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I$CMSSW_BASE/src -I${LHAPDFINC} `xml2-config --cflags`
+CFLAGSDICT = -std=c++17 -fPIC -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I. -I$CMSSW_BASE/src -I${LHAPDFINC} `xml2-config --cflags`
 
-LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} -L./lib `xml2-config --libs` -L${LHAPDFLIB} -lLHAPDF
+
+
+LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} -L${LIBDIR_CMSSW} -L./lib `xml2-config --libs` -L${LHAPDFLIB} -lLHAPDF
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs --libs`
-CMSSWLIBS= -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreCommon -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules -lDataFormatsProvenance -lDataFormatsJetReco -lDataFormatsParticleFlowCandidate -lDataFormatsTrackReco -lPhysicsToolsHepMCCandAlgos -lPhysicsToolsJetMCUtils -lDataFormatsMuonReco -lDataFormatsRecoCandidate -lDataFormatsEgammaCandidates -lRecoEgammaEgammaTools -lDataFormatsTauReco
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lClassDictionaries -lxml2
-LIBSPLOT = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS}
 
-INCDIR   = include
-SRCDIR   = src
-OBJDIR   = obj
-LIBDIR   = lib
-BINDIR   = bin
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries -lLEAFAnalyzer
+LIBSSMALL = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries
+LIBSPLOT = $(ROOTLIBS) -lstdc++fs
+
 
 SOURCES     := $(wildcard $(SRCDIR)/*.cc)
 INCLUDES    := $(wildcard $(INCDIR)/*.h)
 OBJECTS     := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm $(LIBDIR)/*.cxx_tmp*)
 
-SOURCESEXE  := $(wildcard $(SRCDIR)/*.cxx)
-OBJECTSEXE  := $(SOURCESEXE:$(SRCDIR)/%.cxx=$(OBJDIR)/%.o)
+SOURCESEXE  := $(wildcard $(EXECDIR)/*.cxx)
+OBJECTSEXE  := $(SOURCESEXE:$(EXECDIR)/%.cxx=$(OBJDIR)/%.o)
