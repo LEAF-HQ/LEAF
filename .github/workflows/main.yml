@@ -54,6 +54,7 @@ jobs:
       - name: Set up environment to install LEAF, download the script, and install
         run: |
           set -x
+          set -e
           export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
           export SCRAM_ARCH=slc7_amd64_gcc700
           shopt -s expand_aliases
