@@ -1,0 +1,9 @@
+<use name="root"/>
+<use name="libxml2"/>
+<use name="lhapdf"/>
+<use name="LEAF/Analyzer"/>
+
+<export>
+    <lib name="1" />
+</export>
+<flags EDM_PLUGIN="0"/>
