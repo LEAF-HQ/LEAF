@@ -11,7 +11,7 @@ CUSTOMDICTS := $(foreach subdir,$(subdirs), -l$(subdir)ClassDictionaries)
 all: execs
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
-execs: scram dict Analyzer Counter_NANOAOD Counter_NANOAOD_weights
+execs: scram dict Analyzer Tuplizer_MINIAOD Counter_NANOAOD Counter_NANOAOD_weights
 
 scram: dict
 	@export MAKEFLAGS="$(MAKEFLAGS)"
@@ -27,6 +27,10 @@ dict: libClassDictionaries.so
 Analyzer: scram dict $(OBJDIR)/Analyzer.o
 	@echo "--> Creating Analyzer"
 	@$(CC) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS) $(CUSTOMDICTS)
+
+Tuplizer_MINIAOD: scram dict $(OBJDIR)/Tuplizer_MINIAOD.o
+	@echo "--> Creating Tuplizer_MINIAOD"
+	@$(CC) $(OBJDIR)/Tuplizer_MINIAOD.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSTUPLIZER)
 
 Counter_NANOAOD: scram dict $(OBJDIR)/Counter_NANOAOD.o
 	@echo "--> Creating Counter_NANOAOD"

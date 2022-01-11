@@ -15,15 +15,18 @@ CLHEPINC := $(CLHEP_PARAM_PATH)/include
 ROOT_INCLUDE_PATH_INCS = $(subst :, ,$(ROOT_INCLUDE_PATH))
 
 
-CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I$CMSSW_BASE/src -I${LHAPDFINC} `xml2-config --cflags`
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I${LEAFPATH} -I$CMSSW_BASE/src -I${LHAPDFINC} `xml2-config --cflags`
 CFLAGSDICT = -std=c++17 -fPIC -Wall -I${CMSSW_RELEASE_BASE}/src/ $(ROOT_INCLUDE_PATH_INCS:%=-I%) -I${CLHEPINC} -I. -I$CMSSW_BASE/src -I${LHAPDFINC} `xml2-config --cflags`
+
 
 
 
 LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 -L${LIBINCLUDES} -L${LIBDIR_CMSSW} -L./lib `xml2-config --libs` -L${LHAPDFLIB} -lLHAPDF
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs --libs`
+CMSSWLIBS = -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreCommon -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules -lDataFormatsProvenance -lDataFormatsJetReco -lDataFormatsParticleFlowCandidate -lDataFormatsTrackReco -lPhysicsToolsHepMCCandAlgos -lPhysicsToolsJetMCUtils -lDataFormatsMuonReco -lDataFormatsRecoCandidate -lDataFormatsEgammaCandidates -lRecoEgammaEgammaTools -lDataFormatsTauReco
 
 LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries -lLEAFAnalyzer
+LIBSTUPLIZER = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lxml2 -lClassDictionaries -lLEAFAnalyzer
 LIBSSMALL = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries
 LIBSPLOT = $(ROOTLIBS) -lstdc++fs
 
