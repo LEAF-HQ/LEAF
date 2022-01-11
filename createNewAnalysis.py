@@ -43,7 +43,7 @@ def main():
 
 
     # create makefile
-    createNewMakefile(leafpath, name, placeholder_dict)
+    createNewMakefileAndBuildfile(leafpath, name, placeholder_dict)
 
     # create all new header files
     createNewIncludes(leafpath, name, placeholder_dict)
