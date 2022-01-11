@@ -29,6 +29,13 @@ jobs:
           yum install mesa-libGLU < yes.txt
           ldconfig -p
 
+      - name: Install libopengl0
+        run: |
+          set -x
+          ldconfig -p
+          yum install libopengl0 < yes.txt
+          ldconfig -p
+
       - name: Install CVMFS
         run: |
           set -x
