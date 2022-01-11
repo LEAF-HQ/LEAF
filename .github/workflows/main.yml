@@ -33,7 +33,7 @@ jobs:
         run: |
           set -x
           ldconfig -p
-          yum install libopengl0 < yes.txt
+          yum install freeglut freeglut-devel < yes.txt
           ldconfig -p
 
       - name: Install CVMFS
