@@ -17,7 +17,9 @@
 <use name="SimDataFormats/GeneratorProducts"/>
 <use name="PhysicsTools/HepMCCandAlgos"/>
 <use name="DataFormats/Common"/>
-<use name="PhysicsTools/​JetMCUtils"/>
+<use name="PhysicsTools/JetMCUtils"/>
+<use name="PhysicsTools/NanoAOD"/>
+<use name="RecoEgamma/EgammaTools"/>
 
 
 
