@@ -105,8 +105,8 @@ private:
 
 
 
-  TString outfilename;
-  bool is_mc, do_triggerobjects, do_pfcands;
+  TString outfilename, year;
+  bool is_mc, do_triggerobjects, do_pfcands, do_prefiring;
 
 
   TFile *outfile;
@@ -119,8 +119,10 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
 
   outfilename = (TString)iConfig.getParameter<std::string>("outfilename");
   is_mc       = iConfig.getParameter<bool>("is_mc");
+  year        = (TString)iConfig.getParameter<std::string>("year");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
   do_pfcands = iConfig.getParameter<bool>("do_pfcands");
+  do_prefiring = iConfig.getParameter<bool>("do_prefiring");
 
   if(outfilename != ""){
     outfile = new TFile(outfilename, "RECREATE");
@@ -136,9 +138,11 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   token_mets             = consumes<std::vector<pat::MET>>      (iConfig.getParameter<edm::InputTag>("met"));
   token_primary_vertices = consumes<std::vector<reco::Vertex>>  (iConfig.getParameter<edm::InputTag>("primary_vertices"));
   token_rho              = consumes<double>                     (iConfig.getParameter<edm::InputTag>("rho"));
-  token_l1prefiring      = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring"));
-  token_l1prefiring_up   = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring_up"));
-  token_l1prefiring_down = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring_down"));
+  if(do_prefiring){
+    token_l1prefiring      = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring"));
+    token_l1prefiring_up   = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring_up"));
+    token_l1prefiring_down = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring_down"));
+  }
   token_hltresults       = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("hltresults"));
   token_metfilterresults = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("metfilterresults"));
   if(do_triggerobjects){
@@ -186,9 +190,11 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   iEvent.getByToken(token_mets, mets);
   iEvent.getByToken(token_primary_vertices, pvs);
   iEvent.getByToken(token_rho, rho);
-  iEvent.getByToken(token_l1prefiring, l1prefiring);
-  iEvent.getByToken(token_l1prefiring_up, l1prefiring_up);
-  iEvent.getByToken(token_l1prefiring_down, l1prefiring_down);
+  if(do_prefiring){
+    iEvent.getByToken(token_l1prefiring, l1prefiring);
+    iEvent.getByToken(token_l1prefiring_up, l1prefiring_up);
+    iEvent.getByToken(token_l1prefiring_down, l1prefiring_down);
+  }
   iEvent.getByToken(token_hltresults, hltresults);
   const edm::TriggerNames &hltnames = iEvent.triggerNames(*hltresults);
   iEvent.getByToken(token_metfilterresults, metfilterresults);
@@ -230,10 +236,17 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     if(!pv.isFake() && pv.ndof() > 4 && fabs(pv.z()) < 24 && pv.position().rho() <= 2) n_goodpvs++;
   }
   event.npv_good = n_goodpvs;
-  event.weight_prefiring = *l1prefiring;
-  event.weight_prefiring_up = *l1prefiring_up;
-  event.weight_prefiring_down = *l1prefiring_down;
+  if(do_prefiring){
+    event.weight_prefiring = *l1prefiring;
+    event.weight_prefiring_up = *l1prefiring_up;
+    event.weight_prefiring_down = *l1prefiring_down;
+  }
+  else{
+    event.weight_prefiring = 1.;
+    event.weight_prefiring_up = 1.;
+    event.weight_prefiring_down = 1.;
 
+  }
 
 
   // Do MC truth variables

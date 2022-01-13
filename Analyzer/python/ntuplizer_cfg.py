@@ -67,8 +67,8 @@ process.source = cms.Source("PoolSource",
 # cmsRun python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_args.root idxStart=100 idxStop=350 year=UL17
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
-# process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
+# process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 process.options = cms.untracked.PSet(
     wantSummary=cms.untracked.bool(False),
     numberOfStreams = cms.untracked.uint32(0) # 0 = use number of threads; to set use -n
@@ -115,9 +115,11 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
 
     do_triggerobjects = cms.bool(False),
     do_pfcands        = cms.bool(False),
+    do_prefiring      = cms.bool(not year in ['2018', 'UL18']),
 
     outfilename       = cms.string(outfilename),
     is_mc             = cms.bool(is_mc),
+    year              = cms.string(year)
 )
 
 
