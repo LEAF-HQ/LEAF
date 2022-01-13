@@ -4,6 +4,9 @@ import FWCore.ParameterSet.Types as CfgTypes
 from FWCore.ParameterSet.VarParsing import VarParsing
 import os
 
+# Example to run:
+# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_args.root idxStart=100 idxStop=350 year=UL17
+
 
 idx_start   = -99
 idx_stop    = -99
@@ -58,13 +61,10 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mc2017_realistic_v7', '')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(idx_stop - idx_start) )
 
-# '/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root'
 process.source = cms.Source("PoolSource",
    fileNames = cms.untracked.vstring(infilename),
    skipEvents= cms.untracked.uint32(idx_start)
 )
-
-# cmsRun python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_args.root idxStart=100 idxStop=350 year=UL17
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 # process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
