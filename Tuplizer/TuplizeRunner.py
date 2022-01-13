@@ -38,18 +38,17 @@ class TuplizeRunner:
         # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
         # runtime_str = '%02i:%02i:00' % runtime
         runtime_str, queue = format_runtime(runtime)
-        commandfolder = os.path.join(self.workarea,'commands')
-        print commandfolder
-        ensureDirectory(commandfolder)
-        commandfilename = os.path.join(commandfolder, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', self.sample.name))
-
         samplename = self.sample.name
+        commandfolder = os.path.join(self.workarea,'commands')
+        joboutput = os.path.join(self.workarea,'joboutput',samplename)
+        ensureDirectory(commandfolder)
+        ensureDirectory(joboutput)
+
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
         if not filedict:
             return
 
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
-        ensureDirectory(outfoldername, use_se=('/pnfs' in outfoldername))
         stagetag = self.stage.upper()+'AOD'
 
         commands = []
@@ -57,8 +56,8 @@ class TuplizeRunner:
         for filename, nevt_thisfile in filedict.items():
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
-                outfilename = outfoldername+'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = '%s %s %s %s %i %i' % ('Tuplizer_%s' % (stagetag), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
+                outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
                 commands.append(command)
                 njobs += 1
 
@@ -67,15 +66,7 @@ class TuplizeRunner:
         elif mode is 'resubmit':
             print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
             missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='NTuples', update_missing=True)
-
-        njobs = 0
-        idx = 0
-        with open(commandfilename, 'w') as f:
-            for command in commands:
-                if idx in missing_indices:
-                    f.write(command + '\n')
-                    njobs += 1
-                idx += 1
+            njobs = len(missing_indices)
 
         if njobs == 0:
             if mode is 'resubmit':
@@ -85,6 +76,13 @@ class TuplizeRunner:
             return
 
         if 'slurm' in self.cluster.lower():
+            idx = 0
+            commandfilename = os.path.join(commandfolder, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
+            with open(commandfilename, 'w') as f:
+                for command in commands:
+                    if idx in missing_indices:
+                        f.write(command + '\n')
+                    idx += 1
             slurm_max_array_size = 4000
             submit_more_arrays = True if (njobs > slurm_max_array_size) else False
             # if submit_more_arrays:
@@ -109,25 +107,22 @@ class TuplizeRunner:
                 narrays += 1
         elif 'htcondor' in self.cluster.lower():
             from Submitter.CondorBase import CondorBase
-            CB = CondorBase(JobName=self.sample.name)
+            CB = CondorBase(JobName=samplename)
             CB.CreateJobInfo()
-            joboutput = self.workarea+'/joboutput/'+self.sample.name+'/'
-            ensureDirectory(joboutput)
             CB.ModifyJobInfo('outdir', joboutput)
             # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
             CB.ModifyJobInfo('x509userproxy', '$ENV(X509_USER_PROXY)')
             CB.ModifyJobInfo('use_x509userproxy', 'True')
             jobs = {'executables': [], 'arguments':[]}
-            with open(commandfilename, 'r') as f:
-                lines = f.readlines()
-            for line in lines:
-                exe = line.split()[0]
-                arg = line.strip(exe)
+            ensureDirectory(outfoldername, use_se=('/pnfs' in outfoldername))
+            for command in commands:
+                exe = command.split()[0]
+                arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
                 jobs['executables'].append(os.getenv('ANALYZERPATH')+'/bin/'+exe)
                 jobs['arguments'].append(arg)
             CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
             jobid = int(CB.JobInfo['ClusterId'])
-            print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, self.sample.name, jobid))
+            print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
 
     def CleanBrokenFiles(self, nevt_per_job=200000, only_check_missing=True):
 
