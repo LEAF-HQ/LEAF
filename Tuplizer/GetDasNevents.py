@@ -18,7 +18,7 @@ def GetDasNevents(dataset, options):
         inp = dataset['dataset']
         reply =  api.listBlockSummaries(dataset = inp)
         reply = dict(filter(lambda elem: elem[0] in options, reply[0].items()))
-        print (inp, reply)
+        return {inp: reply}
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     if len(options) == 0:
         # options = ['num_event', 'num_file']
         options = ['num_event']
-    GetDasNevents(dataset=dataset, options=options)
+    print(GetDasNevents(dataset=dataset, options=options))
 
 
 if __name__ == "__main__":

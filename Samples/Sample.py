@@ -9,9 +9,9 @@ from functions import *
 class YearDependentContainer():
     def __init__(self, vals={}):
         self.__dict = {
-            '2016': None,
-            '2017': None,
-            '2018': None,
+            'EOY16': None,
+            'EOY17': None,
+            'EOY18': None,
             'UL16preVFP': None,
             'UL16postVFP': None,
             'UL17': None,
@@ -22,7 +22,7 @@ class YearDependentContainer():
         self.__dict.update(vals)
 
         for key, val in self.__dict.items():
-            if val==None:
+            if val is None:
                 del self.__dict[key]
 
     def __str__(self):
