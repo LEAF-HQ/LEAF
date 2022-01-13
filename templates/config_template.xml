@@ -3,7 +3,7 @@
 
 
 <!ENTITY TargetLumi  "1" >
-<!ENTITY outfilepath "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup" >
+<!ENTITY outfilepath "$MYLEAFPATH/../../../$MYANALYSISNAME/2017/Preselection/InitialSetup" >
 <!-- can also use the storage elements like this example below. If a path starts with "/pnfs/", the Analyzer will prepend the "SEDirector" specified below
 <!ENTITY outfilepath "/pnfs/psi.ch/cms/trivcat/store/user/$MYUSERNAME/$MYANALYSISNAME/InitialSetup" >
 -->

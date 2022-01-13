@@ -1,0 +1,27 @@
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="MagneticField/Records"/>
+<use name="MagneticField/VolumeBasedEngine"/>
+<use name="TrackingTools/Records"/>
+<use name="TrackingTools/TransientTrack"/>
+<use name="RecoVertex/AdaptiveVertexFit"/>
+<use name="RecoVertex/KalmanVertexFit"/>
+<use name="RecoVertex/VertexPrimitives"/>
+<use name="DataFormats/VertexReco"/>
+<use name="DataFormats/TrackReco"/>
+<use name="SimDataFormats/PileupSummaryInfo"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="DataFormats/JetReco"/>
+<use name="SimDataFormats/GeneratorProducts"/>
+<use name="PhysicsTools/HepMCCandAlgos"/>
+<use name="DataFormats/Common"/>
+<use name="PhysicsTools/NanoAOD"/>
+<use name="RecoEgamma/EgammaTools"/>
+
+
+
+<use name="LEAF/Analyzer"/>
+<lib name="ClassDictionaries"/>
+<flags EDM_PLUGIN="1"/>

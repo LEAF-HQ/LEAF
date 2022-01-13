@@ -29,6 +29,13 @@ jobs:
           yum install mesa-libGLU < yes.txt
           ldconfig -p
 
+      - name: Install libopengl0
+        run: |
+          set -x
+          ldconfig -p
+          yum install freeglut freeglut-devel < yes.txt
+          ldconfig -p
+
       - name: Install CVMFS
         run: |
           set -x
@@ -54,6 +61,7 @@ jobs:
       - name: Set up environment to install LEAF, download the script, and install
         run: |
           set -x
+          set -e
           export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
           export SCRAM_ARCH=slc7_amd64_gcc700
           shopt -s expand_aliases

@@ -58,7 +58,7 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = outfoldername+'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = '%s %s %s %s %i %i' % ('Tuplizer_%s' % (stagetag), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(self.macrofolder, 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
                 commands.append(command)
                 njobs += 1
 
