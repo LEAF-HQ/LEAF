@@ -1,0 +1,48 @@
+<use name="root"/>
+<use name="libxml2"/>
+<use name="lhapdf"/>
+<use name="FWCore/Framework"/>
+<use name="FWCore/Common"/>
+<use name="FWCore/MessageLogger"/>
+
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/Utilities"/>
+<use name="FWCore/FWLite"/>
+
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="PhysicsTools/HepMCCandAlgos"/>
+<use name="PhysicsTools/JetMCUtils"/>
+
+<use name="MagneticField/Records"/>
+<use name="MagneticField/VolumeBasedEngine"/>
+<use name="TrackingTools/Records"/>
+<use name="TrackingTools/TransientTrack"/>
+<use name="RecoVertex/AdaptiveVertexFit"/>
+<use name="RecoVertex/KalmanVertexFit"/>
+<use name="RecoVertex/VertexPrimitives"/>
+<use name="RecoEgamma/EgammaTools"/>
+
+<use name="DataFormats/VertexReco"/>
+<use name="DataFormats/TrackReco"/>
+<use name="DataFormats/HepMCCandidate"/>
+<use name="DataFormats/Candidate"/>
+<use name="DataFormats/FWLite"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="DataFormats/Common"/>
+<use name="DataFormats/Provenance"/>
+<use name="DataFormats/JetReco"/>
+<use name="DataFormats/ParticleFlowCandidate"/>
+<use name="DataFormats/MuonReco"/>
+<use name="DataFormats/RecoCandidate"/>
+<use name="DataFormats/EgammaCandidates"/>
+<use name="DataFormats/TauReco"/>
+
+<use name="CondFormats/JetMETObjects"/>
+
+<use name="JetMETCorrections/Modules"/>
+
+<export>
+    <lib name="1" />
+</export>
+<flags EDM_PLUGIN="0"/>

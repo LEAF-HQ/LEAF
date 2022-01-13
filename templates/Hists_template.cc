@@ -1,6 +1,6 @@
-#include "$MYANALYSISNAME/Analyzer/include/$MYHISTNAME.h"
-#include "Analyzer/include/constants.h"
-#include "Analyzer/include/useful_functions.h"
+#include "LEAF/$MYANALYSISNAME/include/$MYHISTNAME.h"
+#include "LEAF/Analyzer/include/constants.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 #include <TH1F.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>

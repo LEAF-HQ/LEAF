@@ -5,7 +5,7 @@
 #include <map>
 #include <TTreeReader.h>
 #include <TROOT.h>
-#include "Analyzer/include/Event.h"
+#include "LEAF/Analyzer/include/Event.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ public:
   BaseHists(TString dir_);
   BaseHists(const BaseHists &) = default;
   BaseHists & operator = (const BaseHists &) = default;
-  ~BaseHists() = default;
+  virtual ~BaseHists() = default;
 
   // Main functions
   virtual void fill(const Event & event){return;};

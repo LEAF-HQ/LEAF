@@ -13,8 +13,8 @@ import ROOT
 # All constants to be used
 analysisname     = '$MYANALYSISNAME'
 user             = '$MYUSERNAME'
-input_base_path  = '$MYLEAFPATH/..'
-result_base_path = '$MYLEAFPATH/..'
+input_base_path  = '$MYLEAFPATH/../../..'
+result_base_path = '$MYLEAFPATH/../../..'
 
 # colors = [ROOT.kRed+4, ROOT.kRed+1, ROOT.kViolet, ROOT.kAzure-2, ROOT.kOrange, ROOT.kGreen-2]
 samples = {

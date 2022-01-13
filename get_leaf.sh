@@ -9,7 +9,7 @@ if [ -r CMSSW_10_6_28/src ] ; then
  echo "Release CMSSW_10_6_28 already exists, using that."
 else
   echo "Setting up CMSSW_10_6_28."
-  cmsrel CMSSW_10_6_28 
+  cmsrel CMSSW_10_6_28
 fi
 
 # get CMSSW_10_2_13 for Combine
@@ -37,7 +37,6 @@ cd ../../
 cd CMSSW_10_6_28/src
 eval `scramv1 runtime -sh`
 scram b
-cd ../../
 
 # download LEAF
 git clone https://github.com/LEAF-HQ/LEAF.git LEAF
@@ -55,7 +54,6 @@ git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsA
 cd HiggsAnalysis/CombinedLimit
 git fetch origin
 git checkout v8.2.0
-cd ../../
 
 # all folders there, set up environment
 cd $LEAFPATH

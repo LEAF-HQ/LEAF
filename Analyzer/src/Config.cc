@@ -3,9 +3,9 @@
 #include <iostream>
 #include <sys/stat.h>
 
-#include "Analyzer/include/Config.h"
-#include "Analyzer/include/BaseTool.h"
-#include "Analyzer/include/useful_functions.h"
+#include "LEAF/Analyzer/include/Config.h"
+#include "LEAF/Analyzer/include/BaseTool.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>

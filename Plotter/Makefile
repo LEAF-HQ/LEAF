@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src/ -I${LEAFPATH} `xml2-config --cflags`
+CFLAGS = -std=c++17 -Wall -I${CMSSW_RELEASE_BASE}/src -I${CMSSW_BASE}/src `xml2-config --cflags`
 LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc700 `xml2-config --libs`
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs`
 LIBSMAIN = $(ROOTLIBS) -lstdc++fs
@@ -25,7 +25,7 @@ all: Plotter
 
 Plotter: $(OBJECTS) $(OBJDIR)/Plotter.o
 	@echo "--> Creating Plotter"
-	@$(CC) $(OBJECTS) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
+	@$(CC) $(CFLAGS) $(OBJECTS) $(OBJDIR)/Plotter.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cc
 	@echo "--> Creating object $@"

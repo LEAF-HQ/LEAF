@@ -7,9 +7,9 @@
 #include <TChain.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
-#include "Analyzer/include/Event.h"
-#include "Analyzer/include/BaseHists.h"
-#include "Analyzer/include/CleaningModules.h"
+#include "LEAF/Analyzer/include/Event.h"
+#include "LEAF/Analyzer/include/BaseHists.h"
+#include "LEAF/Analyzer/include/CleaningModules.h"
 
 struct dataset{
   TString name                = "";

@@ -1,5 +1,5 @@
-#include "$MYANALYSISNAME/Analyzer/include/$MYEVENTCLASS.h"
-#include "Analyzer/include/constants.h"
+#include "LEAF/$MYANALYSISNAME/include/$MYEVENTCLASS.h"
+#include "LEAF/Analyzer/include/constants.h"
 #include <TH1D.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>

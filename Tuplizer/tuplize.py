@@ -10,8 +10,7 @@ from collections import OrderedDict
 
 
 username = os.environ['USER']
-workarea = '/work/%s' % (username)
-workarea = macrofolder = os.environ['TUPLIZERPATH']+'/VBFTagger'
+workarea = macrofolder = os.environ['TUPLIZERPATH']+'/Workarea'
 macrofolder = os.environ['ANALYZERPATH']
 
 AllSamples = SampleContainer()
