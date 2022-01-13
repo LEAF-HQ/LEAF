@@ -187,16 +187,18 @@
 <h2 id="create-user-specific-settings">Create user specific settings</h2>
 <p>This allows to store user-specific options to run the jobs into the cluster. The output in the form of a dictionary is store in a json inside the <code>$SUBMITTERPATH</code> folder. An example is given in <code>$SUBMITTERPATH/Settings_exampleuser.json</code>.</p>
 <p>To create your personal setting, you can simply create your own json (The path and naming scheme MUST be the same. Just place you username instead of exampleuser.), or run the following command.</p>
-<pre><code class="language-bash">./createUserSettings.py -u &lt;username&gt; -k &lt;cluster&gt;  -e &lt;email&gt;
+<pre><code class="bash">./createUserSettings.py -u &lt;username&gt; -k &lt;cluster&gt;  -e &lt;email&gt;
 </code></pre>
+
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This command should be done only once, or anytime one wants to update its own settings.</p>
 </div>
 <h2 id="usage">Usage</h2>
 <p>Once you set up your own <a href="#create-user-specific-settings">user settings</a>, you can simply run you xml file as:</p>
-<pre><code class="language-bash">submit.py MyAnalysis.xml &lt;option-1&gt; &lt;option-2&gt; &lt;arg-option-2&gt; &lt;option-3&gt;
+<pre><code class="bash">submit.py MyAnalysis.xml &lt;option-1&gt; &lt;option-2&gt; &lt;arg-option-2&gt; &lt;option-3&gt;
 </code></pre>
+
 <p>Multiple options, available in the <code>Submitter</code> class are allowed:</p>
 <table>
 <thead>
