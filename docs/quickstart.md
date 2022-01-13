@@ -13,14 +13,14 @@ If you have not yet set up your own analysis, either complete the installation a
 
 ## Event selection and histogram production
 
-The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the `AnalysisTool` class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in `LEAF/MyAnalysis/Analyzer/src/MyAnalysisTool.cc`.
+The first step will be to loop over some test samples of (mock-)data, a simulated background, and two simulated signals. Within the loop, events will be selected and a number of histograms will be filled. We will use the `AnalysisTool` class to perform this task. A new incarnation of such a tool was created when setting up the new analysis. It can be found in `LEAF/MyAnalysis/src/MyAnalysisTool.cc`.
 
-The settings of the job, such as the files to run over or the input/output paths are configured in an `xml` file, which can be found in `LEAF/MyAnalysis/Analyzer/config/MyAnalysis.xml`. Be sure to have a look into both files and understand what is going on.
+The settings of the job, such as the files to run over or the input/output paths are configured in an `xml` file, which can be found in `LEAF/MyAnalysis/config/MyAnalysis.xml`. Be sure to have a look into both files and understand what is going on.
 
 The configuration file is already prepared to run over the test samples (in `LEAF/.testsamples/*.root`), so we can simply run the `Analyzer` executable locally, passing the configuration file as an argument:
 
 ```bash
-cd $LEAFPATH/MyAnalysis/Analyzer/config
+cd $LEAFPATH/MyAnalysis/config
 Analyzer MyAnalysis.xml
 ```
 
@@ -29,10 +29,10 @@ Analyzer MyAnalysis.xml
 
 
 
-The default configuration file will instruct the `Analyzer` to store the output root files in a folder on the same level as the main LEAF folder, `MyAnalysis/2017/Preselection/InitialSetup`. To get there, do
+The default configuration file will instruct the `Analyzer` to store the output root files in a folder three levels above the main LEAF folder (on the same level as the `CMSSW` release), `$LEAFPATH/../../../MyAnalysis/2017/Preselection/InitialSetup`. To get there, do
 
 ```bash
-cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
+cd $LEAFPATH/../../../MyAnalysis/2017/Preselection/InitialSetup
 ```
 
  You will find four root files in that folder, one for each of the samples we processed.
@@ -40,7 +40,7 @@ cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup
 In a real analysis, a given process will often be split into different samples binned in a certain variable (for example HT, PT, or M). In order to merge samples adding up to the same process, we will use the `Submitter`:
 
 ```bash
-cd $LEAFPATH/MyAnalysis/Analyzer/config
+cd $LEAFPATH/MyAnalysis/config
 submit.py MyAnalysis.xml -p
 ```
 
@@ -60,9 +60,9 @@ cd $LEAFPATH/MyAnalysis/Plotter
 Plotter Default.xml
 ```
 
-The distributions will be created in the folder containing the output root files of the previous step, which is on the same level as the main LEAF folder: `MyAnalysis/2017/Preselection/InitialSetup/plots/distributions`. To get there, do
+The distributions will be created in the folder containing the output root files of the previous step, which is on the same level as the main `CMSSW` folder: `$LEAFPATH/../../../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions`. To get there, do
 ```bash
-cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions
+cd $LEAFPATH/../../../MyAnalysis/2017/Preselection/InitialSetup/plots/distributions
 ```
 
 Feel free to inspect the plots before moving on. Also feel free to try and add some new event selection steps and plot the default distributions after those. Adding more observables could be useful as well.
@@ -73,13 +73,13 @@ After having selected events and plotted distributions at the different stages o
 
 Together with the new analysis came a basic collection of analysis scripts, with are contained in the `PostAnalyzer` folder. It contains one main executable script. Let us execute it:
 ```bash
-cd $LEAFPATH/MyAnalysis/Analyzer/PostAnalyzer
+cd $LEAFPATH/MyAnalysis/PostAnalyzer
 ./steer.py
 ```
 
 This will produce two results at the moment. They are new plots to be found in the usual output folder. To get there, do
 ```bash
-cd $LEAFPATH/../MyAnalysis/2017/Preselection/InitialSetup/plots
+cd $LEAFPATH/../../../MyAnalysis/2017/Preselection/InitialSetup/plots
 ```
 
 

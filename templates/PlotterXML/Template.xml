@@ -5,8 +5,8 @@
 <PlotterConfiguration>
 
   <FileConfiguration
-    InputDirectory  = "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup"
-    OutputDirectory = "$MYLEAFPATH/../$MYANALYSISNAME/2017/Preselection/InitialSetup/plots/distributions"
+    InputDirectory  = "$MYLEAFPATH/../../../$MYANALYSISNAME/2017/Preselection/InitialSetup"
+    OutputDirectory = "$MYLEAFPATH/../../../$MYANALYSISNAME/2017/Preselection/InitialSetup/plots/distributions"
     PreFix          = "TestAnalysis_"
     SEDirector      = "root://t3dcachedb03.psi.ch/"
   />
