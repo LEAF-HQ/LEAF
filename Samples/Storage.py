@@ -18,7 +18,7 @@ class Storage():
         newfiles = []
         for f in filelist:
             if f is '': continue
-            newfiles.append(os.path.join(outpath, f))
+            newfiles.append(outpath+f)
         return newfiles
 
 
@@ -57,6 +57,13 @@ class Storage_T3PSI(Storage):
 
 
 
+class Storage_T2ULB(Storage):
+    def __init__(self, path):
+        Storage.__init__(self, path = '/pnfs/iihe/cms' + path, director = 'root://maite.iihe.ac.be:1094/')
+
+    def create_file_list(self):
+        command = 'LD_LIBRARY_PATH='' PYTHONPATH='' gfal-ls %s' % (self.director+self.path)
+        return self.make_list(command, outpath=self.director+self.path)
 
 
 

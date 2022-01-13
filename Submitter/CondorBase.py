@@ -66,7 +66,6 @@ class CondorBase():
 
     def SubmitManyJobs(self, job_args = [], job_exes = []):
         ensureDirectory(self.JobInfo['outdir'])
-        self.PrintJobInfo()
         sub = htcondor.Submit(self.JobInfo)
         if len(job_exes) == 0:
             if self.JobInfo['executable'] == '':

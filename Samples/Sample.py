@@ -11,13 +11,15 @@ class YearDependentContainer():
         self.__dict = {
             '2016': None,
             '2017': None,
-            '2018': None
+            '2018': None,
+            'UL16preVFP': None,
+            'UL16postVFP': None,
+            'UL17': None,
+            'UL18': None,
         }
-        for key in vals.keys():
-            if key in self.__dict.keys():
-                self.__dict[key] = vals[key]
-            else:
-                raise AttributeError('Invalid key %s for year-dependent object.' % str(key))
+        if any(not x in self.__dict for x in vals.keys()):
+            raise AttributeError('Invalid key for year-dependent object. Given keys: '+(', '.join(vals.keys()))+'. Supported keys: '+(', '.join(self.__dict.keys())))
+        self.__dict.update(vals)
 
     def __getitem__(self, year):
         if self.has_year(year):
@@ -101,10 +103,10 @@ class Sample:
         # get from json to make sure it's always ordered in the same way
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
 
-        if filedict:
-            return filedict
-        else:
+        if not filedict:
             raise ValueError('Unable to get filedict for sample %s.' % (self.name))
+
+        return filedict
 
 
 
@@ -120,10 +122,7 @@ class Sample:
                 return filelist_json
 
         # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
-        if stage is 'nano':
-            stagetag = 'NANOAOD'
-        elif stage is 'mini':
-            stagetag = 'MINIAOD'
+        stagetag = stage.upper()+'AOD'
 
         missingfilelist = []
         outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
@@ -183,7 +182,6 @@ class Sample:
             with open(jsonname, 'r') as j:
                 dict_in_json = safe_load(j)
 
-        # print dict_in_json
         dict_in_json[self.name] = filedict
         with open(jsonname, 'w') as j:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)

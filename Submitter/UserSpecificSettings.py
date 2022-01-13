@@ -8,6 +8,7 @@ class UserSpecificSettings():
             'username': username,
             'email':    email,
             'cluster':  cluster,
+            'default_tuple_output':  '',
             }
 
     def GetJSONPath(self,username):

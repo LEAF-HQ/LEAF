@@ -2,4 +2,5 @@
     "cluster": "htcondor", 
     "email": "first.lastname@cern.ch", 
     "username": "username", 
+    "default_tuple_output": "" 
 }

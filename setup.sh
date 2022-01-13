@@ -10,6 +10,7 @@ export PLOTTERPATH=${LEAFPATH}/Plotter
 export PLOTTERBINPATH=${PLOTTERPATH}/bin
 export GENERATORPATH=${LEAFPATH}/Generator
 export SAMPLESPATH=${LEAFPATH}/Samples
+export TUPLIZERPATH=${LEAFPATH}/Tuplizer
 
 # Set up correct CMSSW version and scram architecure
 export SCRAM_ARCH=slc7_amd64_gcc700
