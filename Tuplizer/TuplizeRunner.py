@@ -57,7 +57,7 @@ class TuplizeRunner:
         for filename, nevt_thisfile in filedict.items():
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
-                outfilename = outfoldername+'Tuples_%s_%i.root' % (stagetag, njobs+1)
+                outfilename = outfoldername+'NTuples_%s_%i.root' % (stagetag, njobs+1)
                 command = '%s %s %s %s %i %i' % ('Tuplizer_%s' % (stagetag), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job)
                 commands.append(command)
                 njobs += 1
@@ -66,7 +66,7 @@ class TuplizeRunner:
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
             print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
-            missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='Tuples', update_missing=True)
+            missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='NTuples', update_missing=True)
 
         njobs = 0
         idx = 0
@@ -143,10 +143,10 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             njobs += njobs_thisfile
 
-        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='Tuples', update_missing=only_check_missing)
+        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=only_check_missing)
 
         outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
-        missing_or_broken_tuples = [os.path.join(outfoldername, 'Tuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
+        missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
         commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f for f in missing_or_broken_tuples]
 
         if self.submit:
