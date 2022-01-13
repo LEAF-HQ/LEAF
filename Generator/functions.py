@@ -435,13 +435,12 @@ def get_best_lambda(mlq):
 
 
 
-def findMissingFilesT3(filepath, filename_base, maxindex, generation_step):
+def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree'):
     missing_indices = []
-    filename_base = filepath+'/'+filename_base
     pbar = tqdm(range(maxindex), desc="Files checked")
     for idx in pbar:
         filename = filename_base + '_' + str(idx+1) + '.root'
-        n_genevents = count_genevents_in_file(filename, treename='AnalysisTree')
+        n_genevents = count_genevents_in_file(filename, treename=treename)
         if n_genevents is None:
             missing_indices.append(idx)
 

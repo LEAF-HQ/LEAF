@@ -1,55 +1,30 @@
 #! /usr/bin/env python
 
-import os, sys, math
-from os.path import isfile, join
-import subprocess
-import time
-import parse
-from operator import itemgetter
-import importlib
-from utils import *
-from functions import *
-from constants import *
-
-import ROOT
-from ROOT import gROOT, gStyle, gPad, TLegend, TFile, TCanvas, Double, TF1, TH2D, TGraph, TGraph2D, TGraphAsymmErrors, TLine,\
-                 kBlack, kRed, kBlue, kAzure, kCyan, kGreen, kGreen, kYellow, kOrange, kMagenta, kViolet,\
-                 kSolid, kDashed, kDotted, gSystem
-from math import sqrt, log, floor, ceil
-from array import array
+import os
 
 from TuplizeRunner import *
-from Samples.Storage import *
-from Samples.Sample import *
-from Samples.Signals import *
-from Samples.Backgrounds import *
-from Samples.Data import *
+from VBFTagger.Tuplizer.Signals_VBF import *
+from Samples.Backgrounds_MiniAODv2 import *
+from Samples.Data_MiniAODv2 import *
 from collections import OrderedDict
 
 
 username = os.environ['USER']
 workarea = '/work/%s' % (username)
-basefolder = os.environ['LEAFPATH']
-generatorpath = os.environ['GENERATORPATH']
-tuplizefolder = join(basefolder, 'Tuplizer')
-sampleinfofolder = join(basefolder, 'Samples')
+workarea = macrofolder = os.environ['TUPLIZERPATH']+'/VBFTagger'
 macrofolder = os.environ['ANALYZERPATH']
 
-samples = OrderedDict()
-data = OrderedDict()
-data.update(tup for tup in datalist)
-samples.update(tup for tup in datalist)
+AllSamples = SampleContainer()
+AddSignals_VBF(AllSamples)
+# print (AllSamples)
 
-backgrounds = OrderedDict()
-backgrounds.update(tup for tup in backgroundlist)
-samples.update(tup for tup in backgroundlist)
-
-signals = OrderedDict()
-signals.update(tup for tup in signallist)
-samples.update(tup for tup in signallist)
 
 config_per_year = {
-    '2017': {
+    'UL17': {
+        'arch_tag': 'slc7_amd64_gcc700',
+        'cmsswtag': 'CMSSW_10_6_28'
+    },
+    'UL18': {
         'arch_tag': 'slc7_amd64_gcc700',
         'cmsswtag': 'CMSSW_10_6_28'
     }
@@ -58,28 +33,18 @@ config_per_year = {
 
 
 
-year = '2017'
+year = 'UL18'
 stage = 'mini'
 submit = True
 nevt_per_job = 100000
 
 
-# all
-samplenames = data.keys()
-# samplenames = ['DATA_SingleMuon_E']
-# samplenames = backgrounds.keys()
-# samplenames = signals.keys()
-# samplenames = backgrounds.keys() + signals.keys()
-# samplenames = data.keys() + signals.keys()
-# samplenames = data.keys() + backgrounds.keys() + signals.keys()
-
 
 
 def main():
-    for samplename in samplenames:
+    for samplename, sample in AllSamples.items():
         print green('--> Working on sample: \'%s\'' % (samplename))
-        s = samples[samplename]
-        Tuplizer = TuplizeRunner(sample=s, stage=stage, year=year, config=config_per_year, workarea=workarea, basefolder=basefolder, tuplizefolder=tuplizefolder, sampleinfofolder=sampleinfofolder, macrofolder=macrofolder, submit=submit)
+        Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, submit=submit)
         # Tuplizer.CountEvents(check_missing=True)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='new')
         # Tuplizer.CleanBrokenFiles(nevt_per_job=nevt_per_job, only_check_missing=True)
@@ -89,7 +54,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=False)
         # Tuplizer.PrintDASCrossSection(sample=s, year=year, recalculate=True)
-    # create_default_config(samplenames=samplenames, year='2017', configoutname=join(macrofolder, 'LQDM', 'config', 'Default.xml'))
+    # create_default_config(samplenames=samplenames, year='UL17', configoutname= os.path.join(macrofolder, 'LQDM', 'config', 'Default.xml'))
 
 
 
@@ -105,7 +70,7 @@ def main():
 
 
 def create_default_config(samplenames, year, configoutname='default_config.xml'):
-    templatefilename = join(macrofolder, 'templates', 'config_template.xml')
+    templatefilename = os.path.join(macrofolder, 'templates', 'config_template.xml')
     newlines = []
     with open(templatefilename, 'r') as f:
         lines = f.readlines()
@@ -122,7 +87,7 @@ def create_default_config(samplenames, year, configoutname='default_config.xml')
                 # replace this line with all the entities we need according to our samples
                 for samplename in samplenames:
                     s = samples[samplename]
-                    newline = '<!ENTITY %s SYSTEM "%s" >\n' % (s.name, join(macrofolder, s.xmlfiles[year]))
+                    newline = '<!ENTITY %s SYSTEM "%s" >\n' % (s.name, os.path.join(macrofolder, s.xmlfiles[year]))
                     newlines.append(newline)
             elif '<Configuration' in line:
                 if found_configuration: continue

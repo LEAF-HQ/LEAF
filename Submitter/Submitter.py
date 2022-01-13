@@ -8,6 +8,7 @@ import copy as cp
 from collections import OrderedDict
 from prettytable import PrettyTable
 import shutil
+from UserSpecificSettings import UserSpecificSettings
 
 
 class Submitter:
@@ -51,8 +52,6 @@ class Submitter:
         missing_files_per_dataset = self.Output()
 
         if cluster == '':
-            from UserSpecificSettings import *
-
             user_settings = UserSpecificSettings(os.getenv('USER'))
             user_settings.LoadJSON()
             cluster = user_settings.Get('cluster')

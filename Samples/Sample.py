@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-import os
+import os, json
+from yaml import safe_load
+from collections import OrderedDict
 from utils import *
 from functions import *
-import json
-from yaml import safe_load
 
 class YearDependentContainer():
     def __init__(self, vals={}):
@@ -21,17 +21,26 @@ class YearDependentContainer():
             raise AttributeError('Invalid key for year-dependent object. Given keys: '+(', '.join(vals.keys()))+'. Supported keys: '+(', '.join(self.__dict.keys())))
         self.__dict.update(vals)
 
-    def __getitem__(self, year):
-        if self.has_year(year):
-            return self.__dict[year]
-        else:
-            return None
+        for key, val in self.__dict.items():
+            if val==None:
+                del self.__dict[key]
+
+    def __str__(self):
+        print('')
+        prettydict(self.__dict, indent=14)
+        return ''
 
     def has_year(self, year):
         if year in self.__dict.keys():
             if self.__dict[year] is not None:
                 return True
         return False
+
+    def __getitem__(self, year):
+        if self.has_year(year):
+            return self.__dict[year]
+        else:
+            return None
 
     def __setitem__(self, year, value):
         if not self.has_year(year):
@@ -51,18 +60,22 @@ class Sample:
         self.xsecs = xsecs
         self.xmlfiles = xmlfiles
         self.nevents = nevents
+        # self.__dict = OrderedDict()
+        # self.__dict['name'] = self.name
+        # self.__dict['type'] = self.type
+        # self.__dict['xsec'] = self.xsecs
+        # self.__dict['nevent'] = self.nevents
+        # self.__dict['group'] = self.group
+        # self.__dict['minipath'] = self.minipaths
+        # self.__dict['nanopath'] = self.nanopaths
+        # self.__dict['tuplepath'] = self.tuplepaths
+        # self.__dict['xmlfile'] = self.xmlfiles
 
-    def get_info(self, year):
-        print '--> Info on sample \'%s\' for year %s:' % (self.name, str(year))
-        print '  --> type: %s' % (str(self.type))
-        print '  --> name: %s' % (str(self.name))
-        print '  --> group: %s' % (str(self.group[year]))
-        print '  --> minipath: %s' % (str(self.minipaths[year].path))
-        print '  --> nanopath: %s' % (str(self.nanopaths[year].path))
-        print '  --> tuplepath: %s' % (str(self.tuplepaths[year].path))
-        print '  --> xsec: %s' % (str(self.xsecs[year]))
-        print '  --> xmlfile: %s' % (str(self.xmlfiles[year]))
-        print '  --> nevent: %s' % (str(self.nevents[year]))
+
+    def __str__(self):
+        print('')
+        prettydict(self.__dict__, indent=10)
+        return ''
 
     def get_var_for_year(self, varname, year):
         if varname is 'type' or varname is 'name':
@@ -110,57 +123,41 @@ class Sample:
 
 
 
-    def get_missing_tuples(self, sampleinfofolder, stage, year, tuplebasename, ntuples_expected, update_missing=True, update_all=False):
+    def get_missing_tuples(self, sampleinfofolder, stage, year, tuplebasename, ntuples_expected, update_missing=True):
         self.VerifyStage(stage)
-        if update_missing and update_all:
-            raise AttributeError('Both update_missing and update_all are true. Can only choose one of them or neither, but not both.')
 
-        # first try to read it from the json
-        filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-        if filelist_json:
-            if not update_missing and not update_all:
-                return filelist_json
-
-        # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
         stagetag = stage.upper()+'AOD'
-
-        missingfilelist = []
         outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
-        if filelist_json and update_missing: # only check already listed files
-            if len(filelist_json) == 0:
-                print green('  --> Sample \'%s\' has all no missing tuples, continue.' % (self.name))
-                missingfilelist = []
-            else: # check only for files still in the list of missing files in the json
-                expected_filelist = [os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1))) for i in filelist_json]
-                files_and_events = self.count_events_in_files(expected_filelist, stage=stage, treename='AnalysisTree')
+        filename_base = os.path.join(outfoldername, '%s_%s' % (tuplebasename, stagetag))
 
-                # find missing entries
-                for i in filelist_json:
-                    expected_entry = os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1)))
-                    if not expected_entry in files_and_events:
-                        missingfilelist.append(expected_entry)
+        # first try to read it from the json, it's a list despite the function name
+        filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
 
-                # find entries with 0 events
-                for file in files_and_events:
-                    if not (files_and_events[file] > 0):
-                        missingfilelist.append(file)
-
-        else: # check for all files (again).
-            missing_indices = findMissingFilesT3(filepath=outfoldername, filename_base='%s_%s' % (tuplebasename, stagetag), maxindex=ntuples_expected, generation_step='%s_%s' % (tuplebasename, stagetag))
-            missingfilelist = [os.path.join(outfoldername, '%s_%s_%s.root' % (tuplebasename, stagetag, str(i+1))) for i in missing_indices]
-
-        # if we reach this point, the missing files JSON needs to be updated.
+        if filelist_json:
+            if not update_missing:
+                return filelist_json
+            else:
+                if len(filelist_json) == 0:
+                    print green('  --> Sample \'%s\' has all no missing tuples, continue.' % (self.name))
+                    return filelist_json
+                else: # check only for files still in the list of missing files in the json
+                    expected_filelist = [filename_base+'_'+str(i+1)+'.root' for i in filelist_json]
+                    files_and_events = self.count_events_in_files(expected_filelist, stage=stage, treename='AnalysisTree')
+                    # find missing entries
+                    missingfilelist = list(filter(lambda x: x not in files_and_events ,expected_filelist))
+                    # find entries with 0 events
+                    empty_files = dict(filter(lambda elem: elem[1] != 0,files_and_events.items())).keys()
+                    missingfilelist = list(set(missingfilelist + empty_files))
+        else:
+            # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
+            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected)
+            missingfilelist = [filename_base+'_'+str(i+1)+'.root' for i in missing_indices]
 
         #convert to indices
-        missings = []
-        for name in missingfilelist:
-            missings.append(int(name.split('_')[-1][:-5]) - 1)
+        missings = [int(name.split('_')[-1][:-5]) - 1 for name in missingfilelist]
         self.update_filedict_in_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, filedict=missings, basename='missingtuples')
-
-        result = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-        return result
-
-
+        filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
+        return filelist_json
 
 
     def get_filedict_from_json(self, sampleinfofolder, stage, year, basename='filelist'):
@@ -209,3 +206,32 @@ class Sample:
     def VerifyStage(self,stage):
         if stage is not 'nano' and stage is not 'mini':
             raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
+
+
+class SampleContainer():
+    def __init__(self):
+        self.__dict = OrderedDict()
+
+    def has_sample(self, sample):
+        return sample in self.__dict
+
+    def get_sample(self, sample):
+        if not self.has_sample(year):
+            raise AttributeError('Invalid sample for SampleContainer class.')
+        return self.__dict[sample]
+
+    def add_samples(self, samples_dict):
+        if any(x in self.__dict for x in samples_dict.keys()):
+            raise AttributeError('SampleContainer class already has the entry provided. Please check.')
+        self.__dict.update(samples_dict)
+
+    def __str__(self):
+        print(blue('--> SampleContainer info:'))
+        prettydict(self.__dict)
+        return blue('--> SampleContainer end.')
+
+    def keys(self):
+        return self.__dict.keys()
+
+    def items(self):
+        return self.__dict.items()

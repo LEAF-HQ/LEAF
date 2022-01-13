@@ -10,7 +10,7 @@ import  sys
 import CRABClient
 from dbs.apis.dbsClient import DbsApi
 
-def GetDasNevents(dataset, options=['num_event']): #num_file
+def GetDasNevents(dataset, options):
     url = 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader'
     api = DbsApi(url = url)
     outputDataSets = api.listDatasets(dataset = dataset)
@@ -22,9 +22,13 @@ def GetDasNevents(dataset, options=['num_event']): #num_file
 
 
 def main():
-    args = sys.argv[1:]
-    data = args[0]
-    GetDasNevents(data)
+    args    = sys.argv[1:]
+    dataset = args[0]
+    options = args[1:]
+    if len(options) == 0:
+        # options = ['num_event', 'num_file']
+        options = ['num_event']
+    GetDasNevents(dataset=dataset, options=options)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import os, json
+import os, json, yaml
 
 class UserSpecificSettings():
     """docstring for UserSpecificSettings."""
@@ -8,7 +8,6 @@ class UserSpecificSettings():
             'username': username,
             'email':    email,
             'cluster':  cluster,
-            'default_tuple_output':  '',
             }
 
     def GetJSONPath(self,username):
@@ -17,7 +16,7 @@ class UserSpecificSettings():
     def LoadJSON(self, name=''):
         json_name = name if name !='' else self.GetJSONPath(self.UserInfo['username'])
         with open(json_name, 'r') as f:
-            self.UserInfo = json.load(f)
+            self.UserInfo = yaml.safe_load(f)
 
     def SaveJSON(self):
         with open(self.GetJSONPath(self.UserInfo['username']), 'w') as f:

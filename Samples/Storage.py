@@ -7,6 +7,9 @@ class Storage():
         self.path = path
         self.director = director
 
+    def __str__(self):
+        return self.path
+
     def create_file_list(self):
         raise NotImplementedError()
 
@@ -64,15 +67,3 @@ class Storage_T2ULB(Storage):
     def create_file_list(self):
         command = 'LD_LIBRARY_PATH='' PYTHONPATH='' gfal-ls %s' % (self.director+self.path)
         return self.make_list(command, outpath=self.director+self.path)
-
-
-
-
-
-
-
-
-
-
-
-#
