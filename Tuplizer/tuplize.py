@@ -3,10 +3,10 @@
 import os
 
 from TuplizeRunner import *
-from VBFTagger.Tuplizer.Signals_VBF import *
-from Samples.Backgrounds_MiniAODv2 import *
+
 from Samples.Data_MiniAODv2 import *
-from collections import OrderedDict
+from Samples.Backgrounds_MiniAODv2 import *
+# from Samples.Signals_MiniAODv2 import *
 
 
 username = os.environ['USER']
@@ -14,8 +14,10 @@ workarea = macrofolder = os.environ['TUPLIZERPATH']+'/Workarea'
 macrofolder = os.environ['ANALYZERPATH']
 
 AllSamples = SampleContainer()
-AddSignals_VBF(AllSamples)
-# print (AllSamples)
+Add_Data(AllSamples)
+Add_Background(AllSamples)
+# Add_LQSignals(AllSamples)
+print (AllSamples)
 
 
 config_per_year = {
