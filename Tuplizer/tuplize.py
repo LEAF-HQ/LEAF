@@ -21,16 +21,15 @@ from array import array
 from TuplizeRunner import *
 from Samples.Storage import *
 from Samples.Sample import *
-from Samples.Signals import *
-from Samples.Backgrounds import *
-from Samples.Data import *
+from Samples.Signals_MiniAODv2 import *
+from Samples.Backgrounds_MiniAODv2 import *
+from Samples.Data_MiniAODv2 import *
 from collections import OrderedDict
 
 
 username = os.environ['USER']
 workarea = '/work/%s' % (username)
 basefolder = os.environ['LEAFPATH']
-generatorpath = os.environ['GENERATORPATH']
 tuplizefolder = join(basefolder, 'Tuplizer')
 sampleinfofolder = join(basefolder, 'Samples')
 macrofolder = os.environ['ANALYZERPATH']
