@@ -14,16 +14,18 @@ type        = ''
 year        = ''
 infilename  = ''
 outfilename = ''
+pfcands     = 'False'
 
 
 # USER OPTIONS
 options = VarParsing()
-options.register('idxStart',   idx_start,   mytype=VarParsing.varType.int)
-options.register('idxStop',    idx_stop,    mytype=VarParsing.varType.int)
+options.register('idxStart',    idx_start,   mytype=VarParsing.varType.int)
+options.register('idxStop',     idx_stop,    mytype=VarParsing.varType.int)
 options.register('type',        type,        mytype=VarParsing.varType.string)
 options.register('year',        year,        mytype=VarParsing.varType.string)
 options.register('infilename',  infilename,  mytype=VarParsing.varType.string)
 options.register('outfilename', outfilename, mytype=VarParsing.varType.string)
+options.register('pfcands',     pfcands,     mytype=VarParsing.varType.string)
 options.parseArguments()
 
 idx_start   = options.idxStart
@@ -32,6 +34,7 @@ type        = options.type
 year        = options.year
 infilename  = options.infilename
 outfilename = options.outfilename
+do_pfcands  = bool(options.pfcands)
 
 if idx_start < 0 or idx_stop < 1 or type is '' or year is '' or infilename is '' or outfilename is '':
     raise ValueError('At least one of the 6 required options is not set properly, please give all 6 options.')
@@ -46,6 +49,7 @@ print '-->  type        = %s'     % type
 print '-->  year        = %s'     % year
 print '-->  infilename  = \'%s\'' % infilename
 print '-->  outfilename = \'%s\'' % outfilename
+print '-->  do_pfcands  = \'%s\'' % do_pfcands
 
 process = cms.Process("NTuples")
 
@@ -114,7 +118,7 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     lhe               = cms.InputTag('externalLHEProducer'),
 
     do_triggerobjects = cms.bool(False),
-    do_pfcands        = cms.bool(False),
+    do_pfcands        = cms.bool(do_pfcands),
     do_prefiring      = cms.bool(not year in ['2018', 'UL18']),
 
     outfilename       = cms.string(outfilename),

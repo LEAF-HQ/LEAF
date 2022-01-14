@@ -39,9 +39,7 @@ class TuplizeRunner:
         # runtime_str = '%02i:%02i:00' % runtime
         runtime_str, queue = format_runtime(runtime)
         samplename = self.sample.name
-        commandfolder = os.path.join(self.workarea,'commands')
         joboutput = os.path.join(self.workarea,'joboutput',samplename)
-        ensureDirectory(commandfolder)
         ensureDirectory(joboutput)
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
@@ -57,7 +55,7 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s pfcands=True' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
                 commands.append(command)
                 njobs += 1
 
@@ -77,7 +75,7 @@ class TuplizeRunner:
 
         if 'slurm' in self.cluster.lower():
             idx = 0
-            commandfilename = os.path.join(commandfolder, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
+            commandfilename = os.path.join(joboutput, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
             with open(commandfilename, 'w') as f:
                 for command in commands:
                     if idx in missing_indices:
@@ -109,16 +107,17 @@ class TuplizeRunner:
             from Submitter.CondorBase import CondorBase
             CB = CondorBase(JobName=samplename)
             CB.CreateJobInfo()
-            CB.ModifyJobInfo('outdir', joboutput)
+            CB.ModifyJobInfo('outdir', joboutput+'/')
             # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
             CB.ModifyJobInfo('x509userproxy', '$ENV(X509_USER_PROXY)')
             CB.ModifyJobInfo('use_x509userproxy', 'True')
+            CB.ModifyJobInfo('transfer_executable', 'False')
             jobs = {'executables': [], 'arguments':[]}
             ensureDirectory(outfoldername, use_se=('/pnfs' in outfoldername))
             for command in commands:
                 exe = command.split()[0]
                 arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
-                jobs['executables'].append(os.getenv('ANALYZERPATH')+'/bin/'+exe)
+                jobs['executables'].append(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe))
                 jobs['arguments'].append(arg)
             CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
             jobid = int(CB.JobInfo['ClusterId'])

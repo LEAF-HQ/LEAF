@@ -42,7 +42,8 @@ class CondorBase():
             'notification':         'Always',                      # Always/Error/Done
             'getenv':               'True',                        # port the local environment to the cluster
             'WhenToTransferOutput': 'ON_EXIT_OR_EVICT',            # specify when to transfer the outout back. Not tested yet
-            # 'transfer_executable':  'True',                        # copy the executable to the cluster Doens't work FIXME
+            # 'Hold':                 'True',                        # Start the job with Hold status
+            # 'transfer_executable':  'False',                       # Default True: copy the executable to the cluster. Set to False search the executable on the remote machine
             # 'requirements':          'OpSysAndVer == "CentOS7"'',   # additional requirements. Not tested yet
             # '+RequestRuntime':       str(int(nHours*60*60)),       # requested run time. Not tested yet
             }
