@@ -29,7 +29,7 @@ class CondorBase():
             'executable':           executable,                    # the program to run on the execute node
             'arguments':            arguments,                     # sleep for 10 seconds
             'JobBatchName':         str(self.JobName),             # name of the submitted job
-            'outdir':               './log/',                      # directory to store log/out/err files from htcondor
+            'outdir':               './joboutput/',                # directory to store log/out/err files from htcondor
             'output':               '$(outdir)'+outputname+'.out', # storage of stdout
             'error':                '$(outdir)'+outputname+'.err', # storage of stderr
             'log':                  '$(outdir)'+outputname+'.log', # storage of job log info
