@@ -9,17 +9,18 @@
 -->
 
 
+
+<!ENTITY TestSignal_M1000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M1000.xml" >
+<!ENTITY TestSignal_M2000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M2000.xml" >
+<!ENTITY TestBackground_Sample1  SYSTEM "$MYLEAFPATH/.testsamples/TestBackground.xml" >
+<!ENTITY TestData_Sample1        SYSTEM "$MYLEAFPATH/.testsamples/TestData.xml" >
+
 <!-- real datasets are here
 <!ENTITY LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0   SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/LQLQToBTau_MLQ1000_MPS117_MC1100_L1p0.xml" >
 <!ENTITY LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0   SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/LQLQToBTau_MLQ1360_MPS117_MC1100_L1p0.xml" >
 <!ENTITY WJetsToLNu_Inclusive                    SYSTEM "$MYANALYZERPATH/datasets/UL17/Summer20/MINIAOD/WJetsToLNu_Inclusive.xml" >
 -->
 
-<!-- some mock-up samples -->
-<!ENTITY TestSignal_M1000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M1000.xml" >
-<!ENTITY TestSignal_M2000        SYSTEM "$MYLEAFPATH/.testsamples/TestSignal_M2000.xml" >
-<!ENTITY TestBackground_Sample1  SYSTEM "$MYLEAFPATH/.testsamples/TestBackground.xml" >
-<!ENTITY TestData_Sample1        SYSTEM "$MYLEAFPATH/.testsamples/TestData.xml" >
 
 
 ]>
