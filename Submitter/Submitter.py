@@ -8,11 +8,10 @@ import copy as cp
 from collections import OrderedDict
 from prettytable import PrettyTable
 import shutil
-from UserSpecificSettings import UserSpecificSettings
 
 
 class Submitter:
-    def __init__(self, xmlfilename):
+    def __init__(self, xmlfilename, use_se=False):
         self.xmlinfo = XMLInfo(xmlfilename)
 
         path_parts_local = [item for item in self.xmlinfo.xmlfilename.split('/')[:-1]]
@@ -22,8 +21,9 @@ class Submitter:
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
         self.se_director = self.xmlinfo.configsettings.SEDirector
-        # self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '')
-        self.use_se = False
+        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '' and use_se)
+        if self.se_director == '' and use_se:
+            raise AttributeError('Specifically asked to use the SE director, but none given in the xml file \'%s\'. Please be consistent.' % (xmlfilename))
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
 
@@ -53,6 +53,8 @@ class Submitter:
         missing_files_per_dataset = self.Output()
 
         if cluster == '':
+            from UserSpecificSettings import *
+
             user_settings = UserSpecificSettings(os.getenv('USER'))
             user_settings.LoadJSON()
             cluster = user_settings.Get('cluster')
@@ -78,7 +80,7 @@ class Submitter:
                 command = 'sbatch -a 1-%i -J %s -p %s --chdir %s -t %s submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, queue, joboutput_path, runtime_str, missing_files, environ_path, environ_ld_lib_path)
                 jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
             elif 'htcondor' in cluster.lower():
-                from CondorBase import CondorBase
+                from CondorBase import *
                 CB = CondorBase(JobName=datasetname, Time=str(self.xmlinfo.submissionsettings.Walltime))
                 CB.CreateJobInfo()
                 CB.ModifyJobInfo('outdir', joboutput_path+'/')

@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--notreeadd',       '-t', action='store_true', default=False, dest='notreeadd',          help='Add split files without adding the trees. By default does not apply the force-add')
     parser.add_argument('--allowincomplete', '-i', action='store_true', default=False, dest='allowincomplete',    help='Ignore the non-existent files and does the hadd nonetheless')
     parser.add_argument('--plothadd',        '-p', action='store_true', default=False, dest='hadd',               help='Hadd files to groups used for plotting and further analysis. Will always force.')
+    parser.add_argument('--use-se',              , action='store_true', default=False, dest='use_se',             help='Allow submitter to use the SE director. Should only be necessary when the output directory is not mounted on current system.')
 
     args = parser.parse_args()
     xmlfilename = os.path.abspath(args.xmlfilename[0])
@@ -37,7 +38,7 @@ def main():
     nargs     = sum([1 for x in vars(args) if vars(args)[x] is True])
 
     # Build submitter object, this will already parse the XML file
-    submitter = Submitter(xmlfilename=xmlfilename)
+    submitter = Submitter(xmlfilename=xmlfilename, use_se=args.use_se)
 
     # create workdir locally and remotely (for output), create txt file with expected output files, split XML file into many smaller ones for individual jobs
     if args.clean:
