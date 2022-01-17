@@ -100,12 +100,12 @@ void Config::process_datasets(){
 
 
     // make sure outdir exists
-    TString mkdircommand = "(eval `scram unsetenv -sh`; gfal-mkdir -p ";
+    TString mkdircommand = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-mkdir -p ";
     TString outfolder = output_directory();
     if(outfolder.Contains("/pnfs")){
       mkdircommand += se_director();
     }
-    mkdircommand += outfolder + ")";
+    mkdircommand += outfolder;
     system((const char*)mkdircommand);
 
     // create output file and handle exception for /pnfs storage that is not immediately writeable
@@ -146,11 +146,16 @@ void Config::process_datasets(){
     TString outfilename_final = outfilename_target;
     outfilename_final.ReplaceAll("_tmp.root", ".root");
 
-    string command = "(eval `scram unsetenv -sh`; gfal-copy -f " + (string)outfilename_tmp + " " + (string)outfilename_final + (string)") > /dev/null";
+    TString command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-copy -f " + outfilename_tmp + " ";
+    if(outfolder.Contains("/pnfs")){
+      command += se_director();
+    }
+     command += outfilename_final + " > /dev/null";
     // cout << "copy command: " << command << endl;
-    system(command.c_str());
-    command = (string)"(eval `scram unsetenv -sh`;gfal-rm " + (string)outfilename_tmp + (string)") > /dev/null";
-    system(command.c_str());
+
+    system((const char*)command);
+    command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + outfilename_tmp + " > /dev/null";
+    system((const char*)command);
     cout << green << "--> Wrote histograms and tree to file: " << outfilename_final << reset << endl << endl;
 
     increment_idx();

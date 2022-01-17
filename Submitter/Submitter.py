@@ -22,7 +22,8 @@ class Submitter:
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
         self.se_director = self.xmlinfo.configsettings.SEDirector
-        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '')
+        # self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '')
+        self.use_se = False
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
 
