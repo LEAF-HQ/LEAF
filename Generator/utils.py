@@ -24,7 +24,6 @@ def ensureDirectory(dirname, use_se=False):
             os.makedirs(dirname)
         if not os.path.exists(dirname):
             print yellow('--> failed to make directory "%s"'%(dirname))
-    return dirname
 
 
 def is_file_empty(file_path):

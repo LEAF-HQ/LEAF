@@ -12,7 +12,7 @@ from UserSpecificSettings import UserSpecificSettings
 
 
 class Submitter:
-    def __init__(self, xmlfilename):
+    def __init__(self, xmlfilename, use_se=False):
         self.xmlinfo = XMLInfo(xmlfilename)
 
         path_parts_local = [item for item in self.xmlinfo.xmlfilename.split('/')[:-1]]
@@ -22,7 +22,9 @@ class Submitter:
         self.workdir_local = str(os.path.join('/', *path_parts_local))
 
         self.se_director = self.xmlinfo.configsettings.SEDirector
-        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '')
+        self.use_se = (self.xmlinfo.configsettings.OutputDirectory.startswith('/pnfs') and self.se_director != '' and use_se)
+        if self.se_director == '' and use_se:
+            raise AttributeError('Specifically asked to use the SE director, but none given in the xml file \'%s\'. Please be consistent.' % (xmlfilename))
         path_parts_remote = [item for item in self.xmlinfo.configsettings.OutputDirectory.split('/')]
         path_parts_remote.append('workdir_%s' % (self.xmlinfo.xmlfilename.split('/')[-1][:-4]))
 

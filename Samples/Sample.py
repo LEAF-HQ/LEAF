@@ -216,7 +216,7 @@ class SampleContainer():
         return sample in self.__dict
 
     def get_sample(self, sample):
-        if not self.has_sample(year):
+        if not self.has_sample(sample):
             raise AttributeError('Invalid sample for SampleContainer class.')
         return self.__dict[sample]
 
