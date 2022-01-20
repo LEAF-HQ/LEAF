@@ -31,8 +31,8 @@ GenInfoHists::GenInfoHists(TString dir_) : BaseHists(dir_){
   pdf_new = LHAPDF::mkPDF( (std::string) pdfname_new, 0);
 
 
-  hptmet = book<TH1F>("ptmet", ";E_{T}^{miss} (GenMET) [GeV]; Events / bin", 100, 0, 1000);
-  hphimet = book<TH1F>("phimet", ";#phi(E_{T}^{miss} (GenMET)); Events / bin", 60, -3.5, 3.5);
+  hptmet = book<TH1F>("ptmet", ";gen. p_{T}^{miss} [GeV]; Events / bin", 100, 0, 1000);
+  hphimet = book<TH1F>("phimet", ";#phi(gen. p_{T}^{miss}); Events / bin", 60, -3.5, 3.5);
 
   hgeninfoid1 = book<TH1F>("geninfoid1", ";ID of initial state 1; Events / bin", 11, -5.5, 5.5);
   hgeninfoid2 = book<TH1F>("geninfoid2", ";ID of initial state 2; Events / bin", 11, -5.5, 5.5);
