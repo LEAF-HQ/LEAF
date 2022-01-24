@@ -8,7 +8,13 @@ class Storage():
         self.director = director
 
     def __str__(self):
-        return self.path
+        return self.get_path()
+
+    def get_path(self, is_complete=True):
+        if is_complete:
+            return self.director+self.path
+        else:
+            return self.path
 
     def create_file_list(self):
         raise NotImplementedError()

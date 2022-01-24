@@ -50,7 +50,7 @@ class YearDependentContainer():
 
 
 class Sample:
-    def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents=YearDependentContainer()):
+    def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents_das=YearDependentContainer(), nevents_generated=YearDependentContainer(), nevents_weighted=YearDependentContainer()):
         self.type = type
         self.name = name
         self.group = group
@@ -59,12 +59,16 @@ class Sample:
         self.tuplepaths = tuplepaths
         self.xsecs = xsecs
         self.xmlfiles = xmlfiles
-        self.nevents = nevents
+        self.nevents_das = nevents_das
+        self.nevents_generated = nevents_generated
+        self.nevents_weighted = nevents_weighted
         # self.__dict = OrderedDict()
         # self.__dict['name'] = self.name
         # self.__dict['type'] = self.type
         # self.__dict['xsec'] = self.xsecs
-        # self.__dict['nevent'] = self.nevents
+        # self.__dict['nevents_das'] = self.nevents_das
+        # self.__dict['nevents_generated'] = self.nevents_generated
+        # self.__dict['nevents_weighted'] = self.nevents_weighted
         # self.__dict['group'] = self.group
         # self.__dict['minipath'] = self.minipaths
         # self.__dict['nanopath'] = self.nanopaths
@@ -78,10 +82,8 @@ class Sample:
         return ''
 
     def get_var_for_year(self, varname, year):
-        if varname is 'type' or varname is 'name':
+        if varname == 'type' or varname == 'name':
             return getattr(self, varname)
-        elif varname is 'minipaths' or varname is 'nanopaths' or varname is 'tuplepaths':
-            return getattr(self, varname)[year].path
         else:
             return getattr(self, varname)[year]
 
@@ -97,7 +99,7 @@ class Sample:
                 return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
-        filelist = self.get_var_for_year(stage+"paths",year).get_file_list()
+        filelist = self.get_var_for_year(stage+'paths',year).get_file_list()
 
         if filedict:
             filelist = list(set(filelist) - set(filedict.keys()))

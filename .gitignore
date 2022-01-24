@@ -42,6 +42,8 @@ Analyzer/LQDM
 Analyzer/Makefile.local
 Analyzer/JECDatabase
 Analyzer/JRDatabase
+Tuplizer/Workarea
+Submitter/joboutput
 *.logsite/
 site/
 HiggsAnalysis/
