@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import os, sys, math
+import os, sys, math, parse
 import numpy as np
 import subprocess
 
@@ -39,16 +39,14 @@ class TuplizeRunner:
         # runtime_str = '%02i:%02i:00' % runtime
         runtime_str, queue = format_runtime(runtime)
         samplename = self.sample.name
-        commandfolder = os.path.join(self.workarea,'commands')
         joboutput = os.path.join(self.workarea,'joboutput',samplename)
-        ensureDirectory(commandfolder)
         ensureDirectory(joboutput)
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
         if not filedict:
             return
 
-        outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
+        outfoldername = self.sample.tuplepaths[self.year].get_path()
         stagetag = self.stage.upper()+'AOD'
 
         commands = []
@@ -57,7 +55,7 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s pfcands=True' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
                 commands.append(command)
                 njobs += 1
 
@@ -77,7 +75,7 @@ class TuplizeRunner:
 
         if 'slurm' in self.cluster.lower():
             idx = 0
-            commandfilename = os.path.join(commandfolder, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
+            commandfilename = os.path.join(joboutput, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
             with open(commandfilename, 'w') as f:
                 for command in commands:
                     if idx in missing_indices:
@@ -109,16 +107,19 @@ class TuplizeRunner:
             from Submitter.CondorBase import CondorBase
             CB = CondorBase(JobName=samplename)
             CB.CreateJobInfo()
-            CB.ModifyJobInfo('outdir', joboutput)
+            CB.ModifyJobInfo('outdir', joboutput+'/')
             # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
             CB.ModifyJobInfo('x509userproxy', '$ENV(X509_USER_PROXY)')
             CB.ModifyJobInfo('use_x509userproxy', 'True')
+            CB.ModifyJobInfo('transfer_executable', 'False')
             jobs = {'executables': [], 'arguments':[]}
             ensureDirectory(outfoldername, use_se=('/pnfs' in outfoldername))
-            for command in commands:
+            for idx, command in enumerate(commands):
+                if not (idx+1) in missing_indices:
+                    continue
                 exe = command.split()[0]
                 arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
-                jobs['executables'].append(os.getenv('ANALYZERPATH')+'/bin/'+exe)
+                jobs['executables'].append(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe))
                 jobs['arguments'].append(arg)
             CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
             jobid = int(CB.JobInfo['ClusterId'])
@@ -140,7 +141,7 @@ class TuplizeRunner:
 
         missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=only_check_missing)
 
-        outfoldername = self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path
+        outfoldername = self.sample.tuplepaths[self.year].get_path()
         missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
         commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f for f in missing_or_broken_tuples]
 
@@ -153,69 +154,52 @@ class TuplizeRunner:
 
 
 
-    def CreateDatasetXMLFile(self, force_counting, count_weights=True):
-        xmlfilename = os.path.join(os.environ['ANALYZERPATH'], self.sample.xmlfiles[self.year])
-        inputfilepattern = os.path.join(self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, '*.root')
-        out = open(xmlfilename, 'w')
-        l = list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].director+self.sample.tuplepaths[self.year].path, pattern='*.root')
-        print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(l), self.sample.name))
-        l.sort()
-        commands = []
+    def CreateDatasetXMLFile(self, force_counting, count_weights=True, treename='AnalysisTree'):
+        xmlfilename = os.path.join(os.environ['LEAFPATH'], self.sample.xmlfiles[self.year])
+        ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
-        n_genevents_sum = 0
-        pbar = tqdm(l, desc="  --> Files counted")
-        for filename in pbar:
-            # n_genevents = 0
-            # file_ok = True
-            # try:
-            #     f = ROOT.TFile.Open(filename)
-            #     n_genevents = f.Get('AnalysisTree').GetEntriesFast()
-            # except:
-            #     print yellow('  --> Couldn\'t open file, skip this one: %s. Will not appear in xml file, so it\'s safe if this is not data.' % (filename))
-            #     file_ok = False
-            # try:
-            #     f.Close()
-            # except:
-            #     file_ok = False
-            # del f
-            # n_genevents_sum += n_genevents
-            n_genevents = count_genevents_in_file(filename, treename='AnalysisTree')
-            if n_genevents > 0 and (n_genevents is not None):
-                try:
-                    if count_weights:
-                        commands.append(('Counter_NANOAOD_weights %s' % (filename), filename))
-                    out.write('<InputFile FileName="%s"/>\n' % filename)
-                    n_genevents_sum += n_genevents
-                except:
-                    print yellow('  --> Couldn\'t read number of weighted events in file \'%s\', skip this one. Will not appear in XML file, so it\'s safe.' % (filename))
+        list_folder_content = list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')
+        print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name))
 
-        # if self.sample.nevents.has_year(self.year) :
-        if not force_counting:
-            if self.sample.nevents.has_year(self.year):
-                nevents = self.sample.nevents[self.year]
-                out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
-                print green('  --> Used stored number of events for sample \'%s\' in year %s: %s.' % (self.sample.name, self.year, str(nevents)))
-            else:
-                pass
-        else:
+        nevents_stored = OrderedDict()
+        nevents_stored['das'] = self.sample.get_var_for_year('nevents_das', self.year) if self.sample.nevents_das.has_year(self.year) else None
+        nevents_stored['generated'] = self.sample.get_var_for_year('nevents_generated', self.year) if self.sample.nevents_generated.has_year(self.year) else None
+        nevents_stored['weighted'] = self.sample.get_var_for_year('nevents_weighted', self.year) if self.sample.nevents_weighted.has_year(self.year) else None
+
+        for mode, nevents in nevents_stored.items():
+            if nevents is None:
+                print yellow(' --> Sample \'%s\' in year %s does not have number of %s events stored. Should fill it in.' % (self.sample.name, self.year, mode))
+
+        if force_counting:
+            nevents_new = {'generated': None, 'weighted': None}
+            commands = [(('Counter_NANOAOD %s %s' % (filename, treename), filename)) for filename in list_folder_content]
+            results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
+            nevents_new['generated'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
+            missing_files = [r[1] for r in results if not r[0].strip('\n').strip('.').isdigit()]
             if count_weights:
+                commands = [(('Counter_NANOAOD_weights %s' % (filename), filename)) for filename in list_folder_content]
                 results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
-                nevents = sum(float(r[0]) for r in results)
-                out.write('<!-- Weighted number of events: %s -->\n' % str(nevents))
-                if self.sample.nevents.has_year(self.year):
-                    rel_diff = abs(nevents - self.sample.nevents[self.year]) / nevents
-                    if rel_diff < 0.01:
-                        print green('  --> Sample \'%s\' in year %s already has correct number of weighted events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, str(nevents)))
-                    else:
-                        print yellow('  --> Sample \'%s\' in year %s has a different number of weighted events than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, str(nevents)))
-                else:
-                    print yellow('  --> Sample \'%s\' in year %s has this number of weighted events to be used for the lumi calculation: %s. Should fill it in.' % (self.sample.name, self.year, str(nevents)))
+                nevents_new['weighted'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
+                missing_files = [r[1] for r in results if not r[0].strip('\n').replace('.','').isdigit()]
             else:
-                out.write('<!-- Generated number of events: %s -->\n' % str(n_genevents_sum))
-                print green('  --> Only counted events, not weights. Wrote the XML file with number of generated events in sample.')
+                print green('  --> Only counted events, not weights.')
 
+            for mode, nevents in nevents_new.items():
+                if nevents_stored[mode] is not None:
+                    rel_diff = abs(1 - nevents_stored[mode] / nevents)
+                    if rel_diff < 0.01:
+                        print green('  --> Sample \'%s\' in year %s already has correct number of %s events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, mode, str(nevents)))
+                        continue
+                print yellow('  --> Sample \'%s\' in year %s has a different number of %s events (%s) than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, mode, str(nevents_stored[mode]), str(nevents)))
+                nevents_stored[mode] = nevents
 
-        out.close()
+        with open(xmlfilename, 'w') as out:
+            for filename in list_folder_content:
+                if filename in missing_files: continue
+                out.write('<InputFile FileName="%s"/>\n' % filename)
+            for mode, nevents in nevents_stored.items():
+                if nevents:
+                    out.write('<!-- %s number of events: %s -->\n' % (mode.capitalize(), str(nevents)))
 
 
     def PrintDASCrossSection(self, sample, year, recalculate=False):
@@ -254,19 +238,15 @@ class TuplizeRunner:
 
 
 def list_folder_content_T2(foldername, pattern=None):
-    result = []
     command = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls %s' % (foldername)
-    list = subprocess.check_output(command, shell=True).split('\n')
-    for l in list:
-        filename = l.split(' ')[-1]
-        if pattern is not None: # check pattern
-            parser = parse.compile(pattern.replace('*', '{}'))
-            tuple = parser.parse(filename)
-            if tuple is not None:
-                result.append(os.path.join(foldername, filename))
-        else: #don't check pattern
-            result.append(os.path.join(foldername, filename))
-    # print len(result), result
+    files = subprocess.check_output(command, shell=True).split('\n')
+
+    # check pattern
+    if pattern is not None:
+        files = list(filter(lambda x: parse.compile(pattern.replace('*', '{}')).parse(x.split(' ')[-1]) is not None, files))
+
+    result = sorted([os.path.join(foldername, l.split(' ')[-1]) for l in files])
+
     return result
 
 def get_mini_parts_from_nano_name(nanopath):
