@@ -79,7 +79,7 @@ def createNewMakefileAndBuildfile(basefolder, name, placeholders):
     replace_placeholders('%s/BuildFile.xml' % (os.path.join(basefolder, name)), placeholders)
 
 def createNewIncludes(basefolder, name, placeholders):
-    command = 'cp templates/Linkdef_template.hpp %s/include/Linkdef.hpp' % (os.path.join(basefolder, name))
+    command = 'cp templates/Linkdef_template.hpp %s/include/%sClasses_Linkdef.hpp' % (os.path.join(basefolder, name), name)
     os.system(command)
 
     command = 'cp templates/Event_template.h %s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS'])
@@ -88,7 +88,7 @@ def createNewIncludes(basefolder, name, placeholders):
     command = 'cp templates/Hists_template.h %s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME'])
     os.system(command)
 
-    replace_placeholders('%s/include/Linkdef.hpp' % (os.path.join(basefolder, name)), placeholders)
+    replace_placeholders('%s/include/%sClasses_Linkdef.hpp' % (os.path.join(basefolder, name), name), placeholders)
     replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYEVENTCLASS']), placeholders)
     replace_placeholders('%s/include/%s.h' % (os.path.join(basefolder, name), placeholders['$MYHISTNAME']), placeholders)
 
@@ -149,18 +149,13 @@ def updateMakefileLocal(basefolder, name):
     fullmakefilepath = os.path.join(basefolder, 'Analyzer', 'Makefile.local')
     if os.path.isfile(fullmakefilepath):
         with open(fullmakefilepath, 'r') as f:
-            lines = f.readlines()
-            for l in lines:
-                if 'subdirs := %s' % (name) in l or 'subdirs += %s' % (name) in l:
-                    need_to_update = False
-                newlines.append(l)
+            newlines = f.readlines()
+            if any(('subdirs := %s' % (name) in l or 'subdirs += %s' % (name) in l) for l in newlines):
+                need_to_update = False
 
     if need_to_update:
-        if len(newlines) is 0:
-            newline = 'subdirs := %s' % (name)
-        else:
-            newline = 'subdirs += %s' % (name)
-        newlines.append(newline)
+        symbol =  ':=' if len(newlines) == 0 else '+='
+        newlines.append('subdirs '+symbol+' %s\n' % (name))
         with open(fullmakefilepath, 'w') as f:
             for l in newlines:
                 f.write(l)

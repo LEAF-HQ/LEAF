@@ -25,9 +25,9 @@ LFLAGS = -Wall -I. -lm -lz -lMinuit -L${CMSSW_RELEASE_BASE}/lib/slc7_amd64_gcc70
 ROOTLIBS = `root-config --cflags --ldflags --evelibs --glibs --libs`
 CMSSWLIBS = -lFWCoreUtilities -lDataFormatsHepMCCandidate -lDataFormatsCandidate -lGenVector -lFWCoreFWLite -lFWCoreCommon -lFWCoreMessageLogger -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsCommon -lCondFormatsJetMETObjects -lJetMETCorrectionsModules -lDataFormatsProvenance -lDataFormatsJetReco -lDataFormatsParticleFlowCandidate -lDataFormatsTrackReco -lPhysicsToolsHepMCCandAlgos -lPhysicsToolsJetMCUtils -lDataFormatsMuonReco -lDataFormatsRecoCandidate -lDataFormatsEgammaCandidates -lRecoEgammaEgammaTools -lDataFormatsTauReco
 
-LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries -lLEAFAnalyzer
-LIBSTUPLIZER = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lxml2 -lClassDictionaries -lLEAFAnalyzer
-LIBSSMALL = $(ROOTLIBS) -lstdc++fs -lxml2 -lClassDictionaries
+LIBSMAIN = $(ROOTLIBS) -lstdc++fs -lxml2 -lLEAFClasses -lLEAFAnalyzer
+LIBSTUPLIZER = $(ROOTLIBS) -lstdc++fs ${CMSSWLIBS} -lxml2 -lLEAFClasses -lLEAFAnalyzer
+LIBSSMALL = $(ROOTLIBS) -lstdc++fs -lxml2 -lLEAFClasses
 LIBSPLOT = $(ROOTLIBS) -lstdc++fs
 
 
@@ -38,3 +38,5 @@ LIBOBJS     := $(wildcard $(LIBDIR)/*.so $(LIBDIR)/*.cxx $(LIBDIR)/*.pcm $(LIBDI
 
 SOURCESEXE  := $(wildcard $(EXECDIR)/*.cxx)
 OBJECTSEXE  := $(SOURCESEXE:$(EXECDIR)/%.cxx=$(OBJDIR)/%.o)
+
+DICTLIB     := $(patsubst $(INCDIR)/%_Linkdef.hpp,%, $(wildcard $(INCDIR)/*_Linkdef.hpp))
