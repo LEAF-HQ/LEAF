@@ -17,9 +17,12 @@ bool path_exists(const TString &s);
 const std::string red("\x1b[0;31m");
 const std::string green("\x1b[0;32m");
 const std::string yellow("\x1b[0;33m");
-const std::string cyan("\x1b[0;36m");
+const std::string blue("\x1b[0;34m");
 const std::string magenta("\x1b[0;35m");
+const std::string cyan("\x1b[0;36m");
+const std::string bold("\033[1m");
 const std::string reset("\x1b[0m");
+
 
 // distance in phi, with the convention -phi < deltaPhi <= phi
 // T and U have to have a 'phi()' method, e.g. Particle, LorentzVector, etc.
