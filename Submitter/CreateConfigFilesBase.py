@@ -1,5 +1,5 @@
 import os, shutil, parse
-from Submitter.XMLInfo import *
+from XMLInfo import *
 from utils import *
 
 

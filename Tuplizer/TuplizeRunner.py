@@ -39,7 +39,7 @@ class TuplizeRunner:
         # runtime_str = '%02i:%02i:00' % runtime
         runtime_str, queue = format_runtime(runtime)
         samplename = self.sample.name
-        joboutput = os.path.join(self.workarea,'joboutput',samplename)
+        joboutput = os.path.join(self.workarea,'joboutput',samplename+'_'+self.year)
         ensureDirectory(joboutput)
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
