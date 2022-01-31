@@ -31,17 +31,26 @@ def is_file_empty(file_path):
     # Check if file exist and it is empty
     return os.path.exists(file_path) and os.stat(file_path).st_size == 0
 
+def modify_printed_string(type,string):
+    return "%s%s\033[0m"%(type,string)
+
+def red(string):
+    return "\x1b[0;31m%s\033[0m"%string
+
 def green(string):
     return "\x1b[0;32m%s\033[0m"%string
 
 def yellow(string):
     return "\x1b[0;33m%s\033[0m"%string
 
-def red(string):
-    return "\x1b[0;31m%s\033[0m"%string
-
 def blue(string):
     return "\x1b[0;34m%s\033[0m"%string
+
+def magenta(string):
+    return modify_printed_string('\x1b[0;35m',string)
+
+def cyan(string):
+    return modify_printed_string('\x1b[0;36m',string)
 
 def bold(string):
     return "\033[1m%s\033[0m"%string
