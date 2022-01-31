@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "LEAF/Analyzer/include/TagConstants.h"
+#include "LEAF/Analyzer/include/RunConstants.h"
 
 // const std::vector<int> lqids = {9000008, 9000009};
 const std::vector<int> lqids = {9000005};

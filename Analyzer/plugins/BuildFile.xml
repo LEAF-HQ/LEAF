@@ -23,5 +23,5 @@
 
 
 <use name="LEAF/Analyzer"/>
-<lib name="ClassDictionaries"/>
+<lib name="LEAFClasses"/>
 <flags EDM_PLUGIN="1"/>
