@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, parse
 import xml.dom.minidom as minidom
 import subprocess
 import StringIO
@@ -8,10 +8,11 @@ from copy import deepcopy
 class XMLInfo:
     def __init__(self, xmlfilename):
         self.xmlfilename = xmlfilename
+        with open(self.xmlfilename) as f_:
+            self.config_info = f_.readlines()[0:2]
+            self.config_name = parse.compile('<!DOCTYPE {} "" "{ConfigName}"[{}').parse(self.config_info[1])['ConfigName']
+            self.config_info = ''.join(self.config_info)+']>\n'
         command = 'xmllint --noent --dtdattr %s' % (xmlfilename)
-        xmlstring = StringIO.StringIO(subprocess.check_output(command.split(' ')))
-        self.config_info = '\n'.join(xmlstring.read().split('\n')[0:2])+']>\n'
-        self.config_name = self.config_info[self.config_info[:self.config_info.find('.dtd')+len('.dtd')].rfind('"')+1:self.config_info.find('.dtd')+len('.dtd')]
         xmlstring = StringIO.StringIO(subprocess.check_output(command.split(' ')))
         sax_parser = xml.sax.make_parser()
         self.xmlparsed = minidom.parse(xmlstring,sax_parser)
@@ -102,6 +103,15 @@ class GroupedSettings:
     def __init__(self, attributes_and_values):
         for tup in attributes_and_values:
             setattr(self, tup[0], tup[1])
+
+    def hasValue(self, name):
+        return hasattr(self, name)
+
+    def getValue(self, name):
+        return getattr(self, name)
+
+    def setValue(self, name, value):
+        setattr(self, name, value)
 
 class InputDataset:
     def __init__(self, attributes_and_values, infiles):

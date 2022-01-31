@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[
+
+<!ENTITY ModuleName  "ModuleName" >
+<!ENTITY OutputDirectory  "$MYLEAFPATH/../../../$MYANALYSISNAME/Year/&ModuleName;/" >
+
+]>
+
+
+<Configuration OutputDirectory="&OutputDirectory;" PostFix="" SEDirector="root://maite.iihe.ac.be:1094/" TargetLumi="None" AnalysisTool="&ModuleName;Module">
+
+  <SubmissionSettings FilesPerJob="1"/>
+
+  <InputDatasets>
+    <Dataset Name="VBF_HToZZTo4L_M125"           Lumi="None" Year="None" Type="None" Group="None"> <InputFile FileName="None"/> </Dataset>
+  </InputDatasets>
+
+  <AdditionalVariables>
+    <!-- Cleaning -->
+    <Variable Name="do_lumisel"       Value="true"/>  <!--true/false -->
+    <Variable Name="do_lumiweight"    Value="true"/>  <!--true/false -->
+    <Variable Name="do_PUreweight"    Value="true"/>  <!--true/false -->
+    <Variable Name="do_metfilters"    Value="true"/>  <!--true/false -->
+    <Variable Name="do_jec"           Value="true"/>  <!--true/false -->
+    <Variable Name="do_jer"           Value="true"/>  <!--true/false -->
+    <Variable Name="do_eleid"         Value="true"/>  <!--true/false -->
+    <Variable Name="do_muid"          Value="true"/>  <!--true/false -->
+    <Variable Name="do_tauid"         Value="false"/> <!--true/false -->
+    <Variable Name="do_jetid"         Value="true"/>  <!--true/false -->
+    <Variable Name="do_metcorrection" Value="true"/>  <!--true/false -->
+
+    <!-- Corrections and Systematic uncertainties -->
+    <Variable Name="JEC_Version"      Value="None"/>
+    <Variable Name="JER_Version"      Value="None"/>
+    <Variable Name="jec_systematics"  Value="nominal"/> <!--nominal/down/up -->
+    <Variable Name="jer_systematics"  Value="nominal"/> <!--nominal/down/up -->
+
+  </AdditionalVariables>
+
+</Configuration>
