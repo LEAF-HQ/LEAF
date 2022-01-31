@@ -111,18 +111,14 @@ void Config::process_datasets(){
     // create output file and handle exception for /pnfs storage that is not immediately writeable
     TString filename_tmp = dataset_type() + "__" + dataset_name() + postfix() + "_tmp.root";
     TString outfilename_target = outfolder + "/" + filename_tmp;
+    TString outfilename_tmp = outfilename_target;
 
     // this is PSI T3 specific, change in other environments!
-    TString outfilename_tmp = "";
-    TString env_USER = getenv("USER");
-    if(outfilename_target.Contains("/pnfs")){
-      TString tmpworkdirname = "/scratch/" + env_USER + "/tmp_workdir";
+    if(se_director() == "t3dcachedb03.psi.ch") {
+      string tmpworkdirname = "/scratch/" + (string)getenv("USER") + "/tmp_workdir";
       string command = "mkdir -p " + (string)tmpworkdirname;
       system(command.c_str());
       outfilename_tmp = tmpworkdirname + "/" + filename_tmp;
-    }
-    else{
-      outfilename_tmp = outfilename_target;
     }
 
     outfile.reset(new TFile(outfilename_tmp, "RECREATE"));
