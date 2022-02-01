@@ -397,27 +397,26 @@ def tdrCanvas(canvName, x_min, x_max, y_min, y_max, nameXaxis, nameYaxis, square
 def tdrCanvas2d(canvName, square=True):
   setTDRStyle()
 
-  W = 600 if square else 800
-  H = 600 if square else 600
+  W = 600 if square else 700
+  H = 600
 
-  W_ref = 600 if square else 800
-  H_ref = 600 if square else 600
+
 
   # references for T, B, L, R
-  T = 0.07*H_ref if square else 0.08*H_ref
-  B = 0.13*H_ref if square else 0.12*H_ref
-  L = 0.15*H_ref if square else 0.16*H_ref
-  R = 0.24*H_ref if square else 0.05*H_ref
+  T = 0.07*H
+  B = 0.13*H
+  L = 0.15*W
+  R = 0.24*W
 
   canv = rt.TCanvas(canvName,canvName,50,50,W,H)
   canv.SetFillColor(0)
   canv.SetBorderMode(0)
   canv.SetFrameFillStyle(0)
   canv.SetFrameBorderMode(0)
-  canv.SetLeftMargin( L/W )
-  canv.SetRightMargin( R/W )
-  canv.SetTopMargin( T/H )
-  canv.SetBottomMargin( B/H )
+  canv.SetLeftMargin( 0.15 )
+  canv.SetRightMargin( 0.21 )
+  canv.SetTopMargin( 0.03 )
+  canv.SetBottomMargin( 0.13 )
 
   return canv
 
@@ -560,7 +559,8 @@ def tdrDraw2d(h, opt, nbinsx, xmin, xmax, nbinsy, ymin, ymax, ncontour, zmin, zm
   h2.GetXaxis().SetTitle(axistitles[0])
   h2.GetYaxis().SetTitle(axistitles[1])
   h2.GetZaxis().SetTitle(axistitles[2])
-  h2.GetZaxis().SetTitleOffset(1.25)
+  h2.GetYaxis().SetTitleOffset(1.15)
+  h2.GetZaxis().SetTitleOffset(1.3)
   SetAlternative2DColor(h2)
   h.SetHistogram(h2)
 
