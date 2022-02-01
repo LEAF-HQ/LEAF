@@ -114,7 +114,7 @@ void Config::process_datasets(){
     TString outfilename_tmp = outfilename_target;
 
     // this is PSI T3 specific, change in other environments!
-    if(se_director() == "t3dcachedb03.psi.ch") {
+    if(se_director() == "root://t3dcachedb03.psi.ch/") {
       string tmpworkdirname = "/scratch/" + (string)getenv("USER") + "/tmp_workdir";
       string command = "mkdir -p " + (string)tmpworkdirname;
       system(command.c_str());
