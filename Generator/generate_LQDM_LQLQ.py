@@ -68,7 +68,7 @@ nevents         = 1000  # Events per sample
 username       = os.environ['USER']
 arch_tag       = 'slc7_amd64_gcc700'
 cmssw_tag_gp   = 'CMSSW_10_6_0'
-cmssw_tag_sim  = 'CMSSW_10_6_12'
+cmssw_tag_sim  = 'CMSSW_10_6_28'
 cmssw_tag_hlt  = 'CMSSW_9_4_14_UL_patch1'
 campaign       = 'UL17'
 sampletype     = 'ChiPsi'
@@ -78,8 +78,8 @@ workarea       = os.path.join('/work', username)
 workdir_slurm  = os.path.join(workarea, 'workdir_slurm')
 mgfolder       = os.path.join(workarea, cmssw_tag_sim, 'src', 'genproductions', 'bin', 'MadGraph5_aMCatNLO')
 mgfolder_local = os.path.join(workarea, 'MG5_aMC_v2_7_2')
-basefolder     = os.path.join(workarea, 'LEAF')
-generatorfolder= os.path.join(basefolder, 'Generator')
+basefolder     = os.environ['LEAFPATH']
+generatorfolder= os.environ['GENERATORPATH']
 gridpackfolder = os.path.join(generatorfolder, 'gridpacks', sampletype)
 cardfolder     = os.path.join(generatorfolder, 'cards', sampletype)
 crosssecfolder = os.path.join(generatorfolder, 'crosssections', sampletype)
@@ -107,13 +107,14 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individ
 # CrossBRRunner.ShortenCrossBR()
 # CrossBRRunner.RunMG(only_resubmit=True, ncores=1, runtime=(01,00,00), maxjobs_per_proc=50)
 
-CrossBRRunner.ReadoutCrossBR(ignore_br=True)
-# CrossBRRunner.RootifyCrosssections(variables=['MPS'], graphs_per=['L', 'MLQ'], forcepoints2d=None)
+# CrossBRRunner.ReadoutCrossBR(ignore_br=True)
+# CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['L', 'MCH'], forcepoints2d=None)
 # CrossBRRunner.RootifyCrosssections(variables=['MLQ', 'MCH'], graphs_per=['L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
+CrossBRRunner.RootifyCrosssections(variables=['MLQ', 'MPS'], graphs_per=['L'], forcepoints2d=get_all_combinations(preferred_configurations=preferred_configurations))
 
-# CrossBRRunner.PlotCrosssections(variables=['MPS'], overlay=['MLQ', 'L'], overlay_values=[['1720', '3520', '7210', '10000'], ['1']])
-# CrossBRRunner.PlotCrosssections(variables=['MLQ', 'MCH'], overlay=None, overlay_values=None)
-# CrossBRRunner.PlotCrosssections(variables=['MLQ', 'MPS'], overlay=None, overlay_values=None)
+CrossBRRunner.PlotCrosssections(variables=['MLQ'], overlay=None, overlay_values=None)
+CrossBRRunner.PlotCrosssections(variables=['MLQ', 'MCH'], overlay=None, overlay_values=None)
+CrossBRRunner.PlotCrosssections(variables=['MLQ', 'MPS'], overlay=None, overlay_values=None)
 
 
 #

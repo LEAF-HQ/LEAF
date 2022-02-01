@@ -364,6 +364,13 @@ class CrossSectionRunner:
             if not len(overlay) == len(overlay_values):
                 raise AttributeError('Different length of variable names and values to overlay. The latter must be one list per element of the former')
 
+        # dictionary to transform axisnames into nicely formatted strings
+        varname_to_axistitle = {
+            'MPS': 'M_{#psi} [GeV]',
+            'MLQ': 'M_{LQ} [GeV]',
+            'MCH': 'M_{#chi_{1}} [GeV]',
+        }
+
 
         ensureDirectory(self.crosssecfolder+'/plots')
         for processname in self.processnames:
@@ -470,10 +477,16 @@ class CrossSectionRunner:
             for plotname in graphs_per_plot:
                 thisplotname = self.crosssecfolder+'/plots/Crosssections_%s_vs_%s%s.pdf'%(plotname, '_'.join(variables), self.tag)
 
+                xsectitle_formatted = '#sigma [pb]'
+                if 'LQLQ' in plotname:
+                    xsectitle_formatted = '#sigma (pp #rightarrow LQ LQ) [pb]'
+                if 'PsiPsi' in plotname:
+                    xsectitle_formatted = '#sigma (pp #rightarrow #psi #psi) [pb]'
+
                 if len(variables) == 1:
-                    plot_xsec_1d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], plotname=thisplotname)
+                    plot_xsec_1d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], axistitles=[varname_to_axistitle[variables[0]], xsectitle_formatted], plotname=thisplotname)
                 elif len(variables) == 2:
-                    plot_xsec_2d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], axistitles=[variables[0], variables[1], '#sigma [pb]'], plotname=thisplotname)
+                    plot_xsec_2d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], axistitles=[varname_to_axistitle[variables[0]], varname_to_axistitle[variables[1]], xsectitle_formatted], plotname=thisplotname)
 
 
 
@@ -573,7 +586,7 @@ def readout_branchingratio(infilename, filenamepattern, variable_order, order_se
     return result_lists
 
 
-def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, plotname, colors=[kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2]):
+def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, axistitles, plotname, colors=[kRed+4, kRed+1, kAzure-2, kOrange, kGreen-2]):
 
     graphs_and_legnames = []
     xmax = ymax = 0
@@ -586,7 +599,7 @@ def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, plotname, colors=[kR
         xmin = min(g.GetXaxis().GetXmin(), xmin)
         ymin = max(min(g.GetHistogram().GetMinimum(), ymin), 1E-10)
 
-    c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), '#sigma [pb]', square=True, iPeriod=0, iPos=11)
+    c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), axistitles[1], square=True, iPeriod=0, iPos=11)
     c.SetLogy()
     legy_high = 0.9
     entryheight = 0.07
@@ -623,7 +636,7 @@ def plot_xsec_2d(infile, graphnames_and_legends_for_canvas, axistitles, plotname
     xmin = g.GetXaxis().GetXmin()
     ymin = max(g.GetYaxis().GetXmin(), ymin)
 
-    c = tdrCanvas2d('c', square=True)
+    c = tdrCanvas2d('c', square=False)
     c.SetLogy()
     c.SetLogz()
     tdrDraw2d(g, 'COLZ', 500, xmin, xmax, 500, ymin, ymax, 150, zmin, zmax, axistitles)
