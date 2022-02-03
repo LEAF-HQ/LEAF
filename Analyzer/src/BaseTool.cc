@@ -22,3 +22,26 @@ void BaseTool::WriteHistograms(const Config & cfg){
     HistFolder(x)->save(cfg.outfile.get());
   }
 }
+
+
+template <>
+void load_additional_collection<Event>(Event* main_event, Event* additional_event, collection c){
+  std::string errormsg = "Using the base class 'Event' when trying to load additional collections. This event class has only one member, which is a weight. Please instead use a derived event class like 'RecoEvent'";
+  throw std::runtime_error(errormsg);
+}
+template <>
+void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additional_event, collection c){
+  std::string errormsg = "Using the base class 'GenEvent' when trying to load additional collections. Please instead use an event class like 'RecoEvent' that has support for additional collections";
+  throw std::runtime_error(errormsg);
+}
+
+template<>
+void load_entry_lumiblock_number<Event>(TTree* chain, Event* main_event, Event* additional_event){
+  std::string errormsg = "Using the base class 'Event' when trying to load entry of additional collections. This event class has only one member, which is a weight. Please instead use a derived event class like 'RecoEvent'";
+  throw std::runtime_error(errormsg);
+}
+template<>
+void load_entry_lumiblock_number<GenEvent>(TTree* chain, GenEvent* main_event, GenEvent* additional_event){
+  std::string errormsg = "Using the base class 'GenEvent' when trying to load entry of additional collections. Please instead use an event class like 'RecoEvent' that has support for additional collections";
+  throw std::runtime_error(errormsg);
+}

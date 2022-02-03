@@ -5,7 +5,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 import os
 
 # Example to run:
-# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_args.root idxStart=100 idxStop=350 year=UL17
+# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL17
 
 
 idx_start   = -99
@@ -34,7 +34,7 @@ type        = options.type
 year        = options.year
 infilename  = options.infilename
 outfilename = options.outfilename
-do_pfcands  = bool(options.pfcands)
+do_pfcands  = options.pfcands in ['True', 'true']
 
 if idx_start < 0 or idx_stop < 1 or type is '' or year is '' or infilename is '' or outfilename is '':
     raise ValueError('At least one of the 6 required options is not set properly, please give all 6 options.')
@@ -117,6 +117,7 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     geninfo           = cms.InputTag('generator'),
     lhe               = cms.InputTag('externalLHEProducer'),
 
+    do_standard_event = cms.bool(True),
     do_triggerobjects = cms.bool(False),
     do_pfcands        = cms.bool(do_pfcands),
     do_prefiring      = cms.bool(not year in ['2018', 'UL18']),

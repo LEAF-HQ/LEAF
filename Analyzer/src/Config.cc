@@ -77,6 +77,84 @@ Config::Config(TString configfilename){
   }
 
 
+  // Loop through additional inputs and store to vector
+  // ==================================================
+
+
+  xmlNode *addcolls = findNodeByName(root_element, "AdditionalInputs");
+  vector<TString> existing_collections = {};
+  for (xmlNode* current_node = addcolls->children; current_node; current_node = current_node->next){
+    if(current_node->type == XML_ELEMENT_NODE){
+
+      // here we are looking at one <AdditionalInput> at a time
+      additional_input ai;
+
+      // read in the dataset and check if a corresponding nominal dataset was defined in the xml file. Otherwise, this is ill-defined
+      xmlNode *dataset_node = findNodeByName(current_node, "Dataset");
+      dataset ds;
+      ds.name     = getDatasetName(dataset_node);
+      ds.type     = getDatasetType(dataset_node);
+      ds.year     = getDatasetYear(dataset_node);
+      ds.lumi     = getDatasetLumi(dataset_node);
+
+      bool is_defined_nominal_dataset = false;
+      for(dataset nomds : m_datasets){
+        if(nomds.name == ds.name) is_defined_nominal_dataset = true;
+      }
+      string errormsg = "Additional dataset with name " + (string)ds.name + " does not have a corresponding nominal dataset defined.";
+      if(!is_defined_nominal_dataset) throw runtime_error(errormsg);
+
+      // loop over infiles of this dataset
+      for (xmlNode* current_inputfile = dataset_node->children; current_inputfile; current_inputfile = current_inputfile->next){
+        if(current_inputfile->type == XML_ELEMENT_NODE){
+          ds.infilenames.emplace_back(getInputFileFileName(current_inputfile));
+        }
+      }
+      ai.ds = ds;
+
+      // read in the collections that the above dataset should be used for
+      for (xmlNode* collection_node = current_node->children; collection_node; collection_node = collection_node->next){
+        if(collection_node->type == XML_ELEMENT_NODE){
+          if(!xmlStrEqual(collection_node->name, (xmlChar*)"Collection")) continue;
+
+          collection coll;
+          coll.classname = getCollectionClassname(collection_node);
+          coll.branchname = getCollectionBranchname(collection_node);
+          TString message = "In Config: Additional collection with name ";
+          message += coll.branchname;
+          message += " already used.";
+          for(TString bn : existing_collections){
+            if(bn == coll.branchname){
+              throw runtime_error((string)message);
+            }
+          }
+          ai.collections.emplace_back(coll);
+          existing_collections.emplace_back(coll.branchname);
+
+        }
+      }
+
+      cout << green << "--> Requesting " << ai.collections.size() << " additional collections from this additional input, using a total of " << ai.ds.infilenames.size() << " additional input files:" << reset << endl;
+      for(collection c: ai.collections){
+        cout << green << "  --> Adding collection " << c.branchname << ", which contains objects of class " << c.classname << "." << reset << endl;
+      }
+
+      m_additionalinputs.emplace_back(ai);
+    }
+  }
+  //
+  //   // now sort collections per file requested, such that a given file is reused for multiple collections if possible
+  //   for(collection c : m_collections){
+  //     auto it = m_collections_per_filetag.find(c.filetag);
+  //     bool has_tag = (it != m_collections_per_filetag.end());
+  //     if(!has_tag){ // initialize empty vector if key doesn't exist yet
+  //     m_collections_per_filetag[c.filetag] = {};
+  //   }
+  //   m_collections_per_filetag[c.filetag].emplace_back(c);
+  // }
+  // cout << green << "--> Requesting " << m_collections.size() << " additional collections in a total of " << m_collections_per_filetag.size() << " additional files" << reset << endl;
+
+
   xmlFreeDoc(doc);
   xmlCleanupParser();
   m_is_init = true;
@@ -89,12 +167,29 @@ void Config::process_datasets(){
   // loop through samples
   while(idx() < n_datasets()){
 
-    // Chain all samples of the same dataset into a TChain
+    // Chain all samples of the same dataset into a TChain, for the nominal sample and the additional inputs (if any)
     event_chain.reset(new TChain("AnalysisTree"));
+    for(additional_input ai : m_additionalinputs){
+      shared_ptr<TChain> ch;
+      ch.reset(new TChain("AnalysisTree"));
+      m_additional_event_chains.emplace_back(ch);
+    }
     cout << green << "--> Loading " << dataset_infilenames().size() << " input files for sample " << dataset_name() << "." << reset << endl;
     for(size_t i=0; i<dataset_infilenames().size(); i++){
-      event_chain->Add(dataset_infilenames().at(i));
+      TString infilename_nominal = dataset_infilenames().at(i);
+      event_chain->Add(infilename_nominal);
     }
+
+    for(size_t i=0; i<m_additionalinputs.size(); i++){
+      additional_input ai = m_additionalinputs.at(i);
+      for(TString infilename_add: ai.ds.infilenames){
+        m_additional_event_chains.at(i)->Add(infilename_add);
+        cout << "infilename_add: " << infilename_add << endl;
+      }
+      m_additional_event_chains.at(i)->BuildIndex("lumiblock", "number");
+    }
+
+
     nevt = event_chain->GetEntries();
     cout << green << "--> Loaded " << dataset_infilenames().size() << " files containing " << nevt << " events." << reset << endl;
 
@@ -146,8 +241,7 @@ void Config::process_datasets(){
     if(outfolder.Contains("/pnfs")){
       command += se_director();
     }
-     command += outfilename_final + " > /dev/null";
-    // cout << "copy command: " << command << endl;
+    command += outfilename_final + " > /dev/null";
 
     system((const char*)command);
     command = "LD_LIBRARY_PATH='' PYTHONPATH='' gfal-rm " + outfilename_tmp + " > /dev/null";

@@ -106,7 +106,7 @@ private:
 
 
   TString outfilename, year;
-  bool is_mc, do_triggerobjects, do_pfcands, do_prefiring;
+  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring;
 
 
   TFile *outfile;
@@ -120,6 +120,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   outfilename = (TString)iConfig.getParameter<std::string>("outfilename");
   is_mc       = iConfig.getParameter<bool>("is_mc");
   year        = (TString)iConfig.getParameter<std::string>("year");
+  do_standard_event = iConfig.getParameter<bool>("do_standard_event");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
   do_pfcands = iConfig.getParameter<bool>("do_pfcands");
   do_prefiring = iConfig.getParameter<bool>("do_prefiring");
@@ -228,6 +229,9 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   event.run = iEvent.id().run();
   event.number = iEvent.id().event();
   event.lumiblock = iEvent.luminosityBlock();
+
+  if(do_standard_event){
+
   event.rho = *rho;
   event.npv = pvs->size();
   int n_goodpvs = 0;
@@ -456,75 +460,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   for(size_t i=0; i<hltresults->size(); ++i){
     event.flags->set(hltnames.triggerName(i), hltresults->accept(i));
     // cout << "trigger name: " << hltnames.triggerName(i) << ": " << hltresults->accept(i) << endl;
-  }
-
-
-  // Do HLT objects  (these are super heavy, add only once the need arises)
-  // ==============
-  if(do_triggerobjects){
-    for(size_t i=0; i<triggerobjects->size(); i++){
-      pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
-      bool fired_hlt = false;
-      vector<TriggerObject::ID> ids = {};
-      for(size_t j=0; j<triggerobject.filterIds().size(); j++){
-        int id = triggerobject.filterIds()[j];
-        if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
-
-        if(id == trigger::TriggerObjectType::TriggerPhoton) ids.emplace_back(TriggerObject::Photon);
-        else if(id == trigger::TriggerObjectType::TriggerElectron) ids.emplace_back(TriggerObject::Electron);
-        else if(id == trigger::TriggerObjectType::TriggerMuon) ids.emplace_back(TriggerObject::Muon);
-        else if(id == trigger::TriggerObjectType::TriggerTau) ids.emplace_back(TriggerObject::Tau);
-        else if(id == trigger::TriggerObjectType::TriggerJet) ids.emplace_back(TriggerObject::Jet);
-        else if(id == trigger::TriggerObjectType::TriggerBJet) ids.emplace_back(TriggerObject::BJet);
-        else if(id == trigger::TriggerObjectType::TriggerMET) ids.emplace_back(TriggerObject::MET);
-        else if(id == trigger::TriggerObjectType::TriggerTET) ids.emplace_back(TriggerObject::ET);
-        else if(id == trigger::TriggerObjectType::TriggerTHT) ids.emplace_back(TriggerObject::HT);
-        else if(id == trigger::TriggerObjectType::TriggerMHT) ids.emplace_back(TriggerObject::MHT);
-        else if(id == trigger::TriggerObjectType::TriggerTrack) ids.emplace_back(TriggerObject::Track);
-        else ids.emplace_back(TriggerObject::Other);
-      }
-      if(fired_hlt){
-        TriggerObject to;
-        triggerobject.unpackPathNames(hltnames);
-        vector<string> pathNamesAll  = triggerobject.pathNames(false);
-        vector<TString> new_hltnames = {};
-        for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
-        to.set_hltnames(new_hltnames);
-
-        triggerobject.unpackFilterLabels(iEvent, *hltresults);
-        vector<string> filternames = triggerobject.filterLabels();
-        vector<TString> new_filternames = {};
-        for(const string & name : filternames) new_filternames.emplace_back(name);
-        to.set_filternames(new_filternames);
-
-        to.set_pt(triggerobject.pt());
-        to.set_eta(triggerobject.eta());
-        to.set_phi(triggerobject.phi());
-        to.set_m(triggerobject.mass());
-        to.set_charge(triggerobject.charge());
-        event.triggerobjects->emplace_back(to);
-      }
-    }
-  }
-
-
-  // Do PF candidates
-  // ================
-  if(do_pfcands){
-    for(size_t i=0; i<pfcands->size(); i++){
-      pat::PackedCandidate patcand = pfcands->at(i);
-      PFCandidate p;
-      p.set_pt(patcand.pt());
-      p.set_eta(patcand.eta());
-      p.set_phi(patcand.phi());
-      p.set_m(patcand.mass());
-      p.set_charge(patcand.charge());
-      p.set_pdgid(patcand.pdgId());
-      p.set_puppiweight(patcand.puppiWeight());
-      p.set_puppiweight_nolep(patcand.puppiWeightNoLep());
-
-      event.pfcands->emplace_back(p);
-    }
   }
 
 
@@ -943,8 +878,80 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
     event.taus->emplace_back(t);
   }
+}
 
 
+
+
+
+  // Do HLT objects  (these are super heavy, add only once the need arises)
+  // ==============
+
+  if(do_triggerobjects){
+    for(size_t i=0; i<triggerobjects->size(); i++){
+      pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
+      bool fired_hlt = false;
+      vector<TriggerObject::ID> ids = {};
+      for(size_t j=0; j<triggerobject.filterIds().size(); j++){
+        int id = triggerobject.filterIds()[j];
+        if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
+
+        if(id == trigger::TriggerObjectType::TriggerPhoton) ids.emplace_back(TriggerObject::Photon);
+        else if(id == trigger::TriggerObjectType::TriggerElectron) ids.emplace_back(TriggerObject::Electron);
+        else if(id == trigger::TriggerObjectType::TriggerMuon) ids.emplace_back(TriggerObject::Muon);
+        else if(id == trigger::TriggerObjectType::TriggerTau) ids.emplace_back(TriggerObject::Tau);
+        else if(id == trigger::TriggerObjectType::TriggerJet) ids.emplace_back(TriggerObject::Jet);
+        else if(id == trigger::TriggerObjectType::TriggerBJet) ids.emplace_back(TriggerObject::BJet);
+        else if(id == trigger::TriggerObjectType::TriggerMET) ids.emplace_back(TriggerObject::MET);
+        else if(id == trigger::TriggerObjectType::TriggerTET) ids.emplace_back(TriggerObject::ET);
+        else if(id == trigger::TriggerObjectType::TriggerTHT) ids.emplace_back(TriggerObject::HT);
+        else if(id == trigger::TriggerObjectType::TriggerMHT) ids.emplace_back(TriggerObject::MHT);
+        else if(id == trigger::TriggerObjectType::TriggerTrack) ids.emplace_back(TriggerObject::Track);
+        else ids.emplace_back(TriggerObject::Other);
+      }
+      if(fired_hlt){
+        TriggerObject to;
+        triggerobject.unpackPathNames(hltnames);
+        vector<string> pathNamesAll  = triggerobject.pathNames(false);
+        vector<TString> new_hltnames = {};
+        for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
+        to.set_hltnames(new_hltnames);
+
+        triggerobject.unpackFilterLabels(iEvent, *hltresults);
+        vector<string> filternames = triggerobject.filterLabels();
+        vector<TString> new_filternames = {};
+        for(const string & name : filternames) new_filternames.emplace_back(name);
+        to.set_filternames(new_filternames);
+
+        to.set_pt(triggerobject.pt());
+        to.set_eta(triggerobject.eta());
+        to.set_phi(triggerobject.phi());
+        to.set_m(triggerobject.mass());
+        to.set_charge(triggerobject.charge());
+        event.triggerobjects->emplace_back(to);
+      }
+    }
+  }
+
+
+  // Do PF candidates
+  // ================
+  if(do_pfcands){
+    for(size_t i=0; i<pfcands->size(); i++){
+      pat::PackedCandidate patcand = pfcands->at(i);
+      PFCandidate p;
+      p.set_pt(patcand.pt());
+      p.set_eta(patcand.eta());
+      p.set_phi(patcand.phi());
+      p.set_m(patcand.mass());
+      p.set_charge(patcand.charge());
+      p.set_pdgid(patcand.pdgId());
+      p.set_puppiweight(patcand.puppiWeight());
+      p.set_puppiweight_nolep(patcand.puppiWeightNoLep());
+
+      event.pfcands->emplace_back(p);
+    }
+  }
 
 
   tree->Fill();
@@ -957,6 +964,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 void NTuplizer::endJob(){
   event.clear();
   if(outfile && tree){
+    tree->BuildIndex("lumiblock", "number");
     outfile->cd();
     outfile->Write();
     outfile->Close();

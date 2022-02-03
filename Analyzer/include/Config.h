@@ -15,8 +15,18 @@ struct dataset{
   TString name                = "";
   TString type                = "";
   TString year                = "";
-  vector<TString> infilenames = {};
+  std::vector<TString> infilenames = {};
   double lumi                  = -1.;
+};
+
+struct collection{
+  TString classname    = "";
+  TString branchname   = "";
+};
+
+struct additional_input{
+  dataset ds;
+  std::vector<collection> collections = {};
 };
 
 
@@ -28,7 +38,7 @@ public:
   Config(TString configfilename);
   Config(const Config &) = default;
   Config & operator = (const Config &) = default;
-  ~Config() = default;
+  // ~Config() = default;
 
   void increment_idx(){m_idx += 1;};
   void set_idx(size_t i){m_idx = i;};
@@ -50,12 +60,16 @@ public:
   const double  dataset_lumi() const {return m_datasets[m_idx].lumi;};
   const size_t  n_datasets()   const {return m_datasets.size();};
   const size_t  idx()          const {return m_idx;};
+  const std::vector<additional_input> additional_inputs() const {return m_additionalinputs;};
+
+
 
   void process_datasets();
 
 
 
   shared_ptr<TChain> event_chain;
+  std::vector<shared_ptr<TChain>> m_additional_event_chains = {}; // used for loading additional collections
   int nevt;
   TTree* outputtree;
   shared_ptr<TFile> outfile;
@@ -66,7 +80,10 @@ private:
   double m_target_lumi;
   int m_nevt_max, m_nevt_skip;
   std::unordered_map<std::string, std::string> m_additionalvariables;
+  std::vector<additional_input> m_additionalinputs = {};
   std::vector<dataset> m_datasets = {};
+  // std::vector<collection> m_collections = {};
+  // std::map<TString, std::vector<collection>> m_collections_per_filetag;
   size_t m_idx = 0;
   bool m_is_init = false;
 

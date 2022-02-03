@@ -155,6 +155,22 @@ string getVariableValue(xmlNode* node){
 }
 
 
+
+string getCollectionClassname(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"ClassName");
+  string value = (const char*)prop;
+  return value;
+}
+
+string getCollectionBranchname(xmlNode* node){
+  xmlChar* prop = xmlGetProp(node, (xmlChar*)"BranchName");
+  string value = (const char*)prop;
+  return value;
+}
+
+
+
+
 const TString JERCPathString(const string& dataset, const string& version, const string& jetCollection, const string& type, const bool& isJEC) {
   TString result = isJEC? "JEC":"JR";
   result += "Database/textFiles/";

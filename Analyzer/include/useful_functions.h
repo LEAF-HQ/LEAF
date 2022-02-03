@@ -152,6 +152,9 @@ int     getJobNEventsSkip(xmlNode* node);
 std::string getVariableName(xmlNode* node);
 std::string getVariableValue(xmlNode* node);
 
+std::string getCollectionClassname(xmlNode* node);
+std::string getCollectionBranchname(xmlNode* node);
+
 const TString JERCPathString(const std::string& dataset, const std::string& version, const std::string& jetCollection, const std::string& type, const bool& isJEC);
 const TString JERPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
 const TString JECPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
