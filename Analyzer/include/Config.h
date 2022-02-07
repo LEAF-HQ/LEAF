@@ -38,7 +38,7 @@ public:
   Config(TString configfilename);
   Config(const Config &) = default;
   Config & operator = (const Config &) = default;
-  // ~Config() = default;
+  ~Config() = default;
 
   void increment_idx(){m_idx += 1;};
   void set_idx(size_t i){m_idx = i;};
