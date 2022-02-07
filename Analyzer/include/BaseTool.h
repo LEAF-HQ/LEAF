@@ -79,25 +79,15 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cfg.event_chain->SetBranchAddress("Events", &event);
   cfg.outputtree->Branch("Events", &event);
 
-  // TFile* add_file = new TFile("/work/areimers/CMSSW_10_6_28/src/LEAF/Analyzer/test/NTuples_pfonly.root");
-  // TChain* add_tree = new TChain("AnalysisTree");
-  // add_tree->Add("/work/areimers/CMSSW_10_6_28/src/LEAF/Analyzer/test/NTuples_pfonly.root");
-  // TTree* add_tree = (TTree*)add_file->Get("AnalysisTree");
-  // RecoEvent* add_event = new RecoEvent();
-  // add_tree->SetBranchAddress("Events", &add_event);
-
   // Initialize additional events to read additional inputs. The addresses of the corresponding additional collections will be set to the address of the main event in order to merge them.
   std::vector<E*> additional_events = {};
   for(size_t i=0; i<cfg.additional_inputs().size(); i++){
-    additional_events.emplace_back(new E());
-    cfg.m_additional_event_chains.at(i)->SetBranchAddress("Events", &additional_events.at(i));
-    // for(collection c: cfg.additional_inputs().at(i).collections){
-    //   load_additional_collection(event, additional_events.at(i), c);
-    // }
-
+    E* add_event = new E();
+    additional_events.emplace_back(add_event);
   }
-  // event->pfcands = additional_events.at(0)->pfcands;
-  // eventmap["standard"]->pfcands = eventmap["pfonly"]->pfcands;
+  for(size_t i=0; i<cfg.additional_inputs().size(); i++){
+    cfg.m_additional_event_chains.at(i)->SetBranchAddress("Events", &additional_events.at(i));
+  }
 
 
   // Loop through chain
@@ -126,42 +116,27 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
         cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ")" << reset << endl;
       }
     }
+
     // read the data for i-th event, nominal and for all additional inputs
     cfg.event_chain->GetEntry(i);
     for(size_t j=0; j<cfg.additional_inputs().size(); j++){
-      // treemap["pfonly"]->GetEntryWithIndex(eventmap["standard"]->lumiblock, eventmap["standard"]->number);
-      load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j).get(), event, additional_events.at(j));
-      // cfg.m_additional_event_chains.at(i)->GetEntryWithIndex(additional_events.at(i)->lumiblock, additional_events.at(i)->number);
+      load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j), event);
     }
-
-
-
 
     // set addresses for external collections
     for(size_t j=0; j<cfg.additional_inputs().size(); j++){
-      for(collection c: cfg.additional_inputs().at(j).collections){
-        load_additional_collection(event, additional_events.at(j), c);
+      for(size_t k=0; k<cfg.additional_inputs().at(j).collections.size(); k++){
+        load_additional_collection(event, additional_events.at(j), cfg.additional_inputs().at(j).collections.at(k));
       }
     }
-
-    // load_entry_lumiblock_number(add_tree, event, add_event);
-    // cout << "addevent, lumiblock: " << add_event->lumiblock << ", number: " << add_event->number << endl;
-    // cout << "n pfcands in add_event: " << add_event->pfcands->size() << endl;
-
-
-    // weight must be: target_lumi / dataset_lumi or 1 for data
-    // if(cfg.dataset_type() == "DATA") event->weight = 1.;
-    // else event->weight *= (double)cfg.target_lumi() / (double)cfg.dataset_lumi();
 
     // call Process() for each event, main part of this function!
     bool keep_event = tool.Process();
     // cout << "keep event? " << keep_event << endl;
 
-    // outevent = *event;
     if(keep_event) cfg.outputtree->Fill();
+
     event->reset();
-
-
     for(size_t j=0; j<additional_events.size(); j++){
       additional_events.at(j)->reset();
     }
@@ -169,21 +144,23 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
   event->clear();
   delete event;
+
+  for(size_t j=0; j<additional_events.size(); j++){
+    additional_events.at(j)->clear();
+    delete additional_events.at(j);
+  }
 }
 
 template<typename E>
 void load_additional_collection(E* main_event, E* additional_event, collection c){
   if(c.branchname == "pfcands"){
-    // cout << "addresses before: main = " << main_event->pfcands << ", additional = " << additional_event->pfcands << endl;
-    // cout << "N before:  main = " << main_event->pfcands->size() << ", additional = " << additional_event->pfcands->size() << endl;
-    // cout << "N electrons before: main = " << main_event->electrons->size() << ", add = " << additional_event->electrons->size() << endl;
     *main_event->pfcands = *additional_event->pfcands;
-    // cout << "addresses after:  main = " << main_event->pfcands << ", additional = " << additional_event->pfcands << endl;
-    // cout << "N after:  main = " << main_event->pfcands->size() << ", additional = " << additional_event->pfcands->size() << endl;
-    // cout << "N electrons after: main = " << main_event->electrons->size() << ", add = " << additional_event->electrons->size() << endl;
+  }
+  else if(c.branchname == "triggerobjects"){
+    *main_event->triggerobjects = *additional_event->triggerobjects;
   }
   else{
-    std::string errormsg = "Invalid branchname given when loading additional collections: " + (string)c.branchname;
+    std::string errormsg = "In Analyzer/include/BaseTool.h: Invalid branchname given when loading additional collections: " + (string)c.branchname;
     throw std::runtime_error(errormsg);
   }
 }
@@ -195,18 +172,15 @@ template <>
 void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additional_event, collection c);
 
 template<typename E>
-void load_entry_lumiblock_number(TTree* chain, E* main_event, E* additional_event){
-  // cout << "address main: " << main_event->pfcands << ", add: " << additional_event->pfcands << endl;
+void load_entry_lumiblock_number(shared_ptr<TChain> chain, E* main_event){
   chain->GetEntryWithIndex(main_event->lumiblock, main_event->number);
-  // cout << "chain entries: " << chain->GetEntries() << ", asking for " << main_event->lumiblock << " : " << main_event->number << endl;
-  // cout << "got back " << additional_event->lumiblock << " : " << additional_event->number << endl;
 }
 
 // specializations to stop compiler from complaining
 template<>
-void load_entry_lumiblock_number<Event>(TTree* chain, Event* main_event, Event* additional_event);
+void load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event);
 template<>
-void load_entry_lumiblock_number<GenEvent>(TTree* chain, GenEvent* main_event, GenEvent* additional_event);
+void load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event);
 
 
 typedef Registry<BaseTool, Config> ToolRegistry;
