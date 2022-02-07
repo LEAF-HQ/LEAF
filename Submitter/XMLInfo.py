@@ -77,11 +77,6 @@ class XMLInfo:
 
             this_addinput = AdditionalInput(datasets=datasets, collections=collections)
             additional_inputs.append(this_addinput)
-            # print 'this additional input has datasets: '
-            # for ds in this_addinput.datasets:
-            #     for infi in ds.infiles: print '  %s' % (infi)
-            # print 'and collections: '
-            # for coll in this_addinput.collections: print '  branch %s of class %s' % (coll.BranchName, coll.ClassName)
         return additional_inputs
 
 
