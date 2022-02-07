@@ -20,7 +20,8 @@ class XMLInfo:
         self.configsettings = self.read_configuration_settings()
         self.submissionsettings = self.read_submission_settings()
         self.additionalvars = self.read_additional_variables()
-        self.datasets = self.read_datasets()
+        self.additionalinputs = self.read_additional_inputs()
+        self.datasets = self.read_datasets(parentnode=self.rootnode.getElementsByTagName('InputDatasets')[0])
         self.datasets_to_write = deepcopy(self.datasets) # deep copy of datasets. Modify this one.
 
 
@@ -31,6 +32,7 @@ class XMLInfo:
         self.write_configuration_settings(rootnode)
         self.write_submission_settings(doc, rootnode)
         self.write_datasets(doc, rootnode)
+        self.write_additional_inputs(doc, rootnode)
         self.write_additionalvars(doc, rootnode)
         return rootnode
 
@@ -38,6 +40,7 @@ class XMLInfo:
 
     def read_configuration_settings(self):
         attributes_and_values = self.rootnode.attributes.items()
+        print attributes_and_values
         return GroupedSettings(attributes_and_values)
 
     def read_submission_settings(self):
@@ -51,9 +54,9 @@ class XMLInfo:
             attributes_and_values.append(tup)
         return GroupedSettings(attributes_and_values)
 
-    def read_datasets(self):
+    def read_datasets(self, parentnode):
         datasets = []
-        for var in self.rootnode.getElementsByTagName('InputDatasets')[0].getElementsByTagName('Dataset'):
+        for var in parentnode.getElementsByTagName('Dataset'):
             attributes_and_values = var.attributes.items()
             infiles = []
             for child in var.getElementsByTagName('InputFile'):
@@ -61,6 +64,26 @@ class XMLInfo:
             this_dataset = InputDataset(attributes_and_values, infiles)
             datasets.append(this_dataset)
         return datasets
+
+    def read_additional_inputs(self):
+        additional_inputs = []
+        if len(self.rootnode.getElementsByTagName('AdditionalInputs')) == 0:
+            return additional_inputs
+        for addinputnode in self.rootnode.getElementsByTagName('AdditionalInputs')[0].getElementsByTagName('AdditionalInput'):
+            datasets = self.read_datasets(parentnode=addinputnode)
+            collections = []
+            for coll in addinputnode.getElementsByTagName('Collection'):
+                collections.append(GroupedSettings(coll.attributes.items()))
+
+            this_addinput = AdditionalInput(datasets=datasets, collections=collections)
+            additional_inputs.append(this_addinput)
+            # print 'this additional input has datasets: '
+            # for ds in this_addinput.datasets:
+            #     for infi in ds.infiles: print '  %s' % (infi)
+            # print 'and collections: '
+            # for coll in this_addinput.collections: print '  branch %s of class %s' % (coll.BranchName, coll.ClassName)
+        return additional_inputs
+
 
 
 
@@ -87,6 +110,36 @@ class XMLInfo:
                 tempinfile = doc.createElement('InputFile')
                 tempdataset.appendChild(tempinfile)
                 tempinfile.setAttribute('FileName', infile)
+
+    def write_additional_inputs(self, doc, rootnode):
+        if len(self.additionalinputs) == 0:
+            return
+        addinputs = doc.createElement('AdditionalInputs')
+        rootnode.appendChild(addinputs)
+        for addinput in self.additionalinputs:
+            necessary_additional_datasets = [ds for ds in addinput.datasets if ds.settings.Name in [dstowrite.settings.Name for dstowrite in self.datasets_to_write]]
+            if not len(necessary_additional_datasets) == len(self.datasets_to_write):
+                if len(necessary_additional_datasets) == 0:
+                    continue
+                else:
+                    raise ValueError(red('Datasets in AdditionalInput are not equally many as the datasets_to_write for this job. Please check.'))
+
+            tempaddinput = doc.createElement('AdditionalInput')
+            addinputs.appendChild(tempaddinput)
+            for dataset in necessary_additional_datasets:
+                tempdataset = doc.createElement('Dataset')
+                tempaddinput.appendChild(tempdataset)
+                for attr in dataset.settings.__dict__:
+                    tempdataset.setAttribute(attr, dataset.settings.__dict__[attr])
+                for infile in dataset.infiles:
+                    tempinfile = doc.createElement('InputFile')
+                    tempdataset.appendChild(tempinfile)
+                    tempinfile.setAttribute('FileName', infile)
+            for collection in [c for c in addinput.collections]:
+                tempcollection = doc.createElement('Collection')
+                tempaddinput.appendChild(tempcollection)
+                for attr in collection.__dict__:
+                    tempcollection.setAttribute(attr, collection.__dict__[attr])
 
     def write_additionalvars(self, doc, rootnode):
         tempsettings = doc.createElement('AdditionalVariables')
@@ -117,6 +170,12 @@ class InputDataset:
     def __init__(self, attributes_and_values, infiles):
         self.settings = GroupedSettings(attributes_and_values)
         self.infiles  = infiles
+
+
+class AdditionalInput:
+    def __init__(self, datasets, collections):
+        self.datasets = datasets
+        self.collections  = collections
 
 
 
