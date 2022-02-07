@@ -37,6 +37,20 @@
     <Dataset Name="TestData_Sample1"        Lumi="1"         Year="2017"  Type="DATA"  Group="TestData" >           &TestData_Sample1;         </Dataset>
   </InputDatasets>
 
+  <AdditionalInput>
+    <!--
+    Here, additional collections can be specified. Use this format:
+
+    <AdditionalInput>
+      <Dataset Name="TestDataset"              Lumi="1"  Year="2017" Type="MC" Group="None" >                 &TestDataset_pfonly;                </Dataset>
+      <Collection ClassName="PFCandidate" BranchName="pfcands"/>
+    </AdditionalInput>
+
+    It is possible to define as many <AdditionalInput> fields as desired, one for each new set of files to be read in. Inside each <AdditionalInput>, multiple <Collection> can be defined - one per branch that should be taken from this additional input dataset.
+
+    -->
+  </AdditionalInput>
+
   <AdditionalVariables>
     <Variable Name="test" Value="testvalue"/>
   </AdditionalVariables>
