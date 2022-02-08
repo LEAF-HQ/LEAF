@@ -174,7 +174,6 @@ void Config::process_datasets(){
       additional_input ai = m_additionalinputs.at(i);
       for(TString infilename_add: ai.ds.infilenames){
         m_additional_event_chains.at(i)->Add(infilename_add);
-        cout << "infilename_add: " << infilename_add << endl;
       }
       m_additional_event_chains.at(i)->BuildIndex("lumiblock", "number");
     }

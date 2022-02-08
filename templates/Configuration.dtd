@@ -37,7 +37,7 @@
 >
 
 <!ELEMENT AdditionalInputs (AdditionalInput*)>
-<!ELEMENT AdditionalInput (Dataset,Collection+)>
+<!ELEMENT AdditionalInput (Dataset+,Collection+)>
 
 
 

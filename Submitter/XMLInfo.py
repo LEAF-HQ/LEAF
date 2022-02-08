@@ -40,7 +40,6 @@ class XMLInfo:
 
     def read_configuration_settings(self):
         attributes_and_values = self.rootnode.attributes.items()
-        print attributes_and_values
         return GroupedSettings(attributes_and_values)
 
     def read_submission_settings(self):
