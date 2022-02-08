@@ -81,12 +81,23 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
   // Initialize additional events to read additional inputs. The addresses of the corresponding additional collections will be set to the address of the main event in order to merge them.
   std::vector<E*> additional_events = {};
-  for(size_t i=0; i<cfg.additional_inputs().size(); i++){
+  for(size_t i=0; i<cfg.m_additional_event_chains.size(); i++){
     E* add_event = new E();
     additional_events.emplace_back(add_event);
   }
-  for(size_t i=0; i<cfg.additional_inputs().size(); i++){
+  for(size_t i=0; i<cfg.m_additional_event_chains.size(); i++){
     cfg.m_additional_event_chains.at(i)->SetBranchAddress("Events", &additional_events.at(i));
+  }
+
+  // for each additional information, check if a matching dataset exists. Store this info to use later when loading the branches
+  vector<bool> used_ais = {};
+  for(size_t i=0; i<cfg.additional_inputs().size(); i++){
+    bool used_ai = false;
+    for(size_t j=0; j<cfg.additional_inputs().at(i).datasets.size(); j++){
+      dataset ds = cfg.additional_inputs().at(i).datasets.at(j);
+      if(ds.name == cfg.dataset_name() && ds.year == cfg.dataset_year()) used_ai = true;
+    }
+    used_ais.emplace_back(used_ai);
   }
 
 
@@ -119,15 +130,19 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
     // read the data for i-th event, nominal and for all additional inputs
     cfg.event_chain->GetEntry(i);
-    for(size_t j=0; j<cfg.additional_inputs().size(); j++){
+    for(size_t j=0; j<cfg.m_additional_event_chains.size(); j++){
       load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j), event);
     }
 
     // set addresses for external collections
+    size_t idx_addeventchain = 0;
     for(size_t j=0; j<cfg.additional_inputs().size(); j++){
+      if(!used_ais[j]) continue;
+
       for(size_t k=0; k<cfg.additional_inputs().at(j).collections.size(); k++){
-        load_additional_collection(event, additional_events.at(j), cfg.additional_inputs().at(j).collections.at(k));
+        load_additional_collection(event, additional_events.at(idx_addeventchain), cfg.additional_inputs().at(j).collections.at(k));
       }
+      idx_addeventchain++;
     }
 
     // call Process() for each event, main part of this function!

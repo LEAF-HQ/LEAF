@@ -89,53 +89,76 @@ Config::Config(TString configfilename){
 
         // here we are looking at one <AdditionalInput> at a time
         additional_input ai;
+        vector<pair<TString, TString>> existing_datasets = {};
 
-        // read in the dataset and check if a corresponding nominal dataset was defined in the xml file. Otherwise, this is ill-defined
-        xmlNode *dataset_node = findNodeByName(current_node, "Dataset");
-        dataset ds;
-        ds.name     = getDatasetName(dataset_node);
-        ds.type     = getDatasetType(dataset_node);
-        ds.year     = getDatasetYear(dataset_node);
-        ds.lumi     = getDatasetLumi(dataset_node);
 
-        bool is_defined_nominal_dataset = false;
-        for(dataset nomds : m_datasets){
-          if(nomds.name == ds.name) is_defined_nominal_dataset = true;
-        }
-        string errormsg = "Additional dataset with name " + (string)ds.name + " does not have a corresponding nominal dataset defined.";
-        if(!is_defined_nominal_dataset) throw runtime_error(errormsg);
 
-        // loop over infiles of this dataset
-        for (xmlNode* current_inputfile = dataset_node->children; current_inputfile; current_inputfile = current_inputfile->next){
-          if(current_inputfile->type == XML_ELEMENT_NODE){
-            ds.infilenames.emplace_back(getInputFileFileName(current_inputfile));
-          }
-        }
-        ai.ds = ds;
 
         // read in the collections that the above dataset should be used for
-        for (xmlNode* collection_node = current_node->children; collection_node; collection_node = collection_node->next){
-          if(collection_node->type == XML_ELEMENT_NODE){
-            if(!xmlStrEqual(collection_node->name, (xmlChar*)"Collection")) continue;
+        for (xmlNode* ai_subnode = current_node->children; ai_subnode; ai_subnode = ai_subnode->next){
+          if(ai_subnode->type == XML_ELEMENT_NODE){
 
-            collection coll;
-            coll.classname = getCollectionClassname(collection_node);
-            coll.branchname = getCollectionBranchname(collection_node);
-            TString message = "In Config: Additional collection with name ";
-            message += coll.branchname;
-            message += " already used.";
-            for(TString bn : existing_collections){
-              if(bn == coll.branchname){
-                throw runtime_error((string)message);
+
+            if(xmlStrEqual(ai_subnode->name, (xmlChar*)"AdditionalDataset")){
+
+              // read in the dataset and check if a corresponding nominal dataset was defined in the xml file. Otherwise, this is ill-defined
+              // xmlNode *dataset_node = findNodeByName(current_node, "AdditionalDataset");
+              dataset ds;
+              ds.name     = getDatasetName(ai_subnode);
+              ds.year     = getDatasetYear(ai_subnode);
+
+              // check if this dataset has a corresponding nominal dataset. Throw error if not
+              bool is_defined_nominal_dataset = false;
+              for(dataset nomds : m_datasets){
+                if(nomds.name == ds.name && nomds.year == ds.year) is_defined_nominal_dataset = true;
               }
-            }
-            ai.collections.emplace_back(coll);
-            existing_collections.emplace_back(coll.branchname);
+              string errormsg = "Additional dataset with name " + (string)ds.name + " and year " + (string)ds.year + " does not have a corresponding nominal dataset defined. Both the name and the year must be the same between nominal and additional samples.";
+              if(!is_defined_nominal_dataset) throw runtime_error(errormsg);
 
+              // check if this dataset exists already. Throw error if yes
+              TString message = "In Config: In at least one <AdditionalInput>, an additional dataset with name ";
+              message += ds.name;
+              message += " and year ";
+              message += ds.year;
+              message += " already used.";
+              for(pair<TString,TString> name_year_pair: existing_datasets ){
+                if(ds.name == name_year_pair.first && ds.year == name_year_pair.second){
+                  throw runtime_error(message);
+                }
+              }
+
+              // loop over infiles of this dataset
+              for (xmlNode* current_inputfile = ai_subnode->children; current_inputfile; current_inputfile = current_inputfile->next){
+                if(current_inputfile->type == XML_ELEMENT_NODE){
+                  ds.infilenames.emplace_back(getInputFileFileName(current_inputfile));
+                }
+              }
+
+              // add dataset to list of datasets of this additional input
+              ai.datasets.emplace_back(ds);
+              existing_datasets.emplace_back(make_pair(ds.name, ds.year));
+
+            }
+            else if(xmlStrEqual(ai_subnode->name, (xmlChar*)"Collection")){
+
+              collection coll;
+              coll.classname = getCollectionClassname(ai_subnode);
+              coll.branchname = getCollectionBranchname(ai_subnode);
+              TString message = "In Config: Additional collection with name ";
+              message += coll.branchname;
+              message += " already used.";
+              for(TString bn : existing_collections){
+                if(bn == coll.branchname){
+                  throw runtime_error((string)message);
+                }
+              }
+              ai.collections.emplace_back(coll);
+              existing_collections.emplace_back(coll.branchname);
+            }
           }
         }
 
-        cout << green << "--> Requesting " << ai.collections.size() << " additional collections from this additional input, using a total of " << ai.ds.infilenames.size() << " additional input files:" << reset << endl;
+        cout << green << "--> Requesting " << ai.collections.size() << " additional collections from this additional input" << reset << endl;
         for(collection c: ai.collections){
           cout << green << "  --> Adding collection " << c.branchname << ", which contains objects of class " << c.classname << "." << reset << endl;
         }
@@ -159,10 +182,15 @@ void Config::process_datasets(){
 
     // Chain all samples of the same dataset into a TChain, for the nominal sample and the additional inputs (if any)
     event_chain.reset(new TChain("AnalysisTree"));
+    m_additional_event_chains.clear();
     for(additional_input ai : m_additionalinputs){
-      shared_ptr<TChain> ch;
-      ch.reset(new TChain("AnalysisTree"));
-      m_additional_event_chains.emplace_back(ch);
+      for(dataset ds : ai.datasets){
+        if(ds.name == dataset_name() && ds.year == dataset_year()){
+          shared_ptr<TChain> ch;
+          ch.reset(new TChain("AnalysisTree"));
+          m_additional_event_chains.emplace_back(ch);
+        }
+      }
     }
     cout << green << "--> Loading " << dataset_infilenames().size() << " input files for sample " << dataset_name() << "." << reset << endl;
     for(size_t i=0; i<dataset_infilenames().size(); i++){
@@ -170,17 +198,25 @@ void Config::process_datasets(){
       event_chain->Add(infilename_nominal);
     }
 
-    for(size_t i=0; i<m_additionalinputs.size(); i++){
-      additional_input ai = m_additionalinputs.at(i);
-      for(TString infilename_add: ai.ds.infilenames){
-        m_additional_event_chains.at(i)->Add(infilename_add);
-      }
-      m_additional_event_chains.at(i)->BuildIndex("lumiblock", "number");
-    }
-
-
     nevt = event_chain->GetEntries();
     cout << green << "--> Loaded " << dataset_infilenames().size() << " files containing " << nevt << " events." << reset << endl;
+
+    size_t idx_addeventchain = 0;
+    for(size_t i=0; i<m_additionalinputs.size(); i++){
+      additional_input ai = m_additionalinputs.at(i);
+      for(dataset ds : ai.datasets){
+        if(ds.name == dataset_name() && ds.year == dataset_year()){
+          for(TString infilename_add: ds.infilenames){
+            m_additional_event_chains.at(idx_addeventchain)->Add(infilename_add);
+          }
+          m_additional_event_chains.at(idx_addeventchain)->BuildIndex("lumiblock", "number");
+          idx_addeventchain++;
+        }
+      }
+    }
+    cout << green << "--> Loaded " << m_additional_event_chains.size() << " additional event chains." << reset << endl;
+
+
 
 
     // make sure outdir exists

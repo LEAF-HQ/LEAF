@@ -53,9 +53,9 @@ class XMLInfo:
             attributes_and_values.append(tup)
         return GroupedSettings(attributes_and_values)
 
-    def read_datasets(self, parentnode):
+    def read_datasets(self, parentnode, datasetnodename='Dataset'):
         datasets = []
-        for var in parentnode.getElementsByTagName('Dataset'):
+        for var in parentnode.getElementsByTagName(datasetnodename):
             attributes_and_values = var.attributes.items()
             infiles = []
             for child in var.getElementsByTagName('InputFile'):
@@ -69,7 +69,7 @@ class XMLInfo:
         if len(self.rootnode.getElementsByTagName('AdditionalInputs')) == 0:
             return additional_inputs
         for addinputnode in self.rootnode.getElementsByTagName('AdditionalInputs')[0].getElementsByTagName('AdditionalInput'):
-            datasets = self.read_datasets(parentnode=addinputnode)
+            datasets = self.read_datasets(parentnode=addinputnode, datasetnodename='AdditionalDataset')
             collections = []
             for coll in addinputnode.getElementsByTagName('Collection'):
                 collections.append(GroupedSettings(coll.attributes.items()))
@@ -111,17 +111,22 @@ class XMLInfo:
         addinputs = doc.createElement('AdditionalInputs')
         rootnode.appendChild(addinputs)
         for addinput in self.additionalinputs:
+
+            # make sure to take only additional inputs with the same name as the main input
             necessary_additional_datasets = [ds for ds in addinput.datasets if ds.settings.Name in [dstowrite.settings.Name for dstowrite in self.datasets_to_write]]
-            if not len(necessary_additional_datasets) == len(self.datasets_to_write):
-                if len(necessary_additional_datasets) == 0:
+
+            # also make sure that the year is the same between all (main, additional) datasets with the same name
+            necessary_additional_datasets_same_year = [ads for ads in necessary_additional_datasets if ads.settings.Year in [ds.settings.Year for ds in self.datasets_to_write if ads.settings.Name == ds.settings.Name]]
+            if not len(necessary_additional_datasets_same_year) == len(self.datasets_to_write):
+                if len(necessary_additional_datasets_same_year) == 0:
                     continue
                 else:
-                    raise ValueError(red('Datasets in AdditionalInput are not equally many as the datasets_to_write for this job. Please check.'))
+                    raise ValueError('Datasets in AdditionalInput are not equally many as the datasets_to_write for this job. Please check.')
 
             tempaddinput = doc.createElement('AdditionalInput')
             addinputs.appendChild(tempaddinput)
-            for dataset in necessary_additional_datasets:
-                tempdataset = doc.createElement('Dataset')
+            for dataset in necessary_additional_datasets_same_year:
+                tempdataset = doc.createElement('AdditionalDataset')
                 tempaddinput.appendChild(tempdataset)
                 for attr in dataset.settings.__dict__:
                     tempdataset.setAttribute(attr, dataset.settings.__dict__[attr])

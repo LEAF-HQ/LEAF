@@ -37,9 +37,13 @@
 >
 
 <!ELEMENT AdditionalInputs (AdditionalInput*)>
-<!ELEMENT AdditionalInput (Dataset+,Collection+)>
+<!ELEMENT AdditionalInput (AdditionalDataset+,Collection+)>
 
-
+<!ELEMENT AdditionalDataset (InputFile+)>
+<!ATTLIST AdditionalDataset
+    Name        CDATA       #REQUIRED
+    Year        CDATA       #REQUIRED
+>
 
 <!ELEMENT Collection EMPTY>
 <!ATTLIST Collection

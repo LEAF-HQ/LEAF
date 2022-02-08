@@ -25,7 +25,7 @@ struct collection{
 };
 
 struct additional_input{
-  dataset ds;
+  std::vector<dataset> datasets;
   std::vector<collection> collections = {};
 };
 
@@ -81,6 +81,7 @@ private:
   int m_nevt_max, m_nevt_skip;
   std::unordered_map<std::string, std::string> m_additionalvariables;
   std::vector<additional_input> m_additionalinputs = {};
+  // std::map<std::string, > m_has
   std::vector<dataset> m_datasets = {};
   // std::vector<collection> m_collections = {};
   // std::map<TString, std::vector<collection>> m_collections_per_filetag;
