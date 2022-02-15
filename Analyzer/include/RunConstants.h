@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <unordered_map>
 
 
 
@@ -55,14 +54,7 @@ const std::map<std::string, std::map<std::string, float > > Year2Run2Lumi = {
   }},
 };
 
-const std::map<std::string, std::map<std::string, int > > Year2Runnumber = {
-  {"UL16preVFP",  {{"min", 272007}, {"max", 278801}}},
-  {"UL16postVFP", {{"min", 278802}, {"max", 284044}}},
-  {"UL17",        {{"min", 297046}, {"max", 306462}}},
-  {"UL18",        {{"min", 315252}, {"max", 325175}}},
-};
-
-const std::map<std::string, std::map<std::string, std::map<std::string, int > > > Year2Run2Runnumber = {
+const std::map<std::string, std::map<std::string, std::map<std::string, unsigned int > > > Year2Run2Runnumber = {
   {"UL16preVFP",  {
     {"B",  {{"min", 272007}, {"max", 275376}}},
     {"C",  {{"min", 275657}, {"max", 276283}}},
@@ -90,23 +82,59 @@ const std::map<std::string, std::map<std::string, std::map<std::string, int > > 
   }},
 };
 
+// const std::map<std::string, std::map<std::string, int > > Year2Runnumber = {
+//   {"UL16preVFP",  {{"min", 272007}, {"max", 278801}}},
+//   {"UL16postVFP", {{"min", 278802}, {"max", 284044}}},
+//   {"UL17",        {{"min", 297046}, {"max", 306462}}},
+//   {"UL18",        {{"min", 315252}, {"max", 325175}}},
+// };
 
-const std::unordered_map<std::string, std::unordered_map<std::string, std::string> > JERC_Info = {
+
+
+const std::map<std::string, std::map<std::string, std::string> > JERC_Info = {
   {"UL16preVFP", {
-    {"JEC_Version", "Summer19UL17_V5"},
-    {"JER_Version", "Summer19UL17_JRV2"},
+    {"JEC_Version", "Summer19UL16APV_V7"},
+    {"JER_Version", "Summer20UL16APV_JRV3"},
   }},
   {"UL16postVFP", {
-    {"JEC_Version", "Summer19UL17_V5"},
-    {"JER_Version", "Summer19UL17_JRV2"},
+    {"JEC_Version", "Summer19UL16_V7"},
+    {"JER_Version", "Summer20UL16_JRV3"},
   }},
   {"UL17", {
     {"JEC_Version", "Summer19UL17_V5"},
     {"JER_Version", "Summer19UL17_JRV2"},
   }},
   {"UL18", {
-    {"JEC_Version", "Summer19UL17_V5"},
-    {"JER_Version", "Summer19UL17_JRV2"},
+    {"JEC_Version", "Summer19UL18_V5"},
+    {"JER_Version", "Summer19UL18_JRV2"},
   }},
 
+};
+
+const std::map<std::string, std::map<std::string, std::string> > Run2JECName = {
+  {"Summer19UL16APV", {
+    {"B", "BCD"},
+    {"C", "BCD"},
+    {"D", "BCD"},
+    {"E", "EF"},
+    {"F", "EF"}
+  }},
+  {"Summer19UL16", {
+    {"F", "GH"},
+    {"G", "GH"},
+    {"H", "GH"}
+  }},
+  {"Summer19UL17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
+  {"Summer19UL18", {
+    {"A", "A"},
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"}
+  }},
 };

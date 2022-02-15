@@ -1,4 +1,3 @@
-#include "LEAF/Analyzer/include/constants.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
 #include <TH1D.h>
 #include <TFile.h>
@@ -195,7 +194,7 @@ const TString JECPathString(const string& version, const string& jetCollection, 
     TString temp = version;
     TString tok; int from = 0;
     temp.Tokenize(tok, from, "_");
-    string newRunName = jecRunMap.at(tok.Data()).at(runName_);
+    string newRunName = Run2JECName.at(tok.Data()).at(runName_);
 
     //in 2018 and UL, they use "_RunX" instead of just "X"
     if (version.find("18") != string::npos ||  version.find("UL") != string::npos){
