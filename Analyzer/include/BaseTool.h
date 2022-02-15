@@ -130,26 +130,36 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
     // read the data for i-th event, nominal and for all additional inputs
     cfg.event_chain->GetEntry(i);
+
+    // load additional branches, skip event loop if one of them cannot be found
+    bool is_additional_input_complete = true;
     for(size_t j=0; j<cfg.m_additional_event_chains.size(); j++){
-      load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j), event);
+      int returncode = load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j), event);
+      if(returncode < 0) is_additional_input_complete = false;
     }
 
-    // set addresses for external collections
-    size_t idx_addeventchain = 0;
-    for(size_t j=0; j<cfg.additional_inputs().size(); j++){
-      if(!used_ais[j]) continue;
+    if(is_additional_input_complete){
 
-      for(size_t k=0; k<cfg.additional_inputs().at(j).collections.size(); k++){
-        load_additional_collection(event, additional_events.at(idx_addeventchain), cfg.additional_inputs().at(j).collections.at(k));
+      // set addresses for external collections
+      size_t idx_addeventchain = 0;
+      for(size_t j=0; j<cfg.additional_inputs().size(); j++){
+        if(!used_ais[j]) continue;
+
+        for(size_t k=0; k<cfg.additional_inputs().at(j).collections.size(); k++){
+          load_additional_collection(event, additional_events.at(idx_addeventchain), cfg.additional_inputs().at(j).collections.at(k));
+        }
+        idx_addeventchain++;
       }
-      idx_addeventchain++;
+
+      // call Process() for each event, main part of this function!
+      bool keep_event = tool.Process();
+      // cout << "keep event? " << keep_event << endl;
+
+      if(keep_event) cfg.outputtree->Fill();
     }
-
-    // call Process() for each event, main part of this function!
-    bool keep_event = tool.Process();
-    // cout << "keep event? " << keep_event << endl;
-
-    if(keep_event) cfg.outputtree->Fill();
+    else{
+      throw runtime_error("When loading additional inputs to nominal event, a mismatch between lumiblock:eventnumber occurred in the nominal event and at least one of the additional ones. If this affects only a few events, this error should become a warning in the future, but for the moment it is probably better to be made aware of this event by crashing the program.");
+    }
 
     event->reset();
     for(size_t j=0; j<additional_events.size(); j++){
@@ -187,15 +197,15 @@ template <>
 void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additional_event, collection c);
 
 template<typename E>
-void load_entry_lumiblock_number(shared_ptr<TChain> chain, E* main_event){
-  chain->GetEntryWithIndex(main_event->lumiblock, main_event->number);
+int load_entry_lumiblock_number(shared_ptr<TChain> chain, E* main_event){
+  return chain->GetEntryWithIndex(main_event->lumiblock, main_event->number);
 }
 
 // specializations to stop compiler from complaining
 template<>
-void load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event);
+int load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event);
 template<>
-void load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event);
+int load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event);
 
 
 typedef Registry<BaseTool, Config> ToolRegistry;

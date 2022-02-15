@@ -50,7 +50,7 @@ class YearDependentContainer():
 
 
 class Sample:
-    def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents_das=YearDependentContainer(), nevents_generated=YearDependentContainer(), nevents_weighted=YearDependentContainer()):
+    def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents_das=YearDependentContainer(), nevents_generated=YearDependentContainer(), nevents_weighted=YearDependentContainer(), contents=YearDependentContainer()):
         self.type = type
         self.name = name
         self.group = group
@@ -62,6 +62,7 @@ class Sample:
         self.nevents_das = nevents_das
         self.nevents_generated = nevents_generated
         self.nevents_weighted = nevents_weighted
+        self.contents = contents
         # self.__dict = OrderedDict()
         # self.__dict['name'] = self.name
         # self.__dict['type'] = self.type
@@ -74,6 +75,7 @@ class Sample:
         # self.__dict['nanopath'] = self.nanopaths
         # self.__dict['tuplepath'] = self.tuplepaths
         # self.__dict['xmlfile'] = self.xmlfiles
+        # self.__dict['content'] = self.contents
 
 
     def __str__(self):
@@ -125,16 +127,17 @@ class Sample:
 
 
 
-    def get_missing_tuples(self, sampleinfofolder, stage, year, tuplebasename, ntuples_expected, update_missing=True):
+    def get_missing_tuples(self, sampleinfofolder, stage, year, tuplebasename, ntuples_expected, update_missing=True, nevents_expected_per_ntuple={}):
         self.VerifyStage(stage)
 
         stagetag = stage.upper()+'AOD'
-        outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
+        # outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
+        outfoldername = self.tuplepaths[year].get_path(use_root_director=True)
         filename_base = os.path.join(outfoldername, '%s_%s' % (tuplebasename, stagetag))
 
         # first try to read it from the json, it's a list despite the function name
         filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-
+        # print 'HERE: ', filelist_json, bool(filelist_json), bool({'hallo': 'ciao'})
         if filelist_json:
             if not update_missing:
                 return filelist_json
@@ -148,11 +151,20 @@ class Sample:
                     # find missing entries
                     missingfilelist = list(filter(lambda x: x not in files_and_events ,expected_filelist))
                     # find entries with 0 events
-                    empty_files = dict(filter(lambda elem: elem[1] != 0,files_and_events.items())).keys()
-                    missingfilelist = list(set(missingfilelist + empty_files))
+                    empty_files = dict(filter(lambda elem: elem[1] == 0,files_and_events.items())).keys()
+                    # if given, check if counted number == expected number
+                    # incomplete_files = dict(filter(lambda elem: elem[1] != nevents))
+                    incomplete_files = []
+                    for fullname in files_and_events:
+                        if fullname in nevents_expected_per_ntuple:
+                            if nevents_expected_per_ntuple[fullname] != files_and_events[fullname]:
+                                incomplete_files.append(fullname)
+                        elif nevents_expected_per_ntuple:
+                            raise ValueError('Found file in target folder that was not even in list of expected files. Strange...')
+                    missingfilelist = list(set(missingfilelist + empty_files + incomplete_files))
         else:
             # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
-            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected)
+            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
             missingfilelist = [filename_base+'_'+str(i+1)+'.root' for i in missing_indices]
 
         #convert to indices

@@ -36,12 +36,14 @@ void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additi
 }
 
 template<>
-void load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event){
+int load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event){
   std::string errormsg = "Using the base class 'Event' when trying to load entry of additional collections. This event class has only one member, which is a weight. Please instead use a derived event class like 'RecoEvent'";
   throw std::runtime_error(errormsg);
+  return -1;
 }
 template<>
-void load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event){
+int load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event){
   std::string errormsg = "Using the base class 'GenEvent' when trying to load entry of additional collections. Please instead use an event class like 'RecoEvent' that has support for additional collections";
   throw std::runtime_error(errormsg);
+  return -1;
 }

@@ -1,5 +1,6 @@
 #include <TString.h>
 #include <TFile.h>
+#include <TTreeIndex.h>
 #include <iostream>
 #include <sys/stat.h>
 
@@ -193,23 +194,49 @@ void Config::process_datasets(){
       }
     }
     cout << green << "--> Loading " << dataset_infilenames().size() << " input files for sample " << dataset_name() << "." << reset << endl;
+    vector<TString> infilenames_lastparts = {};
     for(size_t i=0; i<dataset_infilenames().size(); i++){
       TString infilename_nominal = dataset_infilenames().at(i);
       event_chain->Add(infilename_nominal);
+      TString tok;
+      int from = 0;
+      bool found_dotroot = false;
+      while (infilename_nominal.Tokenize(tok, from, "/")) {
+        if(found_dotroot){
+          // this should never happen, because ".root" is always the last part of the filename, after the last "/".
+          throw runtime_error("It seems like one of the additional input filenames has multiple occurrences of '.root'. This is currently not handeled properly and should be implemented. Please open a feature request on GitHub.");
+        }
+        if(tok.Contains(".root")){
+          infilenames_lastparts.emplace_back(tok);
+          found_dotroot = true;
+        }
+      }
     }
 
     nevt = event_chain->GetEntries();
     cout << green << "--> Loaded " << dataset_infilenames().size() << " files containing " << nevt << " events." << reset << endl;
 
+    // load additional datasets, but only the rootfiles with the same number in the end (NTuple_22.root, for example)
     size_t idx_addeventchain = 0;
+    vector<shared_ptr<TTreeIndex>> chain_indices = {};
     for(size_t i=0; i<m_additionalinputs.size(); i++){
       additional_input ai = m_additionalinputs.at(i);
       for(dataset ds : ai.datasets){
         if(ds.name == dataset_name() && ds.year == dataset_year()){
           for(TString infilename_add: ds.infilenames){
+            bool use_this_infile = false;
+            for(TString infilenames_lastpart: infilenames_lastparts){
+              if(infilename_add.Contains(infilenames_lastpart)){
+                use_this_infile = true;
+              }
+            }
+            if(!use_this_infile) continue;
             m_additional_event_chains.at(idx_addeventchain)->Add(infilename_add);
           }
-          m_additional_event_chains.at(idx_addeventchain)->BuildIndex("lumiblock", "number");
+          shared_ptr<TTreeIndex> index;
+          index.reset(new TTreeIndex(m_additional_event_chains.at(idx_addeventchain).get(), "lumiblock", "number"));
+          m_additional_event_chains.at(idx_addeventchain)->SetTreeIndex(index.get());
+          chain_indices.emplace_back(index);
           idx_addeventchain++;
         }
       }
@@ -234,7 +261,7 @@ void Config::process_datasets(){
     TString outfilename_tmp = outfilename_target;
 
     // this is PSI T3 specific, change in other environments!
-    if(se_director() == "root://t3dcachedb03.psi.ch/") {
+    if(se_director() == "root://t3dcachedb03.psi.ch/" || se_director() == "root://storage01.lcg.cscs.ch/") {
       string tmpworkdirname = "/scratch/" + (string)getenv("USER") + "/tmp_workdir";
       string command = "mkdir -p " + (string)tmpworkdirname;
       system(command.c_str());
