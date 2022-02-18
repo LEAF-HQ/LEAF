@@ -8,18 +8,16 @@ from Samples.Data_MiniAODv2 import *
 from Samples.Backgrounds_MiniAODv2 import *
 from Samples.Signals_MiniAODv2 import *
 
-
-username = os.environ['USER']
+# make a new workarea for each eventcontent present in the NTuples, for example "Workarea_standard" for "standard" saved in NTuples, another one "Workarea_pfcands" for ntuplizing samples with the content "pfcands" stored. Each sample will have the same name, just a different 'contents' and xml file name
 workarea = os.path.join(os.environ['TUPLIZERPATH'], 'Workarea_standard')
 path_to_cmssws = os.path.join(os.environ['CMSSW_BASE'], '..')
+username = os.environ['USER']
 
 AllSamples = SampleContainer()
 Add_Data(AllSamples)
 Add_Background(AllSamples)
 Add_Signals_LQ(AllSamples)
 
-StandardEvents = SampleContainer()
-Add_DiBoson(StandardEvents)
 
 
 config_per_year = {
@@ -45,11 +43,9 @@ nevt_per_job = 100000
 
 
 def main():
-    # for samplename, sample in AllSamples.items():
-    for samplename, sample in StandardEvents.items():
-        if not 'WW_2L2Nu' in samplename: continue
+    for samplename, sample in AllSamples.items():
         print green('--> Working on sample: \'%s\'' % (samplename))
-        Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, path_to_cmssws=path_to_cmssws, submit=submit)
+        Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, submit=submit)
         # Tuplizer.CountEvents(check_missing=True)
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='new')
         # Tuplizer.CleanBrokenFiles(nevt_per_job=nevt_per_job)

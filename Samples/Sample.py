@@ -51,6 +51,14 @@ class YearDependentContainer():
 
 class Sample:
     def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents_das=YearDependentContainer(), nevents_generated=YearDependentContainer(), nevents_weighted=YearDependentContainer(), contents=YearDependentContainer()):
+        # contents should be a list of names of the branch(es) of "RecoEvent" that is supposed to be stored here, or "standard".
+        # Ex. contents = ['standard']
+        # or
+        # contents = ['pfcands']
+        # or
+        # contents = ['standard', 'pfcands'] if both a standard and an additional collection "pfcands" is stored (which really should not happen)
+        # or
+        # contents = ['pfcands', 'triggerobjects']
         self.type = type
         self.name = name
         self.group = group
@@ -137,7 +145,6 @@ class Sample:
 
         # first try to read it from the json, it's a list despite the function name
         filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-        # print 'HERE: ', filelist_json, bool(filelist_json), bool({'hallo': 'ciao'})
         if filelist_json:
             if not update_missing:
                 return filelist_json

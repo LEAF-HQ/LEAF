@@ -14,7 +14,7 @@ from Submitter.UserSpecificSettings import UserSpecificSettings
 
 
 class TuplizeRunner:
-    def __init__(self, stage, year, sample, config, workarea, path_to_cmssws, submit=False):
+    def __init__(self, stage, year, sample, config, workarea, submit=False):
         self.sample = sample
         self.submit = submit
         self.stage  = stage
@@ -22,7 +22,6 @@ class TuplizeRunner:
         self.config = config
         self.workarea = workarea
         ensureDirectory(self.workarea)
-        self.path_to_cmssws = path_to_cmssws
         user_settings = UserSpecificSettings(os.getenv('USER'))
         user_settings.LoadJSON()
         self.cluster = user_settings.Get('cluster')
@@ -57,7 +56,9 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s standard=%s pfcands=%s triggerobjects=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year, str('standard' in self.sample.contents[self.year]), str('pfcands' in self.sample.contents[self.year]), str('triggerobjects' in self.sample.contents[self.year]))
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
+                for obj in ['standard','pfcand', 'triggerobjects']:
+                    command += obj+'='+str(obj in self.sample.contents[self.year])
                 commands.append(command)
                 njobs += 1
 
@@ -95,7 +96,7 @@ class TuplizeRunner:
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
 
-                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), self.config['arch_tag'], os.path.join(self.path_to_cmssws, self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername, commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername, commandfilename, idx_offset)
                 if njobs > 0:
                     if self.submit:
                         jobid = int(subprocess.check_output(command, shell=True))
@@ -127,13 +128,11 @@ class TuplizeRunner:
             jobid = int(CB.JobInfo['ClusterId'])
             print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
 
-    # def CleanBrokenFiles(self, nevt_per_job=200000, only_check_missing=True):
     def CleanBrokenFiles(self, nevt_per_job=200000):
 
         outfoldername = self.sample.tuplepaths[self.year].get_path(use_root_director=True)
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
-        # print filedict
         if not filedict:
             raise ValueError('Got invalid filedict when trying to delete broken tuples.')
 
@@ -145,12 +144,11 @@ class TuplizeRunner:
             nevt_thisfile = filedict[filename]
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
+                # get the number of events expected in each ntuple file, later we will compare against this number to make sure we completely finished ntuplizing this file
                 nevents_expected_per_ntuple[os.path.join(outfoldername, 'NTuples_%s_%i.root' % (stagetag, njobs+1))] = min(nevt_thisfile, (n+1)*nevt_per_job) - n*nevt_per_job
                 njobs += 1
-            # njobs += njobs_thisfile
 
 
-        # missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=only_check_missing)
         missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=True, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
 
         missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
@@ -197,7 +195,6 @@ class TuplizeRunner:
 
             for mode, nevents in nevents_new.items():
                 if nevents_stored[mode] is not None and nevents is not None:
-                    print mode, nevents_stored[mode], nevents
                     rel_diff = abs(1 - nevents_stored[mode] / nevents)
                     if rel_diff < 0.01:
                         print green('  --> Sample \'%s\' in year %s already has correct number of %s events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, mode, str(nevents)))
