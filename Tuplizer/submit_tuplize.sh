@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 #SBATCH --account=t3
-#SBATCH --chdir /work/areimers/workdir_slurm
 #SBATCH -e %x-%A-%a.err
 #SBATCH -o %x-%A-%a.out  # replace default slurm-SLURM_JOB_ID.out
 #SBATCH --mail-type FAIL

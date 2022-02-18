@@ -97,12 +97,12 @@ JECCorrector::JECCorrector(const Config& cfg, const TString & year_, const TStri
   else if(dir == "down")    direction = -1;
   else throw std::runtime_error("JECCorrector::JECCorrector -- invalid value in config: JECDirection='"+dir+"' (valid: 'nominal', 'up', 'down')");
 
-  for (const TString run: yearRunMap.at((string)year)) {
-    correctors[run] = build_corrector(JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection));
-    jec_uncertainties[run] = corrector_uncertainty(cfg, JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+  for (const TString run: Year2Run.at((string)year)) {
+    correctors[run] = build_corrector(JERCFiles("JEC", run, JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection));
+    jec_uncertainties[run] = corrector_uncertainty(cfg, JERCFiles("JEC", run, JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection), direction) ;
   }
-  correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection));
-  jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+  correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection));
+  jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection), direction) ;
 
 }
 
@@ -162,12 +162,12 @@ JetLeptonCleaner::JetLeptonCleaner(const Config& cfg, const TString& year_, cons
   else if(dir == "down")    direction = -1;
   else throw std::runtime_error("JECCorrector::JECCorrector -- invalid value in config: JECDirection='"+dir+"' (valid: 'nominal', 'up', 'down')");
 
-  for (const TString run: yearRunMap.at((string)year)) {
-    correctors[run] = build_corrector(JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection));
-    jec_uncertainties[run] = corrector_uncertainty(cfg, JERCFiles("JEC", run, JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+  for (const TString run: Year2Run.at((string)year)) {
+    correctors[run] = build_corrector(JERCFiles("JEC", run, JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection));
+    jec_uncertainties[run] = corrector_uncertainty(cfg, JERCFiles("JEC", run, JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection), direction) ;
   }
-  correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection));
-  jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC.at((string)year).at("JEC"), (string)jetcollection), direction) ;
+  correctors["MC"] = build_corrector(JERCFiles("JEC", "MC", JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection));
+  jec_uncertainties["MC"] = corrector_uncertainty(cfg, JERCFiles("JEC", "MC", JERC_Info.at((string)year).at("JEC_Version"), (string)jetcollection), direction) ;
 
 }
 

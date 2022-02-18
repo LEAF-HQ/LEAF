@@ -45,6 +45,10 @@ class Storage_T2PSI(Storage):
     def __init__(self, path):
         Storage.__init__(self, path = '/pnfs/lcg.cscs.ch/cms/trivcat' + path, director = 'root://storage01.lcg.cscs.ch/')
 
+    # if the path does not yet exist, create it
+    def make_dirs(self):
+        ensureDirectory(self.get_path(is_complete=True).replace('root://', 'gsiftp://'), use_se=True)
+
     def create_file_list(self):
         command = 'LD_LIBRARY_PATH='' PYTHONPATH='' gfal-ls %s' % (self.director.replace('root://', 'gsiftp://')+self.path)
         return self.make_list(command, outpath=self.director+self.path)

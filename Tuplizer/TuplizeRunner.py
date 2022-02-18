@@ -55,7 +55,9 @@ class TuplizeRunner:
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
-                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s pfcands=True' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
+                command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
+                for obj in ['standard','pfcand', 'triggerobjects']:
+                    command += obj+'='+str(obj in self.sample.contents[self.year])
                 commands.append(command)
                 njobs += 1
 
@@ -74,6 +76,7 @@ class TuplizeRunner:
             return
 
         if 'slurm' in self.cluster.lower():
+            ensureDirectory(self.sample.tuplepaths[self.year].get_path(is_complete=True).replace('root://', 'gsiftp://'), use_se=True)
             idx = 0
             commandfilename = os.path.join(joboutput, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
             with open(commandfilename, 'w') as f:
@@ -93,7 +96,7 @@ class TuplizeRunner:
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
 
-                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, self.config['arch_tag'], os.path.join(self.workarea, self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername, commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername, commandfilename, idx_offset)
                 if njobs > 0:
                     if self.submit:
                         jobid = int(subprocess.check_output(command, shell=True))
@@ -125,7 +128,9 @@ class TuplizeRunner:
             jobid = int(CB.JobInfo['ClusterId'])
             print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
 
-    def CleanBrokenFiles(self, nevt_per_job=200000, only_check_missing=True):
+    def CleanBrokenFiles(self, nevt_per_job=200000):
+
+        outfoldername = self.sample.tuplepaths[self.year].get_path()
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
         if not filedict:
@@ -134,14 +139,18 @@ class TuplizeRunner:
         stagetag = self.stage.upper()+'AOD'
 
         njobs = 0
+        nevents_expected_per_ntuple = {}
         for filename in filedict:
             nevt_thisfile = filedict[filename]
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
-            njobs += njobs_thisfile
+            for n in range(njobs_thisfile):
+                # get the number of events expected in each ntuple file, later we will compare against this number to make sure we completely finished ntuplizing this file
+                nevents_expected_per_ntuple[os.path.join(outfoldername, 'NTuples_%s_%i.root' % (stagetag, njobs+1))] = min(nevt_thisfile, (n+1)*nevt_per_job) - n*nevt_per_job
+                njobs += 1
 
-        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=only_check_missing)
 
-        outfoldername = self.sample.tuplepaths[self.year].get_path()
+        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=True, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
+
         missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
         commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f for f in missing_or_broken_tuples]
 
@@ -158,7 +167,7 @@ class TuplizeRunner:
         xmlfilename = os.path.join(os.environ['LEAFPATH'], self.sample.xmlfiles[self.year])
         ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
-        list_folder_content = list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')
+        list_folder_content = [filename for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')]
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name))
 
         nevents_stored = OrderedDict()
@@ -185,13 +194,14 @@ class TuplizeRunner:
                 print green('  --> Only counted events, not weights.')
 
             for mode, nevents in nevents_new.items():
-                if nevents_stored[mode] is not None:
+                if nevents_stored[mode] is not None and nevents is not None:
                     rel_diff = abs(1 - nevents_stored[mode] / nevents)
                     if rel_diff < 0.01:
                         print green('  --> Sample \'%s\' in year %s already has correct number of %s events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, mode, str(nevents)))
                         continue
-                print yellow('  --> Sample \'%s\' in year %s has a different number of %s events (%s) than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, mode, str(nevents_stored[mode]), str(nevents)))
-                nevents_stored[mode] = nevents
+                if nevents is not None:
+                    print yellow('  --> Sample \'%s\' in year %s has a different number of %s events (%s) than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, mode, str(nevents_stored[mode]), str(nevents)))
+                    nevents_stored[mode] = nevents
 
         with open(xmlfilename, 'w') as out:
             for filename in list_folder_content:

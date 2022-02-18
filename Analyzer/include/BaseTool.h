@@ -79,6 +79,28 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   cfg.event_chain->SetBranchAddress("Events", &event);
   cfg.outputtree->Branch("Events", &event);
 
+  // Initialize additional events to read additional inputs. The addresses of the corresponding additional collections will be set to the address of the main event in order to merge them.
+  std::vector<E*> additional_events = {};
+  for(size_t i=0; i<cfg.m_additional_event_chains.size(); i++){
+    E* add_event = new E();
+    additional_events.emplace_back(add_event);
+  }
+  for(size_t i=0; i<cfg.m_additional_event_chains.size(); i++){
+    cfg.m_additional_event_chains.at(i)->SetBranchAddress("Events", &additional_events.at(i));
+  }
+
+  // for each additional information, check if a matching dataset exists. Store this info to use later when loading the branches
+  vector<bool> used_ais = {};
+  for(size_t i=0; i<cfg.additional_inputs().size(); i++){
+    bool used_ai = false;
+    for(size_t j=0; j<cfg.additional_inputs().at(i).datasets.size(); j++){
+      dataset ds = cfg.additional_inputs().at(i).datasets.at(j);
+      if(ds.name == cfg.dataset_name() && ds.year == cfg.dataset_year()) used_ai = true;
+    }
+    used_ais.emplace_back(used_ai);
+  }
+
+
   // Loop through chain
   auto start = std::chrono::high_resolution_clock::now();
   Long64_t maxidx = -1;
@@ -106,25 +128,84 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
       }
     }
 
-    // read the data for i-th event
+    // read the data for i-th event, nominal and for all additional inputs
     cfg.event_chain->GetEntry(i);
 
-    // weight must be: target_lumi / dataset_lumi or 1 for data
-    // if(cfg.dataset_type() == "DATA") event->weight = 1.;
-    // else event->weight *= (double)cfg.target_lumi() / (double)cfg.dataset_lumi();
+    // load additional branches, skip event loop if one of them cannot be found
+    bool is_additional_input_complete = true;
+    for(size_t j=0; j<cfg.m_additional_event_chains.size(); j++){
+      int returncode = load_entry_lumiblock_number(cfg.m_additional_event_chains.at(j), event);
+      if(returncode < 0) is_additional_input_complete = false;
+    }
 
-    // call Process() for each event, main part of this function!
-    bool keep_event = tool.Process();
-    // cout << "keep event? " << keep_event << endl;
+    if(is_additional_input_complete){
 
-    // outevent = *event;
-    if(keep_event) cfg.outputtree->Fill();
+      // set addresses for external collections
+      size_t idx_addeventchain = 0;
+      for(size_t j=0; j<cfg.additional_inputs().size(); j++){
+        if(!used_ais[j]) continue;
+
+        for(size_t k=0; k<cfg.additional_inputs().at(j).collections.size(); k++){
+          load_additional_collection(event, additional_events.at(idx_addeventchain), cfg.additional_inputs().at(j).collections.at(k));
+        }
+        idx_addeventchain++;
+      }
+
+      // call Process() for each event, main part of this function!
+      bool keep_event = tool.Process();
+      // cout << "keep event? " << keep_event << endl;
+
+      if(keep_event) cfg.outputtree->Fill();
+    }
+    else{
+      throw runtime_error("When loading additional inputs to nominal event, a mismatch between lumiblock:eventnumber occurred in the nominal event and at least one of the additional ones. If this affects only a few events, this error should become a warning in the future, but for the moment it is probably better to be made aware of this event by crashing the program.");
+    }
+
     event->reset();
+    for(size_t j=0; j<additional_events.size(); j++){
+      additional_events.at(j)->reset();
+    }
   }
 
   event->clear();
   delete event;
+
+  for(size_t j=0; j<additional_events.size(); j++){
+    additional_events.at(j)->clear();
+    delete additional_events.at(j);
+  }
 }
+
+template<typename E>
+void load_additional_collection(E* main_event, E* additional_event, collection c){
+  if(c.branchname == "pfcands"){
+    *main_event->pfcands = *additional_event->pfcands;
+  }
+  else if(c.branchname == "triggerobjects"){
+    *main_event->triggerobjects = *additional_event->triggerobjects;
+  }
+  else{
+    std::string errormsg = "In Analyzer/include/BaseTool.h: Invalid branchname given when loading additional collections: " + (string)c.branchname;
+    throw std::runtime_error(errormsg);
+  }
+}
+
+// specializations to stop compiler from complaining
+template <>
+void load_additional_collection<Event>(Event* main_event, Event* additional_event, collection c);
+template <>
+void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additional_event, collection c);
+
+template<typename E>
+int load_entry_lumiblock_number(shared_ptr<TChain> chain, E* main_event){
+  return chain->GetEntryWithIndex(main_event->lumiblock, main_event->number);
+}
+
+// specializations to stop compiler from complaining
+template<>
+int load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event);
+template<>
+int load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event);
 
 
 typedef Registry<BaseTool, Config> ToolRegistry;

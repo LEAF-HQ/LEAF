@@ -5,7 +5,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 import os
 
 # Example to run:
-# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_args.root idxStart=100 idxStop=350 year=UL17
+# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL17
 
 
 idx_start   = -99
@@ -14,7 +14,9 @@ type        = ''
 year        = ''
 infilename  = ''
 outfilename = ''
+standard    = 'False'
 pfcands     = 'False'
+triggerobjects     = 'False'
 
 
 # USER OPTIONS
@@ -25,7 +27,9 @@ options.register('type',        type,        mytype=VarParsing.varType.string)
 options.register('year',        year,        mytype=VarParsing.varType.string)
 options.register('infilename',  infilename,  mytype=VarParsing.varType.string)
 options.register('outfilename', outfilename, mytype=VarParsing.varType.string)
+options.register('standard',     standard,     mytype=VarParsing.varType.string)
 options.register('pfcands',     pfcands,     mytype=VarParsing.varType.string)
+options.register('triggerobjects',     triggerobjects,     mytype=VarParsing.varType.string)
 options.parseArguments()
 
 idx_start   = options.idxStart
@@ -34,7 +38,9 @@ type        = options.type
 year        = options.year
 infilename  = options.infilename
 outfilename = options.outfilename
-do_pfcands  = bool(options.pfcands)
+do_standard_event  = options.standard in ['True', 'true']
+do_pfcands  = options.pfcands in ['True', 'true']
+do_triggerobjects  = options.triggerobjects in ['True', 'true']
 
 if idx_start < 0 or idx_stop < 1 or type is '' or year is '' or infilename is '' or outfilename is '':
     raise ValueError('At least one of the 6 required options is not set properly, please give all 6 options.')
@@ -42,6 +48,8 @@ if not type in ['DATA', 'MC']:
     raise ValueError('Invalid value for argument \'type\': %s. Can be \'MC\' or \'DATA\'.' % (type))
 if not idx_start < idx_stop:
     raise ValueError('Invalid value for arguments \'idx-start\' and \'idx-stop\': %i and %i. The stop index must be greater than the start index.' % (idx_start, idx_stop))
+if not (do_standard_event or do_pfcands or do_triggerobjects):
+   raise AttributeError('None of the collections is being requested, this sample would be empty! Is this a bug?')
 
 print '-->  idx-start   = %s'     % idx_start
 print '-->  idx-stop    = %s'     % idx_stop
@@ -49,7 +57,9 @@ print '-->  type        = %s'     % type
 print '-->  year        = %s'     % year
 print '-->  infilename  = \'%s\'' % infilename
 print '-->  outfilename = \'%s\'' % outfilename
+print '-->  do_standard_event  = \'%s\'' % do_standard_event
 print '-->  do_pfcands  = \'%s\'' % do_pfcands
+print '-->  do_triggerobjects  = \'%s\'' % do_triggerobjects
 
 process = cms.Process("NTuples")
 
@@ -117,7 +127,8 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     geninfo           = cms.InputTag('generator'),
     lhe               = cms.InputTag('externalLHEProducer'),
 
-    do_triggerobjects = cms.bool(False),
+    do_standard_event = cms.bool(do_standard_event),
+    do_triggerobjects = cms.bool(do_triggerobjects),
     do_pfcands        = cms.bool(do_pfcands),
     do_prefiring      = cms.bool(not year in ['2018', 'UL18']),
 
