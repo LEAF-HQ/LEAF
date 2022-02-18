@@ -10,7 +10,6 @@ from Samples.Signals_MiniAODv2 import *
 
 # make a new workarea for each eventcontent present in the NTuples, for example "Workarea_standard" for "standard" saved in NTuples, another one "Workarea_pfcands" for ntuplizing samples with the content "pfcands" stored. Each sample will have the same name, just a different 'contents' and xml file name
 workarea = os.path.join(os.environ['TUPLIZERPATH'], 'Workarea_standard')
-path_to_cmssws = os.path.join(os.environ['CMSSW_BASE'], '..')
 username = os.environ['USER']
 
 AllSamples = SampleContainer()
@@ -55,7 +54,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
         # Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=True)
         # Tuplizer.PrintDASCrossSection(sample=sample, year=year, recalculate=True)
-    # create_default_config(allsamples=StandardEvents, year='UL17', configoutname= os.path.join(os.environ['LEAFPATH'], 'LQDM', 'config', 'Default.xml'))
+    # create_default_config(allsamples=AllSamples, year='UL17', configoutname= os.path.join(os.environ['LEAFPATH'], 'LQDM', 'config', 'Default.xml'))
 
 
 

@@ -47,7 +47,6 @@ class TuplizeRunner:
             return
 
         outfoldername = self.sample.tuplepaths[self.year].get_path()
-        self.sample.tuplepaths[self.year].make_dirs()
         stagetag = self.stage.upper()+'AOD'
 
         commands = []
@@ -77,6 +76,7 @@ class TuplizeRunner:
             return
 
         if 'slurm' in self.cluster.lower():
+            ensureDirectory(self.sample.tuplepaths[self.year].get_path(is_complete=True).replace('root://', 'gsiftp://'), use_se=True)
             idx = 0
             commandfilename = os.path.join(joboutput, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
             with open(commandfilename, 'w') as f:
@@ -167,7 +167,7 @@ class TuplizeRunner:
         xmlfilename = os.path.join(os.environ['LEAFPATH'], self.sample.xmlfiles[self.year])
         ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
-        list_folder_content = [filename.replace('gsiftp://', 'root://') for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path().replace('root://', 'gsiftp://'), pattern='*.root')]
+        list_folder_content = [filename for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')]
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name))
 
         nevents_stored = OrderedDict()

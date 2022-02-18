@@ -139,8 +139,7 @@ class Sample:
         self.VerifyStage(stage)
 
         stagetag = stage.upper()+'AOD'
-        # outfoldername = self.tuplepaths[year].director+self.tuplepaths[year].path
-        outfoldername = self.tuplepaths[year].get_path(use_root_director=True)
+        outfoldername = self.tuplepaths[year].get_path()
         filename_base = os.path.join(outfoldername, '%s_%s' % (tuplebasename, stagetag))
 
         # first try to read it from the json, it's a list despite the function name
