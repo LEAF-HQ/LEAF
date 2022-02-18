@@ -20,10 +20,13 @@ echo "--> User input:"
 CMSSW_MG_FOLDER=$1
 JOBNAME=$2
 CARDDIR=$3
-QUEUEMODE=$4
+GRIDPACKFOLDER=$4
+QUEUEMODE=$5
+
 echo $CMSSW_MG_FOLDER
 echo $JOBNAME
 echo $CARDDIR
+echo $GRIDPACKFOLDER
 echo $QUEUEMODE
 echo "<-- End user input."
 
@@ -44,7 +47,7 @@ TASKCMD="./gridpack_generation.sh ${JOBNAME} ${RELPATH_TO_CARDS} ${QUEUEMODE} ${
 echo $TASKCMD
 eval $TASKCMD
 
-mv ${TMPDIR}/*${JOBNAME}*_tarball.tar.xz ${CMSSW_MG_FOLDER}
+mv ${TMPDIR}/*${JOBNAME}*_tarball.tar.xz ${GRIDPACKFOLDER}
 
 # cleaning of temporal working dir when job was completed:
 

@@ -69,9 +69,11 @@ class GensimRunner:
 
         # Submit gridpacks based on cards created above
         for processname in self.processnames:
+            gpfolder = os.path.join(self.gridpackfolder, processname)
+            ensureDirectory(gpfolder)
             for individual_setting in self.individual_settings:
                 jobname = get_jobname_flex(processname=processname, ordered_dict=individual_setting, tag=self.tag)
-                command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task %i submit_gridpacks.sh %s %s %s local' % (jobname, queue, runtime_str, ncores, self.mgfolder, jobname, self.cardfolder+'/%s' % (processname))
+                command = 'sbatch -J gridpacks_%s -p %s -t %s --cpus-per-task %i %s/submit_gridpacks.sh %s %s %s %s local' % (jobname, queue, runtime_str, ncores, self.generatorfolder, self.mgfolder, jobname, os.path.join(self.cardfolder, processname), gpfolder)
                 if self.submit:
                     time.sleep(1)
                     os.system(command)
@@ -79,29 +81,6 @@ class GensimRunner:
 
         if self.submit: print green('--> Done submitting gridpacks.')
         else:      print yellow('--> Would have submitted gridpacks.')
-
-
-
-    def MoveGridpacks(self):
-        # Move gridpacks to new dir
-        commands = []
-        for processname in self.processnames:
-            for individual_setting in self.individual_settings:
-                jobname = get_jobname_flex(processname=processname, ordered_dict=individual_setting, tag=self.tag)
-                gpname = jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
-                sourcefile = '%s/%s' % (self.mgfolder, gpname)
-                targetfile = '%s/%s/%s' % (self.gridpackfolder, processname, gpname)
-                ensureDirectory('%s/%s' % (self.gridpackfolder, processname))
-                command = 'mv %s %s' % (sourcefile, targetfile)
-                commands.append(command)
-                print command
-                if self.submit:
-                    print green('moving gridpack \'%s\'' % (gpname))
-                else:
-                    print yellow('would move gridpack \'%s\'' % (gpname))
-        if self.submit:
-            execute_commands_parallel(commands=commands, ncores=1)
-            print green('\ndone moving gridpacks')
 
 
 
