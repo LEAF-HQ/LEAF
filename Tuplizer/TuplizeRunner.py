@@ -130,7 +130,7 @@ class TuplizeRunner:
 
     def CleanBrokenFiles(self, nevt_per_job=200000):
 
-        outfoldername = self.sample.tuplepaths[self.year].get_path(use_root_director=True)
+        outfoldername = self.sample.tuplepaths[self.year].get_path()
 
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
         if not filedict:
@@ -167,7 +167,7 @@ class TuplizeRunner:
         xmlfilename = os.path.join(os.environ['LEAFPATH'], self.sample.xmlfiles[self.year])
         ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
-        list_folder_content = [filename.replace('gsiftp://', 'root://') for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')]
+        list_folder_content = [filename.replace('gsiftp://', 'root://') for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path().replace('root://', 'gsiftp://'), pattern='*.root')]
         print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name))
 
         nevents_stored = OrderedDict()

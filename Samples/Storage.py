@@ -45,15 +45,6 @@ class Storage_T2PSI(Storage):
     def __init__(self, path):
         Storage.__init__(self, path = '/pnfs/lcg.cscs.ch/cms/trivcat' + path, director = 'root://storage01.lcg.cscs.ch/')
 
-    def get_path(self, is_complete=True, use_root_director=False):
-        if is_complete:
-            if use_root_director:
-                return self.director+self.path
-            else:
-                return self.director.replace('root://', 'gsiftp://')+self.path
-        else:
-            raise AttributeError('Trying to get path of T2PSI-stored sample without the director, this is not possible.')
-
     # if the path does not yet exist, create it
     def make_dirs(self):
         ensureDirectory(self.get_path(is_complete=True).replace('root://', 'gsiftp://'), use_se=True)
@@ -82,16 +73,6 @@ class Storage_T3PSI(Storage):
 class Storage_T2ULB(Storage):
     def __init__(self, path):
         Storage.__init__(self, path = '/pnfs/iihe/cms' + path, director = 'root://maite.iihe.ac.be:1094/')
-
-    def get_path(self, is_complete=True, use_root_director=False):
-        # makes sure to use the root:// prefix, in case something else is given in __init__ (important for PSI, just porting here for compatibility)
-        if is_complete:
-            if use_root_director:
-                return self.director+self.path
-            else:
-                return self.director.replace('root://', 'gsiftp://')+self.path
-        else:
-            raise AttributeError('Trying to get path of T2ULB-stored sample without the director, this is not possible.')
 
     def create_file_list(self):
         command = 'LD_LIBRARY_PATH='' PYTHONPATH='' gfal-ls %s' % (self.director+self.path)
