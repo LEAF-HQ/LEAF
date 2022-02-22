@@ -56,8 +56,8 @@ class TuplizeRunner:
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
                 command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
-                for obj in ['standard','pfcand', 'triggerobjects']:
-                    command += obj+'='+str(obj in self.sample.contents[self.year])
+                for obj in ['standard','pfcands', 'triggerobjects']:
+                    command += ' '+obj+'='+str(obj in self.sample.contents[self.year])+' '
                 commands.append(command)
                 njobs += 1
 
@@ -118,7 +118,7 @@ class TuplizeRunner:
             jobs = {'executables': [], 'arguments':[]}
             ensureDirectory(outfoldername, use_se=('/pnfs' in outfoldername))
             for idx, command in enumerate(commands):
-                if not (idx+1) in missing_indices:
+                if not idx in missing_indices:
                     continue
                 exe = command.split()[0]
                 arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
