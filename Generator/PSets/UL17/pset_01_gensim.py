@@ -14,6 +14,7 @@ gridpack    = ''
 outfilename = ''
 nevents     = -99
 nThreads    = -1
+lumiblock   = -1
 
 
 # USER OPTIONS
@@ -22,16 +23,18 @@ options.register('gridpack',    gridpack,    mytype=VarParsing.varType.string)
 options.register('outfilename', outfilename, mytype=VarParsing.varType.string)
 options.register('nevents',     nevents,     mytype=VarParsing.varType.int)
 options.register('nThreads',    nThreads,    mytype=VarParsing.varType.int)
+options.register('lumiblock',   lumiblock,   mytype=VarParsing.varType.int)
 options.parseArguments()
 gridpack    = os.path.abspath(options.gridpack)
 nevents     = options.nevents
 nThreads    = options.nThreads
+lumiblock   = options.lumiblock
 outfilename = 'file:' + os.path.abspath(options.outfilename)
 outfile_LHE = outfilename.replace('.root', '_LHE.root')
 
 
-if gridpack is '' or outfilename is '' or nevents is -99 or nThreads is -1:
-    raise ValueError('At least one of the 4 mandatory options is not set, please give all 4 options.')
+if gridpack is '' or outfilename is '' or nevents is -99 or nThreads is -1 or lumiblock is -1:
+    raise ValueError('At least one of the 5 mandatory options is not set, please give all 5 options.')
 
 
 print ">>> gridpack    = '%s'"%gridpack
@@ -39,6 +42,7 @@ print ">>> nevents     = %s"%nevents
 print ">>> nThreads    = %s"%nThreads
 print ">>> outfilename = '%s'"%outfilename
 print ">>> outfile_LHE = '%s'"%outfile_LHE
+print ">>> lumiblock    = %s"%lumiblock
 
 
 
@@ -63,7 +67,9 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 # Input source
-process.source = cms.Source("EmptySource")
+process.source = cms.Source("EmptySource",
+    firstLuminosityBlock = cms.untracked.uint32(lumiblock)
+)
 
 process.options = cms.untracked.PSet(
 
