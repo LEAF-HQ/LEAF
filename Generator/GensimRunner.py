@@ -107,7 +107,7 @@ class GensimRunner:
                     indices = range(self.maxindex)
                 elif mode is 'resubmit':
                     print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
-                    indices = missing_indices = findMissingRootFiles(filepath=self.T2_director_root+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, treename='Events')
+                    indices = missing_indices = findMissingRootFiles(filename_base=os.path.join(self.T2_director_root+self.T2_path,self.folderstructure[generation_step]['pathtag'], jobname, self.folderstructure[generation_step]['outfilenamebase']), maxindex=self.maxindex, treename='Events')
 
                 njobs = 0
                 for i in indices:
