@@ -70,8 +70,7 @@ class XMLInfo:
             return additional_inputs
         for addinputnode in self.rootnode.getElementsByTagName('AdditionalInputs')[0].getElementsByTagName('AdditionalInput'):
             datasets = self.read_datasets(parentnode=addinputnode, datasetnodename='AdditionalDataset')
-            collections = list(GroupedSettings(coll.attributes.items() for coll in addinputnode.getElementsByTagName('Collection'))
-
+            collections = list(GroupedSettings(coll.attributes.items() for coll in addinputnode.getElementsByTagName('Collection')))
             this_addinput = AdditionalInput(datasets=datasets, collections=collections)
             additional_inputs.append(this_addinput)
         return additional_inputs
