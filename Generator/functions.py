@@ -275,11 +275,11 @@ def count_genevents_in_file(filename, treename='Events'):
 
 
 
-def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None):
+def getcmsRunCommand(pset, outfilename, N, ncores, infilename=None, gridpack=None, lumiblock=None):
     """Submit PSet config file and gridpack to SLURM batch system."""
 
-    if gridpack is not None and infilename is None:
-        command = 'cmsRun %s gridpack=%s outfilename=%s nevents=%i nThreads=%i' % (pset, gridpack, outfilename, N, ncores)
-    elif infilename is not None and gridpack is None:
+    if gridpack is not None and infilename is None and lumiblock is not None:
+        command = 'cmsRun %s gridpack=%s outfilename=%s nevents=%i nThreads=%i lumiblock=%i' % (pset, gridpack, outfilename, N, ncores, lumiblock)
+    elif infilename is not None and gridpack is None and lumiblock is None:
         command = 'cmsRun %s infilename=%s outfilename=%s nevents=%i nThreads=%i' % (pset, infilename, outfilename, N, ncores)
     return command

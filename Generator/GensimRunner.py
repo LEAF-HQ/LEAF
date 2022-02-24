@@ -107,7 +107,7 @@ class GensimRunner:
                     indices = range(self.maxindex)
                 elif mode is 'resubmit':
                     print green('--> Now checking for missing files on T2 for generation step \'%s\' of job \'%s\'...' % (generation_step, jobname))
-                    indices = missing_indices = findMissingRootFiles(filepath=self.T2_director_root+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, filename_base=self.folderstructure[generation_step]['outfilenamebase'], maxindex=self.maxindex, treename='Events')
+                    indices = missing_indices = findMissingRootFiles(filename_base=os.path.join(self.T2_director_root+self.T2_path,self.folderstructure[generation_step]['pathtag'], jobname, self.folderstructure[generation_step]['outfilenamebase']), maxindex=self.maxindex, treename='Events')
 
                 njobs = 0
                 for i in indices:
@@ -118,7 +118,7 @@ class GensimRunner:
                         command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], infilename=infilename, outfilename=outfilename, N=-1, ncores=ncores)
                     else:
                         infilename   = self.gridpackfolder + '/' + processname + '/' + jobname + '_' + self.arch_tag + '_' + self.cmssw_tag_gp + '_tarball.tar.xz'
-                        command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=self.nevents, ncores=ncores)
+                        command = getcmsRunCommand(pset=self.folderstructure[generation_step]['pset'], gridpack=infilename, outfilename=outfilename, N=self.nevents, ncores=ncores, lumiblock=i+1)
                     f.write(command + '\n')
                     njobs += 1
 
@@ -127,7 +127,7 @@ class GensimRunner:
                 if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
                 elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
 
-                command = 'sbatch -a 1-%s -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+                command = 'sbatch -a 1-%s -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i %s/submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
                 if njobs > 0:
                     if self.submit:
                         # print command
