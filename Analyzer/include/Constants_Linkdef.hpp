@@ -6,5 +6,6 @@
 
 #pragma link C++ defined_in "include/TagConstants.h";
 #pragma link C++ defined_in "include/RunConstants.h";
+#pragma link C++ defined_in "include/GenLevelConstants.h";
 
 #endif

@@ -51,7 +51,7 @@ public:
     else      m_statusflag_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
-  uint64_t statusflag_bits(){return m_statusflag_bits;};
+  uint64_t statusflag_bits() const {return m_statusflag_bits;};
   int ndaughters() const {return m_ndaughters;};
   int mother_identifier() const {return m_mother_identifier;};
   int status() const {return m_status;};
