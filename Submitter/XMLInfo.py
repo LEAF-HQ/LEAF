@@ -70,7 +70,7 @@ class XMLInfo:
             return additional_inputs
         for addinputnode in self.rootnode.getElementsByTagName('AdditionalInputs')[0].getElementsByTagName('AdditionalInput'):
             datasets = self.read_datasets(parentnode=addinputnode, datasetnodename='AdditionalDataset')
-            collections = list(GroupedSettings(coll.attributes.items() for coll in addinputnode.getElementsByTagName('Collection')))
+            collections = list(GroupedSettings(coll.attributes.items()) for coll in addinputnode.getElementsByTagName('Collection'))
             this_addinput = AdditionalInput(datasets=datasets, collections=collections)
             additional_inputs.append(this_addinput)
         return additional_inputs
@@ -131,11 +131,11 @@ class XMLInfo:
                     tempinfile = doc.createElement('InputFile')
                     tempdataset.appendChild(tempinfile)
                     tempinfile.setAttribute('FileName', infile)
-            for collection in [c for c in addinput.collections]:
+            for collection in addinput.collections:
                 tempcollection = doc.createElement('Collection')
                 tempaddinput.appendChild(tempcollection)
                 for attr in collection.__dict__:
-                    tempcollection.setAttribute(attr, collection.__dict__[attr])
+                    tempcollection.setAttribute(attr, getattr(collection,attr) )
 
     def write_additionalvars(self, doc, rootnode):
         tempsettings = doc.createElement('AdditionalVariables')
