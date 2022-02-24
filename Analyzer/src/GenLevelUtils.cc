@@ -52,7 +52,7 @@ string PdgID2str(int pdgId_) {
   if(pdgId == ParticleID::v_tau)  return "v_tau";
   if(pdgId == ParticleID::v)      return "v";
   if(pdgId == ParticleID::g)      return "g";
-  if(pdgId == ParticleID::ggamma) return "gamma";
+  if(pdgId == ParticleID::photon) return "photon";
   if(pdgId == ParticleID::Z)      return "Z";
   if(pdgId == ParticleID::W)      return "W";
   if(pdgId == ParticleID::H)      return "H";

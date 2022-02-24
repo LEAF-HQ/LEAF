@@ -12,7 +12,7 @@ enum ParticleID {
   u=1, d=2, s=3, c=4, b=5, t=6, q=7,
   e=11, mu=13, tau=15, l=17,
   v_e=12, v_mu=14, v_tau=16, v=18,
-  g=21, ggamma=22, Z=23, W=24, H=25,
+  g=21, photon=22, Z=23, W=24, H=25,
 };
 
 
@@ -36,3 +36,10 @@ const float Z_mass   = 91.1876;
 const float W_mass   = 80.376;
 const float H_mass   = 125.10;
 const float top_mass = 172.9;
+
+// const std::vector<int> lqids = {9000008, 9000009};
+const std::vector<int> lqids = {9000005};
+// const std::vector<int> psiids  = {9000006, 9000007};
+const std::vector<int> psiids  = {9000009};
+// const std::vector<int> dmids = {9000005};
+const std::vector<int> chiids = {9000007};
