@@ -948,6 +948,19 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_puppiweight(patcand.puppiWeight());
       p.set_puppiweight_nolep(patcand.puppiWeightNoLep());
 
+      p.set_caloFraction(patcand.caloFraction());
+      p.set_hcalFraction(patcand.hcalFraction());
+      p.set_dz(patcand.dzAssociatedPV()); // dz with respect to the PV ref
+      p.set_dxy(patcand.dxy()); // dxy with respect to the PV ref
+      if(patcand.hasTrackDetails()){
+        p.set_dzError(patcand.dzError());
+        p.set_dxyError(patcand.dxyError());
+      }
+      p.set_vertex_x(patcand.vertex().X());
+      p.set_vertex_y(patcand.vertex().Y());
+      p.set_vertex_z(patcand.vertex().Z());
+      p.set_isIsolatedChargedHadron(patcand.isIsolatedChargedHadron());
+
       event.pfcands->emplace_back(p);
     }
   }
