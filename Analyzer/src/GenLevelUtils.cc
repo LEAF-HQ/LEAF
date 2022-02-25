@@ -5,14 +5,14 @@
 
 using namespace std;
 
-bool IsHadronic(int pdgId) { return (fabs(pdgId) <= 5) ? true : false; }
-bool IsLeptonic(int pdgId) { return (fabs(pdgId)>= 11 && fabs(pdgId)<=18) ? true : false; }
+bool isHadronic(int pdgId) { return (fabs(pdgId) <= 5) ? true : false; }
+bool isLeptonic(int pdgId) { return (fabs(pdgId)>= 11 && fabs(pdgId)<=18) ? true : false; }
 
 
-bool IsDecayMode(int pdgId1, int pdgId2, Decay decay) {
+bool isDecayMode(int pdgId1, int pdgId2, Decay decay) {
   if (decay==Decay::nodecay) return true;
-  if ( IsLeptonic(pdgId1) && IsLeptonic(pdgId2) && decay == Decay::ll) return true;
-  if ( IsHadronic(pdgId1) && IsHadronic(pdgId2) && decay == Decay::qq) return true;
+  if ( isLeptonic(pdgId1) && isLeptonic(pdgId2) && decay == Decay::ll) return true;
+  if ( isHadronic(pdgId1) && isHadronic(pdgId2) && decay == Decay::qq) return true;
   if ( fabs(pdgId1) == ParticleID::g     && fabs(pdgId2) == ParticleID::g     && decay == Decay::gg)     return true;
   if ( fabs(pdgId1) <= ParticleID::s     && fabs(pdgId2) <= ParticleID::s     && decay == Decay::light)  return true;
   if ( fabs(pdgId1) == ParticleID::c     && fabs(pdgId2) == ParticleID::c     && decay == Decay::cc)     return true;
@@ -33,7 +33,7 @@ bool IsDecayMode(int pdgId1, int pdgId2, Decay decay) {
 }
 
 
-string PdgID2str(int pdgId_) {
+string pdgId2str(int pdgId_) {
   ParticleID pdgId = static_cast<ParticleID>(fabs(pdgId_));
 
   if(pdgId == ParticleID::u)      return "u";
@@ -60,7 +60,7 @@ string PdgID2str(int pdgId_) {
 }
 
 
-string Decay2str(int decay_) {
+string decay2str(int decay_) {
 
   Decay decay = static_cast<Decay>(fabs(decay_));
   if(decay == Decay::nodecay)        return "nodecay";
