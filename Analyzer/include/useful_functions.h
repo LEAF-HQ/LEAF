@@ -24,6 +24,8 @@ const std::string cyan("\x1b[0;36m");
 const std::string bold("\033[1m");
 const std::string reset("\x1b[0m");
 
+/// Compare 2 floats - better than == does to floating-point issues
+bool closeFloat(float a, float b, float maxRelDiff=1E-6, float maxAbsDiff=1E-6);
 
 // distance in phi, with the convention -phi < deltaPhi <= phi
 // T and U have to have a 'phi()' method, e.g. Particle, LorentzVector, etc.

@@ -63,6 +63,7 @@
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 
 #include "LEAF/Analyzer/include/RecoEvent.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
 
 #include <math.h>
 #include <TMath.h>
@@ -961,6 +962,23 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_vertex_z(patcand.vertex().Z());
       p.set_isIsolatedChargedHadron(patcand.isIsolatedChargedHadron());
 
+      if(true) {
+        auto jetidx = -1;
+        for(size_t jetidx_=0; jetidx_<jets->size(); jetidx_++) {
+          if(!jets->at(jetidx_).isPFJet()) continue;
+          pat::Jet patjet = jets->at(jetidx_);
+          const auto& jet_daughter_ptrs = patjet.daughterPtrVector();
+          for(const auto & daughter_p : jet_daughter_ptrs){
+            auto r = reco::deltaR(p.eta(), p.phi(), daughter_p->eta(), daughter_p->phi());
+            if (closeFloat(r, 0.0f) && closeFloat(p.pt(), daughter_p->pt())) {
+              jetidx = jetidx_;
+              break;
+            }
+          }
+          if (jetidx!=-1) break;
+        }
+        p.set_jetidx(jetidx);
+      }
       event.pfcands->emplace_back(p);
     }
   }

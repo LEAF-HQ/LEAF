@@ -22,6 +22,7 @@ public:
     m_vertex_x = -1;
     m_vertex_y = -1;
     m_vertex_z = -1;
+    m_jetidx = -1;
     m_isIsolatedChargedHadron = false;
 
   }
@@ -38,6 +39,7 @@ public:
   float vertex_y() const {return m_vertex_y;};
   float vertex_z() const {return m_vertex_z;};
   bool isIsolatedChargedHadron() const {return m_isIsolatedChargedHadron;};
+  int jetidx() const {return m_jetidx;};
 
   void set_puppiweight(float x) {m_puppiweight = x;};
   void set_puppiweight_nolep(float x) {m_puppiweight_nolep = x;};
@@ -51,7 +53,7 @@ public:
   void set_vertex_y(float x) {m_vertex_y = x;};
   void set_vertex_z(float x) {m_vertex_z = x;};
   void set_isIsolatedChargedHadron(bool x) {m_isIsolatedChargedHadron = x;};
-
+  void set_jetidx(int x){m_jetidx = x;};
 
 protected:
   float m_puppiweight, m_puppiweight_nolep;
@@ -59,5 +61,6 @@ protected:
   float m_dz, m_dxy, m_dzError, m_dxyError;
   float m_vertex_x, m_vertex_y, m_vertex_z;
   bool m_isIsolatedChargedHadron;
+  int m_jetidx;
 
 };
