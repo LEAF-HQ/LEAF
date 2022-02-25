@@ -149,7 +149,7 @@ class Sample:
                 return filelist_json
             else:
                 if len(filelist_json) == 0:
-                    print green('  --> Sample \'%s\' has all no missing tuples, continue.' % (self.name))
+                    print green('  --> Sample \'%s\' has no missing tuples, continue.' % (self.name))
                     return filelist_json
                 else: # check only for files still in the list of missing files in the json
                     expected_filelist = [filename_base+'_'+str(i+1)+'.root' for i in filelist_json]
@@ -210,6 +210,9 @@ class Sample:
 
         commands = [('Counter_NANOAOD %s %s' % (filename, treename), filename) for filename in filelist]
         outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
+
+        if not outputs:
+            print(yellow('Did you set the Grid certificate?'))
 
         newdict = {}
         for o in outputs:
