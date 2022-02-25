@@ -7,9 +7,9 @@
 
 #include "LEAF/Analyzer/include/GenLevelConstants.h"
 
-bool isLeptonic(int pdgId);
-bool isHadronic(int pdgId);
-bool DoubleDecay(int pdgId1, int pdgId2, Decay decay);
+bool IsLeptonic(int pdgId);
+bool IsHadronic(int pdgId);
+bool IsDecayMode(int pdgId1, int pdgId2, Decay decay);
 
 std::string PdgID2str(int);
 std::string Decay2str(int);
