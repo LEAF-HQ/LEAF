@@ -5,7 +5,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 import os
 
 # Example to run:
-# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=/store/mc/RunIISummer20UL17MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v1/00000/9C735D57-8F9C-394D-BC45-D31EE59BBEFD.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL17
+# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/00000/D1F6F7C6-58B6-8142-9A44-D17FBB1C4F40.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL18 standard=True pfcands=False triggerobjects=False
 
 
 idx_start   = -99

@@ -230,43 +230,46 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   event.number = iEvent.id().event();
   event.lumiblock = iEvent.luminosityBlock();
 
+  event.rho = *rho;
+  event.npv = pvs->size();
+  int n_goodpvs = 0;
+  for(size_t i=0; i<pvs->size(); i++){
+    reco::Vertex pv = pvs->at(i);
+    if(!pv.isFake() && pv.ndof() > 4 && fabs(pv.z()) < 24 && pv.position().rho() <= 2) n_goodpvs++;
+  }
+  event.npv_good = n_goodpvs;
+  if(do_prefiring){
+    event.weight_prefiring = *l1prefiring;
+    event.weight_prefiring_up = *l1prefiring_up;
+    event.weight_prefiring_down = *l1prefiring_down;
+  }
+  else{
+    event.weight_prefiring = 1.;
+    event.weight_prefiring_up = 1.;
+    event.weight_prefiring_down = 1.;
+
+  }
+
+  if(is_mc){
+    event.weight = geninfo->weight(); // equivalent to geninfo->weights().at(0), always returns the 0th element
+    // Reco-event variables based on simulation
+    event.ntrueint = pus->at(0).getTrueNumInteractions();
+    event.npu = 0;
+    for(size_t i=0; i<pus->size(); ++i){
+      if(pus->at(i).getBunchCrossing() == 0){ // intime pileup
+        event.npu += pus->at(i).getPU_NumInteractions();
+      }
+    }
+  } else{
+    event.weight = 1.;
+  }
+
   if(do_standard_event){
-
-    event.rho = *rho;
-    event.npv = pvs->size();
-    int n_goodpvs = 0;
-    for(size_t i=0; i<pvs->size(); i++){
-      reco::Vertex pv = pvs->at(i);
-      if(!pv.isFake() && pv.ndof() > 4 && fabs(pv.z()) < 24 && pv.position().rho() <= 2) n_goodpvs++;
-    }
-    event.npv_good = n_goodpvs;
-    if(do_prefiring){
-      event.weight_prefiring = *l1prefiring;
-      event.weight_prefiring_up = *l1prefiring_up;
-      event.weight_prefiring_down = *l1prefiring_down;
-    }
-    else{
-      event.weight_prefiring = 1.;
-      event.weight_prefiring_up = 1.;
-      event.weight_prefiring_down = 1.;
-
-    }
-
 
     // Do MC truth variables
     // =====================
     vector<reco::GenParticle> reco_genvistaus = {};
     if(is_mc){
-
-      // Reco-event variables based on simulation
-      event.ntrueint = pus->at(0).getTrueNumInteractions();
-      event.npu = 0;
-      for(size_t i=0; i<pus->size(); ++i){
-        if(pus->at(i).getBunchCrossing() == 0){ // intime pileup
-          event.npu += pus->at(i).getPU_NumInteractions();
-        }
-      }
-
       // GenMET content
       event.genmet->set_pt(mets->at(0).genMET()->pt());
       event.genmet->set_phi(mets->at(0).genMET()->phi());
@@ -411,7 +414,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
 
       // global gen info
-      event.weight = geninfo->weight(); // equivalent to geninfo->weights().at(0), always returns the 0th element
       event.geninfo->set_weight(geninfo->weight());
       const gen::PdfInfo* pdf = geninfo->pdf();
       if(pdf){
@@ -441,9 +443,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         }
       }
       event.geninfo->set_systweights(systweights);
-    }
-    else{
-      event.weight = 1.;
     }
 
 
