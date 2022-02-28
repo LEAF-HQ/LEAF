@@ -538,7 +538,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
       // NanoAOD-style
       j.set_jet_id(pass_tight*2 + pass_tight_lepveto*4);
-      event.jets->emplace_back(j);
+      event.ak4chs->emplace_back(j);
     }
 
 

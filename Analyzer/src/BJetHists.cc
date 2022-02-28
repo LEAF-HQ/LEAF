@@ -173,12 +173,12 @@ void BJetHists::fill(const RecoEvent & event){
   // Loop through jets
   // ====================
 
-  size_t njets = event.jets->size();
+  size_t njets = event.ak4chs->size();
   size_t ndeepbloose = 0;
   size_t ndeepbmedium = 0;
   size_t ndeepbtight = 0;
   for(size_t i=0; i<njets; i++){
-    Jet j = event.jets->at(i);
+    Jet j = event.ak4chs->at(i);
     double dRmin_ele  = 999.;
     double dRmin_muon = 999.;
     double dRmin_tau  = 999.;

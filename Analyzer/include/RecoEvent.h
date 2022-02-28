@@ -31,7 +31,7 @@ public:
     met = new Met;
     rawmet = new Met;
     triggerobjects = new vector<TriggerObject>;
-    jets = new vector<Jet>;
+    ak4chs = new vector<Jet>;
     taus = new vector<Tau>;
     muons = new vector<Muon>;
     electrons = new vector<Electron>;
@@ -55,7 +55,7 @@ public:
     delete met;
     delete rawmet;
     delete triggerobjects;
-    delete jets;
+    delete ak4chs;
     delete taus;
     delete muons;
     delete electrons;
@@ -69,7 +69,7 @@ public:
     delete met;
     delete rawmet;
     delete triggerobjects;
-    delete jets;
+    delete ak4chs;
     delete taus;
     delete muons;
     delete electrons;
@@ -79,7 +79,7 @@ public:
     met = 0;
     rawmet = 0;
     triggerobjects = 0;
-    jets = 0;
+    ak4chs = 0;
     taus = 0;
     muons = 0;
     electrons = 0;
@@ -93,7 +93,7 @@ public:
     delete met;
     delete rawmet;
     delete triggerobjects;
-    delete jets;
+    delete ak4chs;
     delete taus;
     delete muons;
     delete electrons;
@@ -103,7 +103,7 @@ public:
     met = new Met;
     rawmet = new Met;
     triggerobjects = new vector<TriggerObject>;
-    jets = new vector<Jet>;
+    ak4chs = new vector<Jet>;
     taus = new vector<Tau>;
     muons = new vector<Muon>;
     electrons = new vector<Electron>;
@@ -134,7 +134,7 @@ public:
   Met* met; //
   Met* rawmet; //
   vector<TriggerObject>* triggerobjects; //
-  vector<Jet>* jets;//
+  vector<Jet>* ak4chs;//
   vector<Tau>* taus; //
   vector<Muon>* muons; //
   vector<Electron>* electrons; //

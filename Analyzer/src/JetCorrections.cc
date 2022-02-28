@@ -113,7 +113,7 @@ bool JECCorrector::correct_met(RecoEvent & event, double pt_thresh){
 
   // we start from raw MET
   TLorentzVector rawmet_p4 = event.rawmet->p4();
-  for(Jet & jet : *event.jets){
+  for(Jet & jet : *event.ak4chs){
 
     //thresholds on the corrected jets: pt > 15 EM fraction < 0.9
     if((jet.pt() > pt_thresh) && ((jet.ne_em_efrac() + jet.ch_em_efrac()) < 0.9)){
@@ -137,7 +137,7 @@ bool JECCorrector::process(RecoEvent& event){
   if(direction != 0 && jec_uncertainties.at(runperiod) == nullptr) throw runtime_error("JEC variation should be applied, but JEC uncertainty object is NULL. Abort.");
 
   //apply jet corrections
-  for(Jet & jet : *event.jets){
+  for(Jet & jet : *event.ak4chs){
     correct_jet(*correctors.at(runperiod), jet, event, *jec_uncertainties.at(runperiod), direction);
   }
 
@@ -175,7 +175,7 @@ JetLeptonCleaner::JetLeptonCleaner(const Config& cfg, const TString& year_, cons
 bool JetLeptonCleaner::process(RecoEvent& event) {
 
   TString runperiod = event.get_runperiod(year);
-  for(Jet & jet : *event.jets){
+  for(Jet & jet : *event.ak4chs){
     bool correct_p4 = false;
     TLorentzVector jet_p4_raw = jet.p4() * jet.raw_factor();
 
@@ -248,7 +248,7 @@ JERCorrector::JERCorrector(Config cfg, TString ScaleFactorFileName, TString Reso
 bool JERCorrector::process(RecoEvent & event){
 
   if(event.is_data) return true;
-  apply_JER_smearing(*event.jets, *event.genjets, 0.4, event.rho);
+  apply_JER_smearing(*event.ak4chs, *event.genjets, 0.4, event.rho);
   return true;
 
 }

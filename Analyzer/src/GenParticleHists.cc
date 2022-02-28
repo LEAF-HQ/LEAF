@@ -559,7 +559,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
 
 
-      const Jet* closest_jet = closestParticle(gp, *event.jets);
+      const Jet* closest_jet = closestParticle(gp, *event.ak4chs);
       float dr_min = -1.;
       if(closest_jet != nullptr) dr_min = deltaR(gp, *closest_jet);
 
