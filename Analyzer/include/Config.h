@@ -44,23 +44,23 @@ public:
   void set_idx(size_t i){m_idx = i;};
   void add_dataset(dataset d){m_datasets.emplace_back(d);};
 
-  const bool    has(const string s) const {auto it = m_additionalvariables.find(s); return (it != m_additionalvariables.end());};
-  const string  get(const string s) const {if(Config::has(s)){return m_additionalvariables.at(s);} else{throw runtime_error("Trying to get non-existent variable '" + s + "' from Config.");}};
-  const TString output_directory() const {return m_output_directory;};
-  const TString se_director() const {return m_se_director;};
-  const TString postfix() const {return m_postfix;};
-  const double  target_lumi() const {return m_target_lumi;};
-  const string  analysis_tool() const {return m_analysis_tool;};
-  const int     nevt_max() const {return m_nevt_max;};
-  const int     nevt_skip() const {return m_nevt_skip;};
-  const TString dataset_name() const {return m_datasets[m_idx].name;};
-  const TString dataset_type() const {return m_datasets[m_idx].type;};
-  const TString dataset_year() const {return m_datasets[m_idx].year;};
-  const vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
-  const double  dataset_lumi() const {return m_datasets[m_idx].lumi;};
-  const size_t  n_datasets()   const {return m_datasets.size();};
-  const size_t  idx()          const {return m_idx;};
-  const std::vector<additional_input> additional_inputs() const {return m_additionalinputs;};
+  bool    has(const string s) const {auto it = m_additionalvariables.find(s); return (it != m_additionalvariables.end());};
+  string  get(const string s) const {if(Config::has(s)){return m_additionalvariables.at(s);} else{throw runtime_error("Trying to get non-existent variable '" + s + "' from Config.");}};
+  TString output_directory() const {return m_output_directory;};
+  TString se_director() const {return m_se_director;};
+  TString postfix() const {return m_postfix;};
+  double  target_lumi() const {return m_target_lumi;};
+  string  analysis_tool() const {return m_analysis_tool;};
+  int     nevt_max() const {return m_nevt_max;};
+  int     nevt_skip() const {return m_nevt_skip;};
+  TString dataset_name() const {return m_datasets[m_idx].name;};
+  TString dataset_type() const {return m_datasets[m_idx].type;};
+  TString dataset_year() const {return m_datasets[m_idx].year;};
+  vector<TString> dataset_infilenames() const {return m_datasets[m_idx].infilenames;};
+  double  dataset_lumi() const {return m_datasets[m_idx].lumi;};
+  size_t  n_datasets()   const {return m_datasets.size();};
+  size_t  idx()          const {return m_idx;};
+  std::vector<additional_input> additional_inputs() const {return m_additionalinputs;};
 
 
 

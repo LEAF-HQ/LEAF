@@ -35,27 +35,27 @@ public:
     m_n_electrons = -1;
   }
 
-  const float area() const {return m_area;};
-  const float score_CSVv2() const {return m_score_CSVv2;};
-  const float score_DeepB() const {return m_score_DeepB;};
-  const float score_DeepFlavB() const {return m_score_DeepFlavB;};
-  const float score_qgl() const {return m_score_qgl;};
-  const float ch_em_efrac() const {return m_ch_em_efrac;};
-  const float ch_had_efrac() const {return m_ch_had_efrac;};
-  const float ne_em_efrac() const {return m_ne_em_efrac;};
-  const float ne_had_efrac() const {return m_ne_had_efrac;};
-  const float mu_efrac() const {return m_mu_efrac;};
-  const int jet_id() const {return m_jet_id;};
-  const int pu_id() const {return m_pu_id;};
-  const float raw_factor() const {return m_raw_factor;};
-  const float L1_factor() const {return m_L1_factor;};
-  const float muon_sub_raw_factor() const {return m_muon_sub_raw_factor;};
-  const int parton_flavor() const {return m_parton_flavor;};
-  const int hadron_flavor() const {return m_hadron_flavor;};
-  const int n_constituents() const {return m_n_constituents;};
-  const int n_muons() const {return m_n_muons;};
-  const int n_electrons() const {return m_n_electrons;};
-  const int identifier() const {return m_identifier;};
+  float area() const {return m_area;};
+  float score_CSVv2() const {return m_score_CSVv2;};
+  float score_DeepB() const {return m_score_DeepB;};
+  float score_DeepFlavB() const {return m_score_DeepFlavB;};
+  float score_qgl() const {return m_score_qgl;};
+  float ch_em_efrac() const {return m_ch_em_efrac;};
+  float ch_had_efrac() const {return m_ch_had_efrac;};
+  float ne_em_efrac() const {return m_ne_em_efrac;};
+  float ne_had_efrac() const {return m_ne_had_efrac;};
+  float mu_efrac() const {return m_mu_efrac;};
+  int jet_id() const {return m_jet_id;};
+  int pu_id() const {return m_pu_id;};
+  float raw_factor() const {return m_raw_factor;};
+  float L1_factor() const {return m_L1_factor;};
+  float muon_sub_raw_factor() const {return m_muon_sub_raw_factor;};
+  int parton_flavor() const {return m_parton_flavor;};
+  int hadron_flavor() const {return m_hadron_flavor;};
+  int n_constituents() const {return m_n_constituents;};
+  int n_muons() const {return m_n_muons;};
+  int n_electrons() const {return m_n_electrons;};
+  int identifier() const {return m_identifier;};
 
   void set_area(float x){m_area = x;};
   void set_score_CSVv2(float x){m_score_CSVv2 = x;};

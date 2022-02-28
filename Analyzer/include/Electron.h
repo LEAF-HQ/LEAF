@@ -71,37 +71,37 @@ public:
     else      m_selector_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
-  const uint64_t selector_bits() const {return m_selector_bits;};
-  const int jetidx() const {return m_jetidx;};
-  const int lost_hits() const {return m_lost_hits;};
-  const bool conv_veto() const {return m_conv_veto;};
-  const bool is_pf() const {return m_is_pf;};
+  uint64_t selector_bits() const {return m_selector_bits;};
+  int jetidx() const {return m_jetidx;};
+  int lost_hits() const {return m_lost_hits;};
+  bool conv_veto() const {return m_conv_veto;};
+  bool is_pf() const {return m_is_pf;};
 
-  const float sumchpt() const {return m_sumchpt;};
-  const float sumnhet() const {return m_sumnhet;};
-  const float sumphpt() const {return m_sumphpt;};
-  const float sumpupt() const {return m_sumpupt;};
+  float sumchpt() const {return m_sumchpt;};
+  float sumnhet() const {return m_sumnhet;};
+  float sumphpt() const {return m_sumphpt;};
+  float sumpupt() const {return m_sumpupt;};
 
-  const float dphi_in() const {return m_dphi_in;};
-  const float deta_in_seed() const {return m_deta_in_seed;};
-  const float pt_err() const {return m_pt_err;};
-  const float phi_err() const {return m_phi_err;};
-  const float eta_err() const {return m_eta_err;};
-  const float eta_sc() const {return m_eta_sc;};
-  const float phi_sc() const {return m_phi_sc;};
-  const float e_sc() const {return m_e_sc;};
-  const float dxy() const {return m_dxy;};
-  const float dz() const {return m_dz;};
-  const float d0() const {return m_d0;};
-  const float edxy() const {return m_edxy;};
-  const float edz() const {return m_edz;};
-  const float ed0() const {return m_ed0;};
-  const float ea() const {return m_ea;};
-  const float einv_minus_pinv() const {return m_einv_minus_pinv;};
-  const float h_over_e() const {return m_h_over_e;};
-  const float iso_rel_03() const {return m_iso_rel_03;};
-  const float iso_rel_03_charged() const {return m_iso_rel_03_charged;};
-  const float sigma_ietaieta() const {return m_sigma_ietaieta;};
+  float dphi_in() const {return m_dphi_in;};
+  float deta_in_seed() const {return m_deta_in_seed;};
+  float pt_err() const {return m_pt_err;};
+  float phi_err() const {return m_phi_err;};
+  float eta_err() const {return m_eta_err;};
+  float eta_sc() const {return m_eta_sc;};
+  float phi_sc() const {return m_phi_sc;};
+  float e_sc() const {return m_e_sc;};
+  float dxy() const {return m_dxy;};
+  float dz() const {return m_dz;};
+  float d0() const {return m_d0;};
+  float edxy() const {return m_edxy;};
+  float edz() const {return m_edz;};
+  float ed0() const {return m_ed0;};
+  float ea() const {return m_ea;};
+  float einv_minus_pinv() const {return m_einv_minus_pinv;};
+  float h_over_e() const {return m_h_over_e;};
+  float iso_rel_03() const {return m_iso_rel_03;};
+  float iso_rel_03_charged() const {return m_iso_rel_03_charged;};
+  float sigma_ietaieta() const {return m_sigma_ietaieta;};
 
   void set_selector_bits(uint64_t x){m_selector_bits = x;};
   void set_jetidx(int x){m_jetidx = x;};
