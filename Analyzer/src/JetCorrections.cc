@@ -188,7 +188,7 @@ bool JetLeptonCleaner::process(RecoEvent& event) {
         correct_p4 = true;
         jet_p4_raw -= muo.p4();
         jet.set_n_muons(jet.n_muons() - 1);
-        jet.set_mu_efrac(max(0., (jet.e() * jet.mu_efrac() - muo.e()) / jet.e()));
+        jet.set_muo_efrac(max(0., (jet.e() * jet.muo_efrac() - muo.e()) / jet.e()));
       }
     }
 

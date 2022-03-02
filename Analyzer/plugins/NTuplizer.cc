@@ -80,11 +80,14 @@ public:
 
 private:
   virtual bool filter(edm::Event&, const edm::EventSetup&) override;
+  virtual void NtupliseJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
   virtual void endJob() override;
 
 
   edm::EDGetTokenT<std::vector<pat::Muon>>         token_muons;
-  edm::EDGetTokenT<std::vector<pat::Jet>>          token_jets;
+  edm::EDGetTokenT<std::vector<pat::Jet>>          token_ak4chs;
+  edm::EDGetTokenT<std::vector<pat::Jet>>          token_ak4puppi;
+  edm::EDGetTokenT<std::vector<pat::Jet>>          token_ak8puppi;
   edm::EDGetTokenT<std::vector<pat::Electron>>     token_electrons;
   edm::EDGetTokenT<std::vector<pat::Tau>>          token_taus;
   edm::EDGetTokenT<std::vector<pat::MET>>          token_mets;
@@ -108,6 +111,8 @@ private:
 
   TString outfilename, year;
   bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring;
+  bool do_ak4chs, do_ak4puppi, do_ak8puppi;
+  bool is_oldTracker;
 
 
   TFile *outfile;
@@ -118,13 +123,18 @@ private:
 
 NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
 
-  outfilename = (TString)iConfig.getParameter<std::string>("outfilename");
-  is_mc       = iConfig.getParameter<bool>("is_mc");
-  year        = (TString)iConfig.getParameter<std::string>("year");
+  outfilename  = (TString)iConfig.getParameter<std::string>("outfilename");
+  is_mc        = iConfig.getParameter<bool>("is_mc");
+  year         = (TString)iConfig.getParameter<std::string>("year");
   do_standard_event = iConfig.getParameter<bool>("do_standard_event");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
-  do_pfcands = iConfig.getParameter<bool>("do_pfcands");
+  do_pfcands   = iConfig.getParameter<bool>("do_pfcands");
   do_prefiring = iConfig.getParameter<bool>("do_prefiring");
+  do_ak4chs    = iConfig.getParameter<bool>("do_ak4chs");
+  do_ak4puppi  = iConfig.getParameter<bool>("do_ak4puppi");
+  do_ak8puppi  = iConfig.getParameter<bool>("do_ak8puppi");
+
+  is_oldTracker = year.Contains("16");
 
   if(outfilename != ""){
     outfile = new TFile(outfilename, "RECREATE");
@@ -133,8 +143,10 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
     tree->Branch("Events", &event);
   }
 
+  token_ak4chs           = consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("ak4chs"));
+  token_ak4puppi         = consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("ak4puppi"));
+  token_ak8puppi         = consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("ak8puppi"));
   token_muons            = consumes<std::vector<pat::Muon>>     (iConfig.getParameter<edm::InputTag>("muons"));
-  token_jets             = consumes<std::vector<pat::Jet>>      (iConfig.getParameter<edm::InputTag>("ak4jets"));
   token_electrons        = consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("electrons"));
   token_taus             = consumes<std::vector<pat::Tau>>      (iConfig.getParameter<edm::InputTag>("taus"));
   token_mets             = consumes<std::vector<pat::MET>>      (iConfig.getParameter<edm::InputTag>("met"));
@@ -164,10 +176,11 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
 
 bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-
   // declare handles
   edm::Handle<std::vector<pat::Muon>> muons;
-  edm::Handle<std::vector<pat::Jet>> jets;
+  edm::Handle<std::vector<pat::Jet>> ak4chs;
+  edm::Handle<std::vector<pat::Jet>> ak4puppi;
+  edm::Handle<std::vector<pat::Jet>> ak8puppi;
   edm::Handle<std::vector<pat::Electron>> electrons;
   edm::Handle<std::vector<pat::Tau>> taus;
   edm::Handle<std::vector<pat::MET>> mets;
@@ -185,8 +198,15 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   edm::Handle<LHEEventProduct> lhe;
 
   // fill handles through the tokens
+  iEvent.getByToken(token_ak4chs, ak4chs);
+  iEvent.getByToken(token_ak4puppi, ak4puppi);
+  iEvent.getByToken(token_ak8puppi, ak8puppi);
+
+  if(do_ak4chs) iEvent.getByToken(token_ak4chs, ak4chs);
+  if(do_ak4puppi) iEvent.getByToken(token_ak4puppi, ak4puppi);
+  if(do_ak8puppi) iEvent.getByToken(token_ak8puppi, ak8puppi);
+
   iEvent.getByToken(token_muons, muons);
-  iEvent.getByToken(token_jets, jets);
   iEvent.getByToken(token_electrons, electrons);
   iEvent.getByToken(token_taus, taus);
   iEvent.getByToken(token_mets, mets);
@@ -226,6 +246,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   // Do general event-based variables
   // ================================
 
+  event.year = year.Data();
   event.is_data = !is_mc;
   event.run = iEvent.id().run();
   event.number = iEvent.id().event();
@@ -473,75 +494,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     event.rawmet->set_pt(mets->at(0).uncorPt());
     event.rawmet->set_phi(mets->at(0).uncorPhi());
 
-
-    // Do Jets
-    // =======
-    for(size_t i=0; i<jets->size(); i++){
-      if(!jets->at(i).isPFJet()) continue;
-      pat::Jet patjet = jets->at(i);
-      Jet j;
-
-      j.set_pt(patjet.pt());
-      j.set_eta(patjet.eta());
-      j.set_phi(patjet.phi());
-      j.set_m(patjet.mass());
-      if(is_mc){
-        j.set_parton_flavor(patjet.partonFlavour());
-        j.set_hadron_flavor(patjet.hadronFlavour());
-      }
-      j.set_n_constituents(patjet.chargedMultiplicity()+patjet.neutralMultiplicity());
-      j.set_area(patjet.jetArea());
-      j.set_identifier(i); // to keep track of leptons associated to this jet
-      j.set_ne_em_efrac (patjet.neutralEmEnergyFraction());
-      j.set_ne_had_efrac (patjet.neutralHadronEnergyFraction());
-      j.set_ch_em_efrac (patjet.chargedEmEnergyFraction());
-      j.set_ch_had_efrac (patjet.chargedHadronEnergyFraction());
-      j.set_mu_efrac (patjet.muonEnergyFraction());
-      j.set_n_muons (patjet.muonMultiplicity());
-      j.set_n_electrons (patjet.electronMultiplicity());
-      j.set_raw_factor(patjet.jecFactor("Uncorrected"));
-      j.set_L1_factor(patjet.correctedJet("L1FastJet").pt() / patjet.correctedJet("Uncorrected").pt());
-
-      j.set_score_CSVv2(patjet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      j.set_score_DeepB(patjet.bDiscriminator("pfDeepCSVJetTags:probb") + patjet.bDiscriminator("pfDeepCSVJetTags:probb"));
-      j.set_score_DeepFlavB(patjet.bDiscriminator("pfDeepFlavourJetTags:probb") + patjet.bDiscriminator("pfDeepFlavourJetTags:probbb") + patjet.bDiscriminator("pfDeepFlavourJetTags:problepb"));
-      j.set_pu_id(patjet.userInt("pileupJetId:fullId"));
-      j.set_score_qgl(patjet.userFloat("QGTagger:qgLikelihood"));
-
-      // Calculate JetID on the fly
-      float NHF  = patjet.neutralHadronEnergyFraction();
-      float NEMF = patjet.neutralEmEnergyFraction();
-      float CHF  = patjet.chargedHadronEnergyFraction();
-      float MUF  = patjet.muonEnergyFraction();
-      float CEMF = patjet.chargedEmEnergyFraction();
-      int NumConst = patjet.chargedMultiplicity()+patjet.neutralMultiplicity();
-      int NumNeutralParticles = patjet.neutralMultiplicity();
-      int CHM = patjet.chargedMultiplicity();
-      bool pass_tight = false;
-      bool pass_tight_lepveto = false;
-      if(fabs(patjet.eta()) <= 2.6){
-        pass_tight = (NHF < 0.9 && NEMF < 0.9 && NumConst > 1 && CHF > 0 && CHM > 0);
-        pass_tight_lepveto = (pass_tight && MUF < 0.8 && CEMF < 0.8);
-      }
-      else if(fabs(patjet.eta()) <= 2.7){
-        pass_tight = (NHF < 0.9 && NEMF < 0.99 && CHM > 0);
-        pass_tight_lepveto = (pass_tight && MUF < 0.8 && CEMF < 0.8);
-      }
-      else if(fabs(patjet.eta()) <= 3.0){
-        pass_tight = (NEMF > 0.01 && NEMF < 0.99 && NumNeutralParticles > 1);
-        pass_tight_lepveto = pass_tight;
-      }
-      else if(fabs(patjet.eta()) <= 5.0){
-        pass_tight = (NHF > 0.2 && NEMF < 0.9 && NumNeutralParticles > 10);
-        pass_tight_lepveto = pass_tight;
-      }
-
-      // NanoAOD-style
-      j.set_jet_id(pass_tight*2 + pass_tight_lepveto*4);
-      event.ak4chs->emplace_back(j);
-    }
-
-
     // Do Muons
     // =======
     for(size_t i=0; i<muons->size(); i++){
@@ -560,8 +512,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       m.set_selector(Muon::Good, muon::isGoodMuon(patmu, muon::TMOneStationTight));
 
       int jetidx = -1;
-      for (unsigned int j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
-        pat::Jet jet = jets->at(j);
+      for (unsigned int j=0; j<ak4chs->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = ak4chs->at(j);
         if (matchByCommonSourceCandidatePtr(patmu, jet)) {
           jetidx = j;
           break;
@@ -694,8 +646,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       Electron e;
 
       int jetidx = -1;
-      for (size_t j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
-        pat::Jet jet = jets->at(j);
+      for (size_t j=0; j<ak4chs->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = ak4chs->at(j);
         if (matchByCommonSourceCandidatePtr(patele, jet)) {
           jetidx = j;
           break;
@@ -776,8 +728,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       Tau t;
 
       int jetidx = -1;
-      for (size_t j=0; j<jets->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
-        pat::Jet jet = jets->at(j);
+      for (size_t j=0; j<ak4chs->size(); j++) { // from here: https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/PhysicsTools/NanoAOD/plugins/LeptonJetVarProducer.cc#L108#L121
+        pat::Jet jet = ak4chs->at(j);
         if (matchByCommonSourceCandidatePtr(pattau, jet)) {
           jetidx = j;
           break;
@@ -881,7 +833,11 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   }
 
 
-
+  // Do Jets
+  // =======
+  if(do_ak4chs)   NtupliseJets(ak4chs, *event.ak4chs, false, false);
+  if(do_ak4puppi) NtupliseJets(ak4puppi, *event.ak4puppi, false, true);
+  if(do_ak8puppi) NtupliseJets(ak8puppi, *event.ak8puppi, true, true);
 
 
   // Do HLT objects  (these are super heavy, add only once the need arises)
@@ -964,9 +920,9 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
       if(true) {
         auto jetidx = -1;
-        for(size_t jetidx_=0; jetidx_<jets->size(); jetidx_++) {
-          if(!jets->at(jetidx_).isPFJet()) continue;
-          pat::Jet patjet = jets->at(jetidx_);
+        for(size_t jetidx_=0; jetidx_<ak4chs->size(); jetidx_++) {
+          if(!ak4chs->at(jetidx_).isPFJet()) continue;
+          pat::Jet patjet = ak4chs->at(jetidx_);
           const auto& jet_daughter_ptrs = patjet.daughterPtrVector();
           for(const auto & daughter_p : jet_daughter_ptrs){
             auto r = reco::deltaR(p.eta(), p.phi(), daughter_p->eta(), daughter_p->phi());
@@ -983,11 +939,99 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     }
   }
 
-
   tree->Fill();
   event.reset();
 
   return true;
+}
+
+
+void NTuplizer::NtupliseJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi) {
+  for(size_t i=0; i<input_jets->size(); i++){
+    pat::Jet patjet = input_jets->at(i);
+    if(!patjet.isPFJet()) continue;
+    Jet j;
+    j.set_pt(patjet.pt());
+    j.set_eta(patjet.eta());
+    j.set_phi(patjet.phi());
+    j.set_m(patjet.mass());
+    j.set_area(patjet.jetArea());
+    j.set_identifier(i); // to keep track of leptons associated to this jet
+    if(is_mc){ // TODO really?
+      j.set_parton_flavor(patjet.partonFlavour());
+      j.set_hadron_flavor(patjet.hadronFlavour());
+    }
+    j.set_raw_factor(patjet.jecFactor("Uncorrected"));
+    j.set_L1_factor(is_puppi? 1.: patjet.correctedJet("L1FastJet").pt() / patjet.correctedJet("Uncorrected").pt());
+
+    float NHF  = patjet.neutralHadronEnergyFraction();
+    float CHF  = patjet.chargedHadronEnergyFraction();
+    float NEMF = patjet.neutralEmEnergyFraction();
+    float CEMF = patjet.chargedEmEnergyFraction();
+    float MUOF = patjet.muonEnergyFraction();
+    float ELEF = patjet.electronEnergyFraction();
+    float PHOF = patjet.photonEnergyFraction();
+    float sumFrac = NHF+CHF+NEMF+MUOF+CEMF;
+    int CHM = patjet.chargedMultiplicity();
+    int NM = (!is_puppi || is_ak8)? patjet.neutralMultiplicity(): patjet.userFloat("patPuppiJetSpecificProducer:neutralPuppiMultiplicity");
+    int NumConst = CHM+NM;
+    j.set_n_constituents(NumConst);
+    j.set_ne_had_efrac(NHF);
+    j.set_ch_had_efrac(CHF);
+    j.set_ne_em_efrac(NEMF);
+    j.set_muo_efrac(MUOF);
+    j.set_ele_efrac(ELEF);
+    j.set_pho_efrac(PHOF);
+    j.set_n_muons(patjet.muonMultiplicity());
+    j.set_n_electrons(patjet.electronMultiplicity());
+
+    // Calculate JetID on the fly
+    bool pass_tight = false;
+    bool pass_tight_lepveto = false;
+    if(fabs(patjet.eta()) <= is_oldTracker? 2.4: 2.6){
+      pass_tight = (NHF < 0.9 && NEMF < 0.9 && NumConst > 1 && CHF > 0 && CHM > 0);
+      pass_tight_lepveto = (pass_tight && MUOF < 0.8 && CEMF < 0.8);
+    }
+    else if(fabs(patjet.eta()) <= 2.7){
+      if (is_puppi && is_oldTracker) {
+        pass_tight = (NHF < 0.98 && NEMF < 0.99);
+      } else {pass_tight = (NHF < 0.9 && NEMF < 0.99);}
+      if (!is_oldTracker) {
+        pass_tight_lepveto = (pass_tight && MUOF < 0.8 && CEMF < 0.8);
+      } else {pass_tight_lepveto = pass_tight;}
+    }
+    else if(fabs(patjet.eta()) <= 3.0){
+      if (is_oldTracker){
+        if (is_puppi){pass_tight = NM >= 1;}
+        else {pass_tight = (NHF < 0.9 && NEMF > 0.0 && NEMF < 0.99 && NM > 1);}
+      } else {
+        if (is_puppi){ pass_tight = NHF < 0.9999;}
+        else {pass_tight = (NEMF > 0.0 && NEMF < 0.99 && NM > 1);}
+      }
+      pass_tight_lepveto = pass_tight;
+    }
+    else if(fabs(patjet.eta()) <= 5.0){
+      if (is_puppi) {pass_tight = (NEMF < 0.9 && NM > 2);}
+      else {pass_tight = (NHF > 0.2 && NEMF < 0.9 && NM > 10);}
+      pass_tight_lepveto = pass_tight;
+    }
+
+    // NanoAOD-style
+    j.set_jet_id(pass_tight*2 + pass_tight_lepveto*4);
+
+    if(patjet.hasUserFloat("pileupJetId:fullDiscriminant")) {
+      j.set_pu_id(patjet.userInt("pileupJetId:fullId"));
+    }
+    if(patjet.hasUserFloat("QGTagger:qgLikelihood")) {
+      j.set_score_qgl(patjet.userFloat("QGTagger:qgLikelihood"));
+    }
+    j.set_score_CSVv2(patjet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    j.set_score_DeepB(patjet.bDiscriminator("pfDeepCSVJetTags:probb") + patjet.bDiscriminator("pfDeepCSVJetTags:probb"));
+    j.set_score_DeepFlavB(patjet.bDiscriminator("pfDeepFlavourJetTags:probb") + patjet.bDiscriminator("pfDeepFlavourJetTags:probbb") + patjet.bDiscriminator("pfDeepFlavourJetTags:problepb"));
+
+
+    output_jets.emplace_back(j);
+  }
 }
 
 

@@ -22,7 +22,9 @@ public:
     m_ch_had_efrac = -1.;
     m_ne_em_efrac = -1.;
     m_ne_had_efrac = -1.;
-    m_mu_efrac = -1.;
+    m_muo_efrac = -1.;
+    m_ele_efrac = -1.;
+    m_pho_efrac = -1.;
     m_jet_id = -1;
     m_pu_id = -1;
     m_raw_factor = -1.;
@@ -44,7 +46,9 @@ public:
   float ch_had_efrac() const {return m_ch_had_efrac;};
   float ne_em_efrac() const {return m_ne_em_efrac;};
   float ne_had_efrac() const {return m_ne_had_efrac;};
-  float mu_efrac() const {return m_mu_efrac;};
+  float muo_efrac() const {return m_muo_efrac;};
+  float ele_efrac() const {return m_ele_efrac;};
+  float pho_efrac() const {return m_pho_efrac;};
   int jet_id() const {return m_jet_id;};
   int pu_id() const {return m_pu_id;};
   float raw_factor() const {return m_raw_factor;};
@@ -66,7 +70,9 @@ public:
   void set_ch_had_efrac(float x){m_ch_had_efrac = x;};
   void set_ne_em_efrac(float x){m_ne_em_efrac = x;};
   void set_ne_had_efrac(float x){m_ne_had_efrac = x;};
-  void set_mu_efrac(float x){m_mu_efrac = x;};
+  void set_muo_efrac(float x){m_muo_efrac = x;};
+  void set_ele_efrac(float x){m_ele_efrac = x;};
+  void set_pho_efrac(float x){m_pho_efrac = x;};
   void set_jet_id(int x){m_jet_id = x;};
   void set_pu_id(int x){m_pu_id = x;};
   void set_L1_factor(float x){m_L1_factor = x;};
@@ -91,7 +97,9 @@ protected:
   float m_ch_had_efrac;
   float m_ne_em_efrac;
   float m_ne_had_efrac;
-  float m_mu_efrac;
+  float m_muo_efrac;
+  float m_ele_efrac;
+  float m_pho_efrac;
   int   m_jet_id;
   int   m_pu_id; // 80X (2016) training
   float m_raw_factor; // = Factor to get to raw pT = (raw pt)/(corr pt)
