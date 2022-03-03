@@ -51,9 +51,9 @@ public:
     m_dxy = -1;
     m_dz = -1;
     m_d0 = -1;
-    m_edxy = -1;
-    m_edz = -1;
-    m_ed0 = -1;
+    m_dxy_err = -1;
+    m_dz_err = -1;
+    m_d0_err = -1;
     m_ea = -1;
     m_einv_minus_pinv = -1;
     m_h_over_e = -1;
@@ -93,9 +93,9 @@ public:
   float dxy() const {return m_dxy;};
   float dz() const {return m_dz;};
   float d0() const {return m_d0;};
-  float edxy() const {return m_edxy;};
-  float edz() const {return m_edz;};
-  float ed0() const {return m_ed0;};
+  float dxy_err() const {return m_dxy_err;};
+  float dz_err() const {return m_dz_err;};
+  float d0_err() const {return m_d0_err;};
   float ea() const {return m_ea;};
   float einv_minus_pinv() const {return m_einv_minus_pinv;};
   float h_over_e() const {return m_h_over_e;};
@@ -127,9 +127,9 @@ public:
   void set_dxy(float x){m_dxy = x;};
   void set_dz(float x){m_dz = x;};
   void set_d0(float x){m_d0 = x;};
-  void set_edxy(float x){m_edxy = x;};
-  void set_edz(float x){m_edz = x;};
-  void set_ed0(float x){m_ed0 = x;};
+  void set_dxy_err(float x){m_dxy_err = x;};
+  void set_dz_err(float x){m_dz_err = x;};
+  void set_d0_err(float x){m_d0_err = x;};
   void set_ea(float x){m_ea = x;};
   void set_iso_rel_03(float x){m_iso_rel_03 = x;}; // with ea*rho correction
   void set_iso_rel_03_charged(float x){m_iso_rel_03_charged = x;};
@@ -159,9 +159,9 @@ protected:
   float m_dxy;
   float m_dz;
   float m_d0;
-  float m_edxy;
-  float m_edz;
-  float m_ed0;
+  float m_dxy_err;
+  float m_dz_err;
+  float m_d0_err;
   float m_ea;
   float m_einv_minus_pinv;
   float m_h_over_e;

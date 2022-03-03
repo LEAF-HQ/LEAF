@@ -524,9 +524,9 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       m.set_dxy(fabs(patmu.dB(pat::Muon::PV2D)));
       m.set_dz(fabs(patmu.dB(pat::Muon::PVDZ)));
       m.set_d0(fabs(patmu.dB(pat::Muon::PV3D)));
-      m.set_edxy(patmu.edB(pat::Muon::PV2D));
-      m.set_edz(patmu.edB(pat::Muon::PVDZ));
-      m.set_ed0(patmu.edB(pat::Muon::PV3D));
+      m.set_dxy_err(patmu.edB(pat::Muon::PV2D));
+      m.set_dz_err(patmu.edB(pat::Muon::PVDZ));
+      m.set_d0_err(patmu.edB(pat::Muon::PV3D));
 
       if(patmu.tunePMuonBestTrack().isNonnull()){
         edm::Ref<std::vector<reco::Track> > tunePtrack = patmu.tunePMuonBestTrack();
@@ -669,9 +669,9 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       e.set_dxy(fabs(patele.dB(pat::Electron::PV2D)));
       e.set_dz(fabs(patele.dB(pat::Electron::PVDZ)));
       e.set_d0(fabs(patele.dB(pat::Electron::PV3D)));
-      e.set_edxy(patele.edB(pat::Electron::PV2D));
-      e.set_edz(patele.edB(pat::Electron::PVDZ));
-      e.set_ed0(patele.edB(pat::Electron::PV3D));
+      e.set_dxy_err(patele.edB(pat::Electron::PV2D));
+      e.set_dz_err(patele.edB(pat::Electron::PVDZ));
+      e.set_d0_err(patele.edB(pat::Electron::PV3D));
 
       e.set_lost_hits(patele.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS));
       e.set_conv_veto(patele.passConversionVeto());
@@ -905,13 +905,13 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_puppiweight(patcand.puppiWeight());
       p.set_puppiweight_nolep(patcand.puppiWeightNoLep());
 
-      p.set_caloFraction(patcand.caloFraction());
-      p.set_hcalFraction(patcand.hcalFraction());
+      p.set_calo_frac(patcand.caloFraction());
+      p.set_hcal_frac(patcand.hcalFraction());
       p.set_dz(patcand.dzAssociatedPV()); // dz with respect to the PV ref
       p.set_dxy(patcand.dxy()); // dxy with respect to the PV ref
       if(patcand.hasTrackDetails()){
-        p.set_dzError(patcand.dzError());
-        p.set_dxyError(patcand.dxyError());
+        p.set_dz_err(patcand.dzError());
+        p.set_dxy_err(patcand.dxyError());
       }
       p.set_vertex_x(patcand.vertex().X());
       p.set_vertex_y(patcand.vertex().Y());
