@@ -39,7 +39,7 @@ bool BTaggingScaleFactorApplicator::process(RecoEvent & event) {
   if(!m_calib_nominal) return true;
 
   double weight, weightErrBC, weightErrUDSG;
-  tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(*event.ak4chs, event);
+  tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(*event.jets_ak4chs, event);
   double weightErr = sqrt(weightErrBC*weightErrBC + weightErrUDSG*weightErrUDSG);
 
   double weight_up        = weight + weightErr;

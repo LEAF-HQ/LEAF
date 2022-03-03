@@ -39,7 +39,7 @@ bool GenVisTauCleaner::process(GenEvent & event){
 
 JetCleaner::JetCleaner(const ID<Jet> & id_): id(id_) {}
 bool JetCleaner::process(RecoEvent & event){
-  clean_collection(event.ak4chs, event, id);
+  clean_collection(event.jets_ak4chs, event, id);
   return true;
 }
 

@@ -36,6 +36,6 @@ public:
   };
 
   double weight;
-  std::string year;
+  TString year;
 
 };

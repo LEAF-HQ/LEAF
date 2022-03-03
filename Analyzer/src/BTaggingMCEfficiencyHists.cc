@@ -20,7 +20,7 @@ void BTaggingMCEfficiencyHists::fill(const RecoEvent & event){
   if(event.is_data) return; // makes only sense for MC, check the class name. lol.
 
   double weight = event.weight;
-  for (Jet & jet : *event.ak4chs){
+  for (Jet & jet : *event.jets_ak4chs){
 
     int flav = jet.hadron_flavor();
     bool is_tagged = m_btagid(jet, event);

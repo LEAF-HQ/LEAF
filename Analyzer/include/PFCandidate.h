@@ -12,16 +12,16 @@ public:
   // Constructors, destructor
   PFCandidate(){
     m_puppiweight = -1.;
-    m_puppiweight_nolep = -1;
-    m_calo_frac = -1;
-    m_hcal_frac = -1;
-    m_dz = -1;
-    m_dxy = -1;
-    m_dz_err = -1;
-    m_dxy_err = -1;
-    m_vertex_x = -1;
-    m_vertex_y = -1;
-    m_vertex_z = -1;
+    m_puppiweight_nolep = -1.;
+    m_calo_frac = -1.;
+    m_hcal_frac = -1.;
+    m_dz = -1.;
+    m_dxy = -1.;
+    m_dz_err = -1.;
+    m_dxy_err = -1.;
+    m_vertex_x = -1.;
+    m_vertex_y = -1.;
+    m_vertex_z = -1.;
     m_jetidx = -1;
     m_is_iso_ch_had = false;
 
