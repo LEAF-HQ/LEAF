@@ -23,7 +23,7 @@ public:
     m_vertex_y = -1;
     m_vertex_z = -1;
     m_jetidx = -1;
-    m_isIsolatedChargedHadron = false;
+    m_is_iso_ch_had = false;
 
   }
 
@@ -38,7 +38,7 @@ public:
   float vertex_x() const {return m_vertex_x;};
   float vertex_y() const {return m_vertex_y;};
   float vertex_z() const {return m_vertex_z;};
-  bool isIsolatedChargedHadron() const {return m_isIsolatedChargedHadron;};
+  bool is_iso_ch_had() const {return m_is_iso_ch_had;};
   int jetidx() const {return m_jetidx;};
 
   void set_puppiweight(float x) {m_puppiweight = x;};
@@ -52,7 +52,7 @@ public:
   void set_vertex_x(float x) {m_vertex_x = x;};
   void set_vertex_y(float x) {m_vertex_y = x;};
   void set_vertex_z(float x) {m_vertex_z = x;};
-  void set_isIsolatedChargedHadron(bool x) {m_isIsolatedChargedHadron = x;};
+  void set_is_iso_ch_had(bool x) {m_is_iso_ch_had = x;};
   void set_jetidx(int x){m_jetidx = x;};
 
 protected:
@@ -60,7 +60,7 @@ protected:
   float m_calo_frac, m_hcal_frac;
   float m_dz, m_dxy, m_dz_err, m_dxy_err;
   float m_vertex_x, m_vertex_y, m_vertex_z;
-  bool m_isIsolatedChargedHadron;
+  bool m_is_iso_ch_had;
   int m_jetidx;
 
 };

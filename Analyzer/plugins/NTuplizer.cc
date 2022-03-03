@@ -916,7 +916,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_vertex_x(patcand.vertex().X());
       p.set_vertex_y(patcand.vertex().Y());
       p.set_vertex_z(patcand.vertex().Z());
-      p.set_isIsolatedChargedHadron(patcand.isIsolatedChargedHadron());
+      p.set_is_iso_ch_had(patcand.isIsolatedChargedHadron());
 
       if(true) {
         auto jetidx = -1;
