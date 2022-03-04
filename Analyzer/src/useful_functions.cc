@@ -216,6 +216,10 @@ vector<string> JERCFiles(const string& type, const TString& runName, const strin
 }
 
 
+bool closeFloat(float a, float b, float maxRelDiff, float maxAbsDiff) {
+  return fabs(a-b) <= max(maxRelDiff * max(fabs(a), fabs(b)), maxAbsDiff);
+}
+
 
 bool FindInString(const std::string& search, const std::string& str) {
   return str.find(search)!=std::string::npos ;

@@ -14,8 +14,8 @@ public:
   Flags & operator = (const Flags &) = default;
   ~Flags() = default;
 
-  const bool has(const TString s) const {auto it = m_map.find(s); return (it != m_map.end());};
-  const bool has_prefix(const TString s) const {
+  bool has(const TString s) const {auto it = m_map.find(s); return (it != m_map.end());};
+  bool has_prefix(const TString s) const {
     if(m_map.lower_bound(s) != m_map.end()){
       if(m_map.lower_bound(s)->first.Contains(s)){
         return true;
@@ -23,8 +23,8 @@ public:
     }
     return false;
   };
-  const bool get(const TString s) const {if(Flags::has(s)){return m_map.at(s);} else{throw runtime_error("Trying to get non-existent flag '" + s + "' from Flags class.");}};
-  const bool get_prefix(const TString s) const {
+  bool get(const TString s) const {if(Flags::has(s)){return m_map.at(s);} else{throw runtime_error("Trying to get non-existent flag '" + s + "' from Flags class.");}};
+  bool get_prefix(const TString s) const {
     if(!Flags::has_prefix(s)) throw runtime_error("Trying to get non-existent flag with pre-fix '" + s + "' from Flags class.");
     for(auto it=m_map.lower_bound(s); it != m_map.end(); ++it){
       if(!it->first.Contains(s)) continue;

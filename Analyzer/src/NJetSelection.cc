@@ -12,11 +12,11 @@ NJetSelection::NJetSelection(const Config & cfg, int nmin_, int nmax_, ID<Jet> i
 bool NJetSelection::passes(RecoEvent & event){
   int selected = 0;
   if(id){
-    for (Jet & jet : *event.jets){
+    for (Jet & jet : *event.jets_ak4chs){
       if(id(jet, event)) selected++;
     }
   }
-  else selected = event.jets->size();
+  else selected = event.jets_ak4chs->size();
 
   return(selected >= nmin && (selected <= nmax || nmax == -1));
 }

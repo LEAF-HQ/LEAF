@@ -771,7 +771,7 @@ int main(int argc, char* argv[]){
       j.set_eta(jet_eta[i]);
       j.set_phi(jet_phi[i]);
       j.set_m(jet_mass[i]);
-      event.jets->emplace_back(j);
+      event.ak4chs->emplace_back(j);
     }
 
     // Do Taus

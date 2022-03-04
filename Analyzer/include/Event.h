@@ -19,6 +19,7 @@ public:
   // Constructors, destructor
   Event(){
     weight = 1.;
+    year = "";
   };
 
   Event(const Event &) = default;
@@ -27,11 +28,14 @@ public:
 
   void clear(){
     weight = 1.;
+    year = "";
   };
   void reset(){
     weight = 1.;
+    year = "";
   };
 
   double weight;
+  TString year;
 
 };

@@ -56,7 +56,7 @@ class TuplizeRunner:
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
                 command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
-                for obj in ['standard','pfcands', 'triggerobjects']:
+                for obj in ['standard', 'pfcands', 'triggerobjects', 'extrajets']:
                     command += ' '+obj+'='+str(obj in self.sample.contents[self.year])+' '
                 commands.append(command)
                 njobs += 1
@@ -112,7 +112,7 @@ class TuplizeRunner:
             CB.CreateJobInfo()
             CB.ModifyJobInfo('outdir', joboutput+'/')
             # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
-            CB.ModifyJobInfo('x509userproxy', '$ENV(X509_USER_PROXY)')
+            CB.ModifyJobInfo('x509userproxy', '/user/'+os.getenv('USER')+'/tmp/x509up')
             CB.ModifyJobInfo('use_x509userproxy', 'True')
             CB.ModifyJobInfo('transfer_executable', 'False')
             jobs = {'executables': [], 'arguments':[]}
