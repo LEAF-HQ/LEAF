@@ -231,7 +231,7 @@ def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', neven
         n_genevents = count_genevents_in_file(filename, treename=treename)
         if n_genevents is None:
             missing_indices.append(idx)
-        if nevents_expected_per_ntuple:
+        elif nevents_expected_per_ntuple:
             if nevents_expected_per_ntuple[filename] != n_genevents:
                 print yellow('Expected %i events in file %s, but counted only %i. Count as missing file.' % (nevents_expected_per_ntuple[filename], filename, n_genevents))
                 missing_indices.append(idx)
