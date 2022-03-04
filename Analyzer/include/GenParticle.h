@@ -13,21 +13,21 @@ class GenParticle : public FlavorParticle {
 public:
 
   enum StatusFlag{
-    isPrompt,
-    isDecayedLeptonHadron,
-    isTauDecayProduct,
-    isPromptTauDecayProduct,
-    isDirectTauDecayProduct,
-    isDirectPromptTauDecayProduct,
-    isDirectHadronDecayProduct,
     isHardProcess,
     fromHardProcess,
-    isHardProcessTauDecayProduct,
-    isDirectHardProcessTauDecayProduct,
     fromHardProcessBeforeFSR,
+    isPrompt,
     isFirstCopy,
     isLastCopy,
-    isLastCopyBeforeFSR
+    isLastCopyBeforeFSR,
+    isDecayedLeptonHadron,
+    isDirectHadronDecayProduct,
+    isTauDecayProduct,
+    isPromptTauDecayProduct,
+    isHardProcessTauDecayProduct,
+    isDirectHardProcessTauDecayProduct,
+    isDirectTauDecayProduct,
+    isDirectPromptTauDecayProduct,
   };
 
 
@@ -63,6 +63,20 @@ public:
   void set_mother_identifier(int x) {m_mother_identifier = x;};
   void set_status(int x) {m_status = x;};
   void set_identifier(int x) {m_identifier = x;};
+
+
+  bool fromHardProcessFinalState() const {
+    return (get_statusflag(GenParticle::fromHardProcess) && status() == 1);
+  }
+  bool fromHardProcessDecayed() const {
+    return (get_statusflag(GenParticle::isDecayedLeptonHadron) && get_statusflag(GenParticle::fromHardProcess));
+  }
+  bool isPromptFinalState() const {
+    return (get_statusflag(GenParticle::isPrompt) && status() == 1);
+  }
+  bool isPromptDecayed() const {
+    return (get_statusflag(GenParticle::isDecayedLeptonHadron) && get_statusflag(GenParticle::isPrompt));
+  }
 
 
 protected:
