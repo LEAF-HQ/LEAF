@@ -11,7 +11,7 @@ CUSTOMDICTS := $(foreach subdir,$(subdirs), -l$(subdir)Classes)
 all: execs
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
-execs: Analyzer Counter_NANOAOD Counter_NANOAOD_weights
+execs: Analyzer Counter_Entries Counter_Entries_Weights
 
 scram: dict
 	@cd $(ANALYZERPATH)
@@ -27,13 +27,13 @@ Analyzer: scram dict $(OBJDIR)/Analyzer.o
 	@echo "--> Creating Analyzer"
 	@$(CC) $(OBJDIR)/Analyzer.o $(LFLAGS) -o $(BINDIR)/$@ $(LIBSMAIN) $(CUSTOMLIBS) $(CUSTOMDICTS)
 
-Counter_NANOAOD: scram dict $(OBJDIR)/Counter_NANOAOD.o
-	@echo "--> Creating Counter_NANOAOD"
-	@$(CC) $(OBJDIR)/Counter_NANOAOD.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
+Counter_Entries: scram dict $(OBJDIR)/Counter_Entries.o
+	@echo "--> Creating Counter_Entries"
+	@$(CC) $(OBJDIR)/Counter_Entries.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
 
-Counter_NANOAOD_weights: scram dict $(OBJDIR)/Counter_NANOAOD_weights.o
-	@echo "--> Creating Counter_NANOAOD_weights"
-	@$(CC) $(OBJDIR)/Counter_NANOAOD_weights.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
+Counter_Entries_Weights: scram dict $(OBJDIR)/Counter_Entries_Weights.o
+	@echo "--> Creating Counter_Entries_Weights"
+	@$(CC) $(OBJDIR)/Counter_Entries_Weights.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
 
 $(OBJECTSEXE): $(OBJDIR)/%.o : $(EXECDIR)/%.cxx
 	@echo "--> Creating object $@"
