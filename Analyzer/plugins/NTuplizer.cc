@@ -198,7 +198,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   edm::Handle<LHEEventProduct> lhe;
 
   // fill handles through the tokens
-  if (do_ak4chs) iEvent.getByToken(token_jets_ak4chs, jets_ak4chs);
+  iEvent.getByToken(token_jets_ak4chs, jets_ak4chs);
   if (do_ak4puppi) iEvent.getByToken(token_jets_ak4puppi, jets_ak4puppi);
   if (do_ak8puppi) iEvent.getByToken(token_jets_ak8puppi, jets_ak8puppi);
   iEvent.getByToken(token_muons, muons);
