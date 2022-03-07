@@ -259,7 +259,7 @@ void GenParticleHists::fill(const RecoEvent & event){
     }
     for(size_t i=0; i<event.genparticles_all->size(); i++){
       GenParticle gpmu = event.genparticles_all->at(i);
-      if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
+      if (abs(gpmu.pdgid()) != 13 || !gpmu.isLastCopy()) continue;
       hdrgenvistaumu->Fill(deltaR(gvt, gpmu), weight);
       hdphigenvistaumu->Fill(deltaPhi(gvt, gpmu), weight);
       hdetagenvistaumu->Fill(deltaEta(gvt, gpmu), weight);
@@ -267,7 +267,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
     for(size_t i=0; i<event.genparticles_all->size(); i++){
       GenParticle gpe = event.genparticles_all->at(i);
-      if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+      if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
       hdrgenvistaue->Fill(deltaR(gvt, gpe), weight);
       hdphigenvistaue->Fill(deltaPhi(gvt, gpe), weight);
       hdetagenvistaue->Fill(deltaEta(gvt, gpe), weight);
@@ -334,8 +334,8 @@ void GenParticleHists::fill(const RecoEvent & event){
     // cout << "GenParticle at index " << gpidx << " with ID " << gp.pdgid() << ". "
     int id = abs(gp.pdgid());
     if(id != 11 && id != 13 && id != 15 && id != 5 && id != 12 && id != 14 && id != 16) continue;
-    if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
-    // if((id == 5) && !gp.get_statusflag(GenParticle::isFirstCopy)) continue;
+    if(!gp.isLastCopy()) continue;
+    // if((id == 5) && !gp.isFirstCopy()) continue;
 
     if(id == 15){ // taus
       n_gentaus++;
@@ -347,14 +347,14 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=gpidx+1; i<event.genparticles_all->size(); i++){
         GenParticle gptau = event.genparticles_all->at(i);
-        if (abs(gptau.pdgid()) != 15 || !gptau.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gptau.pdgid()) != 15 || !gptau.isLastCopy()) continue;
         hdrgenditau->Fill(deltaR(gp, gptau), weight);
         hdphigenditau->Fill(deltaPhi(gp, gptau), weight);
         hdetagenditau->Fill(deltaEta(gp, gptau), weight);
       }
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpmu = event.genparticles_all->at(i);
-        if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpmu.pdgid()) != 13 || !gpmu.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         double dr = deltaR(gp, gpmu);
         hdrgentaumu->Fill(dr, weight);
@@ -368,7 +368,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
-        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         double dr = deltaR(gp, gpe);
         hdrgentaue->Fill(dr, weight);
@@ -386,7 +386,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=gpidx+1; i<event.genparticles_all->size(); i++){
         GenParticle gpmu = event.genparticles_all->at(i);
-        if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpmu.pdgid()) != 13 || !gpmu.isLastCopy()) continue;
         hdrgendimu->Fill(deltaR(gp, gpmu), weight);
         hdphigendimu->Fill(deltaPhi(gp, gpmu), weight);
         hdetagendimu->Fill(deltaEta(gp, gpmu), weight);
@@ -394,7 +394,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
-        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         hdrgenmue->Fill(deltaR(gp, gpe), weight);
         hdphigenmue->Fill(deltaPhi(gp, gpe), weight);
@@ -456,7 +456,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpmu = event.genparticles_all->at(i);
-        if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpmu.pdgid()) != 13 || !gpmu.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         hdrgenemu->Fill(deltaR(gp, gpmu), weight);
         hdphigenemu->Fill(deltaPhi(gp, gpmu), weight);
@@ -465,7 +465,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=gpidx+1; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
-        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
         hdrgendie->Fill(deltaR(gp, gpe), weight);
         hdphigendie->Fill(deltaPhi(gp, gpe), weight);
         hdetagendie->Fill(deltaEta(gp, gpe), weight);
@@ -526,7 +526,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpmu = event.genparticles_all->at(i);
-        if (abs(gpmu.pdgid()) != 13 || !gpmu.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpmu.pdgid()) != 13 || !gpmu.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         hdrgenbmu->Fill(deltaR(gp, gpmu), weight);
         hdphigenbmu->Fill(deltaPhi(gp, gpmu), weight);
@@ -535,7 +535,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
-        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
         if ((int)i == gpidx) continue;
         hdrgenbe->Fill(deltaR(gp, gpe), weight);
         hdphigenbe->Fill(deltaPhi(gp, gpe), weight);
@@ -551,7 +551,7 @@ void GenParticleHists::fill(const RecoEvent & event){
 
       for(size_t i=gpidx+1; i<event.genparticles_all->size(); i++){
         GenParticle gpb = event.genparticles_all->at(i);
-        if (abs(gpb.pdgid()) != 5 || !gpb.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpb.pdgid()) != 5 || !gpb.isLastCopy()) continue;
         hdrgendib->Fill(deltaR(gp, gpb), weight);
         hdphigendib->Fill(deltaPhi(gp, gpb), weight);
         hdetagendib->Fill(deltaEta(gp, gpb), weight);
@@ -614,7 +614,7 @@ void GenParticleHists::fill(const RecoEvent & event){
       double detamine = 999;
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpe = event.genparticles_all->at(i);
-        if (abs(gpe.pdgid()) != 11 || !gpe.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpe.pdgid()) != 11 || !gpe.isLastCopy()) continue;
         double dr = deltaR(gp, gpe);
         double dphi = deltaPhi(gp, gpe);
         double deta = deltaEta(gp, gpe);
@@ -631,7 +631,7 @@ void GenParticleHists::fill(const RecoEvent & event){
       double detaminmu = 999;
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpm = event.genparticles_all->at(i);
-        if (abs(gpm.pdgid()) != 13 || !gpm.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpm.pdgid()) != 13 || !gpm.isLastCopy()) continue;
         double dr = deltaR(gp, gpm);
         double dphi = deltaPhi(gp, gpm);
         double deta = deltaEta(gp, gpm);
@@ -648,7 +648,7 @@ void GenParticleHists::fill(const RecoEvent & event){
       double detamintau = 999;
       for(size_t i=0; i<event.genparticles_all->size(); i++){
         GenParticle gpt = event.genparticles_all->at(i);
-        if (abs(gpt.pdgid()) != 15 || !gpt.get_statusflag(GenParticle::isLastCopy)) continue;
+        if (abs(gpt.pdgid()) != 15 || !gpt.isLastCopy()) continue;
         double dr = deltaR(gp, gpt);
         double dphi = deltaPhi(gp, gpt);
         double deta = deltaEta(gp, gpt);

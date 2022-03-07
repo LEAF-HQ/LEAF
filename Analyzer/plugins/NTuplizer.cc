@@ -313,21 +313,25 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         gp.set_mother_identifier(motherid);
         gp.set_identifier(i);
         gp.set_status(minigp.status());
-        gp.set_statusflag(GenParticle::isPrompt, minigp.statusFlags().isPrompt());
-        gp.set_statusflag(GenParticle::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
-        gp.set_statusflag(GenParticle::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
-        gp.set_statusflag(GenParticle::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
-        gp.set_statusflag(GenParticle::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
-        gp.set_statusflag(GenParticle::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
-        gp.set_statusflag(GenParticle::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
-        gp.set_statusflag(GenParticle::isHardProcess, minigp.statusFlags().isHardProcess());
-        gp.set_statusflag(GenParticle::fromHardProcess, minigp.statusFlags().fromHardProcess());
-        gp.set_statusflag(GenParticle::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
-        gp.set_statusflag(GenParticle::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
-        gp.set_statusflag(GenParticle::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
-        gp.set_statusflag(GenParticle::isFirstCopy, minigp.statusFlags().isFirstCopy());
-        gp.set_statusflag(GenParticle::isLastCopy, minigp.statusFlags().isLastCopy());
-        gp.set_statusflag(GenParticle::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
+
+        // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenParticle.h
+        // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
+        gp.set_statusflag(GenParticle::StatusFlag::isHardProcess, minigp.statusFlags().isHardProcess());
+        gp.set_statusflag(GenParticle::StatusFlag::fromHardProcess, minigp.statusFlags().fromHardProcess());
+        gp.set_statusflag(GenParticle::StatusFlag::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
+        gp.set_statusflag(GenParticle::StatusFlag::isPrompt, minigp.statusFlags().isPrompt());
+        gp.set_statusflag(GenParticle::StatusFlag::isFirstCopy, minigp.statusFlags().isFirstCopy());
+        gp.set_statusflag(GenParticle::StatusFlag::isLastCopy, minigp.statusFlags().isLastCopy());
+        gp.set_statusflag(GenParticle::StatusFlag::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
+        gp.set_statusflag(GenParticle::StatusFlag::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
+        gp.set_statusflag(GenParticle::StatusFlag::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
+        gp.set_statusflag(GenParticle::StatusFlag::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
+
         event.genparticles_all->emplace_back(gp);
       }
 
