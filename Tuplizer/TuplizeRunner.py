@@ -181,12 +181,12 @@ class TuplizeRunner:
 
         if force_counting:
             nevents_new = {'generated': None, 'weighted': None}
-            commands = [(('Counter_NANOAOD %s %s' % (filename, treename), filename)) for filename in list_folder_content]
+            commands = [(('Counter_Entries %s %s' % (filename, treename), filename)) for filename in list_folder_content]
             results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
             nevents_new['generated'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
             missing_files = [r[1] for r in results if not r[0].strip('\n').strip('.').isdigit()]
             if count_weights:
-                commands = [(('Counter_NANOAOD_weights %s' % (filename), filename)) for filename in list_folder_content]
+                commands = [(('Counter_Entries_Weights %s' % (filename), filename)) for filename in list_folder_content]
                 results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
                 nevents_new['weighted'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
                 missing_files = [r[1] for r in results if not r[0].strip('\n').replace('.','').isdigit()]
