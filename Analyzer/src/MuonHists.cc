@@ -113,7 +113,7 @@ void MuonHists::fill(const RecoEvent & event){
     float gendr_min = 99999.;
     for(const auto & gp : *event.genparticles_all){
       if(abs(gp.pdgid()) != 13) continue;
-      if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
+      if(!gp.isLastCopy()) continue;
       float dr = deltaR(m, gp);
       if(dr < gendr_min){
         gendr_min = dr;

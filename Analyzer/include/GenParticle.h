@@ -12,7 +12,7 @@ class GenParticle : public FlavorParticle {
 
 public:
 
-  enum StatusFlag{
+  enum class StatusFlag{
     isHardProcess,
     fromHardProcess,
     fromHardProcessBeforeFSR,
@@ -64,18 +64,35 @@ public:
   void set_status(int x) {m_status = x;};
   void set_identifier(int x) {m_identifier = x;};
 
+  // Easier access to StatusFlag bools
+  bool isHardProcess() const {return get_statusflag(StatusFlag::isHardProcess);};
+  bool fromHardProcess() const {return get_statusflag(StatusFlag::fromHardProcess);};
+  bool fromHardProcessBeforeFSR() const {return get_statusflag(StatusFlag::fromHardProcessBeforeFSR);};
+  bool isPrompt() const {return get_statusflag(StatusFlag::isPrompt);};
+  bool isFirstCopy() const {return get_statusflag(StatusFlag::isFirstCopy);};
+  bool isLastCopy() const {return get_statusflag(StatusFlag::isLastCopy);};
+  bool isLastCopyBeforeFSR() const {return get_statusflag(StatusFlag::isLastCopyBeforeFSR);};
+  bool isDecayedLeptonHadron() const {return get_statusflag(StatusFlag::isDecayedLeptonHadron);};
+  bool isDirectHadronDecayProduct() const {return get_statusflag(StatusFlag::isDirectHadronDecayProduct);};
+  bool isTauDecayProduct() const {return get_statusflag(StatusFlag::isTauDecayProduct);};
+  bool isPromptTauDecayProduct() const {return get_statusflag(StatusFlag::isPromptTauDecayProduct);};
+  bool isHardProcessTauDecayProduct() const {return get_statusflag(StatusFlag::isHardProcessTauDecayProduct);};
+  bool isDirectHardProcessTauDecayProduct() const {return get_statusflag(StatusFlag::isDirectHardProcessTauDecayProduct);};
+  bool isDirectTauDecayProduct() const {return get_statusflag(StatusFlag::isDirectTauDecayProduct);};
+  bool isDirectPromptTauDecayProduct() const {return get_statusflag(StatusFlag::isDirectPromptTauDecayProduct);};
 
+  // Easier access to combinations of StatusFlag bools
   bool fromHardProcessFinalState() const {
-    return (get_statusflag(GenParticle::fromHardProcess) && status() == 1);
+    return (get_statusflag(StatusFlag::fromHardProcess) && status() == 1);
   }
   bool fromHardProcessDecayed() const {
-    return (get_statusflag(GenParticle::isDecayedLeptonHadron) && get_statusflag(GenParticle::fromHardProcess));
+    return (get_statusflag(StatusFlag::isDecayedLeptonHadron) && get_statusflag(StatusFlag::fromHardProcess));
   }
   bool isPromptFinalState() const {
-    return (get_statusflag(GenParticle::isPrompt) && status() == 1);
+    return (get_statusflag(StatusFlag::isPrompt) && status() == 1);
   }
   bool isPromptDecayed() const {
-    return (get_statusflag(GenParticle::isDecayedLeptonHadron) && get_statusflag(GenParticle::isPrompt));
+    return (get_statusflag(StatusFlag::isDecayedLeptonHadron) && get_statusflag(StatusFlag::isPrompt));
   }
 
 
