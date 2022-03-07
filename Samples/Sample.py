@@ -208,7 +208,7 @@ class Sample:
         self.VerifyStage(stage)
         print green('  --> Going to count events in %i files' % (len(filelist)))
 
-        commands = [('Counter_NANOAOD %s %s' % (filename, treename), filename) for filename in filelist]
+        commands = [('Counter_Entries %s %s' % (filename, treename), filename) for filename in filelist]
         outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
 
         if not outputs:

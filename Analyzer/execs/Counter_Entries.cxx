@@ -20,7 +20,7 @@ using namespace std;
 int main(int argc, char* argv[]){
 
 
-  if(argc != 2 && argc != 3) throw runtime_error("Expected exactly one or exactly 2 argument(2). Usage: Counter_NANOAOD <infilename> [treename, if different from 'Events']");
+  if(argc != 2 && argc != 3) throw runtime_error("Expected exactly one or exactly 2 argument(2). Usage: Counter_Entries <infilename> [treename, if different from 'Events']");
   string inarg  = argv[1];
   TString treename = "Events";
   if(argc == 3) treename = (TString)argv[2];
