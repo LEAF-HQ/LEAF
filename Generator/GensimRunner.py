@@ -127,7 +127,8 @@ class GensimRunner:
                 if mode is 'new':        slurmjobname = '%s' % (self.folderstructure[generation_step]['jobnametag'])
                 elif mode is 'resubmit': slurmjobname = 'resubmit_%s' % (self.folderstructure[generation_step]['jobnametag'])
 
-                command = 'sbatch -a 1-%s -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i %s/submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+                # command = 'sbatch -a 1-%s -J %s -p %s -t %s --exclude t3wn[49,50,54,40,44,39] --cpus-per-task %i %s/submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
+                command = 'sbatch -a 1-%s -J %s -p %s -t %s --cpus-per-task %i %s/submit_cmsRun_command.sh %s %s %s %s %s' % (str(njobs), slurmjobname+'_'+jobname, queue, runtime_str, ncores, self.generatorfolder, self.generatorfolder, self.arch_tag, self.workarea+'/'+self.folderstructure[generation_step]['cmsswtag'], self.T2_director+self.T2_path+'/'+self.folderstructure[generation_step]['pathtag']+'/'+jobname, commandfilename)
                 if njobs > 0:
                     if self.submit:
                         # print command
