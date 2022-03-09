@@ -83,6 +83,10 @@ class Submitter:
                 CB = CondorBase(JobName=datasetname, Time=str(self.xmlinfo.submissionsettings.Walltime))
                 CB.CreateJobInfo()
                 CB.ModifyJobInfo('outdir', joboutput_path+'/')
+                # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
+                CB.ModifyJobInfo('x509userproxy', '/user/'+os.getenv('USER')+'/tmp/x509up')
+                CB.ModifyJobInfo('use_x509userproxy', 'True')
+                CB.ModifyJobInfo('transfer_executable', 'False')
                 jobs = {'executables': [], 'arguments':[]}
                 for line in lines:
                     exe, arg = line.split()
