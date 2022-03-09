@@ -124,9 +124,13 @@ class TuplizeRunner:
                 arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
                 jobs['executables'].append(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe))
                 jobs['arguments'].append(arg)
-            CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
-            jobid = int(CB.JobInfo['ClusterId'])
-            print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
+            if self.submit:
+                CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
+                jobid = int(CB.JobInfo['ClusterId'])
+                print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
+            else:
+                for job_id, exe in enumerate(jobs['executables']):
+                    print yellow("  --> Would submit job: %s %s"%(exe, jobs['arguments'][job_id]))
 
     def CleanBrokenFiles(self, nevt_per_job=200000):
 
