@@ -41,6 +41,9 @@ public:
   bool is_iso_ch_had() const {return m_is_iso_ch_had;};
   int jetidx() const {return m_jetidx;};
 
+  // pdgid is inherited from FlavorParticle. It corresponds to ParticleType
+  int type() const {return m_pdgid;};
+
   void set_puppiweight(float x) {m_puppiweight = x;};
   void set_puppiweight_nolep(float x) {m_puppiweight_nolep = x;};
   void set_calo_frac(float x) {m_calo_frac = x;};

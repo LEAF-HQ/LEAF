@@ -82,14 +82,18 @@ public:
   bool isDirectPromptTauDecayProduct() const {return get_statusflag(StatusFlag::isDirectPromptTauDecayProduct);};
 
   // Easier access to combinations of StatusFlag bools
+  bool isFinalState() const {
+    return (status() == 1);
+  }
+
   bool fromHardProcessFinalState() const {
-    return (get_statusflag(StatusFlag::fromHardProcess) && status() == 1);
+    return (get_statusflag(StatusFlag::fromHardProcess) && isFinalState());
   }
   bool fromHardProcessDecayed() const {
     return (get_statusflag(StatusFlag::isDecayedLeptonHadron) && get_statusflag(StatusFlag::fromHardProcess));
   }
   bool isPromptFinalState() const {
-    return (get_statusflag(StatusFlag::isPrompt) && status() == 1);
+    return (get_statusflag(StatusFlag::isPrompt) && isFinalState());
   }
   bool isPromptDecayed() const {
     return (get_statusflag(StatusFlag::isDecayedLeptonHadron) && get_statusflag(StatusFlag::isPrompt));
