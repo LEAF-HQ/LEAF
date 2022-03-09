@@ -70,3 +70,13 @@ public:
 private:
     ID<Tau> id;
 };
+
+
+class PFCandCleaner : public AnalysisModule<RecoEvent> {
+public:
+    PFCandCleaner(const ID<PFCandidate> & id_);
+    virtual bool process(RecoEvent & event) override;
+
+private:
+    ID<PFCandidate> id;
+};

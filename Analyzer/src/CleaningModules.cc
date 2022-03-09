@@ -60,3 +60,9 @@ bool TauCleaner::process(RecoEvent & event){
   clean_collection(event.taus, event, id);
   return true;
 }
+
+PFCandCleaner::PFCandCleaner(const ID<PFCandidate> & id_): id(id_) {}
+bool PFCandCleaner::process(RecoEvent & event){
+  clean_collection(event.pfcands, event, id);
+  return true;
+}
