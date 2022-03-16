@@ -9,6 +9,7 @@ from collections import OrderedDict
 from prettytable import PrettyTable
 import shutil
 from UserSpecificSettings import UserSpecificSettings
+from functions import count_genevents_in_file
 
 
 class Submitter:
@@ -32,7 +33,6 @@ class Submitter:
 
         self.expected_files_name = 'expected_files.txt'
         self.missing_files_name = 'commands_missing_files.txt'
-        self.missing_files_txt = os.path.join(self.workdir_local, self.missing_files_name)
 
 
     @timeit
@@ -468,13 +468,17 @@ class Submitter:
             nmissing = 0
             missing_files_per_dataset[datasetname] = []
             for file in expected_files[datasetname]:
-                # print file
                 lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
                 lscommand += file
-                # result = subprocess.Popen([lscommand, file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 result = subprocess.Popen(lscommand, stdout=DEVNULL, stderr=DEVNULL, shell=True)
                 output = result.communicate()[0]
                 returncode = result.returncode
+                if returncode == 0:
+                    res = count_genevents_in_file(file, treename='AnalysisTree')
+                    if res is None:
+                        print(green('  --> Removing file: %s.' % file))
+                        execute_command_silent(lscommand.replace('ls','rm'))
+                        returncode = 1
                 if returncode > 0: # opening failed
                     missing_files_per_dataset[datasetname].append(file)
                     nmissing += 1
