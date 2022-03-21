@@ -5,37 +5,38 @@
 
 using namespace std;
 
-bool isHadronic(int pdgId) { return (fabs(pdgId) <= 5) ? true : false; }
-bool isLeptonic(int pdgId) { return (fabs(pdgId)>= 11 && fabs(pdgId)<=18) ? true : false; }
+bool isHadronic(int pdgId) { return (abs(pdgId) <= 5) ? true : false; }
+bool isLeptonic(int pdgId) { return (abs(pdgId) >= 11 && abs(pdgId)<=18) ? true : false; }
+
+bool isHadronic(ParticleID pdgId) { return isHadronic((int)pdgId);}
+bool isLeptonic(ParticleID pdgId) { return isLeptonic((int)pdgId);}
 
 
-bool isDecayMode(int pdgId1, int pdgId2, Decay decay) {
+bool isDecayMode(ParticleID pdgId1, ParticleID pdgId2, Decay decay) {
   if (decay==Decay::nodecay) return true;
   if ( isLeptonic(pdgId1) && isLeptonic(pdgId2) && decay == Decay::ll) return true;
   if ( isHadronic(pdgId1) && isHadronic(pdgId2) && decay == Decay::qq) return true;
-  if ( fabs(pdgId1) == ParticleID::g     && fabs(pdgId2) == ParticleID::g     && decay == Decay::gg)     return true;
-  if ( fabs(pdgId1) <= ParticleID::s     && fabs(pdgId2) <= ParticleID::s     && decay == Decay::light)  return true;
-  if ( fabs(pdgId1) == ParticleID::c     && fabs(pdgId2) == ParticleID::c     && decay == Decay::cc)     return true;
-  if ( fabs(pdgId1) == ParticleID::b     && fabs(pdgId2) == ParticleID::b     && decay == Decay::bb)     return true;
-  if ( fabs(pdgId1) == ParticleID::Z     && fabs(pdgId2) == ParticleID::Z     && decay == Decay::ZZ)     return true;
-  if ( fabs(pdgId1) == ParticleID::W     && fabs(pdgId2) == ParticleID::W     && decay == Decay::WW)     return true;
-  if ( fabs(pdgId1) == ParticleID::W     && fabs(pdgId2) == ParticleID::b     && decay == Decay::Wb)     return true;
-  if ( fabs(pdgId1) == ParticleID::b     && fabs(pdgId2) == ParticleID::W     && decay == Decay::Wb)     return true;
-  if ( fabs(pdgId1) == ParticleID::e     && fabs(pdgId2) == ParticleID::e     && decay == Decay::ee)     return true;
-  if ( fabs(pdgId1) == ParticleID::mu    && fabs(pdgId2) == ParticleID::mu    && decay == Decay::mumu)   return true;
-  if ( fabs(pdgId1) == ParticleID::tau   && fabs(pdgId2) == ParticleID::tau   && decay == Decay::tautau) return true;
-  if ( fabs(pdgId1) == ParticleID::e     && fabs(pdgId2) == ParticleID::e     && decay == Decay::ll)     return true;
-  if ( fabs(pdgId1) == ParticleID::mu    && fabs(pdgId2) == ParticleID::mu    && decay == Decay::ll)     return true;
-  if ( fabs(pdgId1) == ParticleID::v_e   && fabs(pdgId2) == ParticleID::v_e   && decay == Decay::vv)     return true;
-  if ( fabs(pdgId1) == ParticleID::v_mu  && fabs(pdgId2) == ParticleID::v_mu  && decay == Decay::vv)     return true;
-  if ( fabs(pdgId1) == ParticleID::v_tau && fabs(pdgId2) == ParticleID::v_tau && decay == Decay::vv)     return true;
+  if ( pdgId1 == ParticleID::g     && pdgId2 == ParticleID::g     && decay == Decay::gg)     return true;
+  if ( pdgId1 <= ParticleID::s     && pdgId2 <= ParticleID::s     && decay == Decay::light)  return true;
+  if ( pdgId1 == ParticleID::c     && pdgId2 == ParticleID::c     && decay == Decay::cc)     return true;
+  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::b     && decay == Decay::bb)     return true;
+  if ( pdgId1 == ParticleID::Z     && pdgId2 == ParticleID::Z     && decay == Decay::ZZ)     return true;
+  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::W     && decay == Decay::WW)     return true;
+  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::b     && decay == Decay::Wb)     return true;
+  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::W     && decay == Decay::Wb)     return true;
+  if ( pdgId1 == ParticleID::e     && pdgId2 == ParticleID::e     && decay == Decay::ee)     return true;
+  if ( pdgId1 == ParticleID::mu    && pdgId2 == ParticleID::mu    && decay == Decay::mumu)   return true;
+  if ( pdgId1 == ParticleID::tau   && pdgId2 == ParticleID::tau   && decay == Decay::tautau) return true;
+  if ( pdgId1 == ParticleID::e     && pdgId2 == ParticleID::e     && decay == Decay::ll)     return true;
+  if ( pdgId1 == ParticleID::mu    && pdgId2 == ParticleID::mu    && decay == Decay::ll)     return true;
+  if ( pdgId1 == ParticleID::v_e   && pdgId2 == ParticleID::v_e   && decay == Decay::vv)     return true;
+  if ( pdgId1 == ParticleID::v_mu  && pdgId2 == ParticleID::v_mu  && decay == Decay::vv)     return true;
+  if ( pdgId1 == ParticleID::v_tau && pdgId2 == ParticleID::v_tau && decay == Decay::vv)     return true;
   return false;
 }
 
 
-string pdgId2str(int pdgId_) {
-  ParticleID pdgId = static_cast<ParticleID>(fabs(pdgId_));
-
+string pdgId2str(ParticleID pdgId) {
   if(pdgId == ParticleID::u)      return "u";
   if(pdgId == ParticleID::d)      return "d";
   if(pdgId == ParticleID::s)      return "s";
@@ -44,25 +45,43 @@ string pdgId2str(int pdgId_) {
   if(pdgId == ParticleID::t)      return "t";
   if(pdgId == ParticleID::q)      return "q";
   if(pdgId == ParticleID::e)      return "e";
-  if(pdgId == ParticleID::mu)     return "mu";
-  if(pdgId == ParticleID::tau)    return "tau";
+  if(pdgId == ParticleID::mu)     return "#mu";
+  if(pdgId == ParticleID::tau)    return "#tau";
   if(pdgId == ParticleID::l)      return "l";
-  if(pdgId == ParticleID::v_e)    return "v_e";
-  if(pdgId == ParticleID::v_mu)   return "v_mu";
-  if(pdgId == ParticleID::v_tau)  return "v_tau";
-  if(pdgId == ParticleID::v)      return "v";
+  if(pdgId == ParticleID::v_e)    return "#nu_{e}";
+  if(pdgId == ParticleID::v_mu)   return "#nu_{#mu}";
+  if(pdgId == ParticleID::v_tau)  return "#nu_{#tau}";
+  if(pdgId == ParticleID::v)      return "#nu";
   if(pdgId == ParticleID::g)      return "g";
-  if(pdgId == ParticleID::photon) return "photon";
+  if(pdgId == ParticleID::photon) return "#gamma";
   if(pdgId == ParticleID::Z)      return "Z";
   if(pdgId == ParticleID::W)      return "W";
   if(pdgId == ParticleID::H)      return "H";
+  if(pdgId == ParticleID::pi_0)   return "#pi^{0}";
+  if(pdgId == ParticleID::pi_plus)   return "#pi^{+}";
+  if(pdgId == ParticleID::kaon_0_L)  return "K^{0}_{L}";
+  if(pdgId == ParticleID::kaon_0_S)  return "K^{0}_{S}";
+  if(pdgId == ParticleID::kaon_0)    return "K^{0}";
+  if(pdgId == ParticleID::kaon_plus) return "K^{+}";
+  if(pdgId == ParticleID::kaon_star_plus) return "K^{*+}";
+  if(pdgId == ParticleID::kaon_star_0) return "K^{*0}";
+  if(pdgId == ParticleID::D_plus)      return "D^{+}";
+  if(pdgId == ParticleID::D_plus_S)    return "D^{+}_{S}";
+  if(pdgId == ParticleID::D_star_plus) return "D^{*+}";
+  if(pdgId == ParticleID::D_0)         return "D^{0}";
+  if(pdgId == ParticleID::D_star_0)    return "D^{*0}";
+  if(pdgId == ParticleID::phi)         return "#phi";
+  if(pdgId == ParticleID::rho_0)       return "#rho^{0}";
+  if(pdgId == ParticleID::rho_plus)    return "#rho^{+}";
+  if(pdgId == ParticleID::omega)       return "#omega";
+  if(pdgId == ParticleID::delta_plus_plus) return "#Delta^{++}";
+  if(pdgId == ParticleID::lambda) return "#Lambda";
+  if(pdgId == ParticleID::proton) return "p";
   return "unknown";
 }
 
 
-string decay2str(int decay_) {
-
-  Decay decay = static_cast<Decay>(fabs(decay_));
+string decay2str(Decay decay) {
   if(decay == Decay::nodecay)        return "nodecay";
   if(decay == Decay::uu)             return "uu";
   if(decay == Decay::dd)             return "dd";
@@ -102,4 +121,32 @@ string decay2str(int decay_) {
   if(decay == Decay::WWvlqq)         return "WWvlqq";
   if(decay == Decay::Wb)             return "Wb";
   return "nodecay";
+}
+
+std::string type2str(ParticleType type){
+  if(type == ParticleType::X)         return "undefined";
+  if(type == ParticleType::e)         return "e";
+  if(type == ParticleType::mu)        return "#mu";
+  if(type == ParticleType::gamma)     return "#gamma";
+  if(type == ParticleType::h)         return "ch. had.";
+  if(type == ParticleType::h0)        return "neut. had.";
+  if(type == ParticleType::h_HF)      return "HF had";
+  if(type == ParticleType::egamma_HF) return "HF EM";
+  return "undefined";
+}
+
+
+bool isDecayMode(int pdgId1_, int pdgId2_, Decay decay) {
+  return isDecayMode(static_cast<ParticleID>(abs(pdgId1_)),static_cast<ParticleID>(abs(pdgId2_)), decay);
+}
+string pdgId2str(int pdgId_) {
+  return pdgId2str(static_cast<ParticleID>(abs(pdgId_)));
+}
+
+string decay2str(int decay_) {
+  return decay2str(static_cast<Decay>(abs(decay_)));
+}
+
+std::string type2str(int type_){
+  return type2str(static_cast<ParticleType>(abs(type_)));
 }

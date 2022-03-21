@@ -1,20 +1,4 @@
 #include "LEAF/Analyzer/include/useful_functions.h"
-#include <TH1D.h>
-#include <TFile.h>
-#include <TGraphAsymmErrors.h>
-#include <TCanvas.h>
-#include <TLegend.h>
-#include <TLine.h>
-#include <TStyle.h>
-#include <TKey.h>
-#include <TTree.h>
-#include <TLatex.h>
-#include <TMath.h>
-#include <TTreeReader.h>
-#include <TTreeReaderValue.h>
-#include <iostream>
-#include <sys/stat.h>
-#include <libxml/xmlreader.h>
 
 using namespace std;
 

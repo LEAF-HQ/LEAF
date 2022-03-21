@@ -4,8 +4,24 @@
 #include <string>
 #include <vector>
 #include <libxml/xmlreader.h>
+#include <sys/stat.h>
+
 #include <TString.h>
 #include <TH1F.h>
+#include <TH1D.h>
+#include <TFile.h>
+#include <TGraphAsymmErrors.h>
+#include <TCanvas.h>
+#include <TLegend.h>
+#include <TLine.h>
+#include <TStyle.h>
+#include <TKey.h>
+#include <TTree.h>
+#include <TLatex.h>
+#include <TMath.h>
+#include <TTreeReader.h>
+#include <TTreeReaderValue.h>
+
 #include "LEAF/Analyzer/include/constants.h"
 #include "LEAF/Analyzer/include/Particle.h"
 
@@ -162,3 +178,7 @@ const TString JERCPathString(const std::string& dataset, const std::string& vers
 const TString JERPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
 const TString JECPathString(const std::string& version, const std::string& jetCollection, const std::string& correction, const TString& runName);
 std::vector<std::string> JERCFiles(const std::string& type, const TString& runName, const std::string& version, const std::string& jetCollection);
+
+bool closeFloat(float a, float b, float maxRelDiff, float maxAbsDiff);
+bool FindInString(const std::string& search, const std::string& str);
+int FindInVector(const std::vector<std::string>& vec, const std::string& el);

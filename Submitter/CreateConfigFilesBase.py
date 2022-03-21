@@ -7,10 +7,10 @@ class CreateConfigFilesBase:
     def __init__(self, xmlfilename, xmlfilepath, years, AllSamples):
         self.years       = years
         self.xmlfilepath = xmlfilepath
-        self.xmlfilename = os.path.join(self.xmlfilepath,xmlfilename)
-        outdir = os.path.join(self.xmlfilepath,"workdir_"+xmlfilename.strip("Config.xml"))
+        self.xmlfilename = os.path.join(self.xmlfilepath,xmlfilename.split('/')[-1])
+        outdir = os.path.join(self.xmlfilepath,"workdir_"+self.xmlfilename.split('/')[-1].strip("Config.xml"))
         os.system('mkdir -p '+outdir)
-        self.outfilename = os.path.join(outdir, xmlfilename)
+        self.outfilename = os.path.join(outdir, self.xmlfilename.split('/')[-1])
         with open(self.xmlfilename) as f_:
             ConfigName = parse.compile('<!DOCTYPE {} "" "{ConfigName}"[{}').parse(f_.readlines()[1])['ConfigName']
         shutil.copy(os.path.join(self.xmlfilepath,ConfigName), outdir)
