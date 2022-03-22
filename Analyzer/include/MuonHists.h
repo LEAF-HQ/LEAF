@@ -15,7 +15,7 @@ class MuonHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  MuonHists(TString dir_);
+  MuonHists(TString dir_, bool do_allgenparticles_ = false);
   MuonHists(const MuonHists &) = default;
   MuonHists & operator = (const MuonHists &) = default;
   ~MuonHists() = default;
@@ -26,6 +26,8 @@ public:
 
 protected:
 
+  bool do_allgenparticles;
+  vector<GenParticle>* genparticles;
   shared_ptr<TH1D> hnmuons, hmuonpt, hmuonpt_rebin, hmuonpt_rebin2, hmuoneta, hmuonphi, hmuonmass, hmuonenergy, hmuonpfiso, hmuondxy, hmuondz, hmuond, hmuongendrmin, hmuongenflav,
 
   hmuonclosestd,

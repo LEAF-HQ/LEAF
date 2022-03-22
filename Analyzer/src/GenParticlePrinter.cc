@@ -6,10 +6,13 @@
 using namespace std;
 
 
-GenParticlePrinter::GenParticlePrinter(const Config & cfg){}
+GenParticlePrinter::GenParticlePrinter(const Config & cfg,bool do_allgenparticles_): do_allgenparticles(do_allgenparticles_) {}
 
 bool GenParticlePrinter::process(RecoEvent & event){
   if(event.is_data) return false;
+
+  if (do_allgenparticles) genparticles = event.genparticles_all;
+  else genparticles = event.genparticles_fromHP;
 
   cout << "     +=====================+" << endl;
   cout << "     |     GenParticles    |" << endl;
@@ -18,21 +21,21 @@ bool GenParticlePrinter::process(RecoEvent & event){
   cout << "Number, Identifier, pdgId, mother, pt, eta" << endl;
   cout << "------------------------------------------" << endl;
 
-  for(size_t i=0; i<event.genparticles_all->size(); i++){
+  for(size_t i=0; i<genparticles->size(); i++){
     int correct_idx = -1;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      if(event.genparticles_all->at(j).identifier() == (int)i){
+    for(size_t j=0; j<genparticles->size(); j++){
+      if(genparticles->at(j).identifier() == (int)i){
         correct_idx = j;
         break;
       }
     }
-    GenParticle gp = event.genparticles_all->at(correct_idx);
+    GenParticle gp = genparticles->at(correct_idx);
 
     // now find mother using the identifier again
     int motherpdgid = -1;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      if(event.genparticles_all->at(j).identifier() == gp.mother_identifier()){
-        motherpdgid = event.genparticles_all->at(j).pdgid();
+    for(size_t j=0; j<genparticles->size(); j++){
+      if(genparticles->at(j).identifier() == gp.mother_identifier()){
+        motherpdgid = genparticles->at(j).pdgid();
         break;
       }
     }
