@@ -82,6 +82,7 @@ public:
 private:
   virtual bool filter(edm::Event&, const edm::EventSetup&) override;
   virtual void NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
+  virtual void NtuplizeGenParticles(edm::Handle<std::vector<pat::PackedGenParticle>> input_jets, vector<GenParticle>& output_genparticles, bool do_allgenparticles);
   virtual void endJob() override;
 
 
@@ -101,6 +102,7 @@ private:
 
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> token_pus;
   edm::EDGetTokenT<std::vector<reco::GenJet>>      token_genjets;
+  edm::EDGetTokenT<std::vector<pat::PackedGenParticle>> token_genparticles;
   edm::EDGetTokenT<std::vector<reco::GenParticle>> token_genparticles_pruned;
   edm::EDGetTokenT<GenEventInfoProduct>            token_geninfo;
   edm::EDGetTokenT<LHEEventProduct>                token_lhe;
@@ -111,7 +113,7 @@ private:
 
 
   TString outfilename, year;
-  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring;
+  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring, do_allgenparticles;
   bool do_ak4chs, do_ak4puppi, do_ak8puppi;
   bool is_oldTracker;
 
@@ -129,6 +131,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   year         = (TString)iConfig.getParameter<std::string>("year");
   do_standard_event = iConfig.getParameter<bool>("do_standard_event");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
+  do_allgenparticles = iConfig.getParameter<bool>("do_allgenparticles");
   do_pfcands   = iConfig.getParameter<bool>("do_pfcands");
   do_prefiring = iConfig.getParameter<bool>("do_prefiring");
   do_ak4chs    = iConfig.getParameter<bool>("do_ak4chs");
@@ -169,6 +172,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
 
   token_pus              = consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileup"));
   token_genjets          = consumes<std::vector<reco::GenJet>>(iConfig.getParameter<edm::InputTag>("genjets"));
+  token_genparticles     = consumes<std::vector<pat::PackedGenParticle>>(iConfig.getParameter<edm::InputTag>("genparticles")) ;
   token_genparticles_pruned = consumes<std::vector<reco::GenParticle>>(iConfig.getParameter<edm::InputTag>("genparticles_pruned")) ;
   token_geninfo          = consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("geninfo")) ;
   token_lhe              = consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("lhe")) ;
@@ -194,6 +198,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   edm::Handle<std::vector<PileupSummaryInfo>> pus;
   edm::Handle<std::vector<reco::GenJet>> genjets;
+  edm::Handle<std::vector<pat::PackedGenParticle>> genparticles;
   edm::Handle<std::vector<reco::GenParticle>> genparticles_pruned;
   edm::Handle<GenEventInfoProduct> geninfo;
   edm::Handle<LHEEventProduct> lhe;
@@ -228,6 +233,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   if(is_mc){
     iEvent.getByToken(token_pus, pus);
     iEvent.getByToken(token_genjets, genjets);
+    iEvent.getByToken(token_genparticles, genparticles);
     iEvent.getByToken(token_genparticles_pruned, genparticles_pruned);
     iEvent.getByToken(token_geninfo, geninfo);
     try{
@@ -283,7 +289,13 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     event.weight = 1.;
   }
 
-  if(do_standard_event){
+  // GenParticles
+  if(is_mc) {
+    if (do_standard_event)  NtuplizeGenParticles(genparticles, *event.genparticles_fromHP, false);
+    if (do_allgenparticles) NtuplizeGenParticles(genparticles, *event.genparticles_all, true);
+  }
+
+  if(do_standard_event) {
 
     // Do MC truth variables
     // =====================
@@ -300,40 +312,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         gj.set_p4(minigj.pt(), minigj.eta(), minigj.phi(), minigj.mass());
         gj.set_n_constituents(minigj.chargedHadronMultiplicity() + minigj.neutralHadronMultiplicity() + minigj.chargedEmMultiplicity() + minigj.neutralEmMultiplicity() + minigj.muonMultiplicity());
         event.genjets->emplace_back(gj);
-      }
-
-      // GenParticles
-      for(size_t i=0; i<genparticles_pruned->size(); i++){
-        reco::GenParticle minigp = genparticles_pruned->at(i);
-        GenParticle gp;
-        gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
-        gp.set_pdgid(minigp.pdgId());
-        gp.set_charge(minigp.charge());
-        int motherid = -1;
-        if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef(0).key();
-        gp.set_mother_identifier(motherid);
-        gp.set_identifier(i);
-        gp.set_status(minigp.status());
-
-        // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenParticle.h
-        // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
-        gp.set_statusflag(GenParticle::StatusFlag::isHardProcess, minigp.statusFlags().isHardProcess());
-        gp.set_statusflag(GenParticle::StatusFlag::fromHardProcess, minigp.statusFlags().fromHardProcess());
-        gp.set_statusflag(GenParticle::StatusFlag::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
-        gp.set_statusflag(GenParticle::StatusFlag::isPrompt, minigp.statusFlags().isPrompt());
-        gp.set_statusflag(GenParticle::StatusFlag::isFirstCopy, minigp.statusFlags().isFirstCopy());
-        gp.set_statusflag(GenParticle::StatusFlag::isLastCopy, minigp.statusFlags().isLastCopy());
-        gp.set_statusflag(GenParticle::StatusFlag::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
-        gp.set_statusflag(GenParticle::StatusFlag::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
-        gp.set_statusflag(GenParticle::StatusFlag::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
-        gp.set_statusflag(GenParticle::StatusFlag::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
-
-        event.genparticles_all->emplace_back(gp);
       }
 
       // GenVisTaus
@@ -943,6 +921,46 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   event.reset();
 
   return true;
+}
+
+void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<pat::PackedGenParticle>> input_genparticles, vector<GenParticle>& output_genparticles, bool do_allgenparticles) {
+
+  for(size_t i=0; i<input_genparticles->size(); i++){
+    pat::PackedGenParticle minigp = input_genparticles->at(i);
+    if (!do_allgenparticles) {
+      if (!minigp.statusFlags().isHardProcess() && !minigp.statusFlags().fromHardProcess()) continue;
+    }
+    GenParticle gp;
+    gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
+    gp.set_pdgid(minigp.pdgId());
+    gp.set_charge(minigp.charge());
+    int motherid = -1;
+    if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef().key();
+    gp.set_mother_identifier(motherid);
+    gp.set_identifier(i);
+    gp.set_status(minigp.status());
+
+    // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenParticle.h
+    // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
+    gp.set_statusflag(GenParticle::StatusFlag::isHardProcess, minigp.statusFlags().isHardProcess());
+    gp.set_statusflag(GenParticle::StatusFlag::fromHardProcess, minigp.statusFlags().fromHardProcess());
+    gp.set_statusflag(GenParticle::StatusFlag::fromHardProcessBeforeFSR, minigp.statusFlags().fromHardProcessBeforeFSR());
+    gp.set_statusflag(GenParticle::StatusFlag::isPrompt, minigp.statusFlags().isPrompt());
+    gp.set_statusflag(GenParticle::StatusFlag::isFirstCopy, minigp.statusFlags().isFirstCopy());
+    gp.set_statusflag(GenParticle::StatusFlag::isLastCopy, minigp.statusFlags().isLastCopy());
+    gp.set_statusflag(GenParticle::StatusFlag::isLastCopyBeforeFSR, minigp.statusFlags().isLastCopyBeforeFSR());
+    gp.set_statusflag(GenParticle::StatusFlag::isDecayedLeptonHadron, minigp.statusFlags().isDecayedLeptonHadron());
+    gp.set_statusflag(GenParticle::StatusFlag::isDirectHadronDecayProduct, minigp.statusFlags().isDirectHadronDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isTauDecayProduct, minigp.statusFlags().isTauDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isPromptTauDecayProduct, minigp.statusFlags().isPromptTauDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isHardProcessTauDecayProduct, minigp.statusFlags().isHardProcessTauDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isDirectHardProcessTauDecayProduct, minigp.statusFlags().isDirectHardProcessTauDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isDirectTauDecayProduct, minigp.statusFlags().isDirectTauDecayProduct());
+    gp.set_statusflag(GenParticle::StatusFlag::isDirectPromptTauDecayProduct, minigp.statusFlags().isDirectPromptTauDecayProduct());
+
+    output_genparticles.emplace_back(gp);
+  }
+
 }
 
 
