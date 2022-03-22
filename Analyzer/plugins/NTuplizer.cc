@@ -32,6 +32,7 @@
 #include "DataFormats/GsfTrackReco/interface/GsfTrackFwd.h"
 
 #include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -100,7 +101,7 @@ private:
 
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> token_pus;
   edm::EDGetTokenT<std::vector<reco::GenJet>>      token_genjets;
-  edm::EDGetTokenT<std::vector<reco::GenParticle>> token_genparticles;
+  edm::EDGetTokenT<std::vector<reco::GenParticle>> token_genparticles_pruned;
   edm::EDGetTokenT<GenEventInfoProduct>            token_geninfo;
   edm::EDGetTokenT<LHEEventProduct>                token_lhe;
 
@@ -168,7 +169,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
 
   token_pus              = consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileup"));
   token_genjets          = consumes<std::vector<reco::GenJet>>(iConfig.getParameter<edm::InputTag>("genjets"));
-  token_genparticles     = consumes<std::vector<reco::GenParticle>>(iConfig.getParameter<edm::InputTag>("genparticles")) ;
+  token_genparticles_pruned = consumes<std::vector<reco::GenParticle>>(iConfig.getParameter<edm::InputTag>("genparticles_pruned")) ;
   token_geninfo          = consumes<GenEventInfoProduct>(iConfig.getParameter<edm::InputTag>("geninfo")) ;
   token_lhe              = consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("lhe")) ;
 
@@ -193,7 +194,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   edm::Handle<std::vector<PileupSummaryInfo>> pus;
   edm::Handle<std::vector<reco::GenJet>> genjets;
-  edm::Handle<std::vector<reco::GenParticle>> genparticles;
+  edm::Handle<std::vector<reco::GenParticle>> genparticles_pruned;
   edm::Handle<GenEventInfoProduct> geninfo;
   edm::Handle<LHEEventProduct> lhe;
 
@@ -227,7 +228,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   if(is_mc){
     iEvent.getByToken(token_pus, pus);
     iEvent.getByToken(token_genjets, genjets);
-    iEvent.getByToken(token_genparticles, genparticles);
+    iEvent.getByToken(token_genparticles_pruned, genparticles_pruned);
     iEvent.getByToken(token_geninfo, geninfo);
     try{
       iEvent.getByToken(token_lhe, lhe);
@@ -302,8 +303,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       }
 
       // GenParticles
-      for(size_t i=0; i<genparticles->size(); i++){
-        reco::GenParticle minigp = genparticles->at(i);
+      for(size_t i=0; i<genparticles_pruned->size(); i++){
+        reco::GenParticle minigp = genparticles_pruned->at(i);
         GenParticle gp;
         gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
         gp.set_pdgid(minigp.pdgId());
@@ -338,7 +339,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       // GenVisTaus
       vector<reco::GenJet> genTauJets = {};
       reco::GenParticleRefVector allStatus2Taus;
-      GenParticlesHelper::findParticles(*genparticles, allStatus2Taus, 15, 2);
+      GenParticlesHelper::findParticles(*genparticles_pruned, allStatus2Taus, 15, 2);
 
       for (reco::GenParticleRefVector::const_iterator iTau = allStatus2Taus.begin(); iTau != allStatus2Taus.end(); ++iTau) {
         // look for all status 1 (stable) descendents
@@ -403,8 +404,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         reco::GenParticle genVisTau(genTauJet.charge(), genTauJet.p4(), genTauJet.vertex(), pdgId, decayMode, true);
 
         // CV: find tau lepton "mother" particle
-        for (size_t idxGenParticle = 0; idxGenParticle < genparticles->size(); ++idxGenParticle) {
-          const reco::GenParticle& genTau = (*genparticles)[idxGenParticle];
+        for (size_t idxGenParticle = 0; idxGenParticle < genparticles_pruned->size(); ++idxGenParticle) {
+          const reco::GenParticle& genTau = (*genparticles_pruned)[idxGenParticle];
           if (abs(genTau.pdgId()) == 15 && genTau.status() == 2) {
             reco::Candidate::LorentzVector daughterVisP4;
             for (const reco::GenParticleRef& daughter : genTau.daughterRefVector()) {
@@ -416,7 +417,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
             }
             double dR2 = deltaR2(daughterVisP4, genVisTau);
             if (dR2 < 1.e-4) {
-              genVisTau.addMother(reco::GenParticleRef(genparticles, idxGenParticle));
+              genVisTau.addMother(reco::GenParticleRef(genparticles_pruned, idxGenParticle));
               break;
             }
           }
@@ -770,8 +771,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         // match to gen-e, gen-mu, and genvistaus
         int idx_match_lep = -1;
         float min_dr_lep = 99999;
-        for(size_t j=0; j<genparticles->size(); j++){
-          reco::GenParticle minigp = genparticles->at(j);
+        for(size_t j=0; j<genparticles_pruned->size(); j++){
+          reco::GenParticle minigp = genparticles_pruned->at(j);
           int gpid = abs(minigp.pdgId());
           if(!(gpid == 11 || gpid == 13)) continue;
 
@@ -795,10 +796,10 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         }
 
         // define gen part flav as in: https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/plugins/CandMCMatchTableProducer.cc#L178#L190
-        if(idx_match_lep > 0 && genparticles->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 1;
-        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 2;
-        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 3;
-        else if(idx_match_lep > 0 && genparticles->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 4;
+        if(idx_match_lep > 0 && genparticles_pruned->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles_pruned->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 1;
+        else if(idx_match_lep > 0 && genparticles_pruned->at(idx_match_lep).statusFlags().isPrompt() && abs(genparticles_pruned->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 2;
+        else if(idx_match_lep > 0 && genparticles_pruned->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles_pruned->at(idx_match_lep).pdgId()) == 11) gen_part_flav = 3;
+        else if(idx_match_lep > 0 && genparticles_pruned->at(idx_match_lep).isDirectPromptTauDecayProductFinalState() && abs(genparticles_pruned->at(idx_match_lep).pdgId()) == 13) gen_part_flav = 4;
         else if(idx_match_gvt > 0) gen_part_flav = 5;
 
       }

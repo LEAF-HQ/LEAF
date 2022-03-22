@@ -122,7 +122,7 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     met               = cms.InputTag('slimmedMETs'),
     pileup            = cms.InputTag('slimmedAddPileupInfo'),
     genjets           = cms.InputTag('slimmedGenJets'),
-    genparticles      = cms.InputTag('prunedGenParticles'),
+    genparticles_pruned = cms.InputTag('prunedGenParticles'),
     geninfo           = cms.InputTag('generator'),
     lhe               = cms.InputTag('externalLHEProducer'),
 
