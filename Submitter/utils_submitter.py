@@ -1,13 +1,14 @@
 import os, sys, math, copy
 from ROOT import TFile
 import subprocess
-from utils import yellow
+from utils import yellow, green
 
 def get_number_events_in_dataset(dataset, treename='AnalysisTree'):
     nevents = 0
     infiles_filled = []
+    print green('Going to count generated events in %i files, this could take a while. If this number is too large, you could try splitting by files instead of events.' % len(dataset.infiles))
     for infile in dataset.infiles:
-        f = TFile(str(infile))
+        f = TFile.Open(str(infile))
         try:
             n = f.Get(treename).GetEntriesFast()
             if n > 0:
