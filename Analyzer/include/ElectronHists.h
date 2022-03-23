@@ -15,7 +15,7 @@ class ElectronHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  ElectronHists(TString dir_);
+  ElectronHists(TString dir_, bool do_allgenparticles_ = false);
   ElectronHists(const ElectronHists &) = default;
   ElectronHists & operator = (const ElectronHists &) = default;
   ~ElectronHists() = default;
@@ -25,6 +25,8 @@ public:
 
 
 protected:
+  bool do_allgenparticles;
+  vector<GenParticle>* genparticles;
 
   shared_ptr<TH1D> hnelectrons, helectronpt, helectronpt_rebin, helectronpt_rebin2, helectroneta, helectronphi, helectronmass, helectronenergy, helectronpfiso, helectrondxy, helectrondz, helectrond, helectrongendrmin,
 

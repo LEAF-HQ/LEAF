@@ -8,8 +8,12 @@
 // #include <pair>
 
 class GenParticlePrinter: public AnalysisModule<RecoEvent>{
- public:
-  explicit GenParticlePrinter(const Config & cfg);
+public:
+  explicit GenParticlePrinter(const Config & cfg, bool do_allgenparticles_ = false);
   virtual bool process(RecoEvent & event) override;
+
+protected:
+  bool do_allgenparticles;
+  vector<GenParticle>* genparticles;
 
 };

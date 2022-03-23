@@ -18,7 +18,7 @@
 
 using namespace std;
 
-ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
+ElectronHists::ElectronHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), do_allgenparticles(do_allgenparticles_){
 
   hnelectrons = book<TH1D>("nelectrons", ";N_{e}; Events / bin", 11, -0.5, 10.5);
   helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 1500);
@@ -92,6 +92,8 @@ ElectronHists::ElectronHists(TString dir_) : BaseHists(dir_){
 void ElectronHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
+  if (do_allgenparticles) genparticles = event.genparticles_all;
+  else genparticles = event.genparticles_fromHP;
 
 
   // Loop through jets
@@ -102,7 +104,7 @@ void ElectronHists::fill(const RecoEvent & event){
   for(size_t i=0; i<nelectrons; i++){
     Electron e = event.electrons->at(i);
     float gendr_min = 99999.;
-    for(const auto & gp : *event.genparticles_all){
+    for(const auto & gp : *genparticles){
       if(abs(gp.pdgid()) != 11) continue;
       if(!gp.isLastCopy()) continue;
       float dr = deltaR(e, gp);

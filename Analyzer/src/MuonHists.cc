@@ -18,7 +18,7 @@
 
 using namespace std;
 
-MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
+MuonHists::MuonHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), do_allgenparticles(do_allgenparticles_){
 
   hnmuons = book<TH1D>("nmuons", ";N_{#mu}; Events / bin", 11, -0.5, 10.5);
   hmuonpt = book<TH1D>("muonpt", ";p_{T}^{#mu} [GeV]; Events / bin", 50, 0, 1500);
@@ -99,7 +99,8 @@ MuonHists::MuonHists(TString dir_) : BaseHists(dir_){
 void MuonHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
-
+  if (do_allgenparticles) genparticles = event.genparticles_all;
+  else genparticles = event.genparticles_fromHP;
 
   // Loop through muons
   // ====================
@@ -111,7 +112,7 @@ void MuonHists::fill(const RecoEvent & event){
   for(size_t i=0; i<nmuons; i++){
     Muon m = event.muons->at(i);
     float gendr_min = 99999.;
-    for(const auto & gp : *event.genparticles_all){
+    for(const auto & gp : *genparticles){
       if(abs(gp.pdgid()) != 13) continue;
       if(!gp.isLastCopy()) continue;
       float dr = deltaR(m, gp);
