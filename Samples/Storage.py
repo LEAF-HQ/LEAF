@@ -27,7 +27,7 @@ class Storage():
         newfiles = []
         for f in filelist:
             if f is '': continue
-            newfiles.append(outpath+f)
+            newfiles.append(os.path.join(outpath,f))
         return newfiles
 
 

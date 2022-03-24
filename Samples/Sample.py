@@ -106,7 +106,7 @@ class Sample:
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
 
         if filedict and not check_missing:
-                return filedict
+            return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
         filelist = self.get_var_for_year(stage+'paths',year).get_file_list()
