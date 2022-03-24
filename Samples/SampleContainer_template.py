@@ -15,10 +15,10 @@ def Add_Generic_Sample(SampleContainer, sample_name, modes, years, storage, ntup
 
     for mode in modes:
         mode_name = '_plus_'.join(mode)
-        default_info['name'] = sample_name+'_'+mode_name
+        default_info['name']       = sample_name+'_'+mode_name
         default_info['tuplepaths'] = YearDependentContainer(dict((year,storage(get_storage_path(ntuple_folder_base,  year, common_path, mode_name, sample_name))       ) for year in years))
-        default_info['xmlfiles'] = YearDependentContainer(dict((year,          get_storage_path('Analyzer/datasets/', year, common_path, mode_name, sample_name)+'.xml') for year in years))
-        default_info['contents'] = YearDependentContainer(dict.fromkeys(years, mode))
+        default_info['xmlfiles']   = YearDependentContainer(dict((year,          get_storage_path('Analyzer/datasets/', year, common_path, mode_name, sample_name)+'.xml') for year in years))
+        default_info['contents']   = YearDependentContainer(dict.fromkeys(years, mode))
         SampleContainer.add_samples({sample_name+'_'+mode_name: Sample(**default_info)})
 
 
