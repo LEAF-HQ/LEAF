@@ -56,7 +56,7 @@ class TuplizeRunner:
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
                 command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
-                for obj in ['standard', 'pfcands', 'triggerobjects', 'extrajets']:
+                for obj in ['standard', 'pfcands', 'triggerobjects', 'extrajets', 'allgenparticles']:
                     command += ' '+obj+'='+str(obj in self.sample.contents[self.year])+' '
                 commands.append(command)
                 njobs += 1
@@ -96,7 +96,7 @@ class TuplizeRunner:
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
 
-                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername, commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername.replace('root://', 'gsiftp://'), commandfilename, idx_offset)
                 if njobs > 0:
                     if self.submit:
                         jobid = int(subprocess.check_output(command, shell=True))
