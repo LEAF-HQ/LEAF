@@ -56,7 +56,7 @@ class TuplizeRunner:
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
                 command = 'cmsRun %s type=%s infilename=%s outfilename=%s idxStart=%i idxStop=%i year=%s' % (os.path.join(os.getenv('ANALYZERPATH'), 'python', 'ntuplizer_cfg.py'), self.sample.type, filename, outfilename, n*nevt_per_job, (n+1)*nevt_per_job, self.year)
-                for obj in ['standard', 'pfcands', 'triggerobjects', 'extrajets']:
+                for obj in ['standard', 'pfcands', 'triggerobjects', 'extrajets', 'allgenparticles']:
                     command += ' '+obj+'='+str(obj in self.sample.contents[self.year])+' '
                 commands.append(command)
                 njobs += 1
