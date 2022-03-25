@@ -984,23 +984,27 @@ void NTuplizer::NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vect
 
     float NHF  = patjet.neutralHadronEnergyFraction();
     float CHF  = patjet.chargedHadronEnergyFraction();
-    float NEMF = patjet.neutralEmEnergyFraction();
-    float CEMF = patjet.chargedEmEnergyFraction();
     float MUOF = patjet.muonEnergyFraction();
     float ELEF = patjet.electronEnergyFraction();
     float PHOF = patjet.photonEnergyFraction();
+    float HFHF = patjet.HFHadronEnergyFraction();
+    float HFEMF = patjet.HFEMEnergyFraction();
     int CHM = patjet.chargedMultiplicity();
     int NM = (!is_puppi || is_ak8)? patjet.neutralMultiplicity(): patjet.userFloat("patPuppiJetSpecificProducer:neutralPuppiMultiplicity");
     int NumConst = CHM+NM;
     j.set_n_constituents(NumConst);
     j.set_ne_had_efrac(NHF);
     j.set_ch_had_efrac(CHF);
-    j.set_ne_em_efrac(NEMF);
     j.set_muo_efrac(MUOF);
     j.set_ele_efrac(ELEF);
     j.set_pho_efrac(PHOF);
+    j.set_hf_had_efrac(HFHF);
+    j.set_hf_em_efrac(HFEMF);
     j.set_n_muons(patjet.muonMultiplicity());
     j.set_n_electrons(patjet.electronMultiplicity());
+
+    float NEMF = j.ne_em_efrac();
+    float CEMF = j.ch_em_efrac();
 
     // Calculate JetID on the fly
     bool pass_tight = false;

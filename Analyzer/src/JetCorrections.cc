@@ -116,7 +116,7 @@ bool JECCorrector::correct_met(RecoEvent & event, double pt_thresh){
   for(Jet & jet : *event.jets_ak4chs){
 
     //thresholds on the corrected jets: pt > 15 EM fraction < 0.9
-    if((jet.pt() > pt_thresh) && ((jet.ne_em_efrac() + jet.ch_em_efrac()) < 0.9)){
+    if((jet.pt() > pt_thresh) && (jet.em_efrac() < 0.9)){
 
       // subtracting something from the p4 is actually adding it to MET, which is defined as the negative vectorial sum of everything
       rawmet_p4 -= jet.p4();
@@ -188,7 +188,7 @@ bool JetLeptonCleaner::process(RecoEvent& event) {
         correct_p4 = true;
         jet_p4_raw -= muo.p4();
         jet.set_n_muons(jet.n_muons() - 1);
-        jet.set_muo_efrac(max(0., (jet.e() * jet.muo_efrac() - muo.e()) / jet.e()));
+        jet.set_muo_efrac(max(0., (jet.e() * jet.muo_efrac() - muo.e()) / (jet.e() - muo.e())));
       }
     }
 
@@ -201,7 +201,7 @@ bool JetLeptonCleaner::process(RecoEvent& event) {
         correct_p4 = true;
         jet_p4_raw -= ele.p4();
         jet.set_n_electrons(jet.n_electrons() - 1);
-        jet.set_ch_em_efrac(max(0., (jet.e() * jet.ch_em_efrac() - ele.e()) / jet.e()));
+        jet.set_ele_efrac(max(0., (jet.e() * jet.ele_efrac() - ele.e()) / (jet.e() - ele.e())));
       }
     }
 
