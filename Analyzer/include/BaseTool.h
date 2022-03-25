@@ -184,6 +184,15 @@ void load_additional_collection(E* main_event, E* additional_event, collection c
   else if(c.branchname == "triggerobjects"){
     *main_event->triggerobjects = *additional_event->triggerobjects;
   }
+  else if(c.branchname == "jets_ak4puppi"){
+    *main_event->jets_ak4puppi = *additional_event->jets_ak4puppi;
+  }
+  else if(c.branchname == "jets_ak8puppi"){
+    *main_event->jets_ak8puppi = *additional_event->jets_ak8puppi;
+  }
+  else if(c.branchname == "genparticles_all"){
+    *main_event->genparticles_all = *additional_event->genparticles_all;
+  }
   else{
     std::string errormsg = "In Analyzer/include/BaseTool.h: Invalid branchname given when loading additional collections: " + (string)c.branchname;
     throw std::runtime_error(errormsg);

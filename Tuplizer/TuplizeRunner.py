@@ -209,7 +209,8 @@ class TuplizeRunner:
 
         with open(xmlfilename, 'w') as out:
             for filename in list_folder_content:
-                if filename in missing_files: continue
+                if force_counting:
+                    if filename in missing_files: continue
                 out.write('<InputFile FileName="%s"/>\n' % filename)
             for mode, nevents in nevents_stored.items():
                 if nevents:
