@@ -27,8 +27,8 @@ def Add_Signals_ChiPsi_LQLQToBTau(SampleContainer):
             'minipaths':         YearDependentContainer(storagenames),
             'group':             YearDependentContainer(dict.fromkeys(years, name)),
             'nevents_das':       YearDependentContainer(),
-            'nevents_generated': YearDependentContainer(),
-            'nevents_weighted':  YearDependentContainer(),
+            'nevents_generated': YearDependentContainer({'UL17': 100000.0}),
+            'nevents_weighted':  YearDependentContainer({'UL17': 100000.0}),
         }
         modes = [['standard']]
         Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -66,8 +66,8 @@ def Add_Signals_ChiPsi_LQLQToBTauPsiChi(SampleContainer):
             'minipaths':         YearDependentContainer(storagenames),
             'group':             YearDependentContainer(dict.fromkeys(years, name)),
             'nevents_das':       YearDependentContainer(),
-            'nevents_generated': YearDependentContainer(),
-            'nevents_weighted':  YearDependentContainer(),
+            'nevents_generated': YearDependentContainer({'UL17': 100000.0}),
+            'nevents_weighted':  YearDependentContainer({'UL17': 100000.0}),
         }
         modes = [['standard']]
         Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -105,8 +105,8 @@ def Add_Signals_ChiPsi_LQLQToPsiChi(SampleContainer):
             'minipaths':         YearDependentContainer(storagenames),
             'group':             YearDependentContainer(dict.fromkeys(years, name)),
             'nevents_das':       YearDependentContainer(),
-            'nevents_generated': YearDependentContainer(),
-            'nevents_weighted':  YearDependentContainer(),
+            'nevents_generated': YearDependentContainer({'UL17': 100000.0}),
+            'nevents_weighted':  YearDependentContainer({'UL17': 100000.0}),
         }
         modes = [['standard']]
         Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -146,8 +146,8 @@ def Add_Signals_ChiPsi_PsiPsiToLQChi(SampleContainer):
             'minipaths':         YearDependentContainer(storagenames),
             'group':             YearDependentContainer(dict.fromkeys(years, name)),
             'nevents_das':       YearDependentContainer(),
-            'nevents_generated': YearDependentContainer(),
-            'nevents_weighted':  YearDependentContainer(),
+            'nevents_generated': YearDependentContainer({'UL17': 100000.0}),
+            'nevents_weighted':  YearDependentContainer({'UL17': 100000.0}),
         }
         modes = [['standard']]
         Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
