@@ -355,3 +355,8 @@ def timeit(method):
             print(blue('--> End of %r: %2.2f s' % (method.__name__, (te - ts))))
         return result
     return timed
+
+def remove_prefix(text, prefix):
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text  
