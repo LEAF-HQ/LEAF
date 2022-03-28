@@ -27,7 +27,12 @@ class Storage():
         newfiles = []
         for f in filelist:
             if f is '': continue
-            newfiles.append(os.path.join(outpath,f))
+            nstripped = 0
+            while f.startswith('/'):
+                f = remove_prefix(f, '/')
+                nstripped += 1
+            thisoutpath = outpath + '/' * nstripped
+            newfiles.append(os.path.join(thisoutpath,f))
         return newfiles
 
 
