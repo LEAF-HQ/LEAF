@@ -25,7 +25,7 @@ def Add_Backgrounds_Diboson(SampleContainer):
 
     name = 'WZ_2Q2L'
     storagenames = {
-        'UL17': Storage_DAS(' Dataset: /WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM'),
+        'UL17': Storage_DAS('/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM'),
     }
     years = storagenames.keys()
     default_info = {
@@ -79,7 +79,7 @@ def Add_Backgrounds_Diboson(SampleContainer):
 
     name = 'ZZ_2Q2L'
     storagenames = {
-        'UL17': Storage_DAS('ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM'),
+        'UL17': Storage_DAS('/ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM'),
     }
     years = storagenames.keys()
     default_info = {
