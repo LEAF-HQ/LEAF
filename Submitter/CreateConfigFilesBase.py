@@ -39,7 +39,7 @@ class CreateConfigFilesBase:
         for addinput in self.xmlinfo.additionalinputs:
             for ds in addinput.datasets:
                 for collection in addinput.collections:
-                    dataset_name = getattr(ds.settings,'Name').replace('standard',getattr(collection,'BranchName'))
+                    dataset_name = getattr(ds.settings,'Name').replace('standard',getattr(collection,'FileName'))
                     sample = AllSamples.get_sample(dataset_name)
                     for year in self.years:
                         for info in self.sample_info:
@@ -88,12 +88,20 @@ class CreateConfigFilesBase:
                     setattr(ds_add.settings, 'Name', newName)
                     setattr(ds_add.settings, 'Year', year)
 
-    def AddEntityInLine(self, xmlOutput, name, value, condition):
-        return '\n'.join([x.replace('/>', '> &'+value+'; </'+condition+'> ') if ('Name="'+name+'"' in x and '<'+condition in x) else x for x in xmlOutput.split('\n')])
+    def AddEntityInLine(self, xmlOutput, name, value, condition, extra_condition=None):
+        input_lines = xmlOutput.split('\n')
+        output_lines = []
+        for index, x in enumerate(input_lines):
+            to_change = 'Name="'+name+'"' in x and '<'+condition in x
+            if extra_condition != None and to_change:
+                to_change *= extra_condition[0] in input_lines[index+extra_condition[1]]
+            output_lines.append(x.replace('/>', '> &'+value+'; </'+condition+'> ') if to_change else x)
+        return '\n'.join(output_lines)
 
     def AddSystemEntity(self, ds_name, year):
         entity = '<!ENTITY {} SYSTEM "{}" >\n'.format(ds_name, os.path.join(self.leaf_path,self.dataset_infos[ds_name.strip("_"+year)][year]['xmlfiles']))
-        self.xmlinfo.config_info = ''.join([self.xmlinfo.config_info.split(']>')[0],entity])+'\n]>\n'
+        if not entity in self.xmlinfo.config_info:
+            self.xmlinfo.config_info = ''.join([self.xmlinfo.config_info.split(']>')[0],entity])+'\n]>\n'
 
     def write_single_xml(self, year):
         outfilename = self.outfilename.replace('.xml','_'+year+'.xml')
@@ -106,14 +114,12 @@ class CreateConfigFilesBase:
                 ds_name = getattr(ds.settings,'Name')
                 self.AddSystemEntity(ds_name, year)
                 xmlOutput = self.AddEntityInLine(xmlOutput, ds_name, ds_name, condition='Dataset')
-                for addinput in self.xmlinfo.additionalinputs:
-                    for ds_add in addinput.datasets:
-                        if ds_name != ds_add.settings.Name:
-                            continue
-                        for collection in addinput.collections:
-                            ds_name_coll = ds_name.replace('standard',getattr(collection,'BranchName'))
-                            self.AddSystemEntity(ds_name_coll, year)
-                            xmlOutput = self.AddEntityInLine(xmlOutput, ds_name, ds_name_coll, condition='AdditionalDataset')
+            for addinput in self.xmlinfo.additionalinputs:
+                for index, ds_add in enumerate(addinput.datasets):
+                    FileName = getattr(addinput.collections[0],'FileName')
+                    ds_name_coll = ds_add.settings.Name.replace('standard',FileName)
+                    self.AddSystemEntity(ds_name_coll, year)
+                    xmlOutput = self.AddEntityInLine(xmlOutput, ds_add.settings.Name, ds_name_coll, condition='AdditionalDataset', extra_condition=(FileName,len(addinput.datasets)-index))
         with open(outfilename, 'wr') as f:
             print(green('--> Creating new config: %s' %(outfilename)))
             f.write(self.xmlinfo.config_info)
