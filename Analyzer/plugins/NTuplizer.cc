@@ -896,6 +896,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_vertex_y(patcand.vertex().Y());
       p.set_vertex_z(patcand.vertex().Z());
       p.set_is_iso_ch_had(patcand.isIsolatedChargedHadron());
+      p.set_fromPV((int)patcand.fromPV()); // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/PatCandidates/interface/PackedCandidate.h
+
 
       int jetidx = -1;;
       for(size_t jetidx_=0; jetidx_<jets_ak4chs->size(); jetidx_++) {
