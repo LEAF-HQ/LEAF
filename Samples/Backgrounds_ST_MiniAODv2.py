@@ -15,9 +15,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 24.780000}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 1177725}),
+        'nevents_generated': YearDependentContainer({'UL17': 1177725.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 1177725.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -33,9 +33,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 24.770000}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 1117652}),
+        'nevents_generated': YearDependentContainer({'UL17': 1117652.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 1117652.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -51,9 +51,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 24.760000}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 1149875}),
+        'nevents_generated': YearDependentContainer({'UL17': 1149875.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 1149875.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -69,9 +69,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 3.36}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 13882000}),
+        'nevents_generated': YearDependentContainer({'UL17': 13882000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 49292567.7638}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -87,9 +87,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 71.7*0.5*0.546}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 8507203}),
+        'nevents_generated': YearDependentContainer({'UL17': 8507203.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 276021555.955}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -105,9 +105,9 @@ def Add_Backgrounds_ST(SampleContainer):
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ST'}),
         'xsecs':             YearDependentContainer({'UL17': 71.7*0.5*0.546}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'nevents_das':       YearDependentContainer({'UL17': 8433998}),
+        'nevents_generated': YearDependentContainer({'UL17': 8433998.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 274168353.779}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)

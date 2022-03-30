@@ -14,10 +14,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer({'UL17': 11.090000}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 12.178}),
+        'nevents_das':       YearDependentContainer({'UL17': 7098000}),
+        'nevents_generated': YearDependentContainer({'UL17': 7098000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 78687950.4184}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -32,10 +32,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer(),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 5.595}),
+        'nevents_das':       YearDependentContainer({'UL17': 29091996}),
+        'nevents_generated': YearDependentContainer({'UL17': 29091996.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 279011957.776}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -50,10 +50,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer(),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 4.4297}),
+        'nevents_das':       YearDependentContainer({'UL17': 1994000}),
+        'nevents_generated': YearDependentContainer({'UL17': 1994000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 9298956.9674}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -68,10 +68,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer({'UL17': 0.973800}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 0.564}),
+        'nevents_das':       YearDependentContainer({'UL17': 40839000}),
+        'nevents_generated': YearDependentContainer({'UL17': 40839000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 39767479.3951}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -86,10 +86,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer(),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 3.22}),
+        'nevents_das':       YearDependentContainer({'UL17': 29521496}),
+        'nevents_generated': YearDependentContainer({'UL17': 29521496.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 162895522.458}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -104,10 +104,10 @@ def Add_Backgrounds_Diboson(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'VV'}),
-        'xsecs':             YearDependentContainer({'UL17': 13.810000}),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer(),
-        'nevents_weighted':  YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 1.256}), #1.256?
+        'nevents_das':       YearDependentContainer({'UL17': 41708429}),
+        'nevents_generated': YearDependentContainer({'UL17': 41708429.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 577305398.684}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
