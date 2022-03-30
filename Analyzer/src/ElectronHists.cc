@@ -92,8 +92,8 @@ ElectronHists::ElectronHists(TString dir_, bool do_allgenparticles_) : BaseHists
 void ElectronHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
-  if (do_allgenparticles) genparticles = event.genparticles_all;
-  else genparticles = event.genparticles_fromHP;
+  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  else genparticles = event.genparticles_pruned;
 
 
   // Loop through jets
