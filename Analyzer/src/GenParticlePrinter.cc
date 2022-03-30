@@ -11,8 +11,8 @@ GenParticlePrinter::GenParticlePrinter(const Config & cfg,bool do_allgenparticle
 bool GenParticlePrinter::process(RecoEvent & event){
   if(event.is_data) return false;
 
-  if (do_allgenparticles) genparticles = event.genparticles_all;
-  else genparticles = event.genparticles_fromHP;
+  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  else genparticles = event.genparticles_pruned;
 
   cout << "     +=====================+" << endl;
   cout << "     |     GenParticles    |" << endl;

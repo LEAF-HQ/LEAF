@@ -244,8 +244,8 @@ void GenParticleHists::fill(const RecoEvent & event){
   if(event.is_data) return;
   double weight = event.weight;
 
-  if (do_allgenparticles) genparticles = event.genparticles_all;
-  else genparticles = event.genparticles_fromHP;
+  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  else genparticles = event.genparticles_pruned;
 
 
   // loop through gen vis. taus
