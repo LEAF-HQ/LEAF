@@ -229,19 +229,13 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     iEvent.getByToken(token_pfcands, pfcands);
   }
 
-  bool has_lhe = is_mc;
   if(is_mc){
     iEvent.getByToken(token_pus, pus);
     iEvent.getByToken(token_genjets, genjets);
     iEvent.getByToken(token_genparticles, genparticles);
     iEvent.getByToken(token_genparticles_pruned, genparticles_pruned);
     iEvent.getByToken(token_geninfo, geninfo);
-    try{
-      iEvent.getByToken(token_lhe, lhe);
-    }
-    catch(...){
-      has_lhe = false;
-    }
+    iEvent.getByToken(token_lhe, lhe);
   }
 
 
@@ -437,7 +431,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       }
 
       vector<double> systweights = {};
-      if(has_lhe){
+      if(lhe){
         event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
         for(unsigned int i=0; i<lhe->weights().size(); i++){
           systweights.emplace_back(lhe->weights().at(i).wgt);
