@@ -76,7 +76,7 @@ class TuplizeRunner:
             return
 
         if 'slurm' in self.cluster.lower():
-            ensureDirectory(self.sample.tuplepaths[self.year].get_path(is_complete=True).replace('root://', 'gsiftp://'), use_se=True)
+            ensureDirectory(self.sample.tuplepaths[self.year].get_path(is_complete=True).replace(self.sample.tuplepaths[self.year].director, self.sample.tuplepaths[self.year].get_director_filesystem()), use_se=True)
             idx = 0
             commandfilename = os.path.join(joboutput, '%stuplize_%s.txt' % ('resubmit_' if mode is 'resubmit' else '', samplename))
             with open(commandfilename, 'w') as f:
@@ -86,7 +86,6 @@ class TuplizeRunner:
                     idx += 1
             slurm_max_array_size = 4000
             submit_more_arrays = True if (njobs > slurm_max_array_size) else False
-            # if submit_more_arrays:
             njobs_left = njobs
             narrays = 0
             njobs_per_array = []
@@ -96,7 +95,7 @@ class TuplizeRunner:
                 arrayend = min(njobs_left, slurm_max_array_size)
                 njobs_per_array.append(arrayend)
 
-                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s %s/submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), os.environ['TUPLIZERPATH'], self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername.replace('root://', 'gsiftp://'), commandfilename, idx_offset)
+                command = 'sbatch --parsable -a 1-%i -J tuplize_%s -p %s -t %s --cpus-per-task %i --chdir %s %s/submit_tuplize.sh %s %s %s %s %s %i' % (arrayend, samplename, queue, runtime_str, ncores, os.path.join(self.workarea,'joboutput', samplename+'_'+self.year), os.environ['TUPLIZERPATH'], self.config['arch_tag'], os.path.join(os.path.join(os.environ['CMSSW_BASE'], '..'), self.config['cmsswtag']), os.environ['LEAFPATH'], outfoldername.replace(self.sample.tuplepaths[self.year].director, self.sample.tuplepaths[self.year].get_director_filesystem()), commandfilename, idx_offset)
                 if njobs > 0:
                     if self.submit:
                         jobid = int(subprocess.check_output(command, shell=True))
@@ -156,7 +155,7 @@ class TuplizeRunner:
         missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=True, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
 
         missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
-        commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f for f in missing_or_broken_tuples]
+        commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f.replace(self.sample.tuplepaths[self.year].director, self.sample.tuplepaths[self.year].get_director_filesystem()) for f in missing_or_broken_tuples]
 
         if self.submit:
             print green('  --> Removing up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
@@ -286,10 +285,8 @@ def get_mini_parts_from_mini_name(nanopath):
 
 def get_dasxsec_cmsrun_command(minipath, director):
     dasgocommand = 'dasgoclient --limit=100 -query="file dataset=%s"' % (minipath)
-    print dasgocommand
     files = "/store"+subprocess.check_output(dasgocommand, shell=True).replace("\n",",").split("/store",1)[1]
     files = files.strip(',')
-    result = 'cmsRun PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i  2>&1 | tee xsec_%s.log' % (files, 1e6, minipath.split('/')[1])
-    # print result
+    result = 'cmsRun %s/PSets/pset_xsecanalyzer.py inputFiles=\"%s\" maxEvents=%i  2>&1 | tee xsec_%s.log' % (os.environ['TUPLIZERPATH'], files, 1e6, minipath.split('/')[1])
 
     return result
