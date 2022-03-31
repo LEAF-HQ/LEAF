@@ -24,6 +24,7 @@ public:
     m_vertex_z = -1.;
     m_jetidx = -1;
     m_is_iso_ch_had = false;
+    m_fromPV = -1;
 
   }
 
@@ -40,6 +41,7 @@ public:
   float vertex_z() const {return m_vertex_z;};
   bool is_iso_ch_had() const {return m_is_iso_ch_had;};
   int jetidx() const {return m_jetidx;};
+  int fromPV() const {return m_fromPV;};
 
   // pdgid is inherited from FlavorParticle. It corresponds to ParticleType
   int type() const {return m_pdgid;};
@@ -57,6 +59,7 @@ public:
   void set_vertex_z(float x) {m_vertex_z = x;};
   void set_is_iso_ch_had(bool x) {m_is_iso_ch_had = x;};
   void set_jetidx(int x){m_jetidx = x;};
+  void set_fromPV(int x){m_fromPV = x;};
 
 protected:
   float m_puppiweight, m_puppiweight_nolep;
@@ -65,5 +68,6 @@ protected:
   float m_vertex_x, m_vertex_y, m_vertex_z;
   bool m_is_iso_ch_had;
   int m_jetidx;
+  int m_fromPV;
 
 };

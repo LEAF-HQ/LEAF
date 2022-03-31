@@ -36,6 +36,7 @@ public:
     m_statusflag_bits = -1;
     m_ndaughters = -1;
     m_mother_identifier = -1;
+    m_pruned_mother_identifier = -1;
     m_status = -1;
     m_identifier = -1;
   }
@@ -54,6 +55,7 @@ public:
   uint64_t statusflag_bits() const {return m_statusflag_bits;};
   int ndaughters() const {return m_ndaughters;};
   int mother_identifier() const {return m_mother_identifier;};
+  int pruned_mother_identifier() const {return m_pruned_mother_identifier;};
   int status() const {return m_status;};
   int identifier() const {return m_identifier;};
 
@@ -61,6 +63,7 @@ public:
   void set_statusflag_bits(uint64_t x){m_statusflag_bits = x;};
   void set_ndaughters(int x) {m_ndaughters = x;};
   void set_mother_identifier(int x) {m_mother_identifier = x;};
+  void set_pruned_mother_identifier(int x) {m_pruned_mother_identifier = x;};
   void set_status(int x) {m_status = x;};
   void set_identifier(int x) {m_identifier = x;};
 
@@ -104,6 +107,7 @@ protected:
   uint64_t m_statusflag_bits;
   int m_ndaughters;
   int m_mother_identifier;
+  int m_pruned_mother_identifier;
   int m_status;
   int m_identifier;
 

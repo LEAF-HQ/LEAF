@@ -82,7 +82,7 @@ public:
 private:
   virtual bool filter(edm::Event&, const edm::EventSetup&) override;
   virtual void NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
-  virtual void NtuplizeGenParticles(edm::Handle<std::vector<pat::PackedGenParticle>> input_jets, vector<GenParticle>& output_genparticles, bool do_allgenparticles);
+  template <typename T, typename S> void NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles);
   virtual void endJob() override;
 
 
@@ -113,7 +113,7 @@ private:
 
 
   TString outfilename, year;
-  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring, do_allgenparticles;
+  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring, do_stablegenparticles;
   bool do_ak4chs, do_ak4puppi, do_ak8puppi;
   bool is_oldTracker;
 
@@ -131,7 +131,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   year         = (TString)iConfig.getParameter<std::string>("year");
   do_standard_event = iConfig.getParameter<bool>("do_standard_event");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
-  do_allgenparticles = iConfig.getParameter<bool>("do_allgenparticles");
+  do_stablegenparticles = iConfig.getParameter<bool>("do_stablegenparticles");
   do_pfcands   = iConfig.getParameter<bool>("do_pfcands");
   do_prefiring = iConfig.getParameter<bool>("do_prefiring");
   do_ak4chs    = iConfig.getParameter<bool>("do_ak4chs");
@@ -285,8 +285,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   // GenParticles
   if(is_mc) {
-    if (do_standard_event)  NtuplizeGenParticles(genparticles, *event.genparticles_fromHP, false);
-    if (do_allgenparticles) NtuplizeGenParticles(genparticles, *event.genparticles_all, true);
+    if (do_standard_event)     NtuplizeGenParticles<reco::GenParticle, reco::GenParticle>(genparticles_pruned, genparticles_pruned, *event.genparticles_pruned, false);
+    if (do_stablegenparticles) NtuplizeGenParticles<pat::PackedGenParticle, reco::GenParticle>(genparticles, genparticles_pruned, *event.genparticles_stable, true);
   }
 
   if(do_standard_event) {
@@ -890,6 +890,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       p.set_vertex_y(patcand.vertex().Y());
       p.set_vertex_z(patcand.vertex().Z());
       p.set_is_iso_ch_had(patcand.isIsolatedChargedHadron());
+      p.set_fromPV((int)patcand.fromPV()); // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/PatCandidates/interface/PackedCandidate.h
+
 
       int jetidx = -1;;
       for(size_t jetidx_=0; jetidx_<jets_ak4chs->size(); jetidx_++) {
@@ -917,22 +919,34 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   return true;
 }
 
-void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<pat::PackedGenParticle>> input_genparticles, vector<GenParticle>& output_genparticles, bool do_allgenparticles) {
+template <typename T, typename S>
+void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles) {
 
   for(size_t i=0; i<input_genparticles->size(); i++){
-    pat::PackedGenParticle minigp = input_genparticles->at(i);
-    if (!do_allgenparticles) {
-      if (!minigp.statusFlags().isHardProcess() && !minigp.statusFlags().fromHardProcess()) continue;
-    }
+    auto minigp = input_genparticles->at(i);
+    const reco::Candidate * mother = minigp.mother(0);
+
     GenParticle gp;
     gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
     gp.set_pdgid(minigp.pdgId());
     gp.set_charge(minigp.charge());
+    gp.set_status(minigp.status());
+    gp.set_identifier(i);
     int motherid = -1;
     if(minigp.numberOfMothers() > 0) motherid = minigp.motherRef().key();
     gp.set_mother_identifier(motherid);
-    gp.set_identifier(i);
-    gp.set_status(minigp.status());
+
+    int pruned_motherid = -1;
+    // https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#MC_Truth
+    for(size_t j=0; j<input_pruned_genparticles->size(); j++){
+      const reco::Candidate * pruned = &(input_pruned_genparticles->at(j));
+      if(mother != nullptr && pruned == mother){
+        pruned_motherid = j;
+        break;
+      }
+    }
+    if (!do_stable_particles && motherid!=pruned_motherid) cout << "key : " << motherid << " " << pruned_motherid << " " << input_genparticles->size() << " " << input_pruned_genparticles->size()<< endl;
+    gp.set_pruned_mother_identifier(pruned_motherid);
 
     // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenParticle.h
     // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenStatusFlags.h
@@ -1077,6 +1091,7 @@ void NTuplizer::endJob(){
     outfile->Close();
   }
 }
+
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(NTuplizer);

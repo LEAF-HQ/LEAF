@@ -9,11 +9,11 @@
 
 class GenParticlePrinter: public AnalysisModule<RecoEvent>{
 public:
-  explicit GenParticlePrinter(const Config & cfg, bool do_allgenparticles_ = false);
+  explicit GenParticlePrinter(const Config & cfg, bool do_stablegenparticles_ = false);
   virtual bool process(RecoEvent & event) override;
 
 protected:
-  bool do_allgenparticles;
+  bool do_stablegenparticles;
   vector<GenParticle>* genparticles;
 
 };

@@ -18,7 +18,7 @@
 
 using namespace std;
 
-ElectronHists::ElectronHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), do_allgenparticles(do_allgenparticles_){
+ElectronHists::ElectronHists(TString dir_, bool do_stablegenparticles_) : BaseHists(dir_), do_stablegenparticles(do_stablegenparticles_){
 
   hnelectrons = book<TH1D>("nelectrons", ";N_{e}; Events / bin", 11, -0.5, 10.5);
   helectronpt = book<TH1D>("electronpt", ";p_{T}^{e} [GeV]; Events / bin", 50, 0, 1500);
@@ -92,8 +92,8 @@ ElectronHists::ElectronHists(TString dir_, bool do_allgenparticles_) : BaseHists
 void ElectronHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
-  if (do_allgenparticles) genparticles = event.genparticles_all;
-  else genparticles = event.genparticles_fromHP;
+  if (do_stablegenparticles) genparticles = event.genparticles_stable;
+  else genparticles = event.genparticles_pruned;
 
 
   // Loop through jets
