@@ -467,6 +467,7 @@ class Submitter:
         for datasetname in expected_files:
             nmissing = 0
             missing_files_per_dataset[datasetname] = []
+            print green('  --> Checking %i files for sample %s' % (len(expected_files[datasetname]), datasetname))
             for file in expected_files[datasetname]:
                 lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
                 lscommand += file
@@ -477,7 +478,10 @@ class Submitter:
                     res = count_genevents_in_file(file, treename='AnalysisTree')
                     if res is None:
                         print(green('  --> Removing file: %s.' % file))
-                        execute_command_silent(lscommand.replace('ls','rm'))
+                        print 'using command %s' % (lscommand.replace('ls ','rm '))
+                        # execute_command_silent(lscommand.replace('ls ','rm '))
+                        os.system(lscommand.replace('ls ','rm '))
+                        print 'done removing'
                         returncode = 1
                 if returncode > 0: # opening failed
                     missing_files_per_dataset[datasetname].append(file)
