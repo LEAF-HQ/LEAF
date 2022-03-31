@@ -84,7 +84,6 @@ private:
   virtual void NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
   template <typename T, typename S> void NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles);
   virtual void endJob() override;
-  bool isAncestor(const reco::Candidate * ancestor, const reco::Candidate * particle);
 
 
   edm::EDGetTokenT<std::vector<pat::Muon>>         token_muons;
@@ -920,20 +919,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   return true;
 }
 
-bool NTuplizer::isAncestor(const reco::Candidate* ancestor, const reco::Candidate * particle)
-{
-  //particle is already the ancestor
-  if(ancestor == particle ) return true;
-
-  //otherwise loop on mothers, if any and return true if the ancestor is found
-  // for(size_t i=0;i< particle->numberOfMothers();i++)
-  // {
-  //   if(isAncestor(ancestor,particle->mother(i))) return true;
-  // }
-  //if we did not return yet, then particle and ancestor are not relatives
-  return false;
-}
-
 template <typename T, typename S>
 void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles) {
 
@@ -955,7 +940,7 @@ void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genpartic
     // https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#MC_Truth
     for(size_t j=0; j<input_pruned_genparticles->size(); j++){
       const reco::Candidate * pruned = &(input_pruned_genparticles->at(j));
-      if(mother != nullptr && isAncestor( pruned , mother)){
+      if(mother != nullptr && pruned == mother){
         pruned_motherid = j;
         break;
       }
