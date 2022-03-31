@@ -18,7 +18,7 @@
 
 using namespace std;
 
-MuonHists::MuonHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), do_allgenparticles(do_allgenparticles_){
+MuonHists::MuonHists(TString dir_, bool do_stablegenparticles_) : BaseHists(dir_), do_stablegenparticles(do_stablegenparticles_){
 
   hnmuons = book<TH1D>("nmuons", ";N_{#mu}; Events / bin", 11, -0.5, 10.5);
   hmuonpt = book<TH1D>("muonpt", ";p_{T}^{#mu} [GeV]; Events / bin", 50, 0, 1500);
@@ -99,7 +99,7 @@ MuonHists::MuonHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), 
 void MuonHists::fill(const RecoEvent & event){
   double weight = event.weight;
 
-  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  if (do_stablegenparticles) genparticles = event.genparticles_stable;
   else genparticles = event.genparticles_pruned;
 
   // Loop through muons

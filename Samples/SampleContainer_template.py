@@ -41,7 +41,7 @@ def Add_Signals_VBF(SampleContainer):
         'nevents_generated': YearDependentContainer({'UL18': 1000}),
         'nevents_weighted':  YearDependentContainer({'UL18': 1000}),
     }
-    modes = [['standard'],['pfcands'], ['extrajets'], ['allgenparticles'], ['standard','extrajets']]
+    modes = [['standard'],['pfcands'], ['extrajets'], ['stablegenparticles'], ['standard','extrajets']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2ULB, '/store/user/anmalara/Tuples/', get_common_path(), default_info)
 
 

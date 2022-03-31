@@ -6,12 +6,12 @@
 using namespace std;
 
 
-GenParticlePrinter::GenParticlePrinter(const Config & cfg,bool do_allgenparticles_): do_allgenparticles(do_allgenparticles_) {}
+GenParticlePrinter::GenParticlePrinter(const Config & cfg,bool do_stablegenparticles_): do_stablegenparticles(do_stablegenparticles_) {}
 
 bool GenParticlePrinter::process(RecoEvent & event){
   if(event.is_data) return false;
 
-  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  if (do_stablegenparticles) genparticles = event.genparticles_stable;
   else genparticles = event.genparticles_pruned;
 
   cout << "     +=====================+" << endl;

@@ -113,7 +113,7 @@ private:
 
 
   TString outfilename, year;
-  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring, do_allgenparticles;
+  bool is_mc, do_standard_event, do_triggerobjects, do_pfcands, do_prefiring, do_stablegenparticles;
   bool do_ak4chs, do_ak4puppi, do_ak8puppi;
   bool is_oldTracker;
 
@@ -131,7 +131,7 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
   year         = (TString)iConfig.getParameter<std::string>("year");
   do_standard_event = iConfig.getParameter<bool>("do_standard_event");
   do_triggerobjects = iConfig.getParameter<bool>("do_triggerobjects");
-  do_allgenparticles = iConfig.getParameter<bool>("do_allgenparticles");
+  do_stablegenparticles = iConfig.getParameter<bool>("do_stablegenparticles");
   do_pfcands   = iConfig.getParameter<bool>("do_pfcands");
   do_prefiring = iConfig.getParameter<bool>("do_prefiring");
   do_ak4chs    = iConfig.getParameter<bool>("do_ak4chs");
@@ -285,8 +285,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   // GenParticles
   if(is_mc) {
-    if (do_standard_event)  NtuplizeGenParticles<reco::GenParticle, reco::GenParticle>(genparticles_pruned, genparticles_pruned, *event.genparticles_pruned, false);
-    if (do_allgenparticles) NtuplizeGenParticles<pat::PackedGenParticle, reco::GenParticle>(genparticles, genparticles_pruned, *event.genparticles_stable, true);
+    if (do_standard_event)     NtuplizeGenParticles<reco::GenParticle, reco::GenParticle>(genparticles_pruned, genparticles_pruned, *event.genparticles_pruned, false);
+    if (do_stablegenparticles) NtuplizeGenParticles<pat::PackedGenParticle, reco::GenParticle>(genparticles, genparticles_pruned, *event.genparticles_stable, true);
   }
 
   if(do_standard_event) {

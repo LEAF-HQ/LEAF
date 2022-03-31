@@ -5,21 +5,21 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 import os
 
 # Example to run:
-# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/00000/D1F6F7C6-58B6-8142-9A44-D17FBB1C4F40.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL18 standard=True pfcands=False triggerobjects=False allgenparticles=False
+# cmsRun $ANALYZERPATH/python/ntuplizer_cfg.py type=MC infilename=root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/00000/D1F6F7C6-58B6-8142-9A44-D17FBB1C4F40.root outfilename=NTuples_pfonly.root idxStart=0 idxStop=100 year=UL18 standard=True pfcands=False triggerobjects=False stablegenparticles=False
 
 # USER OPTIONS
 options = VarParsing()
-options.register('idxStart',       -99,     mytype=VarParsing.varType.int)
-options.register('idxStop',        -99,     mytype=VarParsing.varType.int)
-options.register('type',           '',      mytype=VarParsing.varType.string)
-options.register('year',           '',      mytype=VarParsing.varType.string)
-options.register('infilename',     '',      mytype=VarParsing.varType.string)
-options.register('outfilename',    '',      mytype=VarParsing.varType.string)
-options.register('standard',       'False', mytype=VarParsing.varType.string)
-options.register('pfcands',        'False', mytype=VarParsing.varType.string)
-options.register('triggerobjects', 'False', mytype=VarParsing.varType.string)
-options.register('extrajets',      'False', mytype=VarParsing.varType.string)
-options.register('allgenparticles','False', mytype=VarParsing.varType.string)
+options.register('idxStart',           -99,     mytype=VarParsing.varType.int)
+options.register('idxStop',            -99,     mytype=VarParsing.varType.int)
+options.register('type',               '',      mytype=VarParsing.varType.string)
+options.register('year',               '',      mytype=VarParsing.varType.string)
+options.register('infilename',         '',      mytype=VarParsing.varType.string)
+options.register('outfilename',        '',      mytype=VarParsing.varType.string)
+options.register('standard',           'False', mytype=VarParsing.varType.string)
+options.register('pfcands',            'False', mytype=VarParsing.varType.string)
+options.register('triggerobjects',     'False', mytype=VarParsing.varType.string)
+options.register('extrajets',          'False', mytype=VarParsing.varType.string)
+options.register('stablegenparticles', 'False', mytype=VarParsing.varType.string)
 options.parseArguments()
 
 idx_start   = options.idxStart
@@ -32,7 +32,7 @@ do_standard_event = options.standard.lower() == 'true'
 do_pfcands  = options.pfcands.lower() == 'true'
 do_triggerobjects = options.triggerobjects.lower() == 'true'
 do_extrajets = options.extrajets.lower() == 'true'
-do_allgenparticles = options.allgenparticles.lower() == 'true'
+do_stablegenparticles = options.stablegenparticles.lower() == 'true'
 
 if idx_start < 0 or idx_stop < 1 or type is '' or year is '' or infilename is '' or outfilename is '':
     raise ValueError('At least one of the 6 required options is not set properly, please give all 6 options.')
@@ -40,7 +40,7 @@ if not type in ['DATA', 'MC']:
     raise ValueError('Invalid value for argument \'type\': %s. Can be \'MC\' or \'DATA\'.' % (type))
 if not idx_start < idx_stop:
     raise ValueError('Invalid value for arguments \'idx-start\' and \'idx-stop\': %i and %i. The stop index must be greater than the start index.' % (idx_start, idx_stop))
-if not (do_standard_event or do_pfcands or do_triggerobjects or do_extrajets or do_allgenparticles):
+if not (do_standard_event or do_pfcands or do_triggerobjects or do_extrajets or do_stablegenparticles):
    raise AttributeError('None of the collections is being requested, this sample would be empty! Is this a bug?')
 
 do_ak4chs = do_standard_event
@@ -55,7 +55,7 @@ print '-->  infilename   = \'%s\'' % infilename
 print '-->  outfilename  = \'%s\'' % outfilename
 print '-->  do_standard_event  = \'%s\'' % do_standard_event
 print '-->  do_triggerobjects  = \'%s\'' % do_triggerobjects
-print '-->  do_allgenparticles = \'%s\'' % do_allgenparticles
+print '-->  do_stablegenparticles = \'%s\'' % do_stablegenparticles
 print '-->  do_pfcands   = \'%s\'' % do_pfcands
 print '-->  do_ak4chs    = \'%s\'' % do_ak4chs
 print '-->  do_ak4puppi  = \'%s\'' % do_ak4puppi
@@ -133,7 +133,7 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     do_standard_event = cms.bool(do_standard_event),
     do_triggerobjects = cms.bool(do_triggerobjects),
     do_pfcands        = cms.bool(do_pfcands),
-    do_allgenparticles = cms.bool(do_allgenparticles),
+    do_stablegenparticles = cms.bool(do_stablegenparticles),
     do_prefiring      = cms.bool(not year in ['2018', 'UL18']),
     do_ak4chs         = cms.bool(do_ak4chs),
     do_ak4puppi       = cms.bool(do_ak4puppi),

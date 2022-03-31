@@ -16,7 +16,7 @@ class GenParticleHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  GenParticleHists(TString dir_, bool do_allgenparticles_ = false);
+  GenParticleHists(TString dir_, bool do_stablegenparticles_ = false);
   GenParticleHists(const GenParticleHists &) = default;
   GenParticleHists & operator = (const GenParticleHists &) = default;
   ~GenParticleHists() = default;
@@ -27,7 +27,7 @@ public:
 
 protected:
 
-  bool do_allgenparticles;
+  bool do_stablegenparticles;
   vector<GenParticle>* genparticles;
 
   shared_ptr<TH1D> hngentaus, hptgentau1, hptgentau1_rebin, hptgentau1_rebin2, hptgentau1_rebin3, hptgentau1_rebin4, hptgentau2, hptgentau2_rebin, hptgentau2_rebin2, hptgentau2_rebin3, hptgentau2_rebin4, hdrgenditau, hdphigenditau, hdetagenditau, hdrgentaumu, hdphigentaumu, hdetagentaumu, hdptgentaumu, hdptrelgentaumu, hdrgentaue, hdphigentaue, hdetagentaue, hdptgentaue, hdptrelgentaue,

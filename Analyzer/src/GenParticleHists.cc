@@ -18,7 +18,7 @@
 
 using namespace std;
 
-GenParticleHists::GenParticleHists(TString dir_, bool do_allgenparticles_) : BaseHists(dir_), do_allgenparticles(do_allgenparticles_){
+GenParticleHists::GenParticleHists(TString dir_, bool do_stablegenparticles_) : BaseHists(dir_), do_stablegenparticles(do_stablegenparticles_){
 
   hngentaus = book<TH1D>("ngentaus", ";N_{gen #tau}; Events / bin", 11, -0.5, 10.5);
   hptgentau1 = book<TH1D>("ptgentau1", ";p_{T}^{gen #tau 1} [GeV]; Events / bin", 40, 0, 1200);
@@ -244,7 +244,7 @@ void GenParticleHists::fill(const RecoEvent & event){
   if(event.is_data) return;
   double weight = event.weight;
 
-  if (do_allgenparticles) genparticles = event.genparticles_stable;
+  if (do_stablegenparticles) genparticles = event.genparticles_stable;
   else genparticles = event.genparticles_pruned;
 
 
