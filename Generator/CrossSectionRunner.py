@@ -482,6 +482,11 @@ class CrossSectionRunner:
                     xsectitle_formatted = '#sigma (pp #rightarrow LQ LQ) [pb]'
                 if 'PsiPsi' in plotname:
                     xsectitle_formatted = '#sigma (pp #rightarrow #psi #psi) [pb]'
+                if 'LQTChannelTauNu' in plotname:
+                    xsectitle_formatted = '#sigma_{LQ} (pp #rightarrow #tau #nu) [pb]'
+                if 'LQTChannelTauTau' in plotname:
+                    xsectitle_formatted = '#sigma_{LQ} (pp #rightarrow #tau #tau) [pb]'
+                print varname_to_axistitle[variables[0]]
 
                 if len(variables) == 1:
                     plot_xsec_1d(infile=infile, graphnames_and_legends_for_canvas=graphs_per_plot[plotname], axistitles=[varname_to_axistitle[variables[0]], xsectitle_formatted], plotname=thisplotname)
@@ -599,7 +604,8 @@ def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, axistitles, plotname
         xmin = min(g.GetXaxis().GetXmin(), xmin)
         ymin = max(min(g.GetHistogram().GetMinimum(), ymin), 1E-10)
 
-    c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), axistitles[1], square=True, iPeriod=0, iPos=11)
+    # c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), axistitles[1], square=True, iPeriod=0, iPos=11)
+    c = tdrCanvas('c', xmin, xmax, ymin, ymax, axistitles[0], axistitles[1], square=True, iPeriod=0, iPos=11)
     c.SetLogy()
     legy_high = 0.9
     entryheight = 0.07
