@@ -35,8 +35,8 @@ def Add_Backgrounds_DYJets(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'DYJets'}),
         'xsecs':             YearDependentContainer({'UL17': 5352.000000}),
         'nevents_das':       YearDependentContainer({'UL17': 103344974}),
-        'nevents_generated': YearDependentContainer({'UL17': 103290685.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 103205839.0}),
+        'nevents_generated': YearDependentContainer({'UL17': 103344974.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 103344974.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -72,7 +72,7 @@ def Add_Backgrounds_DYJets(SampleContainer):
         'xsecs':             YearDependentContainer({'UL17': 140.400000 * 1.23}),
         'nevents_das':       YearDependentContainer({'UL17': 18955253}),
         'nevents_generated': YearDependentContainer({'UL17': 18955253.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 18702259.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 18955253.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -161,8 +161,8 @@ def Add_Backgrounds_DYJets(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'DYJets'}),
         'xsecs':             YearDependentContainer({'UL17': 0.133000 * 1.23}),
         'nevents_das':       YearDependentContainer({'UL17': 4802716}),
-        'nevents_generated': YearDependentContainer({'UL17': 4802716.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 4802716.0}),
+        'nevents_generated': YearDependentContainer({'UL17': 4755667.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 4755667.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)

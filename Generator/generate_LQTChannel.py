@@ -84,8 +84,8 @@ workarea       = os.path.join('/work', username)
 workdir_slurm  = os.path.join(workarea, 'workdir_slurm')
 mgfolder       = os.path.join(workarea, cmssw_tag_sim, 'src', 'genproductions', 'bin', 'MadGraph5_aMCatNLO')
 mgfolder_local = os.path.join(workarea, 'MG5_aMC_v2_7_2')
-basefolder     = os.path.join(workarea, 'LEAF')
-generatorfolder= os.path.join(basefolder, 'Generator')
+basefolder     = os.environ['LEAFPATH']
+generatorfolder= os.environ['GENERATORPATH']
 gridpackfolder = os.path.join(generatorfolder, 'gridpacks', sampletype)
 cardfolder     = os.path.join(generatorfolder, 'cards', sampletype)
 crosssecfolder = os.path.join(generatorfolder, 'crosssections', sampletype)
@@ -164,7 +164,7 @@ CrossBRRunner = CrossSectionRunner(processnames=processes_xsec, tag=tag, individ
 # CrossBRRunner.ReadoutCrossBR(ignore_br=True)
 # CrossBRRunner.RootifyCrosssections(variables=['MLQ'], graphs_per=['LAMBDA', 'B23L'], forcepoints2d=None)
 # CrossBRRunner.PlotCrosssections(variable='MLQ', overlay=['LAMBDA'], overlay_values=[None])
-CrossBRRunner.PlotCrosssections(variable='MLQ', overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
+CrossBRRunner.PlotCrosssections(variables=['MLQ'], overlay=['B23L'], overlay_values=[['0p19', '0p21', '1p0']])
 # CrossBRRunner.PlotCrosssections(overlay=['LAMBDA', 'B23L'], overlay_values=[['1p0', 'best'], None])
 # CrossBRRunner.PlotCrosssections(overlay=None, overlay_values=None)
 

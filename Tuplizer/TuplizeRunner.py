@@ -31,10 +31,12 @@ class TuplizeRunner:
         filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, check_missing=check_missing)
 
 
-    def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new'):
+    def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new', clean_broken=False):
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
+        if mode is 'new' and clean_broken:
+            raise ValueError('clean_broken is set to true, but mode is \'new\', this would not have any effect on broken files, so prefer to abort. Please call CleanBrokenFiles() standalone if necessary.')
         # queue   = 'standard' if runtime[0] > 1 else 'short'      # short -- standard
         # runtime_str = '%02i:%02i:00' % runtime
         runtime_str, queue = format_runtime(runtime)
@@ -64,8 +66,11 @@ class TuplizeRunner:
         if mode is 'new':
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
-            print green('  --> Now checking for missing files on T3 for job \'%s\'...' % (samplename))
-            missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='NTuples', update_missing=True)
+            print green('  --> Now checking for missing NTuples for job \'%s\'...' % (samplename))
+            if clean_broken:
+                missing_indices = self.CleanBrokenFiles(nevt_per_job=nevt_per_job)
+            else:
+                missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='NTuples', update_missing=True)
             njobs = len(missing_indices)
 
         if njobs == 0:
@@ -163,6 +168,7 @@ class TuplizeRunner:
         else:
             print yellow('  --> Would remove up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
             print commands
+        return missing_indices
 
 
 

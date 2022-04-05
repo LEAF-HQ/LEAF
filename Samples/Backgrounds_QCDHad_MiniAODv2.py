@@ -88,8 +88,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 403500.000000}),
         'nevents_das':       YearDependentContainer({'UL17': 28896000}),
-        'nevents_generated': YearDependentContainer({'UL17': 22944000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 22944281.041}),
+        'nevents_generated': YearDependentContainer({'UL17': 23448000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 23448287.3502}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -124,8 +124,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 6760.000000}),
         'nevents_das':       YearDependentContainer({'UL17': 55690000}),
-        'nevents_generated': YearDependentContainer({'UL17': 42592000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 42676006.7038}),
+        'nevents_generated': YearDependentContainer({'UL17': 43012000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 43012006.7659}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -142,8 +142,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 545.900000}),
         'nevents_das':       YearDependentContainer({'UL17': 50885000}),
-        'nevents_generated': YearDependentContainer({'UL17': 43622000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 43622143.0906}),
+        'nevents_generated': YearDependentContainer({'UL17': 44216000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 44216144.7156}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -161,7 +161,7 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'xsecs':             YearDependentContainer({'UL17': 154.700000}),
         'nevents_das':       YearDependentContainer({'UL17': 67379000}),
         'nevents_generated': YearDependentContainer({'UL17': 62651000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 62651001.4941}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 62651001.4822}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -178,8 +178,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 25.950000}),
         'nevents_das':       YearDependentContainer({'UL17': 36890000}),
-        'nevents_generated': YearDependentContainer({'UL17': 30641000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 30641000.0}),
+        'nevents_generated': YearDependentContainer({'UL17': 30725000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 30725000.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -250,8 +250,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 0.005193}),
         'nevents_das':       YearDependentContainer({'UL17': 2997000}),
-        'nevents_generated': YearDependentContainer({'UL17': 2757000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 2757000.0}),
+        'nevents_generated': YearDependentContainer({'UL17': 2829000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 2829000.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -268,8 +268,8 @@ def Add_Backgrounds_QCDHad(SampleContainer):
         'group':             YearDependentContainer({'UL17': 'QCDHad'}),
         'xsecs':             YearDependentContainer({'UL17': 0.000134}),
         'nevents_das':       YearDependentContainer({'UL17': 1000000}),
-        'nevents_generated': YearDependentContainer({'UL17': 970000.0}),
-        'nevents_weighted':  YearDependentContainer({'UL17': 970000.0}),
+        'nevents_generated': YearDependentContainer({'UL17': 1000000.0}),
+        'nevents_weighted':  YearDependentContainer({'UL17': 1000000.0}),
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
