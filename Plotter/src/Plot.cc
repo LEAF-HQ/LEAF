@@ -222,6 +222,7 @@ void plot_folder(vector<PlottingDataset*>& datasets_stack, vector<PlottingDatase
     for(PlottingDataset* dataset : datasets_stack){
       TH1F* hist = ((TH1F*)dataset->infile->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
+      else          hist->Scale(dataset->scalefactor);
       hist->SetFillColor(dataset->color);
       hist->SetLineWidth(0);
       stack->Add(hist);
@@ -257,6 +258,7 @@ void plot_folder(vector<PlottingDataset*>& datasets_stack, vector<PlottingDatase
     for(size_t j=0; j<datasets_single.size(); j++){
       TH1F* hist = ((TH1F*)datasets_single[j]->infile->Get(foldername + "/" + histname));
       if(normalize) hist->Scale(1./hist->Integral());
+      else          hist->Scale(datasets_single[j]->scalefactor);
       maximum = max(max(maximum, hist->GetMaximum()), 1E-4);
       hists_single.emplace_back(hist);
       if(!is_data[j]) leg->AddEntry(hist, datasets_single[j]->legend, "l");
