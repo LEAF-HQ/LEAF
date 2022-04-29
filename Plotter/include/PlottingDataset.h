@@ -15,7 +15,7 @@ class PlottingDataset {
 
 public:
   // Constructors, destructor
-  PlottingDataset(TString name_="", int color_=-1, int linestyle_=-1, TString legend_="", TString type_="", bool stack_=false, TString infilename_="") : name(name_), color(color_), linestyle(linestyle_), legend(legend_), type(type_), stack(stack_), infilename(infilename_){
+  PlottingDataset(TString name_="", int color_=-1, int linestyle_=-1, TString legend_="", TString type_="", bool stack_=false, double scalefactor_=1., TString infilename_="") : name(name_), color(color_), linestyle(linestyle_), legend(legend_), type(type_), stack(stack_), scalefactor(scalefactor_), infilename(infilename_){
     is_infile_populated = false;
     infile = nullptr;
   };
@@ -30,6 +30,7 @@ public:
     legend              = "";
     type                = "";
     stack               = false;
+    scalefactor         = 1.;
     infilename          = "";
   };
 
@@ -63,6 +64,7 @@ public:
   TString legend;
   TString type;
   bool    stack;
+  double  scalefactor;
   TString infilename;
   TFile*  infile;
   bool    is_infile_populated;

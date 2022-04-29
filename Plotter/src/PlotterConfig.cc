@@ -47,6 +47,10 @@ PlotterConfig::PlotterConfig(TString configfilename){
   for (xmlNode* current_node = node_inputdatasets->children; current_node; current_node = current_node->next){
     if(current_node->type == XML_ELEMENT_NODE){
 
+      double this_scalefactor = 1.;
+      if(getNodeProperty(current_node, "ScaleFactor") != ""){
+        this_scalefactor = stod(getNodeProperty(current_node, "ScaleFactor"));
+      }
       PlottingDataset ds(
         getNodeProperty(current_node, "Name"),
         stoi(getNodeProperty(current_node, "Color")),
@@ -54,6 +58,7 @@ PlotterConfig::PlotterConfig(TString configfilename){
         getNodeProperty(current_node, "Legend"),
         getNodeProperty(current_node, "Type"),
         ("true" == getNodeProperty(current_node, "Stack")),
+        this_scalefactor,
         m_input_directory + "/" + (TString)getNodeProperty(current_node, "Type") + "__" + (TString)getNodeProperty(current_node, "Name") + ".root"
       );
 

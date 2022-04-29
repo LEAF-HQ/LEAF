@@ -33,4 +33,5 @@
     Legend      CDATA         #REQUIRED
     Type        (MC|DATA)     #REQUIRED
     Stack       (true|false)  #REQUIRED
+    ScaleFactor CDATA         ""
 >
