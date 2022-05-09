@@ -252,7 +252,7 @@ class Submitter:
 
 
     @timeit
-    def Hadd(self):
+    def Hadd(self, ignoretree=True):
         print green('--> Hadding samples into groups. Assuming all samples have been processed entirely.')
 
         # update list of missing files
@@ -280,7 +280,7 @@ class Submitter:
             files_to_add = [os.path.join(outpath,  '%s__%s.root' % (grouptype, filename)) for filename in datasets_per_group[group][1]]
             files_to_add_ordered = order_haddlist(haddlist=clean_haddlist(haddlist=files_to_add, use_se=self.use_se))
             sourcestring = ' '.join( files_to_add_ordered )
-            singleargument = '%s---%s---%s---%s' % (outfilepath_and_name, sourcestring, 'True', 'True')
+            singleargument = '%s---%s---%s---%s' % (outfilepath_and_name, sourcestring, 'True', str(ignoretree))
             argumentlist.append(singleargument)
 
         execute_function_parallel(func=hadd_large_singlearg, argumentlist=argumentlist)
