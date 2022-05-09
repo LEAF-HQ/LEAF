@@ -58,11 +58,11 @@ def PreprocessInputs(self, maxfiles_per_sample, train_test_val_split=(4./6, 1./6
 
 
     # Now create matrix with labels, it's zero everywhere, only the column corresponding to the class the example belongs to has ones. This is OneHotEncoding the limits
-    labels_total = np.zeros((label_concatenated.shape[0], len(classes)))
-    for i in range(label_concatenated.shape[0]):
-        label = label_concatenated[i]
-        labels_total[i,label] = 1
-    labels_total = labels_total.astype(np.int8)
+    # labels_total = np.zeros((label_concatenated.shape[0], len(classes)))
+    # for i in range(label_concatenated.shape[0]):
+    #     label = label_concatenated[i]
+    #     labels_total[i,label] = 1
+    # labels_total = labels_total.astype(np.int8)
 
 
     # Here we're making sure to loop through all classes in the numeric order to avoid confusing the labels of inputs -- dict might be unordered, but the input matrix has to be ordered! Thanks god the class names correspond to the list indices from 0 to nclasses-1
@@ -101,8 +101,8 @@ def PreprocessInputs(self, maxfiles_per_sample, train_test_val_split=(4./6, 1./6
     sumweights_classes = {}
     # initialize this dict
 
-    for i in range(labels_total.shape[1]):
-        sumweights_classes[i] = 0.
+    # for i in range(labels_total.shape[1]):
+    #     sumweights_classes[i] = 0.
     #
     # for i in range(len(eventweight_total)):
     #     currentsum += eventweight_total[i,0]

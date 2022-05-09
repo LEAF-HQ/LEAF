@@ -24,7 +24,7 @@ from collections import OrderedDict
 # import pickle
 import ROOT
 from SampleSettings import *
-from DNNRunner.DNNRunner import *
+from DNNRunner import *
 
 # All constants to be used
 analysisname     = 'LQDM'
@@ -65,7 +65,7 @@ def main():
 
     Classifier = DNNRunner(dnnparameters=dnnparameters, year='UL17', analysisname=analysisname, input_base_path=input_base_path, result_base_path=result_base_path, selectionstage='Fullselection', selectionname='PsiPsi_05_Jets2_BTagTight1_DPhiJet1Met_DPhiJet2Met_PtratioJet2Met_LeptonCategories', plotprefix='PsiPsiToLQChi', samples=samples)
     Classifier.ConvertRootToInputs(chunksize=200000)
-    # Classifier.PreprocessInputs(maxfiles_per_sample=None)
+    Classifier.PreprocessInputs(maxfiles_per_sample=None)
 
     # tag = dict_to_str(parameters)
     # classtag = get_classes_tag(parameters)
