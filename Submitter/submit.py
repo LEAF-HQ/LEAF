@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--notreeadd',       '-t', action='store_true', default=False, dest='notreeadd',          help='Add split files without adding the trees. By default does not apply the force-add')
     parser.add_argument('--allowincomplete', '-i', action='store_true', default=False, dest='allowincomplete',    help='Ignore the non-existent files and does the hadd nonetheless')
     parser.add_argument('--plothadd',        '-p', action='store_true', default=False, dest='hadd',               help='Hadd files to groups used for plotting and further analysis. Will always force.')
+    parser.add_argument('--group-with-tree', '-g', action='store_true', default=False, dest='groupwithtree',      help='Hadd files to groups and keep the tree (which makes it useful only for further processing). Will always force.')
     parser.add_argument('--use-se',                action='store_true', default=False, dest='use_se',             help='Allow submitter to use the SE director. Should only be necessary when the output directory is not mounted on current system.')
 
     args = parser.parse_args()
@@ -50,7 +51,8 @@ def main():
     if args.submit:     submitter.Submit(cluster=args.cluster)
     if run_local:       submitter.RunLocal(ncores=args.ncores)
     if is_to_add:       submitter.Add(force=args.forceadd, ignoretree=args.notreeadd, allowincomplete=args.allowincomplete)
-    if args.hadd:       submitter.Hadd()
+    if args.hadd:       submitter.Hadd(ignoretree=True)
+    if args.groupwithtree: submitter.Hadd(ignoretree=False)
 
 
 
