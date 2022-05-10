@@ -4,10 +4,12 @@ from utils import *
 from collections import OrderedDict
 import PreprocessInputs
 import ConvertRootToInputs
+import PlotInputs
+import TrainNetwork
 
 
 class DNNRunner:
-    def __init__(self, dnnparameters, year, analysisname, input_base_path, result_base_path, selectionstage, selectionname, plotprefix, samples):
+    def __init__(self, dnnparameters, year, analysisname, input_base_path, result_base_path, selectionstage, selectionname, plotprefix, samples, colors=['C0', 'C3', 'C1', 'C2', 'C4']):
 
         self.dnnparameters = dnnparameters
         self.year = year
@@ -17,6 +19,7 @@ class DNNRunner:
         self.selectionname = selectionname
         self.plotprefix = plotprefix
         self.samples = samples
+        self.colors = colors
 
         # stitch together a few paths
         self.inputpath_root      = os.path.join(input_base_path,  analysisname, year, selectionstage, selectionname)
@@ -24,12 +27,15 @@ class DNNRunner:
         self.inputpath_preproc   = os.path.join(input_base_path,  analysisname, year, selectionstage, selectionname, 'DNN', 'ProcessedInputs')
         self.resultpath          = os.path.join(result_base_path, analysisname, year, selectionstage, selectionname)
         self.plotoutput_path     = os.path.join(self.resultpath, 'plots')
-        self.dataoutput_path     = os.path.join(os.environ['ANALYZERPATH'], analysisname, 'data', year)
+        self.dataoutput_path     = os.path.join(self.resultpath, 'data')
         ensureDirectory(self.plotoutput_path)
+        ensureDirectory(self.dataoutput_path)
 
         # bind functions
         DNNRunner.ConvertRootToInputs = ConvertRootToInputs.ConvertRootToInputs
         DNNRunner.PreprocessInputs  = PreprocessInputs.PreprocessInputs
+        DNNRunner.PlotInputs  = PlotInputs.PlotInputs
+        DNNRunner.TrainNetwork  = TrainNetwork.TrainNetwork
 
         print green('--> Set up DNNRunner for year %s:' % (str(year)))
         for key in self.__dict__.keys():
