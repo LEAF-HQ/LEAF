@@ -59,8 +59,8 @@ def PlotPerformance(self, filepostfix='', use_best_model=False, plotfoldername='
 
     # log_model_performance(parameters=parameters, model_history=model_history, outputfolder=outputfolder)
     self.plot_loss(plotfolder=plotfolder, model_history=model_history)
-    # plot_accuracy(parameters=parameters, plotfolder=plotfolder, model_history=model_history)
-    # plot_rocs(parameters=parameters, plotfolder=plotfolder, pred_val=pred_val, labels_val=labels_val, sample_weights_val=sample_weights_val, eventweights_val=eventweights_val, pred_signals=pred_signals, eventweight_signals=eventweight_signals, usesignals=usesignals, use_best_model=use_best_model)
+    self.plot_accuracy(plotfolder=plotfolder, model_history=model_history)
+    self.plot_rocs(plotfolder=plotfolder, pred_val=pred_val, labels_val=labels_val, eventweights_val=eventweights_val)
     # plot_model(model, show_shapes=True, to_file=plotfolder+'/Model.pdf')
     # plot_confusion_matrices(parameters=parameters, plotfolder=plotfolder, pred_train=pred_train, labels_train=labels_train, sample_weights_train=sample_weights_train, eventweights_train=eventweights_train, pred_val=pred_val, labels_val=labels_val, sample_weights_val=sample_weights_val, eventweights_val=eventweights_val, use_best_model=use_best_model)
     #
@@ -73,6 +73,12 @@ def PlotPerformance(self, filepostfix='', use_best_model=False, plotfoldername='
 
 
 
+
+
+    print green('  --> Done plotting the performance.')
+
+
+
 def plot_loss(self, plotfolder, model_history):
 
     print green('    --> Plotting loss now...')
@@ -81,29 +87,158 @@ def plot_loss(self, plotfolder, model_history):
     # def fitfunc(x, a, b, c, d, e):
     #     return a + b/x + c*x + d*x*x + e/x/x
 
-    tag = parameters_to_tag(self.dnnparameters)
     plt.clf()
     fig = plt.figure()
     plt.grid()
     # x, fitx, fitfunc, postfitpars_train = fit_loss(model_history['loss'])
     # x, fitx, fitfunc, postfitpars_val = fit_loss(model_history['val_loss'])
 
-    plt.plot(model_history['loss'], label = 'Training set')
-    plt.plot(model_history['val_loss'], label = 'Validation set')
+    x = range(len(model_history['loss'])+1)
+    x = x[1:]
+
+    plt.plot(x, model_history['loss'], label = 'Training set')
+    plt.plot(x, model_history['val_loss'], label = 'Validation set')
     # plt.plot(fitx, fitfunc(fitx, *postfitpars_train), label="Fit (training set)")
     # plt.plot(fitx, fitfunc(fitx, *postfitpars_val), label="Fit (validation set)")
 
     plt.legend(loc='upper right')
-    # plt.ylim([0.1, 0.25])
+    plt.ylim([0., 3.])
     # if eqweight:
     #     plt.ylim([0.01, 0.06])
     plt.ylabel('Loss')
     plt.xlabel('Number of training epochs')
     fig.savefig(os.path.join(plotfolder, 'Loss.pdf'))
     plt.close()
-    print green('    --> Done plotting loss.')
+
+def plot_accuracy(self, plotfolder, model_history):
+
+    print green('    --> Plotting accuracy now...')
+    plt.clf()
+    fig = plt.figure()
+    plt.grid()
+
+    x = range(len(model_history['categorical_accuracy'])+1)
+    x = x[1:]
+    plt.plot(x, model_history['categorical_accuracy'], label = 'Training set')
+    plt.plot(x, model_history['val_categorical_accuracy'], label = 'Validation set')
+
+    plt.legend(loc='lower right')
+    plt.ylim([0., 1.05])
+    plt.ylabel('Prediction accuracy')
+    plt.xlabel('Number of training epochs')
+    fig.savefig(os.path.join(plotfolder, 'Accuracy.pdf'))
+
+def plot_rocs(self, plotfolder, pred_val, labels_val, eventweights_val, use_best_model=False):
+
+    classes = self.dnnparameters['classes']
+    classtitles = get_classtitles(classes)
+
+    print green('    --> Plotting ROCs now...')
+
+    # lumiweighted
+    FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(pred=pred_val, labels=labels_val, weights=eventweights_val)
+    plt.clf()
+    fig = plt.figure()
+    plt.xticks(np.arange(0.1,1.1,0.1))
+    plt.grid(True, which='both')
+    for i in range(len(FalsePositiveRates)):
+        plt.semilogy(TruePositiveRates[i], FalsePositiveRates[i], label=classtitles[i] + ', AUC: '+str(round(aucs[i],3)), color=self.colors[i])
+    plt.legend(loc='upper left')
+    plt.ylim([0.0001, 1.05])
+    plt.xlabel('Class selection efficiency')
+    plt.ylabel('Class background efficiency')
+    title = 'ROC_val'
+    if use_best_model: title += '_best'
+    else: title += '_last'
+    title += '.pdf'
+    fig.savefig(os.path.join(plotfolder, title))
+    plt.close()
+
+    plt.clf()
+    fig = plt.figure()
+    for i in range(len(TruePositiveRates)):
+        plt.plot(TruePositiveRates[i], SignalPuritys[i], label=classtitles[i], color=self.colors[i])
+    plt.legend(loc='best')
+    plt.ylim([0., 1.05])
+    plt.xlim([0., 1.])
+    plt.xticks(np.arange(0.,1.1,0.1))
+    plt.yticks(np.arange(0.,1.1,0.1))
+    plt.grid(True, which='both')
+    plt.xlabel('Selection efficiency')
+    plt.ylabel('Purity')
+    title = title.replace('ROC_', 'EffVsPur_')
+    fig.savefig(os.path.join(plotfolder, title))
+    plt.close()
+
+    # # Individual backgrounds: 1 plot per class, the other classes are individual curves. Therefore we only need to look at outputnode no. 'cl'
+    # for cl in classes.keys():
+    #     #cl is the true class
+    #
+    #     # Dictionaries to store the rocs against each individual background
+    #     fprs_lum = {}
+    #     tprs_lum = {}
+    #     thrs_lum = {}
+    #     aucss_lum = {}
+    #     prts_lum = {}
+    #     eff_signals_lum = {}
+    #     auc_signals_lum = {}
+    #
+    #     # Loop over all remaining classes, always keep predictions, labels, and weights for class 'cl' and this one background
+    #     for i in classes.keys():
+    #         # i is the index of the one background class
+    #         if i == cl: continue
+    #         mask = np.logical_or(labels_val[:,cl] == 1, labels_val[:,i] == 1)
+    #         pred_this = pred_val[mask]
+    #         labels_this = labels_val[mask]
+    #         weights_lum = eventweights_val[mask]
+    #         pred_this = pred_this[:,[cl,i]]
+    #         labels_this = labels_this[:,[cl,i]]
+    #         fprs_lum[i], tprs_lum[i], thrs_lum[i], aucss_lum[i], prts_lum[i] = get_fpr_tpr_thr_auc(parameters=parameters, pred_val=pred_this, labels_val=labels_this, weights_val=weights_lum)
+    #
+    #     # don't care, which tpr and thr we choose for class 'cl', we are calculating the singal efficiency for those values anyway ;)
+    #     if do_sig:
+    #         for key in pred_signals.keys():
+    #             eff_signals_lum[key], indices = get_cut_efficiencies(parameters=parameters, predictions=pred_signals[key][:,cl], thresholds=thrs_lum[0 if cl > 0 else 1][0], weights=eventweight_signals[key])
+    #             # print thrs_lum[0 if cl > 0 else 1][0]
+    #             # print eff_signals_lum
+    #             auc_signals_lum[key] = np.trapz(tprs_lum[0 if cl > 0 else 1][0][indices], eff_signals_lum[key])
 
 
 
-
-    print green('  --> Done plotting the performance.')
+        # # Now just plot all 4 curves (lumiweighted)
+        # plt.clf()
+        # fig = plt.figure()
+        # plt.xticks(np.arange(0.1,1.1,0.1))
+        # plt.grid(True, which='both')
+        # for i in fprs_lum.keys():
+        #     plt.semilogy(tprs_lum[i][0], fprs_lum[i][0], label='Bkg: '+classtitles[i] + ', AUC: '+str(round(aucss_lum[i][0],3)), color=colorstr[i])
+        # if do_sig:
+        #     for sigidx in range(len(usesignals)):
+        #         plt.semilogy(tprs_lum[0 if cl > 0 else 1][0][indices], eff_signals_lum[usesignals[sigidx]], label='Signal (%s), AUC: %s' % (signalmasses[usesignals[sigidx]], str(round(auc_signals_lum[usesignals[sigidx]],3))), color='k', linestyle=signal_linestyles[sigidx])
+        # plt.legend(loc='upper left')
+        # plt.ylim([0.0001, 1.05])
+        # plt.xlabel(classtitles[cl]+' selection efficiency')
+        # plt.ylabel('Class background efficiency')
+        # title = 'ROC_val_class'+str(cl)+'_lumiweighted'
+        # if use_best_model: title += '_best'
+        # title += '.pdf'
+        # fig.savefig(plotfolder+'/'+title)
+        # plt.close()
+        #
+        # plt.clf()
+        # fig = plt.figure()
+        # for i in fprs_eq.keys():
+        #     plt.plot(tprs_lum[i][0], prts_lum[i][0], label='Bkg: ' + classtitles[i], color=colorstr[i])
+        # plt.legend(loc='best')
+        # plt.ylim([0., 1.05])
+        # plt.xlim([0., 1.])
+        # plt.xticks(np.arange(0.,1.1,0.1))
+        # plt.yticks(np.arange(0.,1.1,0.1))
+        # plt.grid(True, which='both')
+        # plt.xlabel(classtitles[cl]+' selection efficiency')
+        # plt.ylabel('Purity wrt. given background')
+        # title = 'EffVsPur_val_class'+str(cl)+'_lumiweighted'
+        # if use_best_model: title += '_best'
+        # title += '.pdf'
+        # fig.savefig(plotfolder+'/'+title)
+        # plt.close()

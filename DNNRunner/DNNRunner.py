@@ -42,6 +42,9 @@ class DNNRunner:
         DNNRunner.MakePrediction  = MakePrediction.MakePrediction
         DNNRunner.PlotPerformance  = PlotPerformance.PlotPerformance
         DNNRunner.plot_loss  = PlotPerformance.plot_loss
+        DNNRunner.plot_accuracy  = PlotPerformance.plot_accuracy
+        DNNRunner.plot_rocs  = PlotPerformance.plot_rocs
+
 
         print green('--> Set up DNNRunner for year %s:' % (str(year)))
         for key in self.__dict__.keys():
