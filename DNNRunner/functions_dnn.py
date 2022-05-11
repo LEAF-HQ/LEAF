@@ -37,7 +37,7 @@ def float_to_str(f):
 
 def load_data(inputfolder, fraction, postfix):
 
-    print green('--> Loading data...')
+    print green('    --> Loading data...')
 
 
     # os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_train.npy' % (float_to_str(percentage)) )
@@ -55,3 +55,20 @@ def load_data(inputfolder, fraction, postfix):
     eventweights_val = np.load(os.path.join(inputfolder,     'eventweights_%s_val%s.npy' % (float_to_str(fraction), postfix)))
 
     return input_train, input_test, input_val, labels_train, labels_test, labels_val, sample_weights_train, sample_weights_test, sample_weights_val, eventweights_train, eventweights_test, eventweights_val
+
+def load_predictions(inputfolder, modeltag='last', filepostfix=''):
+
+    print green('    --> Loading predictions...')
+
+    # Load model prediction
+    pred_train = np.load(os.path.join(inputfolder, 'prediction_%s_train%s.npy'%(modeltag, filepostfix)))
+    pred_test = np.load(os.path.join(inputfolder, 'prediction_%s_test%s.npy'%(modeltag, filepostfix)))
+    pred_val = np.load(os.path.join(inputfolder, 'prediction_%s_val%s.npy'%(modeltag, filepostfix)))
+
+    return pred_train, pred_test, pred_val
+
+
+def remove_and_numpy_save(filename, content):
+    if os.path.exists(filename):
+        os.remove(filename)
+    np.save(filename, content)
