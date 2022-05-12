@@ -44,6 +44,7 @@ class DNNRunner:
         DNNRunner.plot_loss  = PlotPerformance.plot_loss
         DNNRunner.plot_accuracy  = PlotPerformance.plot_accuracy
         DNNRunner.plot_rocs  = PlotPerformance.plot_rocs
+        DNNRunner.plot_outputs_1d_nodes  = PlotPerformance.plot_outputs_1d_nodes
 
 
         print green('--> Set up DNNRunner for year %s:' % (str(year)))
