@@ -20,67 +20,39 @@ from functions_dnn import *
 import copy
 import tqdm
 
-def MakePrediction(filepostfix):
-    print 'Making predictions now'
-    # tag = dict_to_str(parameters)
-    # classtag = get_classes_tag(parameters)
-    # fraction = get_fraction(parameters)
-    #
-    # # Get inputs
-    # model = keras.models.load_model(outputfolder+'/model.h5')
-    # model_best = keras.models.load_model(outputfolder+'/model_best.h5')
-    # input_train, input_test, input_val, labels_train, labels_test, labels_val, sample_weights_train, sample_weights_test, sample_weights_val, eventweights_train, eventweights_test, eventweights_val, signals, signal_eventweights, signal_normweights = load_data(parameters, inputfolder=inputfolder, filepostfix=filepostfix)
-    #
-    # signal_identifiers = ['RSGluon_All', 'RSGluon_M1000', 'RSGluon_M2000', 'RSGluon_M3000', 'RSGluon_M4000', 'RSGluon_M5000', 'RSGluon_M6000']
-    #
-    # # Do the predictions
-    # print 'Now that the model is trained, we\'re going to predict the labels of all 3 sets. '
-    # print 'predicting for training set'
-    #
-    # pred_train = model.predict(input_train)
-    # np.save(outputfolder+'/prediction_train.npy'  , pred_train)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for training set, class ' + str(cl)
-    #     tmp = pred_train[labels_train[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_train_class'+str(cl)+'.npy'  , tmp)
-    # print 'predicting for test set'
-    # print input_test.shape
-    # print labels_test.shape
-    # pred_test = model.predict(input_test)
-    # print pred_test.shape
-    # print labels_test.shape
-    # np.save(outputfolder+'/prediction_test.npy'  , pred_test)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for test set, class ' + str(cl)
-    #     tmp = pred_test[labels_test[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_test_class'+str(cl)+'.npy'  , tmp)
-    # print 'predicting for val set'
-    # pred_val = model.predict(input_val)
-    # np.save(outputfolder+'/prediction_val.npy'  , pred_val)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for val set, class ' + str(cl)
-    #     tmp = pred_val[labels_val[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_val_class'+str(cl)+'.npy'  , tmp)
-    #
-    # # Do predictions with best model instead of last
-    # print 'predicting for training set, best model'
-    # pred_train = model_best.predict(input_train)
-    # np.save(outputfolder+'/prediction_train_best.npy'  , pred_train)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for training set, best model, class ' + str(cl)
-    #     tmp = pred_train[labels_train[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_train_class'+str(cl)+'_best.npy'  , tmp)
-    # print 'predicting for test set, best model'
-    # pred_test = model_best.predict(input_test)
-    # np.save(outputfolder+'/prediction_test_best.npy'  , pred_test)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for test set, best model, class ' + str(cl)
-    #     tmp = pred_test[labels_test[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_test_class'+str(cl)+'_best.npy'  , tmp)
-    # print 'predicting for val set, best model'
-    # pred_val = model_best.predict(input_val)
-    # np.save(outputfolder+'/prediction_val_best.npy'  , pred_val)
-    # for cl in range(len(parameters['classes'])):
-    #     print 'predicting for val set, best model, class ' + str(cl)
-    #     tmp = pred_val[labels_val[:,cl] == 1]
-    #     np.save(outputfolder+'/prediction_val_class'+str(cl)+'_best.npy'  , tmp)
+
+def MakePrediction(self, filepostfix=''):
+    print green('  --> Making predictions now...')
+
+    # Get inputs and model(s)
+    tag = parameters_to_tag(self.dnnparameters)
+    classes = self.dnnparameters['classes']
+    classtag = dict_to_str(classes)
+    modelpath = os.path.join(self.dataoutput_path, 'DNNModels', tag)
+    model = keras.models.load_model(os.path.join(modelpath, 'model.h5'))
+    model_best = keras.models.load_model(os.path.join(modelpath, 'model_best.h5'))
+    inputfolder = os.path.join(self.inputpath_preproc, classtag)
+    input_train, input_test, input_val, labels_train, labels_test, labels_val, sample_weights_train, sample_weights_test, sample_weights_val, eventweights_train, eventweights_test, eventweights_val = load_data(inputfolder=inputfolder, fraction=self.dnnparameters['runonfraction'], postfix=filepostfix)
+
+    # Do the predictions
+    outdir = os.path.join(self.inputpath_predictions, tag)
+    ensureDirectory(outdir)
+
+    inputs = [input_train, input_test, input_val]
+    labels = [labels_train, labels_test, labels_val]
+    outfiletags = ['train', 'test', 'val']
+
+    for (input, label, outfiletag) in zip(inputs, labels, outfiletags):
+        print green('    --> Predicting for %s set, all classes' % (outfiletag))
+        pred = model.predict(input)
+        pred_best = model_best.predict(input)
+        remove_and_numpy_save(os.path.join(outdir, 'prediction_last_%s.npy'%(outfiletag)), pred)
+        remove_and_numpy_save(os.path.join(outdir, 'prediction_best_%s.npy'%(outfiletag)), pred_best)
+        for cl in classes:
+            print green('    --> Predicting for %s set, class %i' % (outfiletag, cl))
+            tmp = pred[label[:,cl] == 1]
+            tmp_best = pred_best[label[:,cl] == 1]
+            remove_and_numpy_save(os.path.join(outdir, 'prediction_last_%s_class%i.npy'%(outfiletag,cl)) , tmp)
+            remove_and_numpy_save(os.path.join(outdir, 'prediction_best_%s_class%i.npy'%(outfiletag,cl)) , tmp_best)
+
+    print green('  --> Done making predictions.')

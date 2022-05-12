@@ -20,7 +20,7 @@ from functions_dnn import *
 import copy
 import tqdm
 
-def TrainNetwork(self):
+def TrainNetwork(self, filepostfix=''):
 
     # Get parameters
     layers        = self.dnnparameters['layers']
@@ -50,7 +50,7 @@ def TrainNetwork(self):
         return
 
     inputfolder = os.path.join(self.inputpath_preproc, classtag)
-    input_train, input_test, input_val, labels_train, labels_test, labels_val, sample_weights_train, sample_weights_test, sample_weights_val, eventweights_train, eventweights_test, eventweights_val = load_data(inputfolder=inputfolder, fraction=self.dnnparameters['runonfraction'], postfix='')
+    input_train, input_test, input_val, labels_train, labels_test, labels_val, sample_weights_train, sample_weights_test, sample_weights_val, eventweights_train, eventweights_test, eventweights_val = load_data(inputfolder=inputfolder, fraction=self.dnnparameters['runonfraction'], postfix=filepostfix)
 
 
     # Define the network
@@ -103,3 +103,6 @@ def TrainNetwork(self):
     model.save(os.path.join(modelpath, 'model.h5'))
     with open(os.path.join(modelpath, 'model_history.pkl'), 'w') as f:
         pickle.dump(model.history.history, f)
+
+
+    self.MakePrediction(filepostfix=filepostfix)

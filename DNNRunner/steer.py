@@ -91,8 +91,9 @@ def main():
     # Classifier.ConvertRootToInputs(chunksize=200000)
     # Classifier.PreprocessInputs(maxfiles_per_sample=None)
     # Classifier.PlotInputs(filepostfix='', plotfoldername='DNNInputDistributions')
-    # Classifier.TrainNetwork()
-    Classifier.MakePrediction(filepostfix='')
+    # Classifier.TrainNetwork(filepostfix='')
+    # Classifier.MakePrediction(filepostfix='')
+    Classifier.PlotPerformance(filepostfix='', plotfoldername='DNNPerformancePlots')
 
     # # First network
     # # =============
