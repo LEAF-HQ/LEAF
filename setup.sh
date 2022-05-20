@@ -25,6 +25,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ANALYZERLIBPATH
 export PATH=${PATH}:${ANALYZERBINPATH}:${PLOTTERBINPATH}:${SUBMITTERPATH}
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$LEAFPATH
 export PYTHONPATH=$PYTHONPATH:${GENERATORPATH}:${LEAFPATH}
+export PYTHONPATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc700/lcg/root/6.14.09-pafccj6/lib:$PYTHONPATH # needed in very rare cases (conda incarnation of python to make use of GPUs for DNNs, for example)
 
 # LHAPDF
 cd $CMSSW_BASE/src
