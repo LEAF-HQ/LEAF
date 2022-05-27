@@ -35,9 +35,9 @@ class TrainingBase():
         else:
             # self.model.fit(self.inputs_train, self.labels_train, sample_weight=self.weights_train, batch_size=self.params['batch_size'], epochs=self.params['epochs'], verbose=1, validation_data=(self.inputs_val, self.labels_val), callbacks=self.callbacks)
             if self.do_weights:
-                history = self.model.fit(self.inputs['train'], self.labels['train'][:,0],  sample_weight=self.weights['train'], batch_size=self.DNNparams['batch_size'], epochs=self.DNNparams['epochs'], validation_data=(self.inputs['val'], self.labels['val'][:,0]), callbacks=self.callbacks, verbose=1)
+                history = self.model.fit(self.inputs['train'], self.labels['train'],  sample_weight=self.weights['train'], batch_size=self.DNNparams['batch_size'], epochs=self.DNNparams['epochs'], validation_data=(self.inputs['val'], self.labels['val']), callbacks=self.callbacks, verbose=1)
             else:
-                history = self.model.fit(self.inputs['train'], self.labels['train'][:,0],               batch_size=self.DNNparams['batch_size'], epochs=self.DNNparams['epochs'], validation_data=(self.inputs['val'], self.labels['val'][:,0]), callbacks=self.callbacks, verbose=1)
+                history = self.model.fit(self.inputs['train'], self.labels['train'],               batch_size=self.DNNparams['batch_size'], epochs=self.DNNparams['epochs'], validation_data=(self.inputs['val'], self.labels['val']), callbacks=self.callbacks, verbose=1)
             # self.model.fit(self.input_train, self.labels_train, sample_weight=weights_train, batch_size=self.DNNparams['batch_size'], epochs=self.DNNparams['epochs'], shuffle=True, validation_data=(self.input_val, self.labels_val, self.weights_val), callbacks=self.callbacks, verbose=2)
         return history
 
