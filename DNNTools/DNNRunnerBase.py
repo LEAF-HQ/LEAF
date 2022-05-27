@@ -28,13 +28,13 @@ class DNNRunnerBase:
         self.filepath_raw     = raw
         self.filepath_preproc = preproc
         # self.filepath_input   = input
-        # self.filepath_result  = result
+        self.filepath_result  = result
         self.filepath_plots   = plots
         ensureDirectory(self.filepath_raw)
         ensureDirectory(self.filepath_preproc)
         # ensureDirectory(self.filepath_input)
-        # ensureDirectory(self.filepath_result)
-        # ensureDirectory(self.filepath_plots)
+        ensureDirectory(self.filepath_result)
+        ensureDirectory(self.filepath_plots)
         self.PrintContent()
 
     def PrintContent(self):

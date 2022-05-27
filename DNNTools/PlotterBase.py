@@ -44,7 +44,6 @@ class PlotterBase():
         inputs = []
         for label in ['train', 'val', 'test']:
             input   = pd.read_pickle(os.path.join(inputdir, 'input_%s_%s.pkl' %(label,self.frac) ))
-            input['trainLabel'] = label
             input['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
             input['label'] = np.argmax(np.array(input['label'].to_list()), axis = 1)
             input['weights'] = pd.read_pickle(os.path.join(inputdir, 'weights_%s_%s.pkl' %(label,self.frac) ))
@@ -73,15 +72,12 @@ class PlotterBase():
         plt.xlabel(variable_name)
         plt.ylabel('Number of events / bin')
         fname = os.path.join(self.outdir, '%s_%s.pdf' % (variable_name, self.frac))
-        print fname
         CleanFile(fname)
         fig.savefig(fname)
         plt.close()
 
 
     def PlotBase(self, style):
-        plt.clf()
-        fig = plt.figure()
         print len(self.df.columns)
         for variable_name in tqdm.tqdm(self.df.columns[80:], desc="Plots done"):
         # for variable_name in self.df.columns[80:]:
@@ -94,15 +90,20 @@ class PlotterBase():
         ensureDirectory(self.outdir)
         self.LoadInputs()
         style = {
-            'VBF': {
-                'label': 'VBF: training sample',
+            'QCDHad': {
+                'label': 'QCDHad: training sample',
                 'linestyle': 'solid',
                 'color': 'C0'
                 },
-            'GluGlu': {
-                'label': 'ggH: training sample',
+            'PsiPsiToLQChi': {
+                'label': 'PsiPsiToLQChi: training sample',
                 'linestyle': 'solid',
-                'color': 'C0'
+                'color': 'C1'
+                },
+            'VV': {
+                'label': 'VV: training sample',
+                'linestyle': 'solid',
+                'color': 'C2'
                 },
             }
         self.PlotBase(style)
