@@ -3,7 +3,7 @@ import os, json
 from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
 
-from CallBacksBase import DefineCallbacksBase, PlotOnPredictBase
+from CallBacksBase import DefineCallbacksBase
 from functions_dnn import float_to_str
 from utils import ensureDirectory
 
