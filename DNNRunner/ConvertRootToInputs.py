@@ -19,8 +19,10 @@ import pickle
 import os
 from utils import *
 from functions_dnn import *
+import tqdm
 
 def ConvertRootToInputs(self, chunksize=200000, treename='AnalysisTree'):
+    print green('  --> Converting root trees to numpy arrays now...')
 
     tag = parameters_to_tag(self.dnnparameters)
     outfolder = self.inputpath_raw
@@ -31,7 +33,7 @@ def ConvertRootToInputs(self, chunksize=200000, treename='AnalysisTree'):
     ROOT.gSystem.Load('libLQDMClasses.so')
 
     for samplename in self.samples:
-        print green('  --> Creating numpy arrays for input sample %s' % (samplename))
+        print green('    --> Creating numpy arrays for input sample %s' % (samplename))
         infilename = os.path.join(self.inputpath_root, 'MC__%s.root' % (samplename))
         infile = ROOT.TFile.Open(infilename)
 
@@ -71,22 +73,27 @@ def ConvertRootToInputs(self, chunksize=200000, treename='AnalysisTree'):
         print green('    --> Producing %i files with %i events each.' % (maxidx, chunksize))
         for i in range(maxidx):
             print green('      --> Working on file number: %i (%3.2f%%)' % (i+1, float(i+1)/maxidx * 100.))
-            # (branch_or_expression, fill_value, length)
+
+
+
+        # pbar = tqdm.tqdm(total=entries, desc="Events done")
+        # for idx, ev in enumerate(tree):
+        #     row = convert_event_to_numpy(ev, -99.)
+        #     pbar.update(1)
+
+
+
             mymatrix = root2array(filenames=infilename, treename=treename, branches=varnames_all, start=i*chunksize, stop=(i+1)*chunksize)
             mymatrix = rec2array(mymatrix)
+
             myweights = root2array(filenames=infilename, treename=treename, branches=['Events.GenEvent.Event.weight'], start=i*chunksize, stop=(i+1)*chunksize)
             myweights = rec2array(myweights)
+
             outname = os.path.join(outfolder, '%s_%i.npy' % (samplename, i))
             outname_weights = os.path.join(outfolder, 'Weights_%s_%i.npy' % (samplename, i))
-            if os.path.exists(outname):
-                os.remove(outname)
-            if os.path.exists(outname_weights):
-                os.remove(outname_weights)
-            np.save(outname, mymatrix)
-            np.save(outname_weights, myweights)
-            # percent = float(i+1)/float(maxidx) * 100.
-            # sys.stdout.write( '{0:d} of {1:d} ({2:4.2f} %) jobs done.\r'.format(i+1, maxidx, percent))
-            # if not i == maxidx-1: sys.stdout.flush()
+
+            remove_and_numpy_save(outname, mymatrix)
+            remove_and_numpy_save(outname_weights, myweights)
 
         print green('    --> Finished storing inputs, now storing the variable names and moving on.')
         outfilename_varnames = os.path.join(outfolder, 'variable_names.pkl')
@@ -94,3 +101,25 @@ def ConvertRootToInputs(self, chunksize=200000, treename='AnalysisTree'):
             os.remove(outfilename_varnames)
         with open(outfilename_varnames, 'w') as f:
             pickle.dump(varnames_all, f)
+
+def convert_event_to_numpy(event, defaultvalue):
+    njets = 5
+    values = []
+
+    event.Events.jets_ak4chs.size()
+    for i in range(njets):
+        if i < event.Events.jets_ak4chs.size():
+            values.append(event.Events.jets_ak4chs[i].pt())
+            values.append(event.Events.jets_ak4chs[i].eta())
+            values.append(event.Events.jets_ak4chs[i].phi())
+            values.append(event.Events.jets_ak4chs[i].m())
+            values.append(event.Events.jets_ak4chs[i].score_DeepFlavB())
+        else:
+            values.append(defaultvalue)
+            values.append(defaultvalue)
+            values.append(defaultvalue)
+            values.append(defaultvalue)
+            values.append(defaultvalue)
+
+    result = np.asarray(values, dtype=np.float64)
+    return result

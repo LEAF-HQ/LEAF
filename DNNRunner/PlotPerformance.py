@@ -57,16 +57,19 @@ def PlotPerformance(self, filepostfix='', use_best_model=False, plotfoldername='
 
 
 
-    # log_model_performance(parameters=parameters, model_history=model_history, outputfolder=outputfolder)
     self.plot_loss(plotfolder=plotfolder, model_history=model_history)
     self.plot_accuracy(plotfolder=plotfolder, model_history=model_history)
     self.plot_rocs(plotfolder=plotfolder, pred_val=pred_val, labels_val=labels_val, eventweights_val=eventweights_val)
+    self.plot_outputs_1d_nodes(
+        plotfolder=plotfolder,
+        pred_train=pred_train, labels_train=labels_train, weights_train=eventweights_train,
+        pred_val=pred_val, labels_val=labels_val, weights_val=eventweights_val,
+        use_best_model=use_best_model
+    )
+    # log_model_performance(parameters=parameters, model_history=model_history, outputfolder=outputfolder)
     # plot_model(model, show_shapes=True, to_file=plotfolder+'/Model.pdf')
     # plot_confusion_matrices(parameters=parameters, plotfolder=plotfolder, pred_train=pred_train, labels_train=labels_train, sample_weights_train=sample_weights_train, eventweights_train=eventweights_train, pred_val=pred_val, labels_val=labels_val, sample_weights_val=sample_weights_val, eventweights_val=eventweights_val, use_best_model=use_best_model)
-    #
-    #
-    # pred_trains, weights_trains, normweights_trains, lumiweights_trains, pred_vals, weights_vals, normweights_vals, lumiweights_vals, pred_tests, weights_tests, normweights_tests, lumiweights_tests = get_data_dictionaries(parameters=parameters, eventweights_train=eventweights_train, sample_weights_train=sample_weights_train, pred_train=pred_train, labels_train=labels_train, eventweights_val=eventweights_val, sample_weights_val=sample_weights_val, pred_val=pred_val, labels_val=labels_val, eventweights_test=eventweights_test, sample_weights_test=sample_weights_test, pred_test=pred_test, labels_test=labels_test)
-    # plot_outputs_1d_nodes(parameters=parameters, plotfolder=plotfolder, pred_trains=pred_trains, labels_train=labels_train, weights_trains=weights_trains, lumiweights_trains=lumiweights_trains, normweights_trains=normweights_trains, pred_vals=pred_vals, labels_val=labels_val, weights_vals=weights_vals, lumiweights_vals=lumiweights_vals, normweights_vals=normweights_vals, pred_signals=pred_signals, eventweight_signals=eventweight_signals, normweight_signals=normweight_signals, usesignals=usesignals, use_best_model=use_best_model)
+
     #
     # plot_outputs_1d_classes(parameters=parameters, plotfolder=plotfolder, pred_trains=pred_trains, labels_train=labels_train, weights_trains=weights_trains, lumiweights_trains=lumiweights_trains, normweights_trains=normweights_trains, pred_vals=pred_vals, labels_val=labels_val, weights_vals=weights_vals, lumiweights_vals=lumiweights_vals, normweights_vals=normweights_vals, use_best_model=use_best_model)
     # plot_outputs_2d(parameters=param
@@ -229,5 +232,68 @@ def plot_rocs(self, plotfolder, pred_val, labels_val, eventweights_val, use_best
         plt.xlabel(classtitles[cl]+' selection efficiency')
         plt.ylabel('Purity wrt. given background')
         title = title.replace('ROC_', 'EffVsPur_')
+        fig.savefig(os.path.join(plotfolder, title))
+        plt.close()
+
+def plot_outputs_1d_nodes(self, plotfolder, pred_train, pred_val, labels_train, labels_val, weights_train, weights_val, use_best_model):
+    print green('    --> Plotting classifier output distributions now...')
+    classes = self.dnnparameters['classes']
+    classtitles = get_classtitles(classes)
+
+    nbins = 100
+    binwidth = 1./float(nbins)
+    for node in classes:
+        # 'node' is the output node number, we will make one plot per 'node'
+        y_trains = {}
+        y_vals = {}
+        # y_trains_norm = {}
+        # y_vals_norm = {}
+        normweights_train = {}
+        normweights_val = {}
+        bin_edges = {}
+        bin_centers = {}
+        y_val_sumofweightquares = {}
+        yerrs_val = {}
+
+
+        for i in classes:
+            # 'i' is the true class
+            y_trains[i], bin_edges[i] = np.histogram(pred_train[labels_train[:,i]==1][:,node], bins=nbins, weights=weights_train[labels_train[:,i]==1])
+            y_vals[i] = np.histogram(pred_val[labels_val[:,i]==1][:,node], bins=nbins, weights=weights_val[labels_val[:,i]==1])[0]
+            y_val_sumofweightquares[i] = np.histogram(pred_val[labels_val[:,i]==1][:,node], bins=nbins, weights=weights_val[labels_val[:,i]==1]**2)[0]
+            normweights_train[i] = 1./weights_train[labels_train[:,i]==1].sum()
+            normweights_val[i] = 1./weights_val[labels_val[:,i]==1].sum()
+            bin_centers[i] = 0.5*(bin_edges[i][1:] + bin_edges[i][:-1])
+            # yerrs_val[i] = y_vals[i]**0.5
+            yerrs_val[i] = y_val_sumofweightquares[i]**0.5
+
+        plt.clf()
+        fig = plt.figure()
+        for i in classes:
+            plt.hist(bin_centers[i], weights=y_trains[i]*normweights_train[i], bins=bin_edges[i], histtype='step', label='Training sample, ' + classtitles[i], color=self.colors[i])
+            plt.errorbar(bin_centers[i], y_vals[i]*normweights_val[i], yerr=yerrs_val[i]*normweights_val[i], fmt = '.', drawstyle = 'steps-mid', linestyle=' ', label='Validation sample, ' + classtitles[i], color=self.colors[i])
+        plt.legend(loc='best', prop={'size': 8})
+        plt.yscale('log')
+        plt.xlabel('Classifier output for node %s' % (classtitles[node]))
+        plt.ylabel('Normalized number of events / bin')
+        title = 'Distribution_node%i_norm' % (node)
+        if use_best_model: title += '_best'
+        else: title += '_last'
+        title += '.pdf'
+        fig.savefig(os.path.join(plotfolder, title))
+
+        plt.clf()
+        fig = plt.figure()
+        for i in classes:
+            plt.errorbar(bin_centers[i], y_vals[i], yerr=yerrs_val[i], fmt = '.', drawstyle = 'steps-mid', linestyle=' ', label='Validation sample, ' + classtitles[i], color=self.colors[i])
+
+        plt.legend(loc='best', prop={'size': 8})
+        plt.yscale('log')
+        plt.xlabel('Classifier output for node %s' % (classtitles[node]))
+        plt.ylabel('Events / bin')
+        title = 'Distribution_node%i' % (node)
+        if use_best_model: title += '_best'
+        else: title += '_last'
+        title += '.pdf'
         fig.savefig(os.path.join(plotfolder, title))
         plt.close()

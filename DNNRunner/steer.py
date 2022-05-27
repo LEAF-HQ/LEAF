@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import keras
 import os, sys, math, time
 import subprocess
 from utils import *
@@ -33,12 +34,6 @@ input_base_path  = os.path.join('/pnfs/psi.ch/cms/trivcat/store/user', user)
 result_base_path = os.path.join('/work', user)
 
 samples = {
-    # 'PsiPsiToLQChi_MLQ1000_MCH100_MPS117_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ1000_MCH100_MPS117_L1p0',   color=ROOT.kRed+4,   linestyle=2, legendtext='PsiPsiToLQChi_MLQ1000_MCH100_MPS117_L1p0'),
-    # 'PsiPsiToLQChi_MLQ7030_MCH100_MPS117_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ7030_MCH100_MPS117_L1p0',   color=ROOT.kRed+1,   linestyle=2, legendtext='PsiPsiToLQChi_MLQ7030_MCH100_MPS117_L1p0'),
-    # 'PsiPsiToLQChi_MLQ1000_MCH457_MPS567_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ1000_MCH457_MPS567_L1p0',   color=ROOT.kViolet,  linestyle=2, legendtext='PsiPsiToLQChi_MLQ1000_MCH457_MPS567_L1p0'),
-    # 'PsiPsiToLQChi_MLQ7030_MCH457_MPS504_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ7030_MCH457_MPS504_L1p0',   color=ROOT.kAzure-2, linestyle=2, legendtext='PsiPsiToLQChi_MLQ7030_MCH457_MPS504_L1p0'),
-    # 'PsiPsiToLQChi_MLQ1000_MCH2089_MPS2221_L1p0': SampleSettings(name='PsiPsiToLQChi_MLQ1000_MCH2089_MPS2221_L1p0', color=ROOT.kOrange,  linestyle=2, legendtext='PsiPsiToLQChi_MLQ1000_MCH2089_MPS2221_L1p0'),
-    # 'PsiPsiToLQChi_MLQ7030_MCH2089_MPS2445_L1p0': SampleSettings(name='PsiPsiToLQChi_MLQ7030_MCH2089_MPS2445_L1p0', color=ROOT.kGreen-2, linestyle=2, legendtext='PsiPsiToLQChi_MLQ7030_MCH2089_MPS2445_L1p0'),
 
     'PsiPsiToLQChi_MLQ10000_MCH100_MPS117_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ10000_MCH100_MPS117_L1p0',   color=ROOT.kBlack, linestyle=2, legendtext='PsiPsiToLQChi_MLQ10000_MCH100_MPS117_L1p0'),
     'PsiPsiToLQChi_MLQ10000_MCH2089_MPS2342_L1p0': SampleSettings(name='PsiPsiToLQChi_MLQ10000_MCH2089_MPS2342_L1p0', color=ROOT.kBlack, linestyle=2, legendtext='PsiPsiToLQChi_MLQ10000_MCH2089_MPS2342_L1p0'),
@@ -62,21 +57,22 @@ samples = {
     'PsiPsiToLQChi_MLQ7030_MCH977_MPS1071_L1p0':   SampleSettings(name='PsiPsiToLQChi_MLQ7030_MCH977_MPS1071_L1p0',   color=ROOT.kBlack, linestyle=2, legendtext='PsiPsiToLQChi_MLQ7030_MCH977_MPS1071_L1p0'),
 
 
-    # 'VV':          SampleSettings(name='VV',     color=ROOT.kViolet,  linestyle=1, legendtext='VV'),
-    # 'ST':          SampleSettings(name='ST',     color=ROOT.kGreen-2, linestyle=1, legendtext='ST'),
-    # 'TT':          SampleSettings(name='TT',     color=ROOT.kRed+1,   linestyle=1, legendtext='TT'),
-    # 'DYJets':      SampleSettings(name='DYJets', color=ROOT.kOrange,  linestyle=1, legendtext='DYJets'),
-    # 'WJets':       SampleSettings(name='WJets',  color=ROOT.kGreen-2, linestyle=1, legendtext='WJets'),
+    'VV':          SampleSettings(name='VV',     color=ROOT.kViolet,  linestyle=1, legendtext='VV'),
+    'ST':          SampleSettings(name='ST',     color=ROOT.kGreen-2, linestyle=1, legendtext='ST'),
+    'TT':          SampleSettings(name='TT',     color=ROOT.kRed+1,   linestyle=1, legendtext='TT'),
+    'DYJets':      SampleSettings(name='DYJets', color=ROOT.kOrange,  linestyle=1, legendtext='DYJets'),
+    'WJets':       SampleSettings(name='WJets',  color=ROOT.kGreen-2, linestyle=1, legendtext='WJets'),
     'QCDHad':      SampleSettings(name='QCDHad', color=ROOT.kAzure-2, linestyle=1, legendtext='QCDHad'),
 }
 
 dnnparameters = OrderedDict()
-dnnparameters['layers'] = [128, 128]
+dnnparameters['layers'] = [128, 256, 256, 256, 256, 128]
 # dnnparameters['batchsize'] =  131072
 dnnparameters['batchsize'] =  128
+# dnnparameters['classes'] = OrderedDict([(0, ['QCDHad']), (1, ['WJets']), (2, ['DYJets']), (3, ['TT']), (4, ['ST']), (5, ['VV']), (6, ['PsiPsiToLQChi'])])
 dnnparameters['classes'] = OrderedDict([(0, ['QCDHad']), (1, ['PsiPsiToLQChi'])])
 dnnparameters['regmethod'] =  'dropout'
-dnnparameters['regrate'] =  0.050000
+dnnparameters['regrate'] =  0.000000
 dnnparameters['batchnorm'] =  False
 dnnparameters['epochs'] =  25
 dnnparameters['learningrate'] =  0.00050
@@ -91,18 +87,11 @@ def main():
     # Classifier.ConvertRootToInputs(chunksize=200000)
     # Classifier.PreprocessInputs(maxfiles_per_sample=None)
     # Classifier.PlotInputs(filepostfix='', plotfoldername='DNNInputDistributions')
-    # Classifier.TrainNetwork(filepostfix='')
+    Classifier.TrainNetwork(filepostfix='')
     # Classifier.MakePrediction(filepostfix='')
-    Classifier.PlotPerformance(filepostfix='', plotfoldername='DNNPerformancePlots')
+    # Classifier.PlotPerformance(filepostfix='', plotfoldername='DNNPerformancePlots')
 
-    # # First network
-    # # =============
-    # TrainNetwork(parameters)
-    # PredictExternal(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='')
-    # PlotPerformance(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='', use_best_model=False, usesignals=[2,4])
-    # PlotPerformance(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='', plotfolder='Plots/'+tag, use_best_model=True, usesignals=[2,4])
-    # PlotInputs(parameters, inputfolder='output/'+tag+'/cut', filepostfix='_pass_best', plotfolder='Plots/'+tag+'/InputDistributions/pass')
-    # PlotInputs(parameters, inputfolder='output/'+tag+'/cut', filepostfix='_fail_best', plotfolder='Plots/'+tag+'/InputDistributions/fail')
+
     # ExportModel(parameters, inputfolder='input/', outputfolder='output/', use_best_model=True)
     # RankNetworks(outputfolder='output/')
 

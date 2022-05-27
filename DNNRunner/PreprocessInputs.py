@@ -212,6 +212,8 @@ def PreprocessInputs(self, maxfiles_per_sample, train_test_val_split=(4./6, 1./6
     # Write out scaler info
     ensureDirectory(os.path.join(self.inputpath_preproc, classtag))
     norminfofile = os.path.join(self.inputpath_preproc, classtag, 'NormInfo.txt')
+    if os.path.exists(norminfofile):
+        os.remove(norminfofile)
     with open(norminfofile, 'w') as f:
         for i in range(scaler.mean_.shape[0]):
             var = variable_names[i]
@@ -223,23 +225,25 @@ def PreprocessInputs(self, maxfiles_per_sample, train_test_val_split=(4./6, 1./6
 
 
     varnamefile = os.path.join(self.inputpath_preproc, classtag, 'variable_names.pkl')
+    if os.path.exists(varnamefile):
+        os.remove(varnamefile)
     with open(varnamefile, 'w') as f:
         pickle.dump(variable_names, f)
 
 
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_train.npy' % (float_to_str(percentage)) )  , input_train)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_test.npy' % (float_to_str(percentage)) )   , input_test)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_val.npy' % (float_to_str(percentage)) )    , input_val)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_train.npy' % (float_to_str(percentage)) ) , labels_train)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_test.npy' % (float_to_str(percentage)) )  , labels_test)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_val.npy' % (float_to_str(percentage)) )   , labels_val)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_train.npy' % (float_to_str(percentage)) )  , input_train)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_test.npy' % (float_to_str(percentage)) )   , input_test)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'input_%s_val.npy' % (float_to_str(percentage)) )    , input_val)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_train.npy' % (float_to_str(percentage)) ) , labels_train)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_test.npy' % (float_to_str(percentage)) )  , labels_test)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'labels_%s_val.npy' % (float_to_str(percentage)) )   , labels_val)
 
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_train.npy' % (float_to_str(percentage)) ), sample_weights_train)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_train.npy' % (float_to_str(percentage)) ), eventweight_train)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_test.npy' % (float_to_str(percentage)) ), sample_weights_test)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_test.npy' % (float_to_str(percentage)) ), eventweight_test)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_val.npy' % (float_to_str(percentage)) ), sample_weights_val)
-    np.save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_val.npy' % (float_to_str(percentage)) ), eventweight_val)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_train.npy' % (float_to_str(percentage)) ), sample_weights_train)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_train.npy' % (float_to_str(percentage)) ), eventweight_train)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_test.npy' % (float_to_str(percentage)) ), sample_weights_test)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_test.npy' % (float_to_str(percentage)) ), eventweight_test)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_val.npy' % (float_to_str(percentage)) ), sample_weights_val)
+    remove_and_numpy_save(os.path.join(self.inputpath_preproc, classtag, 'eventweights_%s_val.npy' % (float_to_str(percentage)) ), eventweight_val)
 
 
 
@@ -265,15 +269,23 @@ def read_inputs_and_weights_for_sample(samplename, inpath, inputfiles, maxfiles_
 
     # Read files for this sample
     print green('  --> Now starting with sample %s' % (samplename))
+    list_of_inputs  = []
+    list_of_weights = []
     for (i, inputfile) in enumerate(list_of_inputfiles):
         print green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles)))
-        if first:
-            input = np.load(os.path.join(inpath, inputfile))
-            weight = np.load(os.path.join(inpath, 'Weights_%s' % (inputfile)))
-            first = False
-        else:
-            input  = np.concatenate((input, np.load(os.path.join(inpath, inputfile))))
-            weight = np.concatenate((weight, np.load(inpath, 'Weights_%s' % (inputfile))))
+        list_of_inputs.append(np.load(os.path.join(inpath, inputfile)))
+        list_of_weights.append(np.load(os.path.join(inpath, 'Weights_%s' % (inputfile))))
+
+    input = np.concatenate(tuple(list_of_inputs))
+    weight = np.concatenate(tuple(list_of_weights))
+
+        # if first:
+        #     input = np.load(os.path.join(inpath, inputfile))
+        #     weight = np.load(os.path.join(inpath, 'Weights_%s' % (inputfile)))
+        #     first = False
+        # else:
+        #     input  = np.concatenate((input, np.load(os.path.join(inpath, inputfile))))
+        #     weight = np.concatenate((weight, np.load(os.path.join(inpath, 'Weights_%s' % (inputfile)))))
     # input = input.astype(np.float64)
     # weight = weight.astype(np.float64)
     return {'input': input, 'weight': weight}

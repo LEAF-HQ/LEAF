@@ -11,7 +11,7 @@ import PlotPerformance
 
 
 class DNNRunner:
-    def __init__(self, dnnparameters, year, analysisname, input_base_path, result_base_path, selectionstage, selectionname, plotprefix, samples, colors=['C0', 'C3', 'C1', 'C2', 'C4']):
+    def __init__(self, dnnparameters, year, analysisname, input_base_path, result_base_path, selectionstage, selectionname, plotprefix, samples, colors=['C0', 'C3', 'C1', 'C2', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9']):
 
         self.dnnparameters = dnnparameters
         self.year = year
@@ -44,6 +44,7 @@ class DNNRunner:
         DNNRunner.plot_loss  = PlotPerformance.plot_loss
         DNNRunner.plot_accuracy  = PlotPerformance.plot_accuracy
         DNNRunner.plot_rocs  = PlotPerformance.plot_rocs
+        DNNRunner.plot_outputs_1d_nodes  = PlotPerformance.plot_outputs_1d_nodes
 
 
         print green('--> Set up DNNRunner for year %s:' % (str(year)))
