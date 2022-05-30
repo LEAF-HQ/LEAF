@@ -11,7 +11,6 @@ class PlotOnTrainingBase(Callback):
     def MakePlots(self):
         plot_losses(self.history, mode='loss', name=os.path.join(self.modelPath,'training_loss'))
         plot_losses(self.history, mode='acc',  name=os.path.join(self.modelPath,'training_acc'))
-        plot_rocs()
 
     def on_epoch_end(self, epoch, logs=None):
         for k, v in logs.items():
