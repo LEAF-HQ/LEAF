@@ -15,7 +15,7 @@ class DNNRunnerBase:
     def DefinePathsBase(self, **kwargs):
         self.filepath = {}
         self.filepath.update(kwargs)
-        for path in self.filepath:
+        for path in self.filepath.values():
             ensureDirectory(path)
         self.PrintContent()
 

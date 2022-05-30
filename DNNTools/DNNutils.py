@@ -18,3 +18,8 @@ def SaveNumpy(obj, fname):
     CleanFile(fname)
     ensureDirectory(fname[:fname.rfind('/')])
     np.save(fname, obj)
+
+def SaveMPL(obj, fname):
+    CleanFile(fname)
+    ensureDirectory(fname[:fname.rfind('/')])
+    obj.savefig(fname)
