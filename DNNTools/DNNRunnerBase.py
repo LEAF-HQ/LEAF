@@ -4,56 +4,48 @@ import pandas as pd
 from printing_utils import *
 from utils import ensureDirectory
 # from collections import OrderedDict
-from ConvertRootToInputsBase import ConvertRootToInputsBase
-from PreprocessInputsBase import PreprocessInputsBase
-from TrainingBase import TrainingBase
 from functions_dnn import float_to_str, classes_to_str
 
 class DNNRunnerBase:
-    def __init__(self, dnnparameters, year, plotprefix, samples, colors):
+    def __init__(self, dnnparameters, year, samples):
         self.dnnparameters = dnnparameters
         self.year = year
-        self.plotprefix = plotprefix
         self.samples = samples
-        self.colors = colors
 
-        # bind functions
-        # self.ConvertRootToInputs = ConvertRootToInputs.ConvertRootToInputs
-        # self.PreprocessInputs  = PreprocessInputs.PreprocessInputs
-        # self.PlotInputs  = PlotInputs.PlotInputs
-        # self.TrainNetwork  = TrainNetwork.TrainNetwork
-
-    def DefinePathsBase(self, root, raw, preproc=None, input=None, result=None, plots=None):
-        self.filepath_root    = root
-        self.filepath_raw     = raw
-        self.filepath_preproc = preproc
-        # self.filepath_input   = input
-        self.filepath_result  = result
-        self.filepath_plots   = plots
-        ensureDirectory(self.filepath_raw)
-        ensureDirectory(self.filepath_preproc)
-        # ensureDirectory(self.filepath_input)
-        ensureDirectory(self.filepath_result)
-        ensureDirectory(self.filepath_plots)
+    def DefinePathsBase(self, **kwargs):
+        self.filepath = {}
+        self.filepath.update(kwargs)
+        for path in self.filepath.values():
+            ensureDirectory(path)
         self.PrintContent()
+
+    def DefinePaths(self):
+        raise NotImplementedError('DefinePaths method is not initialized. Fix this.')
 
     def PrintContent(self):
         print green('--> Set up DNNRunner for year %s:' % (str(self.year)))
         prettydict(self.__dict__, color= cyan)
 
     def CreateConverter(self):
+        from ConvertRootToInputsBase import ConvertRootToInputsBase
         self.ConvertRootToInputs = ConvertRootToInputsBase()
 
     def CreateInputProcessor(self):
+        from PreprocessInputsBase import PreprocessInputsBase
         self.PreprocessInputs = PreprocessInputsBase()
 
+    def CreatePlotter(self):
+        from PlotterBase import PlotterBase
+        self.Plotter = PlotterBase()
+
     def CreateTraining(self):
+        from TrainingBase import TrainingBase
         self.Training = TrainingBase()
 
     def LoadInputsBase(self):
         print(blue('--> Loading'))
         frac = float_to_str(self.dnnparameters['runonfraction'])
-        outdir = os.path.join(self.filepath_preproc, classes_to_str(self.dnnparameters['classes']))
+        outdir = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
         self.input_train   = pd.read_pickle(os.path.join(outdir, 'input_train_%s.pkl'   %frac ))
         self.input_val     = pd.read_pickle(os.path.join(outdir, 'input_val_%s.pkl'     %frac ))
         self.input_test    = pd.read_pickle(os.path.join(outdir, 'input_test_%s.pkl'    %frac ))
