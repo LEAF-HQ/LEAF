@@ -11,7 +11,7 @@ import copy
 
 
 class PreprocessInputsBase():
-    def __init__(self, inputdir='', outdir='', maxfiles_per_sample=None, runonfraction=1.0, train_test_val_split=(0.8, 0.1, 0.1), colname_category='label', colname_weights='event_weight'):
+    def __init__(self, inputdir='', outdir='', maxfiles_per_sample=None, runonfraction=1.0, train_test_val_split=(0.8, 0.1, 0.1), colname_category='category', colname_weights='event_weight'):
         self.maxfiles_per_sample = maxfiles_per_sample
         self.runonfraction = runonfraction
         self.train_test_val_split = train_test_val_split
@@ -56,12 +56,13 @@ class PreprocessInputsBase():
         labels = labels.to_numpy().reshape(len(labels), 1)
         labels = preprocessing.OneHotEncoder(sparse=False).fit_transform(labels)
         inputs.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
-        if np.sum(ratios.values())!= 1: raise RuntimeError('Unexpected ratios for train-validation-test splitting.')
+        if np.sum(ratios.values())!= 1:
+            raise RuntimeError('Unexpected ratios for train-validation-test splitting.')
         self.inputs = {}
         self.labels = {}
         self.weights = {}
-        self.inputs['train'], self.inputs['test'], self.labels['train'], self.label['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(inputs, labels, weights, train_size=ratios['train'])
-        self.inputs['val'], self.inputs['test'], self.labels['val'], self.label['test'], self.weights['val'], self.weights['test'] = model_selection.train_test_split(self.inputs['test'], self.labels['test'], self.weights['test'], test_size=ratios['test']/(ratios['test'] + ratios['validation']))
+        self.inputs['train'], self.inputs['test'], self.labels['train'], self.labels['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(inputs, labels, weights, train_size=ratios['train'])
+        self.inputs['val'], self.inputs['test'], self.labels['val'], self.labels['test'], self.weights['val'], self.weights['test'] = model_selection.train_test_split(self.inputs['test'], self.labels['test'], self.weights['test'], test_size=ratios['test']/(ratios['test'] + ratios['validation']))
 
     def FitScalers(self):
         self.scalers = {}
@@ -77,8 +78,8 @@ class PreprocessInputsBase():
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
-            SavePandas(self.input[mode],   os.path.join(outdir, 'input_%s_%s.pkl'   %(mode,frac)))
-            SaveNumpy(self.label[mode],    os.path.join(outdir, 'label_%s_%s.npy'   %(mode,frac)))
+            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.pkl'   %(mode,frac)))
+            SaveNumpy(self.labels[mode],   os.path.join(outdir, 'label_%s_%s.npy'   %(mode,frac)))
             SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.pkl' %(mode,frac)))
 
     def Save(self):
