@@ -10,8 +10,10 @@ def CleanFile(fname):
 
 def SavePandas(obj, fname):
     CleanFile(fname)
+    ensureDirectory(fname[:fname.rfind('/')])
     obj.to_pickle(fname)
 
 def SaveNumpy(obj, fname):
     CleanFile(fname)
+    ensureDirectory(fname[:fname.rfind('/')])
     np.save(fname, obj)

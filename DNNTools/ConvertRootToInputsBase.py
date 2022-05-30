@@ -25,7 +25,7 @@ def Root2Pandas(input_filename, output_filename, output_folder, branches, column
         outname = os.path.join(output_folder, '%s_%i.pkl' % (output_filename, i))
         SavePandas(df, outname)
 
-class ConvertRootToInputsBase(object):
+class ConvertRootToInputsBase():
     def __init__(self, inputdir, outdir, chunksize=200000, treename='AnalysisTree', namebranch_weight=('Events.GenEvent.Event.weight','event_weight')):
         self.inputdir = inputdir
         self.outdir = outdir
