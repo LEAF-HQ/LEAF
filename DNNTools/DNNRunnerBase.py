@@ -12,18 +12,15 @@ class DNNRunnerBase:
         self.year = year
         self.samples = samples
 
-        # bind functions
-        # self.ConvertRootToInputs = ConvertRootToInputs.ConvertRootToInputs
-        # self.PreprocessInputs  = PreprocessInputs.PreprocessInputs
-        # self.PlotInputs  = PlotInputs.PlotInputs
-        # self.TrainNetwork  = TrainNetwork.TrainNetwork
-
     def DefinePathsBase(self, **kwargs):
         self.filepath = {}
         self.filepath.update(kwargs)
         for path in self.filepath:
             ensureDirectory(path)
         self.PrintContent()
+
+    def DefinePaths(self):
+        raise NotImplementedError('DefinePaths method is not initialized. Fix this.')
 
     def PrintContent(self):
         print green('--> Set up DNNRunner for year %s:' % (str(self.year)))
