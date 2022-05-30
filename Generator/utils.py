@@ -6,6 +6,7 @@ import time
 from preferred_configurations import *
 from bisect import bisect_left
 from constants import *
+from printing_utils import *
 import distutils
 import functools
 
@@ -30,40 +31,6 @@ def is_file_empty(file_path):
     """ Check if file is empty by confirming if its size is 0 bytes"""
     # Check if file exist and it is empty
     return os.path.exists(file_path) and os.stat(file_path).st_size == 0
-
-def modify_printed_string(type,string):
-    return "%s%s\033[0m"%(type,string)
-
-def red(string):
-    return modify_printed_string('\x1b[0;31m',string)
-
-def green(string):
-    return modify_printed_string('\x1b[0;32m',string)
-
-def yellow(string):
-    return modify_printed_string('\x1b[0;33m',string)
-
-def blue(string):
-    return modify_printed_string('\x1b[0;34m',string)
-
-def magenta(string):
-    return modify_printed_string('\x1b[0;35m',string)
-
-def cyan(string):
-    return modify_printed_string('\x1b[0;36m',string)
-
-def bold(string):
-    return modify_printed_string('\033[1m',string)
-
-def prettydict(d, indent=8, color=blue):
-    space = max([0]+[len(str(x)) for x in d])+2
-    for key, value in d.items():
-        print(color(" "*indent + str(key))),
-        if isinstance(value, dict):
-            print ""
-            prettydict(value, len(" "*indent + str(key)+" "*(space+1-len(str(key)))))
-        else:
-            print(color(" "*(space-len(str(key))) + str(value)))
 
 def format_tag(tag):
     formatted = ('_' + tag.strip('_')) if not tag == '' else ''
@@ -359,4 +326,4 @@ def timeit(method):
 def remove_prefix(text, prefix):
     if text.startswith(prefix):
         return text[len(prefix):]
-    return text  
+    return text
