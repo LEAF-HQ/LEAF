@@ -7,10 +7,14 @@
 
 #include "LEAF/Analyzer/include/GenLevelConstants.h"
 
-bool isLeptonic(int pdgId);
-bool isLeptonic(ParticleID pdgId);
 bool isHadronic(int pdgId);
 bool isHadronic(ParticleID pdgId);
+bool isLeptonic(int pdgId);
+bool isLeptonic(ParticleID pdgId);
+bool isNeutrino(int pdgId);
+bool isNeutrino(ParticleID pdgId);
+Decay GetDecayMode(int pdgId1, int pdgId2);
+Decay GetDecayMode(ParticleID pdgId1, ParticleID pdgId2);
 bool isDecayMode(int pdgId1, ParticleID pdgId2, Decay decay);
 bool isDecayMode(ParticleID pdgId1, ParticleID pdgId2, Decay decay);
 
