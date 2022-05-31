@@ -25,7 +25,6 @@
 #include "LEAF/Analyzer/include/constants.h"
 #include "LEAF/Analyzer/include/Particle.h"
 
-// using namespace std;
 TString lambstr(double lambda);
 TString get_samplename(double mlq, double mx, double mdm, double lambda);
 std::vector<int> get_npids();
@@ -181,4 +180,18 @@ std::vector<std::string> JERCFiles(const std::string& type, const TString& runNa
 
 bool closeFloat(float a, float b, float maxRelDiff, float maxAbsDiff);
 bool FindInString(const std::string& search, const std::string& str);
-int FindInVector(const std::vector<std::string>& vec, const std::string& el);
+
+template <typename T>
+int FindInVector(const std::vector<T>& vec, const T& el) {
+  int index = -1;
+  // Find given element in vector
+  auto it = std::find(vec.begin(), vec.end(), el);
+  if (it != vec.end()) index = distance(vec.begin(), it);
+  return index;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec) {
+  for (const auto& x: vec) { os << x << " ";}
+  return os;
+}
