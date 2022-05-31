@@ -9,7 +9,7 @@
 
 enum class ParticleID {
   unknown=0,
-  u=1, d=2, s=3, c=4, b=5, t=6, q=7,
+  d=1, u=2, s=3, c=4, b=5, t=6, q=7,
   e=11, mu=13, tau=15, l=17,
   v_e=12, v_mu=14, v_tau=16, v=18,
   g=21, photon=22, Z=23, W=24, H=25,
@@ -35,8 +35,9 @@ enum class ParticleType {
 
 enum class Decay {
   nodecay =0,
-  uu=11, dd=22, ss=33, cc=44, bb=55, tt=66, light = 123, qq=77, gg=2121,
-  ee=1111, mumu=1313, tautau=1515, ll=1717, vv=1818,
+  dd=11, uu=22, ss=33, cc=44, bb=55, tt=66, light = 123, qq=77, gg=2121,
+  ee=1111, mumu=1313, tautau=1515, ll=1717,
+  ve=1811, vmu=1818, vtau=1818, vv=1818,
   gammagamma=2222, ZZ=232300, WW=242400,
   ZZeeee=232301,       ZZmumumumu=232302, ZZtautautautau=232303, ZZvvvv=232304,
   ZZeemumu=232305,     ZZeetautau=232306, ZZeevv=232307,
