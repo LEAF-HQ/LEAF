@@ -10,8 +10,6 @@
 #include "LEAF/Analyzer/include/GenParticle.h"
 #include "LEAF/Analyzer/include/GenJet.h"
 
-using namespace std;
-
 // Container class for all quantities
 class Event {
 

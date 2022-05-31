@@ -23,9 +23,9 @@ public:
     }
     return false;
   };
-  bool get(const TString s) const {if(Flags::has(s)){return m_map.at(s);} else{throw runtime_error("Trying to get non-existent flag '" + s + "' from Flags class.");}};
+  bool get(const TString s) const {if(Flags::has(s)){return m_map.at(s);} else{throw std::runtime_error("Trying to get non-existent flag '" + s + "' from Flags class.");}};
   bool get_prefix(const TString s) const {
-    if(!Flags::has_prefix(s)) throw runtime_error("Trying to get non-existent flag with pre-fix '" + s + "' from Flags class.");
+    if(!Flags::has_prefix(s)) throw std::runtime_error("Trying to get non-existent flag with pre-fix '" + s + "' from Flags class.");
     for(auto it=m_map.lower_bound(s); it != m_map.end(); ++it){
       if(!it->first.Contains(s)) continue;
       if(it->second) return true;

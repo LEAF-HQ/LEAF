@@ -1,4 +1,5 @@
 #include "LEAF/Analyzer/include/GenParticlePrinter.h"
+#include "LEAF/Analyzer/include/GenLevelUtils.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -42,7 +43,7 @@ bool GenParticlePrinter::process(RecoEvent & event){
 
     // if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
     if(abs(gp.pdgid()) > 30) continue;
-    cout << i << "  ,  " << gp.identifier() << "  ,  " << gp.pdgid() << "  ,  " << gp.mother_identifier() << " (pdgid: " << motherpdgid << ") ,  " << gp.pt() << "  ,  " << gp.eta() << endl;
+    cout << i << "  ,  " << gp.identifier() << "  ,  " << (gp.pdgid()>0?"":"-") << pdgId2str(gp.pdgid()) << "  ,  " << gp.mother_identifier() << " (pdgid: " << motherpdgid << ") ,  " << gp.pt() << "  ,  " << gp.eta() << endl;
   }
   cout << endl << endl << endl << endl;
   return true;

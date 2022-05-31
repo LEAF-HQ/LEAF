@@ -11,8 +11,6 @@
 #include "LEAF/Analyzer/include/GenJet.h"
 #include "LEAF/Analyzer/include/Event.h"
 
-using namespace std;
-
 // Container class for all quantities
 class GenEvent : public Event{
 
@@ -20,10 +18,10 @@ public:
   // Constructors, destructor
   GenEvent(){
     genmet                   = new Met;
-    genparticles_pruned      = new vector<GenParticle>;
-    genparticles_stable      = new vector<GenParticle>;
-    genparticles_visibletaus = new vector<GenParticle>;
-    genjets                  = new vector<GenJet>;
+    genparticles_pruned      = new std::vector<GenParticle>;
+    genparticles_stable      = new std::vector<GenParticle>;
+    genparticles_visibletaus = new std::vector<GenParticle>;
+    genjets                  = new std::vector<GenJet>;
   }
   ~GenEvent(){
     delete genmet;
@@ -54,15 +52,15 @@ public:
     delete genparticles_visibletaus;
     delete genjets;
     genmet                   = new Met;
-    genparticles_pruned      = new vector<GenParticle>;
-    genparticles_stable      = new vector<GenParticle>;
-    genparticles_visibletaus = new vector<GenParticle>;
-    genjets                  = new vector<GenJet>;
+    genparticles_pruned      = new std::vector<GenParticle>;
+    genparticles_stable      = new std::vector<GenParticle>;
+    genparticles_visibletaus = new std::vector<GenParticle>;
+    genjets                  = new std::vector<GenJet>;
   }
 
   Met* genmet;
-  vector<GenParticle>* genparticles_pruned;
-  vector<GenParticle>* genparticles_stable;
-  vector<GenParticle>* genparticles_visibletaus;
-  vector<GenJet>* genjets;
+  std::vector<GenParticle>* genparticles_pruned;
+  std::vector<GenParticle>* genparticles_stable;
+  std::vector<GenParticle>* genparticles_visibletaus;
+  std::vector<GenJet>* genjets;
 };

@@ -5,8 +5,6 @@
 #include <map>
 #include "LEAF/Analyzer/include/FlavorParticle.h"
 
-using namespace std;
-
 // Basically a Particle with a pdgId
 class Electron : public FlavorParticle {
 

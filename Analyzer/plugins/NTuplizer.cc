@@ -81,8 +81,8 @@ public:
 
 private:
   virtual bool filter(edm::Event&, const edm::EventSetup&) override;
-  virtual void NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
-  template <typename T, typename S> void NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles);
+  virtual void NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, std::vector<Jet>& output_jets, bool is_ak8, bool is_puppi);
+  template <typename T, typename S> void NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, std::vector<GenParticle>& output_genparticles, bool do_stable_particles);
   virtual void endJob() override;
 
 
@@ -293,7 +293,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
     // Do MC truth variables
     // =====================
-    vector<reco::GenParticle> reco_genvistaus = {};
+    std::vector<reco::GenParticle> reco_genvistaus = {};
     if(is_mc){
       // GenMET content
       event.genmet->set_pt(mets->at(0).genMET()->pt());
@@ -309,7 +309,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       }
 
       // GenVisTaus
-      vector<reco::GenJet> genTauJets = {};
+      std::vector<reco::GenJet> genTauJets = {};
       reco::GenParticleRefVector allStatus2Taus;
       GenParticlesHelper::findParticles(*genparticles_pruned, allStatus2Taus, 15, 2);
 
@@ -430,7 +430,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
         event.geninfo->set_xpdf2(-999);
       }
 
-      vector<double> systweights = {};
+      std::vector<double> systweights = {};
       if(lhe){
         event.geninfo->set_originalXWGTUP(lhe->originalXWGTUP());
         for(unsigned int i=0; i<lhe->weights().size(); i++){
@@ -445,7 +445,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     // =================
     for(size_t i=0; i<metfilterresults->size(); ++i){
       event.flags->set(metfilternames.triggerName(i), metfilterresults->accept(i));
-      // cout << "trigger name: " << metfilternames.triggerName(i) << ": " << metfilterresults->accept(i) << endl;
+      // std::cout << "trigger name: " << metfilternames.triggerName(i) << ": " << metfilterresults->accept(i) << std::endl;
     }
 
 
@@ -453,7 +453,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     // ============
     for(size_t i=0; i<hltresults->size(); ++i){
       event.flags->set(hltnames.triggerName(i), hltresults->accept(i));
-      // cout << "trigger name: " << hltnames.triggerName(i) << ": " << hltresults->accept(i) << endl;
+      // std::cout << "trigger name: " << hltnames.triggerName(i) << ": " << hltresults->accept(i) << std::endl;
     }
 
 
@@ -514,8 +514,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
       // m.set_iso_mini(muon_iso_mini[i]);
       // m.set_iso_mini_charged(muon_iso_mini_charged[i]);
-      m.set_iso_rel_03((patmu.pfIsolationR03().sumChargedHadronPt + max(patmu.pfIsolationR03().sumNeutralHadronEt + patmu.pfIsolationR03().sumPhotonEt - patmu.pfIsolationR03().sumPUPt/2,float(0.0)))/patmu.pt());
-      m.set_iso_rel_04((patmu.pfIsolationR04().sumChargedHadronPt + max(patmu.pfIsolationR04().sumNeutralHadronEt + patmu.pfIsolationR04().sumPhotonEt - patmu.pfIsolationR04().sumPUPt/2,float(0.0)))/patmu.pt());
+      m.set_iso_rel_03((patmu.pfIsolationR03().sumChargedHadronPt + std::max(patmu.pfIsolationR03().sumNeutralHadronEt + patmu.pfIsolationR03().sumPhotonEt - patmu.pfIsolationR03().sumPUPt/2,float(0.0)))/patmu.pt());
+      m.set_iso_rel_04((patmu.pfIsolationR04().sumChargedHadronPt + std::max(patmu.pfIsolationR04().sumNeutralHadronEt + patmu.pfIsolationR04().sumPhotonEt - patmu.pfIsolationR04().sumPUPt/2,float(0.0)))/patmu.pt());
       m.set_iso_rel_03_charged(patmu.pfIsolationR03().sumChargedHadronPt/patmu.pt());
       m.set_sumchpt(patmu.pfIsolationR04().sumChargedHadronPt);
       m.set_sumnhet(patmu.pfIsolationR04().sumNeutralHadronEt);
@@ -663,7 +663,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       e.set_sumchpt(pfiso.sumChargedHadronPt);
       e.set_sumphpt(pfiso.sumPhotonEt);
       e.set_sumpupt(pfiso.sumPUPt);
-      float iso = pfiso.sumChargedHadronPt + max(0., pfiso.sumNeutralHadronEt + pfiso.sumPhotonEt - (*rho)*ea);
+      float iso = pfiso.sumChargedHadronPt + std::max(0., pfiso.sumNeutralHadronEt + pfiso.sumPhotonEt - (*rho)*ea);
       e.set_iso_rel_03(iso/patele.pt());
       e.set_iso_rel_03_charged(pfiso.sumChargedHadronPt/patele.pt());
 
@@ -736,7 +736,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       t.set_score_deeptau_vsmu(pattau.tauID("byDeepTau2017v2p1VSmuraw")); // needs to become v2p1 once added to tuples
       t.set_score_deeptau_vsjet(pattau.tauID("byDeepTau2017v2p1VSjetraw")); // needs to become v2p1 once added to tuples
       t.set_comb_iso(pattau.tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits"));
-      t.set_comb_iso_dr03((pattau.tauID("chargedIsoPtSumdR03")+max(0.,pattau.tauID("neutralIsoPtSumdR03")-0.072*pattau.tauID("puCorrPtSum"))));
+      t.set_comb_iso_dr03((pattau.tauID("chargedIsoPtSumdR03")+std::max(0.,pattau.tauID("neutralIsoPtSumdR03")-0.072*pattau.tauID("puCorrPtSum"))));
 
       int gen_part_flav = -1;
       if(is_mc){
@@ -820,7 +820,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     for(size_t i=0; i<triggerobjects->size(); i++){
       pat::TriggerObjectStandAlone triggerobject = (*triggerobjects).at(i);
       bool fired_hlt = false;
-      vector<TriggerObject::ID> ids = {};
+      std::vector<TriggerObject::ID> ids = {};
       for(size_t j=0; j<triggerobject.filterIds().size(); j++){
         int id = triggerobject.filterIds()[j];
         if(triggerobject.filterIds()[j] > 0) fired_hlt = true; // < 0 corresponds to earlier stages, https://github.com/cms-sw/cmssw/blob/master/DataFormats/HLTReco/interface/TriggerTypeDefs.h
@@ -841,15 +841,15 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       if(fired_hlt){
         TriggerObject to;
         triggerobject.unpackPathNames(hltnames);
-        vector<string> pathNamesAll  = triggerobject.pathNames(false);
-        vector<TString> new_hltnames = {};
-        for(const string & name : pathNamesAll) new_hltnames.emplace_back(name);
+        std::vector<std::string> pathNamesAll  = triggerobject.pathNames(false);
+        std::vector<TString> new_hltnames = {};
+        for(const std::string & name : pathNamesAll) new_hltnames.emplace_back(name);
         to.set_hltnames(new_hltnames);
 
         triggerobject.unpackFilterLabels(iEvent, *hltresults);
-        vector<string> filternames = triggerobject.filterLabels();
-        vector<TString> new_filternames = {};
-        for(const string & name : filternames) new_filternames.emplace_back(name);
+        std::vector<std::string> filternames = triggerobject.filterLabels();
+        std::vector<TString> new_filternames = {};
+        for(const std::string & name : filternames) new_filternames.emplace_back(name);
         to.set_filternames(new_filternames);
 
         to.set_pt(triggerobject.pt());
@@ -920,7 +920,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 }
 
 template <typename T, typename S>
-void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, vector<GenParticle>& output_genparticles, bool do_stable_particles) {
+void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genparticles, edm::Handle<std::vector<S>> input_pruned_genparticles, std::vector<GenParticle>& output_genparticles, bool do_stable_particles) {
 
   for(size_t i=0; i<input_genparticles->size(); i++){
     auto minigp = input_genparticles->at(i);
@@ -945,7 +945,7 @@ void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genpartic
         break;
       }
     }
-    if (!do_stable_particles && motherid!=pruned_motherid) cout << "key : " << motherid << " " << pruned_motherid << " " << input_genparticles->size() << " " << input_pruned_genparticles->size()<< endl;
+    if (!do_stable_particles && motherid!=pruned_motherid) std::cout << "key : " << motherid << " " << pruned_motherid << " " << input_genparticles->size() << " " << input_pruned_genparticles->size()<< std::endl;
     gp.set_pruned_mother_identifier(pruned_motherid);
 
     // https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/DataFormats/HepMCCandidate/interface/GenParticle.h
@@ -972,7 +972,7 @@ void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genpartic
 }
 
 
-void NTuplizer::NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, vector<Jet>& output_jets, bool is_ak8, bool is_puppi) {
+void NTuplizer::NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, std::vector<Jet>& output_jets, bool is_ak8, bool is_puppi) {
   for(size_t i=0; i<input_jets->size(); i++){
     pat::Jet patjet = input_jets->at(i);
     if(!patjet.isPFJet()) continue;

@@ -5,8 +5,6 @@
 #include <map>
 #include "Particle.h"
 
-using namespace std;
-
 class Tau : public FlavorParticle {
 
 public:

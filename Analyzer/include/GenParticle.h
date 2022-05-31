@@ -5,8 +5,6 @@
 #include <map>
 #include "LEAF/Analyzer/include/FlavorParticle.h"
 
-using namespace std;
-
 // Basically a FlavorParticle with a number of daughters
 class GenParticle : public FlavorParticle {
 

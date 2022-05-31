@@ -8,8 +8,6 @@
 #include <TROOT.h>
 #include "LEAF/Analyzer/include/Event.h"
 
-using namespace std;
-
 class BaseHists {
 
 public:
@@ -24,10 +22,10 @@ public:
   void save(TFile* outfile);
 
   template <typename T, typename... TARGS>
-  shared_ptr<T> book(TString name, TARGS... args){
+  std::shared_ptr<T> book(TString name, TARGS... args){
     gROOT->mkdir(dir);
     gROOT->cd(dir);
-    shared_ptr<T> h;
+    std::shared_ptr<T> h;
     h.reset(new T(name, std::forward<TARGS>(args)...));
     h->SetDirectory(0);
     h->SetName(name);
@@ -42,14 +40,14 @@ public:
   F* hist(const TString& key_){
     F* h(0);
     if(hists.find(key_) != hists.end()) h = static_cast<F*>(hists[key_].get());
-    else throw runtime_error("BaseHists::hist -- histogram key not found: "+key_);
+    else throw std::runtime_error("BaseHists::hist -- histogram key not found: "+key_);
     return h;
   }
 
 
 protected:
-  vector<TString> histnames;
-  map<TString, shared_ptr<TH1>> hists;
+  std::vector<TString> histnames;
+  std::map<TString, std::shared_ptr<TH1>> hists;
   TString dir;
 
 };

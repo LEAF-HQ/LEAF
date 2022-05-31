@@ -10,8 +10,6 @@
 #include "LEAF/Analyzer/include/Muon.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
 
-using namespace std;
-
 class GenParticleHists : public BaseHists{
 
 public:
@@ -28,9 +26,9 @@ public:
 protected:
 
   bool do_stablegenparticles;
-  vector<GenParticle>* genparticles;
+  std::vector<GenParticle>* genparticles;
 
-  shared_ptr<TH1D> hngentaus, hptgentau1, hptgentau1_rebin, hptgentau1_rebin2, hptgentau1_rebin3, hptgentau1_rebin4, hptgentau2, hptgentau2_rebin, hptgentau2_rebin2, hptgentau2_rebin3, hptgentau2_rebin4, hdrgenditau, hdphigenditau, hdetagenditau, hdrgentaumu, hdphigentaumu, hdetagentaumu, hdptgentaumu, hdptrelgentaumu, hdrgentaue, hdphigentaue, hdetagentaue, hdptgentaue, hdptrelgentaue,
+  std::shared_ptr<TH1D> hngentaus, hptgentau1, hptgentau1_rebin, hptgentau1_rebin2, hptgentau1_rebin3, hptgentau1_rebin4, hptgentau2, hptgentau2_rebin, hptgentau2_rebin2, hptgentau2_rebin3, hptgentau2_rebin4, hdrgenditau, hdphigenditau, hdetagenditau, hdrgentaumu, hdphigentaumu, hdetagentaumu, hdptgentaumu, hdptrelgentaumu, hdrgentaue, hdphigentaue, hdetagentaue, hdptgentaue, hdptrelgentaue,
 
   hngenvistaus, hngenvistausmatched, hgenvistaustotal, hgenvistausmatched, hptgenvistau, hptgenvistau_rebin, hptgenvistau_rebin2, hptgenvistaumatched, hptgenvistaumatched_rebin, hptgenvistaumatched_rebin2, hdrmintau, hgenvistaudecaymode, hptgenvistau1, hptgenvistau1_rebin, hptgenvistau1_rebin2, hptgenvistau1matched, hptgenvistau1matched_rebin, hptgenvistau1matched_rebin2, hdrmintau1, hgenvistau1decaymode, hptgenvistau2, hptgenvistau2_rebin, hptgenvistau2_rebin2, hptgenvistau2matched, hptgenvistau2matched_rebin, hptgenvistau2matched_rebin2, hdrmintau2, hgenvistau2decaymode, hdrgenvisditau, hdphigenvisditau, hdetagenvisditau, hdrgenvistaumu, hdphigenvistaumu, hdetagenvistaumu, hdrgenvistaue, hdphigenvistaue, hdetagenvistaue,
 

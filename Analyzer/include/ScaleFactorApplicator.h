@@ -23,9 +23,9 @@ public:
 
 protected:
 
-  unique_ptr<TFile> m_infile;
-  unique_ptr<TH1D> m_hist_1d;
-  unique_ptr<TH2D> m_hist_2d;
+  std::unique_ptr<TFile> m_infile;
+  std::unique_ptr<TH1D> m_hist_1d;
+  std::unique_ptr<TH2D> m_hist_2d;
 
   bool m_is_2d;
   double m_factor_uncertainty;

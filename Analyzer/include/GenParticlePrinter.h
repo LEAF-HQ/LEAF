@@ -14,6 +14,6 @@ public:
 
 protected:
   bool do_stablegenparticles;
-  vector<GenParticle>* genparticles;
+  std::vector<GenParticle>* genparticles;
 
 };

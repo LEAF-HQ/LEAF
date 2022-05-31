@@ -8,8 +8,6 @@
 #include "LEAF/Analyzer/include/RecoEvent.h"
 #include "LEAF/Analyzer/include/BaseHists.h"
 
-using namespace std;
-
 class TauHists : public BaseHists{
 
 public:
@@ -25,7 +23,7 @@ public:
 
 protected:
 
-  shared_ptr<TH1D>
+  std::shared_ptr<TH1D>
   hntaus, htaupt, htaupt_rebin, htaupt_rebin2, htaueta, htauphi, htaumass, htauenergy, htauiso, htaudecaymode, htauorigin, htaudxy, htaudz, htaud, htaugendrmin, htaugenstatus,
   hntausmatched, htaumatchedpt, htaumatchedpt_rebin, htaumatchedpt_rebin2, htaumatchedeta, htaumatchedphi, htaumatchedmass, htaumatchedenergy, htaumatchediso, htaumatcheddecaymode, htaumatchedorigin, htaumatcheddxy, htaumatcheddz, htaumatchedd, htaumatchedgendrmin, htaumatchedgenstatus,
   hntausunmatched, htauunmatchedpt, htauunmatchedpt_rebin, htauunmatchedpt_rebin2, htauunmatchedeta, htauunmatchedphi, htauunmatchedmass, htauunmatchedenergy, htauunmatchediso, htauunmatcheddecaymode, htauunmatchedorigin, htauunmatcheddxy, htauunmatcheddz, htauunmatchedd, htauunmatchedgendrmin, htauunmatchedgenstatus,

@@ -18,8 +18,6 @@
 #include "LEAF/Analyzer/include/PFCandidate.h"
 #include "LEAF/Analyzer/include/constants.h"
 
-using namespace std;
-
 // Container class for all quantities
 class RecoEvent : public GenEvent{
 
@@ -30,14 +28,14 @@ public:
     flags = new Flags;
     met = new Met;
     rawmet = new Met;
-    triggerobjects = new vector<TriggerObject>;
-    jets_ak4chs = new vector<Jet>;
-    jets_ak4puppi = new vector<Jet>;
-    jets_ak8puppi = new vector<Jet>;
-    taus = new vector<Tau>;
-    muons = new vector<Muon>;
-    electrons = new vector<Electron>;
-    pfcands = new vector<PFCandidate>;
+    triggerobjects = new std::vector<TriggerObject>;
+    jets_ak4chs = new std::vector<Jet>;
+    jets_ak4puppi = new std::vector<Jet>;
+    jets_ak8puppi = new std::vector<Jet>;
+    taus = new std::vector<Tau>;
+    muons = new std::vector<Muon>;
+    electrons = new std::vector<Electron>;
+    pfcands = new std::vector<PFCandidate>;
     is_data = false;
     run = -1;
     lumiblock = -1;
@@ -112,14 +110,14 @@ public:
     flags = new Flags;
     met = new Met;
     rawmet = new Met;
-    triggerobjects = new vector<TriggerObject>;
-    jets_ak4chs = new vector<Jet>;
-    jets_ak4puppi = new vector<Jet>;
-    jets_ak8puppi = new vector<Jet>;
-    taus = new vector<Tau>;
-    muons = new vector<Muon>;
-    electrons = new vector<Electron>;
-    pfcands = new vector<PFCandidate>;
+    triggerobjects = new std::vector<TriggerObject>;
+    jets_ak4chs = new std::vector<Jet>;
+    jets_ak4puppi = new std::vector<Jet>;
+    jets_ak8puppi = new std::vector<Jet>;
+    taus = new std::vector<Tau>;
+    muons = new std::vector<Muon>;
+    electrons = new std::vector<Electron>;
+    pfcands = new std::vector<PFCandidate>;
     is_data = false;
     run = -1;
     lumiblock = -1;
@@ -135,24 +133,24 @@ public:
 
   TString get_runperiod(TString year){
     if(!RecoEvent::is_data) return "MC";
-    for (const auto [period, numbermap] : Year2Run2Runnumber.at((string)year)){
+    for (const auto [period, numbermap] : Year2Run2Runnumber.at((std::string)year)){
       if(RecoEvent::run >= numbermap.at("min") && RecoEvent::run <= numbermap.at("max")) return period;
     }
-    throw runtime_error("Event has invalid run number (not in run_number_map in constants.h) and therefore cannot be assigned a run-period");
+    throw std::runtime_error("Event has invalid run number (not in run_number_map in constants.h) and therefore cannot be assigned a run-period");
   }
 
   GenInfo* geninfo; //
   Flags* flags; //
   Met* met; //
   Met* rawmet; //
-  vector<TriggerObject>* triggerobjects; //
-  vector<Jet>* jets_ak4chs;//
-  vector<Jet>* jets_ak4puppi;//
-  vector<Jet>* jets_ak8puppi;//
-  vector<Tau>* taus; //
-  vector<Muon>* muons; //
-  vector<Electron>* electrons; //
-  vector<PFCandidate>* pfcands; //
+  std::vector<TriggerObject>* triggerobjects; //
+  std::vector<Jet>* jets_ak4chs;//
+  std::vector<Jet>* jets_ak4puppi;//
+  std::vector<Jet>* jets_ak8puppi;//
+  std::vector<Tau>* taus; //
+  std::vector<Muon>* muons; //
+  std::vector<Electron>* electrons; //
+  std::vector<PFCandidate>* pfcands; //
   bool is_data;//
   unsigned int run, lumiblock;//
   int npv, npv_good; //

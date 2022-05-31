@@ -5,8 +5,6 @@
 #include <map>
 #include "LEAF/Analyzer/include/FlavorParticle.h"
 
-using namespace std;
-
 class Muon : public FlavorParticle {
 
 public:

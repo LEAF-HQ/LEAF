@@ -8,8 +8,6 @@
 #include "LEAF/Analyzer/include/RecoEvent.h"
 #include "LEAF/Analyzer/include/BaseHists.h"
 
-using namespace std;
-
 class EventHists : public BaseHists{
 
 public:
@@ -25,6 +23,6 @@ public:
 
 protected:
 
-  shared_ptr<TH1D> hmetpt, hmetphi, hisdata, hnpv, hnpv_good, hnpu, hntrueint, hweight_prefiring, hweight_prefiring_up, hweight_prefiring_down, hweight, hsumweights;
+  std::shared_ptr<TH1D> hmetpt, hmetphi, hisdata, hnpv, hnpv_good, hnpu, hntrueint, hweight_prefiring, hweight_prefiring_up, hweight_prefiring_down, hweight, hsumweights;
 
 };
