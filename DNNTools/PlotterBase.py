@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # matplotlib.style.use('seaborn')
 
 from DNNutils import *
-from functions_dnn import classes_to_str, float_to_str, keyFromValue
+from functions_dnn import classes_to_str, float_to_str
 
 
 class PlotterBase():
@@ -56,7 +56,7 @@ class PlotterBase():
             mask = self.df['label']==cl
             weights = self.df[mask]['weights']
             df = self.df[mask][variable_name]
-            style_ = style[keyFromValue(self.DefineClasses(), cl)]
+            style_ = style[cl]
             style_.update(self.common_style)
             plt.hist(df, weights=weights, **style_)
         plt.legend(loc='best')
