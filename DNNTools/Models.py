@@ -9,8 +9,8 @@ def SequentialModel(input_shape,output_shape,params):
         model.add(Dense(params['DenseLayer'][i], activation='tanh',kernel_initializer=params['kernel_initializer'],bias_initializer=params['bias_initializer']))
         if params['batchnorm']:
             model.add(BatchNormalization())
-        if params['regmethod']=='dropout':
-            model.add(Dropout(params['dropoutRate']))
+        if params['regularization_method']=='dropout':
+            model.add(Dropout(params['regularization_rate']))
     model.add(Dense(output_shape, activation=params['activation_last']))
     # Compile
     myloss = 'categorical_crossentropy'
