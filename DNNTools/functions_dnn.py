@@ -15,10 +15,12 @@ def list_to_str(list_, sep='+'):
 def keyFromValue(dict_, val):
     return list(dict_.keys())[list(dict_.values()).index(val)]
 
+def classstring_from_label(classes, label):
+    return list_to_str(list(k for k,v in classes.items() if v==label),sep='+')
+
 def classes_to_str(dict_):
     vals = list(sorted(set(dict_.values())))
-    items = dict_.items()
-    return list_to_str(list(str(val)+'_'+list_to_str(list(k for k,v in items if v==val),sep='+') for val in vals), sep='_')
+    return list_to_str(list(str(val)+'_'+classstring_from_label(dict_, val) for val in vals), sep='_')
 
 def dict_to_str(dict_):
     result = ''
@@ -28,6 +30,7 @@ def dict_to_str(dict_):
         else:
             result += '%s_%s_' % (str(key), str(dict_[key]))
     return result.strip('_').replace('.', 'p')
+
 
 
 
