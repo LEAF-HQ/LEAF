@@ -2,9 +2,6 @@
 
 #include <TLorentzVector.h>
 
-
-// using namespace std;
-
 // Container class for all quantities
 class Particle {
 

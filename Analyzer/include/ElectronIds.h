@@ -23,3 +23,13 @@ public:
 private:
   float dmin, dmax;
 };
+
+
+class ElectronDetectorHolesID {
+public:
+  explicit ElectronDetectorHolesID();
+  bool operator()(const Electron&, const RecoEvent&) const;
+
+private:
+  float etagap_min=1.44, etagap_max=1.57;
+};

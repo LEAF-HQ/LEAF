@@ -9,8 +9,6 @@
 #include "LEAF/Analyzer/include/RecoEvent.h"
 #include "LEAF/Analyzer/include/BaseHists.h"
 
-using namespace std;
-
 class MuonHists : public BaseHists{
 
 public:
@@ -27,8 +25,8 @@ public:
 protected:
 
   bool do_stablegenparticles;
-  vector<GenParticle>* genparticles;
-  shared_ptr<TH1D> hnmuons, hmuonpt, hmuonpt_rebin, hmuonpt_rebin2, hmuoneta, hmuonphi, hmuonmass, hmuonenergy, hmuonpfiso, hmuondxy, hmuondz, hmuond, hmuongendrmin, hmuongenflav,
+  std::vector<GenParticle>* genparticles;
+  std::shared_ptr<TH1D> hnmuons, hmuonpt, hmuonpt_rebin, hmuonpt_rebin2, hmuoneta, hmuonphi, hmuonmass, hmuonenergy, hmuonpfiso, hmuondxy, hmuondz, hmuond, hmuongendrmin, hmuongenflav,
 
   hmuonclosestd,
 
@@ -37,10 +35,6 @@ protected:
   hmuon3pt, hmuon3pt_rebin, hmuon3pt_rebin2, hmuon3eta, hmuon3phi, hmuon3mass, hmuon3energy, hmuon3pfiso, hmuon3dxy, hmuon3dz, hmuon3d, hmuon3gendrmin, hmuon3genflav,
   hmuon4pt, hmuon4pt_rebin, hmuon4pt_rebin2, hmuon4eta, hmuon4phi, hmuon4mass, hmuon4energy, hmuon4pfiso, hmuon4dxy, hmuon4dz, hmuon4d, hmuon4gendrmin, hmuon4genflav;
 
-  shared_ptr<TH2D> hmuon_dxy_vs_dz;
-
-
-
-
+  std::shared_ptr<TH2D> hmuon_dxy_vs_dz;
 
 };

@@ -36,8 +36,8 @@ protected:
   // For internal use, do not touch
   template<typename F> void book_HistFolder(const TString&, F*);
   template<typename F=BaseHists> F* HistFolder(const TString&);
-  vector<TString> histfolders;
-  map<TString, unique_ptr<BaseHists>> histmap;
+  std::vector<TString> histfolders;
+  std::map<TString, std::unique_ptr<BaseHists>> histmap;
   Event* event;
 };
 
@@ -73,7 +73,7 @@ template <class M, class E>
 void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
   // Print current number of dataset
-  cout  << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << endl;
+  std::cout  << green << "--> Initializing sample " << cfg.idx()+1 << "/" << cfg.n_datasets() << ": " << cfg.dataset_name() << reset << std::endl;
 
   // Initialize event for later looping through chain
   cfg.event_chain->SetBranchAddress("Events", &event);
@@ -90,7 +90,7 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   }
 
   // for each additional information, check if a matching dataset exists. Store this info to use later when loading the branches
-  vector<bool> used_ais = {};
+  std::vector<bool> used_ais = {};
   for(size_t i=0; i<cfg.additional_inputs().size(); i++){
     bool used_ai = false;
     for(size_t j=0; j<cfg.additional_inputs().at(i).datasets.size(); j++){
@@ -105,9 +105,9 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
   auto start = std::chrono::high_resolution_clock::now();
   Long64_t maxidx = -1;
   if(cfg.nevt_max() < 0) maxidx = cfg.event_chain->GetEntries();
-  else if(cfg.nevt_max() > 0) maxidx = min((Long64_t)(cfg.nevt_skip() + cfg.nevt_max()), cfg.event_chain->GetEntries());
-  else throw runtime_error("cfg.nevt_max() returned 0. This should have been caught by an earlier condition in Config.cc. In any case, this is not allowed. Must be > or < 0.");
-  cout << green << "--> Going to process " << maxidx - cfg.nevt_skip() << " events, skipping the first " << cfg.nevt_skip() << "." << reset << endl;
+  else if(cfg.nevt_max() > 0) maxidx = std::min((Long64_t)(cfg.nevt_skip() + cfg.nevt_max()), cfg.event_chain->GetEntries());
+  else throw std::runtime_error("cfg.nevt_max() returned 0. This should have been caught by an earlier condition in Config.cc. In any case, this is not allowed. Must be > or < 0.");
+  std::cout << green << "--> Going to process " << maxidx - cfg.nevt_skip() << " events, skipping the first " << cfg.nevt_skip() << "." << reset << std::endl;
 
   for(Long64_t i=cfg.nevt_skip(); i<maxidx; ++i) {
     if(i%1000==0 || i == maxidx-1){
@@ -121,10 +121,10 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
         seconds_left -= std::chrono::duration_cast<std::chrono::seconds>(minutes_left);
         auto hours_left = std::chrono::duration_cast<std::chrono::hours>(minutes_left);
         minutes_left -= std::chrono::duration_cast<std::chrono::minutes>(hours_left);
-        cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ") [ " << fixed << setprecision(2) << ((double)(i+1-cfg.nevt_skip()))/((double)(maxidx - cfg.nevt_skip()))*100 << "% ], time left: " << std::setfill('0') << std::setw(2) << hours_left.count() << ":" << std::setfill('0') << std::setw(2) << minutes_left.count() << ":" << std::setfill('0') << std::setw(2) << seconds_left.count() << reset << endl;
+        std::cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ") [ " << std::fixed << std::setprecision(2) << ((double)(i+1-cfg.nevt_skip()))/((double)(maxidx - cfg.nevt_skip()))*100 << "% ], time left: " << std::setfill('0') << std::setw(2) << hours_left.count() << ":" << std::setfill('0') << std::setw(2) << minutes_left.count() << ":" << std::setfill('0') << std::setw(2) << seconds_left.count() << reset << std::endl;
       }
       else{
-        cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ")" << reset << endl;
+        std::cout << green << "    --> Processing event no. (" << i+1-cfg.nevt_skip() << " / " << maxidx - cfg.nevt_skip() << ")" << reset << std::endl;
       }
     }
 
@@ -153,12 +153,12 @@ void BaseTool::LoopEvents(const Config & cfg, E* event, M & tool){
 
       // call Process() for each event, main part of this function!
       bool keep_event = tool.Process();
-      // cout << "keep event? " << keep_event << endl;
+      // std::cout << "keep event? " << keep_event << std::endl;
 
       if(keep_event) cfg.outputtree->Fill();
     }
     else{
-      throw runtime_error("When loading additional inputs to nominal event, a mismatch between lumiblock:eventnumber occurred in the nominal event and at least one of the additional ones. If this affects only a few events, this error should become a warning in the future, but for the moment it is probably better to be made aware of this event by crashing the program.");
+      throw std::runtime_error("When loading additional inputs to nominal event, a mismatch between lumiblock:eventnumber occurred in the nominal event and at least one of the additional ones. If this affects only a few events, this error should become a warning in the future, but for the moment it is probably better to be made aware of this event by crashing the program.");
     }
 
     event->reset();
@@ -194,7 +194,7 @@ void load_additional_collection(E* main_event, E* additional_event, collection c
     *main_event->genparticles_stable = *additional_event->genparticles_stable;
   }
   else{
-    std::string errormsg = "In Analyzer/include/BaseTool.h: Invalid branchname given when loading additional collections: " + (string)c.branchname;
+    std::string errormsg = "In Analyzer/include/BaseTool.h: Invalid branchname given when loading additional collections: " + (std::string)c.branchname;
     throw std::runtime_error(errormsg);
   }
 }
@@ -206,15 +206,15 @@ template <>
 void load_additional_collection<GenEvent>(GenEvent* main_event, GenEvent* additional_event, collection c);
 
 template<typename E>
-int load_entry_lumiblock_number(shared_ptr<TChain> chain, E* main_event){
+int load_entry_lumiblock_number(std::shared_ptr<TChain> chain, E* main_event){
   return chain->GetEntryWithIndex(main_event->lumiblock, main_event->number);
 }
 
 // specializations to stop compiler from complaining
 template<>
-int load_entry_lumiblock_number<Event>(shared_ptr<TChain> chain, Event* main_event);
+int load_entry_lumiblock_number<Event>(std::shared_ptr<TChain> chain, Event* main_event);
 template<>
-int load_entry_lumiblock_number<GenEvent>(shared_ptr<TChain> chain, GenEvent* main_event);
+int load_entry_lumiblock_number<GenEvent>(std::shared_ptr<TChain> chain, GenEvent* main_event);
 
 
 typedef Registry<BaseTool, Config> ToolRegistry;

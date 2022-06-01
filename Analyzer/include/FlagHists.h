@@ -10,8 +10,6 @@
 #include "LEAF/Analyzer/include/Muon.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
 
-using namespace std;
-
 class FlagHists : public BaseHists{
 
 public:
@@ -27,7 +25,7 @@ public:
 
 protected:
 
-  shared_ptr<TH1D>
+  std::shared_ptr<TH1D>
 hFlag_BadChargedCandidateFilter,
 hFlag_BadChargedCandidateSummer16Filter,
 hFlag_BadPFMuonFilter,

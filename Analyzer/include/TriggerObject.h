@@ -5,9 +5,6 @@
 // #include <map>
 #include "LEAF/Analyzer/include/Particle.h"
 
-
-using namespace std;
-
 class TriggerObject : public Particle{
 
 public:

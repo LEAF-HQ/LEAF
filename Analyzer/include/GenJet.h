@@ -5,8 +5,6 @@
 #include <map>
 #include "LEAF/Analyzer/include/Particle.h"
 
-using namespace std;
-
 // Container class for all quantities
 class GenJet : public Particle {
 

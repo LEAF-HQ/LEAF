@@ -9,8 +9,6 @@
 #include "LEAF/Analyzer/include/RecoEvent.h"
 #include "LEAF/Analyzer/include/BaseHists.h"
 
-using namespace std;
-
 class ElectronHists : public BaseHists{
 
 public:
@@ -26,9 +24,9 @@ public:
 
 protected:
   bool do_stablegenparticles;
-  vector<GenParticle>* genparticles;
+  std::vector<GenParticle>* genparticles;
 
-  shared_ptr<TH1D> hnelectrons, helectronpt, helectronpt_rebin, helectronpt_rebin2, helectroneta, helectronphi, helectronmass, helectronenergy, helectronpfiso, helectrondxy, helectrondz, helectrond, helectrongendrmin,
+  std::shared_ptr<TH1D> hnelectrons, helectronpt, helectronpt_rebin, helectronpt_rebin2, helectroneta, helectronphi, helectronmass, helectronenergy, helectronpfiso, helectrondxy, helectrondz, helectrond, helectrongendrmin,
 
 
   helectron1pt, helectron1pt_rebin, helectron1pt_rebin2, helectron1eta, helectron1phi, helectron1mass, helectron1energy, helectron1pfiso, helectron1gendrmin, helectron1genorigin, helectron1dxy, helectron1dz, helectron1d,
@@ -36,7 +34,7 @@ protected:
   helectron3pt, helectron3pt_rebin, helectron3pt_rebin2, helectron3eta, helectron3phi, helectron3mass, helectron3energy, helectron3pfiso, helectron3gendrmin, helectron3genorigin, helectron3dxy, helectron3dz, helectron3d,
   helectron4pt, helectron4pt_rebin, helectron4pt_rebin2, helectron4eta, helectron4phi, helectron4mass, helectron4energy, helectron4pfiso, helectron4gendrmin, helectron4genorigin, helectron4dxy, helectron4dz, helectron4d;
 
-  shared_ptr<TH2D> helectron_dxy_vs_dz;
+  std::shared_ptr<TH2D> helectron_dxy_vs_dz;
 
 
 

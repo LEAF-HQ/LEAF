@@ -6,39 +6,40 @@
 using namespace std;
 
 bool isHadronic(int pdgId) { return (abs(pdgId) <= 5) ? true : false; }
-bool isLeptonic(int pdgId) { return (abs(pdgId) >= 11 && abs(pdgId)<=18) ? true : false; }
+bool isLeptonic(int pdgId) { return (abs(pdgId) >= 11 && abs(pdgId)<=18 && (abs(pdgId)%2 != 0)) ? true : false; }
+bool isNeutrino(int pdgId) { return (abs(pdgId) >= 11 && abs(pdgId)<=18 && (abs(pdgId)%2 == 0)) ? true : false; }
 
-bool isHadronic(ParticleID pdgId) { return isHadronic((int)pdgId);}
-bool isLeptonic(ParticleID pdgId) { return isLeptonic((int)pdgId);}
-
+Decay GetDecayMode(ParticleID pdgId1, ParticleID pdgId2) {
+  if ( pdgId1 == ParticleID::g     && pdgId2 == ParticleID::g)     return Decay::gg;
+  if ( pdgId1 <= ParticleID::s     && pdgId2 <= ParticleID::s)     return Decay::light;
+  if ( pdgId1 == ParticleID::c     && pdgId2 == ParticleID::c)     return Decay::cc;
+  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::b)     return Decay::bb;
+  if ( pdgId1 == ParticleID::Z     && pdgId2 == ParticleID::Z)     return Decay::ZZ;
+  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::W)     return Decay::WW;
+  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::b)     return Decay::Wb;
+  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::W)     return Decay::Wb;
+  if ( pdgId1 == ParticleID::e     && pdgId2 == ParticleID::e)     return Decay::ee;
+  if ( pdgId1 == ParticleID::mu    && pdgId2 == ParticleID::mu)    return Decay::mumu;
+  if ( pdgId1 == ParticleID::tau   && pdgId2 == ParticleID::tau)   return Decay::tautau;
+  if ( isNeutrino(pdgId1)          && pdgId2 == ParticleID::e)     return Decay::ve;
+  if ( isNeutrino(pdgId1)          && pdgId2 == ParticleID::mu)    return Decay::vmu;
+  if ( isNeutrino(pdgId1)          && pdgId2 == ParticleID::tau)   return Decay::vtau;
+  if ( isNeutrino(pdgId1)          && isNeutrino(pdgId2))          return Decay::vv;
+  return Decay::nodecay;
+}
 
 bool isDecayMode(ParticleID pdgId1, ParticleID pdgId2, Decay decay) {
   if (decay==Decay::nodecay) return true;
+  if ( GetDecayMode(pdgId1, pdgId2) == decay ) return true;
   if ( isLeptonic(pdgId1) && isLeptonic(pdgId2) && decay == Decay::ll) return true;
   if ( isHadronic(pdgId1) && isHadronic(pdgId2) && decay == Decay::qq) return true;
-  if ( pdgId1 == ParticleID::g     && pdgId2 == ParticleID::g     && decay == Decay::gg)     return true;
-  if ( pdgId1 <= ParticleID::s     && pdgId2 <= ParticleID::s     && decay == Decay::light)  return true;
-  if ( pdgId1 == ParticleID::c     && pdgId2 == ParticleID::c     && decay == Decay::cc)     return true;
-  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::b     && decay == Decay::bb)     return true;
-  if ( pdgId1 == ParticleID::Z     && pdgId2 == ParticleID::Z     && decay == Decay::ZZ)     return true;
-  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::W     && decay == Decay::WW)     return true;
-  if ( pdgId1 == ParticleID::W     && pdgId2 == ParticleID::b     && decay == Decay::Wb)     return true;
-  if ( pdgId1 == ParticleID::b     && pdgId2 == ParticleID::W     && decay == Decay::Wb)     return true;
-  if ( pdgId1 == ParticleID::e     && pdgId2 == ParticleID::e     && decay == Decay::ee)     return true;
-  if ( pdgId1 == ParticleID::mu    && pdgId2 == ParticleID::mu    && decay == Decay::mumu)   return true;
-  if ( pdgId1 == ParticleID::tau   && pdgId2 == ParticleID::tau   && decay == Decay::tautau) return true;
-  if ( pdgId1 == ParticleID::e     && pdgId2 == ParticleID::e     && decay == Decay::ll)     return true;
-  if ( pdgId1 == ParticleID::mu    && pdgId2 == ParticleID::mu    && decay == Decay::ll)     return true;
-  if ( pdgId1 == ParticleID::v_e   && pdgId2 == ParticleID::v_e   && decay == Decay::vv)     return true;
-  if ( pdgId1 == ParticleID::v_mu  && pdgId2 == ParticleID::v_mu  && decay == Decay::vv)     return true;
-  if ( pdgId1 == ParticleID::v_tau && pdgId2 == ParticleID::v_tau && decay == Decay::vv)     return true;
   return false;
 }
 
 
 string pdgId2str(ParticleID pdgId) {
-  if(pdgId == ParticleID::u)      return "u";
   if(pdgId == ParticleID::d)      return "d";
+  if(pdgId == ParticleID::u)      return "u";
   if(pdgId == ParticleID::s)      return "s";
   if(pdgId == ParticleID::c)      return "c";
   if(pdgId == ParticleID::b)      return "b";
@@ -83,8 +84,8 @@ string pdgId2str(ParticleID pdgId) {
 
 string decay2str(Decay decay) {
   if(decay == Decay::nodecay)        return "nodecay";
-  if(decay == Decay::uu)             return "uu";
   if(decay == Decay::dd)             return "dd";
+  if(decay == Decay::uu)             return "uu";
   if(decay == Decay::ss)             return "ss";
   if(decay == Decay::cc)             return "cc";
   if(decay == Decay::bb)             return "bb";
@@ -96,6 +97,9 @@ string decay2str(Decay decay) {
   if(decay == Decay::mumu)           return "mumu";
   if(decay == Decay::tautau)         return "tautau";
   if(decay == Decay::ll)             return "ll";
+  if(decay == Decay::ve)             return "ve";
+  if(decay == Decay::vmu)            return "vmu";
+  if(decay == Decay::vtau)           return "vtau";
   if(decay == Decay::vv)             return "vv";
   if(decay == Decay::gammagamma)     return "gammagamma";
   if(decay == Decay::ZZ)             return "ZZ";
@@ -136,9 +140,19 @@ std::string type2str(ParticleType type){
 }
 
 
+bool isHadronic(ParticleID pdgId) { return isHadronic((int)pdgId);}
+bool isLeptonic(ParticleID pdgId) { return isLeptonic((int)pdgId);}
+bool isNeutrino(ParticleID pdgId) { return isNeutrino((int)pdgId);}
+
+
+Decay GetDecayMode(int pdgId1_, int pdgId2_) {
+  return GetDecayMode(static_cast<ParticleID>(abs(pdgId1_)),static_cast<ParticleID>(abs(pdgId2_)));
+}
+
 bool isDecayMode(int pdgId1_, int pdgId2_, Decay decay) {
   return isDecayMode(static_cast<ParticleID>(abs(pdgId1_)),static_cast<ParticleID>(abs(pdgId2_)), decay);
 }
+
 string pdgId2str(int pdgId_) {
   return pdgId2str(static_cast<ParticleID>(abs(pdgId_)));
 }

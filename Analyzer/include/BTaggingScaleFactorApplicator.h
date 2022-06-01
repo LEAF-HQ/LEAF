@@ -25,7 +25,7 @@ protected:
   std::tuple<double, double, double> get_weight_btag(const std::vector<Jet> jets, RecoEvent & event);
   std::pair<double, double> get_SF_btag(double pt, double abs_eta, int flav);
 
-  unique_ptr<TFile> m_f_efficiencies;
+  std::unique_ptr<TFile> m_f_efficiencies;
   std::unique_ptr<TH2D> m_eff_b;
   std::unique_ptr<TH2D> m_eff_c;
   std::unique_ptr<TH2D> m_eff_udsg;

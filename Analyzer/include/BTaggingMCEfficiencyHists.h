@@ -18,5 +18,5 @@ public:
 protected:
 
   JetBTag m_btagid;
-  shared_ptr<TH2D> h_b_passing, h_b_total, h_c_passing, h_c_total, h_udsg_passing, h_udsg_total;
+  std::shared_ptr<TH2D> h_b_passing, h_b_total, h_c_passing, h_c_total, h_udsg_passing, h_udsg_total;
 };
