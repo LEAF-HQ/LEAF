@@ -1,11 +1,7 @@
 import os, json
-
 from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
-
 from CallBacksBase import DefineCallbacksBase
-
-from DNNutils import *
 from functions_dnn import classes_to_str, float_to_str
 
 class TrainingBase():

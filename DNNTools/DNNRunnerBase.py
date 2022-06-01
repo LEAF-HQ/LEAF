@@ -1,9 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
-from printing_utils import *
+from printing_utils import green, blue
 from utils import ensureDirectory
-# from collections import OrderedDict
 from functions_dnn import float_to_str, classes_to_str
 
 class DNNRunnerBase:

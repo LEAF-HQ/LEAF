@@ -1,6 +1,7 @@
 import ROOT
 from root_numpy import root2array, rec2array
-from DNNutils import *
+from printing_utils import green, blue
+from DNNutils import ClearFolder,SavePandas
 
 def Root2Pandas(input_filename, output_filename, output_folder, branches, columns, chunksize, treename, category):
     if len(branches)!= len(columns):

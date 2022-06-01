@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn import preprocessing, model_selection
 from sklearn.utils import class_weight
 
-from DNNutils import *
+from printing_utils import green, blue
 from functions_dnn import classes_to_str, float_to_str
 
 

@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 # matplotlib.style.use('default')
 # matplotlib.style.use('seaborn')
 
-from DNNutils import *
+from printing_utils import green, blue
+from DNNutils import SaveMPL
 from functions_dnn import classes_to_str, float_to_str
 
 
