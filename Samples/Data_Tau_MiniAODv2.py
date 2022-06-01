@@ -14,8 +14,8 @@ def Add_Data_Tau(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_Tau')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 38158216}),
+        'nevents_generated': YearDependentContainer({'UL17': 38158216.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -30,8 +30,8 @@ def Add_Data_Tau(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_Tau')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 55416425}),
+        'nevents_generated': YearDependentContainer({'UL17': 55416425.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -46,8 +46,8 @@ def Add_Data_Tau(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_Tau')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 20530776}),
+        'nevents_generated': YearDependentContainer({'UL17': 20530776.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -62,8 +62,8 @@ def Add_Data_Tau(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_Tau')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 44411467}),
+        'nevents_generated': YearDependentContainer({'UL17': 44316628.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -78,8 +78,8 @@ def Add_Data_Tau(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_Tau')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 88502118}),
+        'nevents_generated': YearDependentContainer({'UL17': 81378838.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)

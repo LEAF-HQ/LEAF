@@ -14,8 +14,8 @@ def Add_Data_MET(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_MET')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 51623474}),
+        'nevents_generated': YearDependentContainer({'UL17': 51623474.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -30,8 +30,8 @@ def Add_Data_MET(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_MET')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 115906496}),
+        'nevents_generated': YearDependentContainer({'UL17': 115906496.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -46,8 +46,8 @@ def Add_Data_MET(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_MET')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 20075033}),
+        'nevents_generated': YearDependentContainer({'UL17': 20075033.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -62,8 +62,8 @@ def Add_Data_MET(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_MET')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 71418865}),
+        'nevents_generated': YearDependentContainer({'UL17': 71418865.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
@@ -78,8 +78,8 @@ def Add_Data_MET(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer(dict.fromkeys(years, 'DATA_MET')),
-        'nevents_das':       YearDependentContainer(),
-        'nevents_generated': YearDependentContainer()
+        'nevents_das':       YearDependentContainer({'UL17': 177521562}),
+        'nevents_generated': YearDependentContainer({'UL17': 177521562.0})
     }
     modes = [['standard']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2PSI, '/store/user/areimers/NTuples/', get_common_path(), default_info)
