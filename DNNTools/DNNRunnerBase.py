@@ -22,7 +22,7 @@ class DNNRunnerBase:
         raise NotImplementedError('DefinePaths method is not initialized. Fix this.')
 
     def PrintContent(self):
-        print green('--> Set up DNNRunner for year %s:' % (str(self.year)))
+        print(green('--> Set up DNNRunner for year %s:' % (str(self.year))))
         prettydict(self.__dict__, color= cyan)
 
     def CreateConverter(self):

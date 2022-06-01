@@ -25,7 +25,7 @@ class TrainingBase():
         raise NotImplementedError('MakeModel method is not initialized. Fix this.')
 
     def FitModel(self):
-        print 'Training'
+        print(green('Training'))
         info = {
             'batch_size': self.DNNparams['batch_size'],
             'epochs': self.DNNparams['epochs'],
