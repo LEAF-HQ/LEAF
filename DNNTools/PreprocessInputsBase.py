@@ -4,8 +4,9 @@ import pandas as pd
 from sklearn import preprocessing, model_selection
 from sklearn.utils import class_weight
 
-from DNNutils import *
+from printing_utils import green, blue
 from functions_dnn import classes_to_str, float_to_str
+from DNNutils import SavePandas, SaveNumpy
 
 
 class PreprocessInputsBase():
@@ -30,9 +31,9 @@ class PreprocessInputsBase():
             list_of_inputfiles = list(filter(lambda x: samplename in x, os.listdir(self.inputdir)))
             if self.maxfiles_per_sample != None and samplename in self.maxfiles_per_sample:
                 list_of_inputfiles = list_of_inputfiles[:self.maxfiles_per_sample[samplename]]
-            print green('  --> Now starting with sample %s' % (samplename))
+            print(green('  --> Now starting with sample %s' % (samplename)))
             for i, inputfile in enumerate(list_of_inputfiles):
-                print green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles)))
+                print(green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles))))
                 inputs.append(pd.read_pickle(os.path.join(self.inputdir, inputfile)))
         self.df = pd.concat(inputs)
         self.df.rename(lambda x: x[0] if isinstance(x, tuple) else x , axis='columns', inplace=True)

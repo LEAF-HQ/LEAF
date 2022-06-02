@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 # matplotlib.style.use('default')
 # matplotlib.style.use('seaborn')
 
-from DNNutils import *
+from printing_utils import green, blue
+from DNNutils import SaveMPL
 from functions_dnn import classes_to_str, float_to_str
 
 
@@ -28,6 +29,9 @@ class PlotterBase():
 
     def DefineStyle(self):
         raise NotImplementedError('DefineStyle method is not initialized. Fix this.')
+
+    def DefineStylePerVariable(self):
+        self.stylePerVariable = {}
 
     def DefineClasses(self):
         raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
@@ -50,14 +54,17 @@ class PlotterBase():
     def PlotSingleVariable(self, style, variable_name, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
         fig = plt.figure()
-        classes = list(set(self.df['label'].to_list()))
 
-        for cl in classes:
-            mask = self.df['label']==cl
+        for classname, label in self.classes.items():
+            mask = self.df['label']==label
             weights = self.df[mask]['weights']
             df = self.df[mask][variable_name]
-            style_ = style[cl]
+            style_ = style[classname]
             style_.update(self.common_style)
+            for var in self.stylePerVariable:
+                style_.update(self.stylePerVariable[var])
+            if variable_name in self.stylePerVariable:
+                style_.update(self.stylePerVariable[variable_name])
             plt.hist(df, weights=weights, **style_)
         plt.legend(loc='best')
         plt.yscale(yscale)
@@ -75,5 +82,6 @@ class PlotterBase():
 
     def Plot(self):
         self.DefineCommonStyle()
+        self.DefineStylePerVariable()
         self.LoadInputs()
         self.PlotBase(self.DefineStyle())

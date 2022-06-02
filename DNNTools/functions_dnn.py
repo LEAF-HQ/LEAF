@@ -1,6 +1,5 @@
-import os, sys, math, time
-import subprocess
-from utils import *
+import os
+from printing_utils import green
 import numpy as np
 from collections import OrderedDict
 
@@ -37,7 +36,7 @@ def dict_to_str(dict_):
 
 def load_data(inputfolder, fraction, postfix):
 
-    print green('--> Loading data...')
+    print(green('--> Loading data...'))
 
 
     # os.path.join(self.inputpath_preproc, classtag, 'sample_weights_%s_train.npy' % (float_to_str(percentage)) )

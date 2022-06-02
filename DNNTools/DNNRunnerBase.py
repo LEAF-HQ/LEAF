@@ -1,9 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
-from printing_utils import *
+from printing_utils import green, blue, cyan, prettydict
 from utils import ensureDirectory
-# from collections import OrderedDict
 from functions_dnn import float_to_str, classes_to_str
 
 class DNNRunnerBase:
@@ -23,7 +22,7 @@ class DNNRunnerBase:
         raise NotImplementedError('DefinePaths method is not initialized. Fix this.')
 
     def PrintContent(self):
-        print green('--> Set up DNNRunner for year %s:' % (str(self.year)))
+        print(green('--> Set up DNNRunner for year %s:' % (str(self.year))))
         prettydict(self.__dict__, color= cyan)
 
     def CreateConverter(self):

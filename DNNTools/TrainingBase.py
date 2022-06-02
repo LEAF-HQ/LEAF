@@ -1,13 +1,11 @@
 import os, json
-
+from pickle import dump
 from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
-
 from CallBacksBase import DefineCallbacksBase
-
-from DNNutils import *
 from functions_dnn import classes_to_str, float_to_str
-from pickle import dump
+from printing_utils import green
+from utils import ensureDirectory
 
 class TrainingBase():
     def __init__(self, DNNparams={}, inputdir='', outputdir='', runonfraction=1.0,  do_weights=False):
@@ -30,8 +28,7 @@ class TrainingBase():
         raise NotImplementedError('MakeModel method is not initialized. Fix this.')
 
     def FitModel(self):
-        print 'Training'
-
+        print(green('Training'))
         info = {
             'batch_size': self.DNNparams['batch_size'],
             'epochs': self.DNNparams['epochs'],

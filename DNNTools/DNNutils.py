@@ -1,9 +1,12 @@
-import os
+import os, shutil
 import numpy as np
 import pandas as pd
-from printing_utils import *
+from printing_utils import green, blue
 from utils import ensureDirectory
 
+def ClearFolder(folder_path):
+    shutil.rmtree(folder_path)
+    ensureDirectory(folder_path)
 
 def CleanFile(fname):
     if os.path.exists(fname):
