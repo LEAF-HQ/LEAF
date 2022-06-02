@@ -78,7 +78,7 @@ def Root2Pandas(input_filename, output_filename, output_folder, branches, column
 
 
 class ConvertRootToInputsBase():
-    def __init__(self, inputdir, outdir, chunksize=200000, treename='AnalysisTree', namebranch_weight=('Events.GenEvent.Event.weight','event_weight'), run_on='local'):
+    def __init__(self, inputdir, outdir, chunksize=200000, treename='AnalysisTree', namebranch_weight=('Events.GenEvent.Event.weight','event_weight'), run_on='1'):
         self.inputdir = inputdir
         self.outdir = outdir
         self.chunksize = chunksize
