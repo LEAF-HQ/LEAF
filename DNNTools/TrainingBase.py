@@ -3,6 +3,8 @@ from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
 from CallBacksBase import DefineCallbacksBase
 from functions_dnn import classes_to_str, float_to_str
+from printing_utils import green
+from utils import ensureDirectory
 
 class TrainingBase():
     def __init__(self, DNNparams={}, inputdir='', outputdir='', runonfraction=1.0,  do_weights=False):
