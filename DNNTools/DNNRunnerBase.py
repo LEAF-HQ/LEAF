@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from printing_utils import green, blue
+from printing_utils import green, blue, cyan, prettydict
 from utils import ensureDirectory
 from functions_dnn import float_to_str, classes_to_str
 
