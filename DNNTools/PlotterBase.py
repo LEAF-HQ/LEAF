@@ -55,11 +55,11 @@ class PlotterBase():
         plt.clf()
         fig = plt.figure()
 
-        for classname, label in self.classes.items():
+        for label in self.classes.values():
             mask = self.df['label']==label
             weights = self.df[mask]['weights']
             df = self.df[mask][variable_name]
-            style_ = style[classname]
+            style_ = style[label]
             style_.update(self.common_style)
             for var in self.stylePerVariable:
                 style_.update(self.stylePerVariable[var])

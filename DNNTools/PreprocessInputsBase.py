@@ -28,7 +28,7 @@ class PreprocessInputsBase():
     def GetInputs(self):
         inputs = []
         for samplename in self.DefineSamples():
-            list_of_inputfiles = list(filter(lambda x: samplename in x, os.listdir(self.inputdir)))
+            list_of_inputfiles = list(filter(lambda x: samplename in x and not '.py' in x, os.listdir(self.inputdir)))
             if self.maxfiles_per_sample != None and samplename in self.maxfiles_per_sample:
                 list_of_inputfiles = list_of_inputfiles[:self.maxfiles_per_sample[samplename]]
             print(green('  --> Now starting with sample %s' % (samplename)))
