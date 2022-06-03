@@ -1,4 +1,5 @@
 import os, json
+import pandas as pd
 from pickle import dump
 from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
@@ -22,7 +23,7 @@ class TrainingBase():
         self.callbacks = DefineCallbacksBase(self.modelpath)
 
     def LoadInputs(self):
-        raise NotImplementedError('LoadInputs method is not initialized. Fix this.')
+        raise NotImplementedError('LoadInputs method is not initialized. Fix this and make sure to also load the index here.')
 
     def MakeModel(self):
         raise NotImplementedError('MakeModel method is not initialized. Fix this.')
@@ -60,7 +61,7 @@ class TrainingBase():
 
         self.predictions = {}
         for mode in ['train','val','test']:
-            self.predictions[mode] = pd.DataFrame(self.model.predict(self.inputs[mode]), columns=column_names)
+            self.predictions[mode] = pd.DataFrame(self.model.predict(self.inputs[mode]), index=self.index[mode], columns=column_names)
 
     def SavePredictions(self):
         raise NotImplementedError('SavePredictions method is not initialized. Fix this.')

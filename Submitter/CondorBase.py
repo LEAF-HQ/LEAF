@@ -1,6 +1,7 @@
 import os, json
 import htcondor
-from utils import blue, ensureDirectory, prettydict
+from printing_utils import red, blue, prettydict
+from utils import ensureDirectory
 
 from ClusterSpecificSettings import ClusterSpecificSettings
 from UserSpecificSettings import UserSpecificSettings
@@ -72,8 +73,10 @@ class CondorBase():
             if self.JobInfo['executable'] == '':
                 raise ValueError('No executable passed. Please check')
             jobs = [ {'arguments': arg } for arg in job_args]
+        elif len(job_args) == 0:
+            jobs = [ {'arguments': '', 'executable': job_exes[n]} for n in range(len(job_exes))]
         elif len(job_exes) == len(job_args):
-            jobs = [ {'arguments': job_args[n], 'executable': job_exes[n], } for n in range(len(job_args))]
+            jobs = [ {'arguments': job_args[n], 'executable': job_exes[n]} for n in range(len(job_exes))]
         else:
             raise ValueError(red('Something is wrong in the SubmitManyJobs parameters'))
         with self.schedd.transaction() as txn:

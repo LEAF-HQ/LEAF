@@ -54,12 +54,13 @@ class PlotterBase():
     def PlotSingleVariable(self, style, variable_name, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
         fig = plt.figure()
+        classes = list(set(self.classes.values()))
 
-        for classname, label in self.classes.items():
-            mask = self.df['label']==label
+        for cl in classes:
+            mask = self.df['label']==cl
             weights = self.df[mask]['weights']
             df = self.df[mask][variable_name]
-            style_ = style[classname]
+            style_ = style[cl]
             style_.update(self.common_style)
             for var in self.stylePerVariable:
                 style_.update(self.stylePerVariable[var])
