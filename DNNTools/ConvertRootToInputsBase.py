@@ -4,6 +4,7 @@ from collections import OrderedDict
 from root_numpy import root2array, rec2array
 from printing_utils import green, blue
 from DNNutils import ClearFolder, SavePandas
+from copy import deepcopy
 
 def ConvertRoot2Pandas(input_filename, output_filename, treename, start, stop, branches, columns, category):
     mymatrix = rec2array(root2array(filenames=input_filename, treename=treename, branches=branches, start=start, stop=stop))
@@ -11,6 +12,9 @@ def ConvertRoot2Pandas(input_filename, output_filename, treename, start, stop, b
     df['category'] = [category]*len(df)
     SavePandas(df, output_filename)
     print(green('      --> Done with file number: %i' % (stop/(stop-start))))
+
+def ConvertRoot2Pandas_singlearg(dict_with_args):
+    ConvertRoot2Pandas(**dict_with_args)
 
 def Root2Pandas(input_filename, output_filename, output_folder, branches, columns, chunksize, treename, category, run_on):
     if len(branches)!= len(columns):
@@ -38,19 +42,19 @@ def Root2Pandas(input_filename, output_filename, output_folder, branches, column
 
     if run_on.isdigit():
         print(green('    --> Running locally using %s cores.' % (run_on)))
-        from multiprocessing import Process
-        processes = []
+
+        from multiprocessing import Pool
+        arglist = []
         for i in range(maxidx):
             outname = os.path.join(output_folder, '%s_%i.pkl' % (output_filename, i))
             info.update({'start': i*chunksize, 'stop': (i+1)*chunksize, 'output_filename': outname})
-            # ConvertRoot2Pandas(**info)
-            processes.append(Process(target=ConvertRoot2Pandas, args=tuple(info.values())))
-            if (i+1)%int(run_on)==0:
-                for process in processes:
-                    process.start()
-                for process in processes:
-                    process.join()
-                del processes[:]
+            arglist.append(deepcopy(info))
+
+        pool = Pool(processes=int(run_on))
+        pool.imap_unordered(ConvertRoot2Pandas_singlearg, arglist)
+        pool.close()
+        pool.join()
+
     elif run_on=='htcondor':
         print(green('    --> Submitting to htcondor...'))
         from Submitter.CondorBase import CondorBase
@@ -74,6 +78,7 @@ def Root2Pandas(input_filename, output_filename, output_folder, branches, column
             job_exes.append(exe)
         CB.SubmitManyJobs(job_exes=job_exes)
     else: raise ValueError('Not implemented option for run_on= '+run_on)
+
 
 
 
