@@ -1,4 +1,5 @@
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_1.root"/>
+<InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_10.root"/>
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_11.root"/>
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_12.root"/>
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_13.root"/>
@@ -14,6 +15,7 @@
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_6.root"/>
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_7.root"/>
 <InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_8.root"/>
+<InputFile FileName="root://maite.iihe.ac.be:1094//pnfs/iihe/cms/store/user/anmalara/Tuples/UL16postVFP/Summer20/MINIAODv2/NTuples_v01/pfcands/GluGluHToZZTo4L_M120/NTuples_MINIAOD_9.root"/>
 <!-- Das number of events: 1000000 -->
-<!-- Generated number of events: 910000.0 -->
-<!-- Weighted number of events: 28226096.5368 -->
+<!-- Generated number of events: 971490.0 -->
+<!-- Weighted number of events: 30132545.2388 -->
