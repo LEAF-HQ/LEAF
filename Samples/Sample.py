@@ -216,7 +216,7 @@ class Sample:
             print(commands)
 
         newdict = {}
-        for i, o in enumerate(outputs):
+        for o in outputs:
             try:
                 nevt = int(o[0].split('\n')[0])
                 filename = o[1]
