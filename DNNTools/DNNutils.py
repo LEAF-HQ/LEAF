@@ -15,7 +15,21 @@ def CleanFile(fname):
 def SavePandas(obj, fname):
     CleanFile(fname)
     ensureDirectory(fname[:fname.rfind('/')])
-    obj.to_pickle(fname)
+    if fname.endswith('.pkl'):
+        obj.to_pickle(fname)
+    elif fname.endswith('.csv'):
+        obj.to_csv(fname, index_label=False)
+    else:
+        raise AttributeError('Trying to save a dataframe in an unsupported format.')
+
+def LoadPandas(fname):
+    if fname.endswith('.pkl'):
+        result = pd.read_pickle(fname)
+    elif fname.endswith('.csv'):
+        result = pd.read_csv(fname)
+    else:
+        raise AttributeError('Trying to load a dataframe in an unsupported format.')
+    return result
 
 def SaveNumpy(obj, fname):
     CleanFile(fname)

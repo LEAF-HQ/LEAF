@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # matplotlib.style.use('seaborn')
 
 from printing_utils import green, blue
-from DNNutils import SaveMPL
+from DNNutils import SaveMPL, LoadPandas
 from functions_dnn import classes_to_str, float_to_str
 
 
@@ -36,15 +36,15 @@ class PlotterBase():
     def DefineClasses(self):
         raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
 
-    def LoadInputsBase(self):
+    def LoadInputsBase(self, format='csv'):
         print(blue('--> Loading'))
         inputdir = os.path.join(self.inputdir, classes_to_str(self.classes))
         inputs = []
         for label in ['train', 'val', 'test']:
-            input   = pd.read_pickle(os.path.join(inputdir, 'input_%s_%s.pkl' %(label,self.frac) ))
+            input   = LoadPandas(os.path.join(inputdir, 'input_%s_%s.%s' %(label,self.frac,format) ))
             input['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
             input['label'] = np.argmax(np.array(input['label'].to_list()), axis = 1)
-            input['weights'] = pd.read_pickle(os.path.join(inputdir, 'weights_%s_%s.pkl' %(label,self.frac) ))
+            input['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.%s' %(label,self.frac,format) ))
             inputs.append(input)
         self.df = pd.concat(inputs)
 
@@ -56,17 +56,20 @@ class PlotterBase():
         fig = plt.figure()
         classes = list(set(self.classes.values()))
 
+        hist_min = self.df[variable_name].min()
+        hist_max = self.df[variable_name].max()
         for cl in classes:
             mask = self.df['label']==cl
-            weights = self.df[mask]['weights']
-            df = self.df[mask][variable_name]
-            style_ = style[cl]
-            style_.update(self.common_style)
-            for var in self.stylePerVariable:
-                style_.update(self.stylePerVariable[var])
+            weights_thisclass = self.df[mask]['weights']
+            df_thisclass = self.df[mask][variable_name]
+
+            style_thisclass = style[cl]
+            style_thisclass.update(self.common_style)
             if variable_name in self.stylePerVariable:
-                style_.update(self.stylePerVariable[variable_name])
-            plt.hist(df, weights=weights, **style_)
+                style_thisclass.update(self.stylePerVariable[variable_name])
+
+            plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
+            
         plt.legend(loc='best')
         plt.yscale(yscale)
         plt.xlabel(variable_name)
@@ -78,7 +81,7 @@ class PlotterBase():
 
     def PlotBase(self, style):
         for variable_name in tqdm.tqdm(self.df.columns, desc="Plots done"):
-            if 'Label' in variable_name: continue
+            if 'label' in variable_name: continue
             self.PlotSingleVariable(style, variable_name)
 
     def Plot(self):

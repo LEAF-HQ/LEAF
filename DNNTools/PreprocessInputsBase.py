@@ -50,7 +50,7 @@ class PreprocessInputsBase():
 
     def Split(self, ratios={'train':0.8, 'validation':0.1, 'test':0.1}):
         inputs = self.df.copy(deep=True)
-        weights = self.df.copy(deep=True).loc[:,self.colname_weights]
+        weights= pd.DataFrame(self.df.copy(deep=True).loc[:,self.colname_weights], columns=[self.colname_weights])
         labels = self.df.copy(deep=True).loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x])
         labels = labels.to_numpy().reshape(len(labels), 1)
         labels = preprocessing.OneHotEncoder(sparse=False).fit_transform(labels)
@@ -72,14 +72,14 @@ class PreprocessInputsBase():
                 scaled_features  = scaler.transform(self.inputs[mode])
                 self.inputs[mode] = pd.DataFrame(scaled_features, index=self.inputs[mode].index, columns=self.inputs[mode].columns)
 
-    def SaveBase(self):
+    def SaveBase(self, format='csv'):
         print(blue('--> saving'))
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
-            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.pkl'   %(mode,frac)))
+            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.%s'   %(mode,frac,format)))
             SaveNumpy(self.labels[mode],   os.path.join(outdir, 'label_%s_%s.npy'   %(mode,frac)))
-            SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.pkl' %(mode,frac)))
+            SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.%s' %(mode,frac,format)))
 
     def Save(self):
         self.SaveBase()
