@@ -129,6 +129,9 @@ class TuplizeRunner:
                 jobs['executables'].append(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe))
                 jobs['arguments'].append(arg)
             if self.submit:
+                if mode is 'resubmit':
+                    for args in jobs['arguments']:
+                        print(yellow('Submitting for file: '+ str(list(filter(lambda x: 'infilename' in x, args.split())))))
                 CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
                 jobid = int(CB.JobInfo['ClusterId'])
                 print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))

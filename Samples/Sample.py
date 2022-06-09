@@ -114,7 +114,7 @@ class Sample:
         if filedict:
             filelist = list(set(filelist) - set(filedict.keys()))
             if len(filelist) == 0:
-                print green('  --> Sample \'%s\' has all files counted, continue.' % (self.name))
+                print(green('  --> Sample \'%s\' has all files counted, continue.' % (self.name)))
                 return filedict
         missingfiledict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
 
@@ -149,7 +149,7 @@ class Sample:
                 return filelist_json
             else:
                 if len(filelist_json) == 0:
-                    print green('  --> Sample \'%s\' has no missing tuples, continue.' % (self.name))
+                    print(green('  --> Sample \'%s\' has no missing tuples, continue.' % (self.name)))
                     return filelist_json
                 else: # check only for files still in the list of missing files in the json
                     expected_filelist = [filename_base+'_'+str(i+1)+'.root' for i in filelist_json]
@@ -206,24 +206,25 @@ class Sample:
 
     def count_events_in_files(self, filelist, stage, treename='Events', ncores=10, chunksize=5, maxtries=3):
         self.VerifyStage(stage)
-        print green('  --> Going to count events in %i files' % (len(filelist)))
+        print(green('  --> Going to count events in %i files' % (len(filelist))))
 
         commands = [('Counter_Entries %s %s' % (filename, treename), filename) for filename in filelist]
         outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
 
         if not outputs:
             print(yellow('Did you set the Grid certificate?'))
+            print(commands)
 
         newdict = {}
-        for o in outputs:
+        for i, o in enumerate(outputs):
             try:
                 nevt = int(o[0].split('\n')[0])
                 filename = o[1]
                 newdict[filename] = nevt
             except Exception as e:
-                print yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name))
+                print(yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name)))
 
-        print green('  --> Successfully counted events in %i files' % (len(newdict)))
+        print(green('  --> Successfully counted events in %i files' % (len(newdict))))
         return newdict
 
     def VerifyStage(self,stage):
