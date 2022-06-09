@@ -83,8 +83,8 @@ GenInfoHists::GenInfoHists(TString dir_) : BaseHists(dir_){
 }
 
 void GenInfoHists::fill(const RecoEvent & event){
+  if(event.is_data) return;
   double weight = event.weight;
-
 
 
 
