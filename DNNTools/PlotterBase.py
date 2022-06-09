@@ -56,25 +56,20 @@ class PlotterBase():
         fig = plt.figure()
         classes = list(set(self.classes.values()))
 
-        df_to_plot_per_class = {}
-        weights_per_class = {}
-        plottingstyle_per_class = {}
+        hist_min = self.df[variable_name].min()
+        hist_max = self.df[variable_name].max()
         for cl in classes:
             mask = self.df['label']==cl
-            weights_per_class[cl] = self.df[mask]['weights']
-            df_to_plot_per_class[cl] = self.df[mask][variable_name]
+            weights_thisclass = self.df[mask]['weights']
+            df_thisclass = self.df[mask][variable_name]
 
-            plottingstyle_per_class[cl] = style[cl]
-            plottingstyle_per_class[cl].update(self.common_style)
+            style_thisclass = style[cl]
+            style_thisclass.update(self.common_style)
             if variable_name in self.stylePerVariable:
-                plottingstyle_per_class[cl].update(self.stylePerVariable[variable_name])
+                style_thisclass.update(self.stylePerVariable[variable_name])
 
-        hist_min = min([df_to_plot_per_class[cl].min() for cl in df_to_plot_per_class])
-        hist_max = max([df_to_plot_per_class[cl].max() for cl in df_to_plot_per_class])
-
-
-        for cl in df_to_plot_per_class:
-            plt.hist(df_to_plot_per_class[cl], weights=weights_per_class[cl], range=(hist_min, hist_max), **plottingstyle_per_class[cl])
+            plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
+            
         plt.legend(loc='best')
         plt.yscale(yscale)
         plt.xlabel(variable_name)
