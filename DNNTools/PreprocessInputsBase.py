@@ -72,14 +72,14 @@ class PreprocessInputsBase():
                 scaled_features  = scaler.transform(self.inputs[mode])
                 self.inputs[mode] = pd.DataFrame(scaled_features, index=self.inputs[mode].index, columns=self.inputs[mode].columns)
 
-    def SaveBase(self):
+    def SaveBase(self, format='csv'):
         print(blue('--> saving'))
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
-            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.csv'   %(mode,frac)))
+            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.%s'   %(mode,frac,format)))
             SaveNumpy(self.labels[mode],   os.path.join(outdir, 'label_%s_%s.npy'   %(mode,frac)))
-            SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.csv' %(mode,frac)))
+            SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.%s' %(mode,frac,format)))
 
     def Save(self):
         self.SaveBase()

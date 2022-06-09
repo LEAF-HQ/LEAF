@@ -36,15 +36,15 @@ class PlotterBase():
     def DefineClasses(self):
         raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
 
-    def LoadInputsBase(self):
+    def LoadInputsBase(self, format='csv'):
         print(blue('--> Loading'))
         inputdir = os.path.join(self.inputdir, classes_to_str(self.classes))
         inputs = []
         for label in ['train', 'val', 'test']:
-            input   = LoadPandas(os.path.join(inputdir, 'input_%s_%s.csv' %(label,self.frac) ))
+            input   = LoadPandas(os.path.join(inputdir, 'input_%s_%s.%s' %(label,self.frac,format) ))
             input['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
             input['label'] = np.argmax(np.array(input['label'].to_list()), axis = 1)
-            input['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.csv' %(label,self.frac) ))
+            input['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.%s' %(label,self.frac,format) ))
             inputs.append(input)
         self.df = pd.concat(inputs)
 
