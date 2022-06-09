@@ -19,7 +19,7 @@ def VerifyDasInfo(filename, year, stage='mini'):
             director = dataset_info.director
             das_info = GetDasInfo(datasets=[das_path], options=['num_event','num_file', 'list_files'])
             das_info[das_path]['list_files'] = [director+x for x in das_info[das_path]['list_files']]
-            print(blue(dataset+' has '+str(das_info[das_path]['num_file'])))
+            print(blue(dataset+' has '+str(das_info[das_path]['num_file'])+' with tot. event = '+str(das_info[das_path]['num_event'])))
             if len(info) != das_info[das_path]['num_file']:
                 missing_files = list(set(das_info[das_path]['list_files'])-set(info.keys()))
                 print(yellow('  --> missing: '+str(len(missing_files))))

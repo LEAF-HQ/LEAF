@@ -1,4 +1,4 @@
-import os, shutil, parse
+import os, shutil, parse, copy
 from XMLInfo import *
 from utils import *
 
@@ -8,7 +8,7 @@ class CreateConfigFilesBase:
         self.years       = years
         self.xmlfilepath = xmlfilepath
         self.xmlfilename = os.path.join(self.xmlfilepath,xmlfilename.split('/')[-1])
-        outdir = os.path.join(self.xmlfilepath,"workdir_"+self.xmlfilename.split('/')[-1].strip("Config.xml"))
+        outdir = os.path.join(self.xmlfilepath,'workdir_'+self.xmlfilename.split('/')[-1].replace('Config.xml',''))
         os.system('mkdir -p '+outdir)
         self.outfilename = os.path.join(outdir, self.xmlfilename.split('/')[-1])
         with open(self.xmlfilename) as f_:
@@ -74,7 +74,7 @@ class CreateConfigFilesBase:
                     errorString += ('%s = %s' %(var, year))
                 raise  RuntimeError(red(errorString))
 
-            newName = self.dataset_infos[dataset_name][year]['name']+"_"+year
+            newName = self.dataset_infos[dataset_name][year]['name']+'_'+year
             setattr(ds.settings, 'Name',  newName)
             setattr(ds.settings, 'Type',  self.dataset_infos[dataset_name][year]['type'])
             setattr(ds.settings, 'Group', self.dataset_infos[dataset_name][year]['group'])
@@ -99,7 +99,7 @@ class CreateConfigFilesBase:
         return '\n'.join(output_lines)
 
     def AddSystemEntity(self, ds_name, year):
-        entity = '<!ENTITY {} SYSTEM "{}" >\n'.format(ds_name, os.path.join(self.leaf_path,self.dataset_infos[ds_name.strip("_"+year)][year]['xmlfiles']))
+        entity = '<!ENTITY {} SYSTEM "{}" >\n'.format(ds_name, os.path.join(self.leaf_path,self.dataset_infos[ds_name.replace('_'+year,'')][year]['xmlfiles']))
         if not entity in self.xmlinfo.config_info:
             self.xmlinfo.config_info = ''.join([self.xmlinfo.config_info.split(']>')[0],entity])+'\n]>\n'
 
@@ -117,7 +117,7 @@ class CreateConfigFilesBase:
             for addinput in self.xmlinfo.additionalinputs:
                 for index, ds_add in enumerate(addinput.datasets):
                     FileName = getattr(addinput.collections[0],'FileName')
-                    ds_name_coll = ds_add.settings.Name.replace('standard',FileName)
+                    ds_name_coll = ds_add.settings.Name.replace('standard',str(FileName))
                     self.AddSystemEntity(ds_name_coll, year)
                     xmlOutput = self.AddEntityInLine(xmlOutput, ds_add.settings.Name, ds_name_coll, condition='AdditionalDataset', extra_condition=(FileName,len(addinput.datasets)-index))
         with open(outfilename, 'wr') as f:
@@ -130,7 +130,9 @@ class CreateConfigFilesBase:
 
     def modifyAllSettings(self):
         for year in self.years:
+            xmlinfo_origin = copy.deepcopy(self.xmlinfo)
             self.modifyDatasetsAttributes(year=year)
             self.modifyConfigAttribute('OutputDirectory', self.xmlinfo.configsettings.getValue('OutputDirectory').replace('Year',year))
             self.modifySpecificSettings(year)
             self.write_single_xml(year)
+            self.xmlinfo = xmlinfo_origin
