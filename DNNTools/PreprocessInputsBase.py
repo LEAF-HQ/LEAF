@@ -40,8 +40,11 @@ class PreprocessInputsBase():
         print(blue('Collected events: '+str(len(self.df))))
 
     def RemoveNanInf(self):
+        size_before = self.df.shape[0]
         self.df.replace([np.inf, -np.inf], np.nan, inplace=True)
-        self.df.dropna()
+        self.df.dropna(inplace=True)
+        size_after = self.df.shape[0]
+        print(green('  --> Removed %i events because of irregular features' % (size_before - size_after)))
 
 
     def SampleEvents(self, fraction=1.0, weights=None, random_state=123456):
@@ -91,4 +94,5 @@ class PreprocessInputsBase():
         self.Split()
         self.FitScalers()
         self.Transform()
+        self.RemoveNanInf()
         self.Save()
