@@ -35,19 +35,24 @@ class PlotterBase():
     def DefineClasses(self):
         raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
 
-    def LoadInputsBase(self, format='csv'):
+    def LoadDFAndWeightsAndLabels(self, inputdir_df, basename_df, attribute_name_target, inputdir_weights, basename_weights, inputdir_label, basename_label, modes=['train', 'val', 'test'], format='csv'):
+        parts = []
+        for mode in modes:
+            print(blue('  --> Loading for subset \'%s\'' % (mode)))
+            df            = LoadPandas(os.path.join(inputdir_df, '%s_%s_%s.%s' %(basename_df,mode,self.frac,format) ))
+            df['label']   = np.load(os.path.join(inputdir_label, '%s_%s_%s.npy' %(basename_label,mode,self.frac) )).tolist()
+            df['label']   = np.argmax(np.array(df['label'].to_list()), axis = 1)
+            df['weights'] = LoadPandas(os.path.join(inputdir_weights, '%s_%s_%s.%s' %(basename_weights,mode,self.frac,format) ))
+            parts.append(df)
+            print(blue('  --> Loaded for subset \'%s\'' % (mode)))
+        setattr(self, str(attribute_name_target), pd.concat(parts))
+
+    def LoadInputsBase(self, modes=['train', 'val', 'test'], format='csv'):
         print(blue('--> Loading inputs (base)'))
-        inputdir = os.path.join(self.inputdir, classes_to_str(self.classes))
-        inputs = []
-        for label in ['train', 'val', 'test']:
-            print(blue('  --> loading for subset \'%s\'' % (label)))
-            input   = LoadPandas(os.path.join(inputdir, 'input_%s_%s.%s' %(label,self.frac,format) ))
-            input['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
-            input['label'] = np.argmax(np.array(input['label'].to_list()), axis = 1)
-            input['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.%s' %(label,self.frac,format) ))
-            inputs.append(input)
-            print(blue('  --> loaded for %s' % (label)))
-        self.inputs = pd.concat(inputs)
+        inputdir_inputs  = os.path.join(self.inputdir, classes_to_str(self.classes))
+        inputdir_weights = os.path.join(self.inputdir, classes_to_str(self.classes))
+        inputdir_label   = os.path.join(self.inputdir, classes_to_str(self.classes))
+        self.LoadDFAndWeightsAndLabels(inputdir_df=inputdir_inputs, basename_df='input', attribute_name_target='inputs', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format)
         print(green('--> Loaded inputs (base)'))
 
     def LoadInputs(self):
@@ -58,19 +63,12 @@ class PlotterBase():
             self.LoadInputs()
 
 
-    def LoadPredictionsBase(self, format='csv'):
+    def LoadPredictionsBase(self, modes=['train', 'val', 'test'], format='csv'):
         print(blue('--> Loading predictions (base)'))
-        inputdir = os.path.join(self.inputdir, classes_to_str(self.classes))
-        preds = []
-        for label in ['train', 'val', 'test']:
-            print(blue('  --> Loading for subset \'%s\'' % (label)))
-            pred   = LoadPandas(os.path.join(os.path.join(self.predictiondir), 'prediction_%s_%s.%s' %(label,self.frac,format) ))
-            pred['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
-            pred['label'] = np.argmax(np.array(pred['label'].to_list()), axis = 1)
-            pred['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.%s' %(label,self.frac,format) ))
-            preds.append(pred)
-            print(blue('  --> Loaded for subset \'%s\'' % (label)))
-        self.predictions = pd.concat(preds)
+        inputdir_pred    = self.predictiondir
+        inputdir_weights = os.path.join(self.inputdir, classes_to_str(self.classes))
+        inputdir_label   = os.path.join(self.inputdir, classes_to_str(self.classes))
+        self.LoadDFAndWeightsAndLabels(inputdir_df=inputdir_pred, basename_df='prediction', attribute_name_target='predictions', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format)
         print(green('--> Loaded predictions (base)'))
 
     def LoadPredictions(self):
@@ -79,6 +77,10 @@ class PlotterBase():
     def EnsurePredictionsLoaded(self):
         if not hasattr(self, 'predictions'):
             self.LoadPredictions()
+
+
+
+
 
     def PlotSingleVariable(self, df, style, variable_name, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
