@@ -58,16 +58,16 @@ class PlotterBase():
             self.LoadInputs()
 
 
-    def LoadPredictionsBase(self):
+    def LoadPredictionsBase(self, format='csv'):
         print(blue('--> Loading predictions (base)'))
         inputdir = os.path.join(self.inputdir, classes_to_str(self.classes))
         preds = []
         for label in ['train', 'val', 'test']:
             print(blue('  --> Loading for subset \'%s\'' % (label)))
-            pred   = LoadPandas(os.path.join(os.path.join(self.predictiondir), 'prediction_%s_%s.csv' %(label,self.frac) ))
+            pred   = LoadPandas(os.path.join(os.path.join(self.predictiondir), 'prediction_%s_%s.%s' %(label,self.frac,format) ))
             pred['label'] = np.load(os.path.join(inputdir, 'label_%s_%s.npy' %(label,self.frac) )).tolist()
             pred['label'] = np.argmax(np.array(pred['label'].to_list()), axis = 1)
-            pred['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.csv' %(label,self.frac) ))
+            pred['weights'] = LoadPandas(os.path.join(inputdir, 'weights_%s_%s.%s' %(label,self.frac,format) ))
             preds.append(pred)
             print(blue('  --> Loaded for subset \'%s\'' % (label)))
         self.predictions = pd.concat(preds)
