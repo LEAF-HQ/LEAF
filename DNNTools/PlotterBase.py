@@ -12,11 +12,9 @@ from functions_dnn import classes_to_str, float_to_str
 
 
 class PlotterBase():
-    def __init__(self, inputdir='', outdir='', predictiondir='', runonfraction=1.00):
+    def __init__(self, inputdir='', outdir=''):
         self.inputdir = inputdir
         self.outdir = outdir
-        self.predictiondir = predictiondir
-        self.frac = float_to_str(runonfraction)
 
     def DefineCommonStyle(self):
         self.common_style = {
