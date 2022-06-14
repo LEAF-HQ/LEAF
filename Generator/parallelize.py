@@ -5,6 +5,17 @@ import subprocess
 from multiprocessing import Pool
 from printing_utils import blue, red
 
+class SimpleNamespace:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+    def __repr__(self):
+        items = (str(k)+'='+str(v) for k, v in self.__dict__.items())
+        return "{}({})".format(type(self).__name__, ", ".join(items))
+    def __eq__(self, other):
+        if isinstance(self, SimpleNamespace) and isinstance(other, SimpleNamespace):
+           return self.__dict__ == other.__dict__
+        return NotImplemented
+
 def timeit(method):
     @functools.wraps(method)
     def timed(*args, **kw):
@@ -34,56 +45,54 @@ def MultiProcess(func,arglist,ncores=10):
     del globals()['func_singlearg']
     return result
 
-def updateCouting(n_completed, n_jobs, time_to_sleep):
-    sys.stdout.write(blue('  --> %d of %d (%.1f%%) jobs done.\r' %(n_completed, n_jobs, round(float(n_completed)/float(n_jobs)*100, 1))))
-    sys.stdout.flush()
-    time.sleep(time_to_sleep)
-
 @timeit
 def parallelize(commands, getoutput=False, logfiles=[], ncores=10, cwd=False, niceness=10, remove_temp_files=True, time_to_sleep = 0.5):
-    processes, outputs, log_files = ({},{}, {})
-    n_running, n_completed, n_jobs = (0,0, len(commands))
-    is_log_given = not getoutput and len(logfiles)==n_jobs
-    for index, command in enumerate(commands):
+    def wait_for_process(sn):
+        for idx, proc in sn.processes.items():
+            if proc.poll() != None:
+                proc.wait()
+                sn.n_running -= 1
+                sn.n_completed += 1
+                if sn.getoutput:
+                    output = proc.communicate()
+                    sn.outputs[idx] = {'stdout': output[0],'stderr': output[1],'returncode':proc.returncode, 'command':sn.commands[idx]}
+                else:
+                    sn.log_files[idx].close()
+                del sn.processes[idx]
+        sys.stdout.write(blue('  --> %d of %d (%.1f%%) jobs done.\r' %(sn.n_completed, sn.n_jobs, round(float(sn.n_completed)/float(sn.n_jobs)*100, 1))))
+        sys.stdout.flush()
+        time.sleep(sn.time_to_sleep)
+    #to be used in python3
+    # from types import SimpleNamespace
+    sn = SimpleNamespace(processes={}, outputs={}, log_files={},
+                         commands=commands, getoutput=getoutput,
+                         n_running=0, n_completed=0, n_jobs=len(commands),
+                         time_to_sleep = time_to_sleep if len(commands) < 10000 else time_to_sleep/10000.
+                         )
+    is_log_given = not sn.getoutput and len(logfiles)==sn.n_jobs
+    for index, command in enumerate(sn.commands):
         cwd_ = command[0]  if cwd else None
         proc = command[1:] if cwd else command
         if isinstance(proc, list):
             proc = ' '.join(proc)
         if niceness is not None:
             proc = 'nice -n %i %s' % (niceness, proc)
-        if getoutput:
-            if not isinstance(proc, str):
-                raise RuntimeError(red('getoutput supports only commands as string. Please fix this.'))
-            processes[index] = subprocess.Popen(proc, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd_)
+        if not isinstance(proc, str):
+            raise RuntimeError(red('getoutput supports only commands as string. Please fix this.'))
+        if sn.getoutput:
+            stdout = subprocess.PIPE
+            stderr = subprocess.STDOUT
         else:
-            log_files[index] = open(list_logfiles[index] if is_log_given else os.path.join(cwd_ if cwd_ else '','parallelize_log_'+str(index)+'.txt'),'w')
-            processes[index] = subprocess.Popen(proc, stdout=log_files[index], stderr=log_files[index], shell=True, cwd=cwd_)
-        n_running += 1
-        while (n_running >= ncores):
-            for idx, proc in processes.items():
-                if proc.poll() != None:
-                    proc.wait()
-                    n_running -= 1
-                    n_completed += 1
-                    if getoutput:
-                        output = proc.communicate()
-                        outputs[idx] = {'stdout': output[0],'stderr': output[1],'returncode':str(proc.returncode)+' '+commands[idx]}
-                    else:
-                        log_files[idx].close()
-                    del processes[idx]
-            updateCouting(n_completed, n_jobs, time_to_sleep if len(commands) < 10000 else time_to_sleep/10000.)
-    while (n_completed < n_jobs):
-        for idx, proc in processes.items():
-            if proc.poll() != None:
-                n_completed += 1
-                if getoutput:
-                    output = proc.communicate()
-                    outputs[idx] = {'stdout': output[0],'stderr': output[1],'returncode':proc.returncode}
-                else:
-                    log_files[idx].close()
-                del processes[idx]
-        updateCouting(n_completed, n_jobs, time_to_sleep if len(commands) < 10000 else time_to_sleep/10000.)
+            sn.log_files[index] = open(logfiles[index] if is_log_given else os.path.join(cwd_ if cwd_ else '','parallelize_log_'+str(index)+'.txt'),'w')
+            stdout = sn.log_files[index]
+            stderr = sn.log_files[index]
+        sn.processes[index] = subprocess.Popen(proc, stdout=stdout, stderr=stderr, shell=True, cwd=cwd_)
+        sn.n_running += 1
+        while (sn.n_running >= ncores):
+            wait_for_process(sn)
+    while (sn.n_completed < sn.n_jobs):
+        wait_for_process(sn)
     print(blue('\nAll jobs completed'))
     if remove_temp_files:
-        a = map(os.remove, [x.name for x in log_files.values()])
-    return outputs
+        a = map(os.remove, [x.name for x in sn.log_files.values()])
+    return sn.outputs
