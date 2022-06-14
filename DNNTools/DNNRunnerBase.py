@@ -4,6 +4,7 @@ import pandas as pd
 from printing_utils import green, blue, cyan, prettydict
 from utils import ensureDirectory
 from functions_dnn import float_to_str, classes_to_str
+from DNNutils import LoadDFWeightsLabelsIntoObject
 
 class DNNRunnerBase:
     def __init__(self, dnnparameters, year, samples):
@@ -41,19 +42,32 @@ class DNNRunnerBase:
         from TrainingBase import TrainingBase
         self.Training = TrainingBase()
 
-    def LoadInputsBase(self):
-        print(blue('--> Loading'))
-        frac = float_to_str(self.dnnparameters['runonfraction'])
-        outdir = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        self.input_train   = pd.read_pickle(os.path.join(outdir, 'input_train_%s.pkl'   %frac ))
-        self.input_val     = pd.read_pickle(os.path.join(outdir, 'input_val_%s.pkl'     %frac ))
-        self.input_test    = pd.read_pickle(os.path.join(outdir, 'input_test_%s.pkl'    %frac ))
-        self.label_train   = np.load(os.path.join(outdir, 'label_train_%s.npy'   %frac ))
-        self.label_val     = np.load(os.path.join(outdir, 'label_val_%s.npy'     %frac ))
-        self.label_test    = np.load(os.path.join(outdir, 'label_test_%s.npy'    %frac ))
-        self.weights_train = pd.read_pickle(os.path.join(outdir, 'weights_train_%s.pkl' %frac ))
-        self.weights_val   = pd.read_pickle(os.path.join(outdir, 'weights_val_%s.pkl'   %frac ))
-        self.weights_test  = pd.read_pickle(os.path.join(outdir, 'weights_test_%s.pkl'  %frac ))
+    def LoadInputsBase(self, modes=['train', 'val', 'test'], format='csv'):
+        print(blue('--> Loading inputs (base)'))
+        inputdir_inputs  = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_weights = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_label   = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_inputs, basename_df='input', attribute_name_target='inputs', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
+        print(green('--> Loaded inputs (base)'))
 
     def LoadInputs(self):
         self.LoadInputsBase()
+
+    def EnsureInputsLoaded(self):
+        if not hasattr(self, 'inputs'):
+            self.LoadInputs()
+
+    def LoadPredictionsBase(self, modes=['train', 'val', 'test'], format='csv'):
+        print(blue('--> Loading predictions (base)'))
+        inputdir_pred    = self.filepath['filepath_predictions']
+        inputdir_weights = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_label   = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_pred, basename_df='prediction', attribute_name_target='predictions', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
+        print(green('--> Loaded predictions (base)'))
+
+    def LoadPredictions(self):
+        self.LoadPredictionsBase()
+
+    def EnsurePredictionsLoaded(self):
+        if not hasattr(self, 'predictions'):
+            self.LoadPredictions()
