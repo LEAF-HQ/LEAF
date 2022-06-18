@@ -33,7 +33,7 @@ def timeit(method):
 
 
 @timeit
-def MultiProcess(func,arglist,ncores=10):
+def MultiProcess(func,arglist,ncores=8):
     global func_singlearg
     def func_singlearg(kwargs):
         return func(**kwargs)
@@ -46,7 +46,7 @@ def MultiProcess(func,arglist,ncores=10):
     return result
 
 @timeit
-def parallelize(commands, getoutput=False, logfiles=[], ncores=10, cwd=False, niceness=10, remove_temp_files=True, time_to_sleep = 0.5):
+def parallelize(commands, getoutput=False, logfiles=[], ncores=8, cwd=False, niceness=10, remove_temp_files=True, time_to_sleep = 0.5):
     def wait_for_process(sn):
         for idx, proc in sn.processes.items():
             if proc.poll() != None:
@@ -92,7 +92,6 @@ def parallelize(commands, getoutput=False, logfiles=[], ncores=10, cwd=False, ni
             wait_for_process(sn)
     while (sn.n_completed < sn.n_jobs):
         wait_for_process(sn)
-    print(blue('\nAll jobs completed'))
     if remove_temp_files:
         a = map(os.remove, [x.name for x in sn.log_files.values()])
     return sn.outputs
