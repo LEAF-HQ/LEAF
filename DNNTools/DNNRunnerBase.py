@@ -7,9 +7,8 @@ from functions_dnn import float_to_str, classes_to_str
 from DNNutils import LoadDFWeightsLabelsIntoObject
 
 class DNNRunnerBase:
-    def __init__(self, dnnparameters, year, samples):
+    def __init__(self, dnnparameters, samples):
         self.dnnparameters = dnnparameters
-        self.year = year
         self.samples = samples
 
     def DefinePathsBase(self, **kwargs):
@@ -23,7 +22,7 @@ class DNNRunnerBase:
         raise NotImplementedError('DefinePaths method is not initialized. Fix this.')
 
     def PrintContent(self):
-        print(green('--> Set up DNNRunner for year %s:' % (str(self.year))))
+        print(green('--> Set up DNNRunner' ))
         prettydict(self.__dict__, color= cyan)
 
     def CreateConverter(self):
@@ -44,9 +43,9 @@ class DNNRunnerBase:
 
     def LoadInputsBase(self, modes=['train', 'val', 'test'], format='csv'):
         print(blue('--> Loading inputs (base)'))
-        inputdir_inputs  = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_weights = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_label   = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_inputs  = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_weights = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_label   = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
         LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_inputs, basename_df='input', attribute_name_target='inputs', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
         print(green('--> Loaded inputs (base)'))
 
@@ -59,9 +58,9 @@ class DNNRunnerBase:
 
     def LoadPredictionsBase(self, modes=['train', 'val', 'test'], format='csv'):
         print(blue('--> Loading predictions (base)'))
-        inputdir_pred    = self.filepath['filepath_predictions']
-        inputdir_weights = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_label   = os.path.join(self.filepath['filepath_preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_pred    = self.filepath['predictions']
+        inputdir_weights = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
+        inputdir_label   = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
         LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_pred, basename_df='prediction', attribute_name_target='predictions', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
         print(green('--> Loaded predictions (base)'))
 

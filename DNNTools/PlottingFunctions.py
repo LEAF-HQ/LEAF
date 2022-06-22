@@ -12,7 +12,6 @@ def plot_losses(history, mode='loss', name='history', min_epoch=0, dynamic=True,
     TDR.extraText = extraText
     TDR.extraText2 = extraText2
     TDR.cms_lumi_TeV = lumi_text
-    print blue('    --> Plotting '+mode+' now...')
     isLoss = mode =='loss'
     if dynamic:
         ranges = np.array(history[mode]+history['val_'+mode])
@@ -41,7 +40,6 @@ def plot_rocs(rocs={}, name='ROCs', x_title='Signal efficiency', y_title='Backgr
     TDR.extraText = extraText
     TDR.extraText2 = extraText2
     TDR.cms_lumi_TeV = lumi_text
-    print blue('    --> Plotting ROCs now...')
 
     canv = tdrCanvas('ROCs', 0, 1.1, 1e-04, 1.2, x_title, y_title, kSquare)
     canv.SetLogy(True)
