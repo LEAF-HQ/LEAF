@@ -25,10 +25,10 @@ class PreprocessInputsBase():
     def DefineClasses(self):
         raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
 
-    def GetInputs(self):
+    def GetInputs(self,format='csv'):
         inputs = []
         for samplename in self.DefineSamples():
-            list_of_inputfiles = list(filter(lambda x: samplename in x and not x.endswith('.py'), os.listdir(self.inputdir)))
+            list_of_inputfiles = list(filter(lambda x: samplename in x and x.endswith('.'+format), os.listdir(self.inputdir)))
             if self.maxfiles_per_sample != None and samplename in self.maxfiles_per_sample:
                 list_of_inputfiles = list_of_inputfiles[:self.maxfiles_per_sample[samplename]]
             print(green('  --> Now starting with sample %s' % (samplename)))
@@ -76,7 +76,7 @@ class PreprocessInputsBase():
                 self.inputs[mode] = pd.DataFrame(scaled_features, index=self.inputs[mode].index, columns=self.inputs[mode].columns)
 
     def SaveBase(self, format='csv'):
-        print(blue('--> saving'))
+        print(blue('--> Saving'))
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
