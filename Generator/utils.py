@@ -42,7 +42,7 @@ def execute_command_silent(command):
     p.wait()
     DEVNULL.close()
 
-def execute_commands_parallel(commands=[], ncores=10, niceness=10):
+def execute_commands_parallel(commands=[], ncores=10, niceness=10, cwd=False):
     n_running = 0
     n_completed = 0
     n_jobs = len(commands)
@@ -50,7 +50,10 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
     DEVNULL = open(os.devnull, 'wb')
     for c in commands:
         if niceness is not None:
-            c = 'nice -n %i %s' % (niceness, c)
+            if cwd:
+                c = (c[0], 'nice -n %i %s' % (niceness, c[1]))
+            else:
+                c = 'nice -n %i %s' % (niceness, c)
         b_wait = (n_running >= ncores)
         while b_wait:
             n_running = 0
@@ -69,9 +72,11 @@ def execute_commands_parallel(commands=[], ncores=10, niceness=10):
             time.sleep(time_to_sleep)
             b_wait = (n_running >= ncores)
         n_running += 1
-        p = subprocess.Popen(c, stdout=DEVNULL, stderr=DEVNULL, shell=True)
-        # p = subprocess.Popen(c, shell=True)
-        processes.append(p)
+        if cwd:
+            processes.append(subprocess.Popen(c[1], stdout=DEVNULL, stderr=DEVNULL, shell=True, cwd=c[0]))
+            time.sleep(1)
+        else:
+            processes.append(subprocess.Popen(c, stdout=DEVNULL, stderr=DEVNULL, shell=True))
     # submitted all jobs, now just wait.
     b_wait = (n_completed < n_jobs)
     while b_wait:
