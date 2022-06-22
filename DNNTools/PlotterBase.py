@@ -12,8 +12,7 @@ from functions_dnn import classes_to_str, float_to_str
 
 
 class PlotterBase():
-    def __init__(self, outdir='', runonfraction=1.00):
-        self.outdir = outdir
+    def __init__(self, runonfraction=1.00):
         self.frac = float_to_str(runonfraction)
 
     def DefineCommonStyle(self):
@@ -36,7 +35,7 @@ class PlotterBase():
 
 
 
-    def PlotSingleVariable(self, df, style, variable_name, ylabel='Number of events / bin', yscale='log'):
+    def PlotSingleVariable(self, df, style, variable_name, outdir, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
         fig = plt.figure()
         classes = list(set(self.classes.values()))
@@ -59,22 +58,19 @@ class PlotterBase():
         plt.yscale(yscale)
         plt.xlabel(variable_name)
         plt.ylabel(ylabel)
-        fname = os.path.join(self.outdir, '%s_%s.pdf' % (variable_name, self.frac))
+        fname = os.path.join(outdir, '%s_%s.pdf' % (variable_name, self.frac))
         SaveMPL(fig, fname)
         plt.close()
 
-    def PlotROCSingleVariable(self, df, style, variable_name):
+    def PlotROCSingleVariable(self, df, style, variable_name, outdir):
         pass
 
 
-    def PlotDF(self, df):
+    def PlotDF(self, df, outdir):
         print(blue('--> Plotting dataframe'))
         self.DefineCommonStyle()
         self.DefineStylePerVariable()
         for variable_name in tqdm.tqdm(df.columns, desc="Plots done"):
             if 'label' in variable_name: continue
-            self.PlotSingleVariable(df=df, style=self.DefineStyle(), variable_name=variable_name)
+            self.PlotSingleVariable(df=df, style=self.DefineStyle(), variable_name=variable_name, outdir=outdir)
         print(green('--> Plotted dataframe'))
-
-
-        
