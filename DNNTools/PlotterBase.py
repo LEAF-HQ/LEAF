@@ -12,9 +12,9 @@ from functions_dnn import classes_to_str, float_to_str
 
 
 class PlotterBase():
-    def __init__(self, inputdir='', outdir=''):
-        self.inputdir = inputdir
+    def __init__(self, outdir='', runonfraction=1.00):
         self.outdir = outdir
+        self.frac = float_to_str(runonfraction)
 
     def DefineCommonStyle(self):
         self.common_style = {
@@ -63,13 +63,18 @@ class PlotterBase():
         SaveMPL(fig, fname)
         plt.close()
 
+    def PlotROCSingleVariable(self, df, style, variable_name):
+        pass
 
-    def PlotBase(self, df, style):
-        for variable_name in tqdm.tqdm(df.columns, desc="Plots done"):
-            if 'label' in variable_name: continue
-            self.PlotSingleVariable(df=df, style=style, variable_name=variable_name)
 
-    def Plot(self, df_to_plot):
+    def PlotDF(self, df):
+        print(blue('--> Plotting dataframe'))
         self.DefineCommonStyle()
         self.DefineStylePerVariable()
-        self.PlotBase(df=df_to_plot, style=self.DefineStyle())
+        for variable_name in tqdm.tqdm(df.columns, desc="Plots done"):
+            if 'label' in variable_name: continue
+            self.PlotSingleVariable(df=df, style=self.DefineStyle(), variable_name=variable_name)
+        print(green('--> Plotted dataframe'))
+
+
+        
