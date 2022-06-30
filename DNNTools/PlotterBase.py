@@ -8,7 +8,11 @@ import matplotlib.pyplot as plt
 
 from printing_utils import green, blue
 from DNNutils import SaveMPL, LoadPandas
-from functions_dnn import classes_to_str, float_to_str
+from functions_dnn import classes_to_str, float_to_str, get_fpr_tpr_thr_auc, list_to_tgraph
+from PlottingFunctions import plot_rocs
+from collections import OrderedDict
+from copy import deepcopy
+
 
 
 class PlotterBase():
@@ -62,8 +66,53 @@ class PlotterBase():
         SaveMPL(fig, fname)
         plt.close()
 
-    def PlotROCSingleVariable(self, df, style, variable_name, outdir):
-        pass
+
+    def PlotROCSingleVariable(self, df, variable_name, outdir):
+        style_per_class = self.DefineStyle()
+        FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=df['label'], weights=df['weights'])
+        rocs = OrderedDict()
+        purities = OrderedDict()
+        purities_vs_score = OrderedDict()
+        for i in sorted(df['label'].unique()):
+            g_roc = list_to_tgraph(TruePositiveRates[i], FalsePositiveRates[i])
+            g_pur = list_to_tgraph(TruePositiveRates[i], SignalPuritys[i])
+            g_pur_vs_score = list_to_tgraph(Thresholds[i], SignalPuritys[i])
+            info = {'color': style_per_class[i]['rootcolor'], 'legendtext': style_per_class[i]['label'], 'auc': aucs[i]}
+            info_pur = deepcopy(info)
+            info_pur.pop('auc', None)
+            info_pur_vs_score = info_pur
+            rocs[g_roc] = info
+            purities[g_pur] = info_pur
+            purities_vs_score[g_pur_vs_score] = info_pur_vs_score
+
+        plot_rocs(rocs=rocs, name=os.path.join(outdir, 'ROC_%s'%(variable_name)), x_title='Selection efficiency', y_title='Background efficiency')
+        plot_rocs(rocs=purities, name=os.path.join(outdir, 'EfficiencyVsPurity_%s'%(variable_name)), x_title='Selection efficiency', y_title='Signal purity', logy=False)
+        plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_%s'%(variable_name)), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
+
+
+    def PlotROCSummary(self, df, outdir, score_basename='score'):
+        # for each class in df, use >> 'score_%i' % (cl) << to plot the "optimal" ROC curves for each node in the same plot
+        style_per_class = self.DefineStyle()
+        rocs = OrderedDict()
+        purities = OrderedDict()
+        purities_vs_score = OrderedDict()
+        for i in sorted(df['label'].unique()):
+            FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df['%s_%i'%(score_basename, i)], labels=df['label'], weights=df['weights'])
+
+            g_roc = list_to_tgraph(TruePositiveRates[i], FalsePositiveRates[i])
+            g_pur = list_to_tgraph(TruePositiveRates[i], SignalPuritys[i])
+            g_pur_vs_score = list_to_tgraph(Thresholds[i], SignalPuritys[i])
+            info = {'color': style_per_class[i]['rootcolor'], 'legendtext': style_per_class[i]['label'], 'auc': aucs[i]}
+            info_pur = deepcopy(info)
+            info_pur.pop('auc', None)
+            info_pur_vs_score = info_pur
+            rocs[g_roc] = info
+            purities[g_pur] = info_pur
+            purities_vs_score[g_pur_vs_score] = info_pur_vs_score
+        plot_rocs(rocs=rocs, name=os.path.join(outdir, 'ROC_summary'), x_title='Selection efficiency', y_title='Background efficiency')
+        plot_rocs(rocs=purities, name=os.path.join(outdir, 'EfficiencyVsPurity_summary'), x_title='Selection efficiency', y_title='Signal purity', logy=False)
+        plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_summary'), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
+
 
 
     def PlotDF(self, df, outdir):

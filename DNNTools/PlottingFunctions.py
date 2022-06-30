@@ -35,32 +35,30 @@ def plot_losses(history, mode='loss', name='history', min_epoch=0, dynamic=True,
     canv.Close()
 
 
-def plot_rocs(rocs={}, name='ROCs', x_title='Signal efficiency', y_title='Background efficiency', writeExtraText = True, extraText  = 'Simulation', extraText2 = 'Work in progress', lumi_text=''):
+def plot_rocs(rocs={}, name='ROCs', x_title='Signal efficiency', y_title='Background efficiency', logy=True, writeExtraText = True, extraText  = 'Simulation', extraText2 = 'Work in progress', lumi_text=''):
     TDR.writeExtraText = writeExtraText
     TDR.extraText = extraText
     TDR.extraText2 = extraText2
     TDR.cms_lumi_TeV = lumi_text
 
-    canv = tdrCanvas('ROCs', 0, 1.1, 1e-04, 1.2, x_title, y_title, kSquare)
-    canv.SetLogy(True)
-    leg = tdrLeg(0.60, 0.70, 0.95, 0.89, 0.035, 42, rt.kBlack)
+    if logy:
+        canv = tdrCanvas('ROCs', -0.1, 1.1, 1e-04, 1.2, x_title, y_title, kSquare)
+        leg = tdrLeg(0.30, 0.2, 0.95, 0.45, 0.035, 42, rt.kBlack)
+    else:
+        canv = tdrCanvas('ROCs', -0.1, 1.1, 0, 1.5, x_title, y_title, kSquare)
+        leg = tdrLeg(0.45, 0.65, 0.95, 0.9, 0.035, 42, rt.kBlack)
+    canv.SetLogy(logy)
     for roc, info in rocs.items():
-        color = info[color]
+        color = info['color']
         roc.SetLineWidth(2)
         tdrDraw(roc, 'L', mcolor=color, lcolor=color)
-        leg.AddEntry(roc, info['legendtext'], 'l')
+        if not 'auc' in info:
+            legstring = info['legendtext']
+        else:
+            legstring = '%s, AUC: %1.3f' % (info['legendtext'], info['auc'])
+        leg.AddEntry(roc, legstring, 'l')
     canv.SaveAs(name+'.pdf')
     canv.Close()
-#
-# 'Bkg: '+classtitles[i] + ', AUC: '+str(round(aucss_lum[i][0],3)),
-# plt.xticks(np.arange(0.1,1.1,0.1))
-# plt.grid(True, which='both')
-# title = 'ROC_val_class%i' % cl
-# if use_best_model: title += '_best'
-# else: title += '_last'
-# title += '.pdf'
-# fig.savefig(os.path.join(plotfolder, title))
-# plt.close()
 
 
 
