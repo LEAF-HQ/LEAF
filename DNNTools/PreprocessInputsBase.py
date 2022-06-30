@@ -33,17 +33,18 @@ class PreprocessInputsBase():
                 list_of_inputfiles = list_of_inputfiles[:self.maxfiles_per_sample[samplename]]
             print(green('  --> Now starting with sample %s' % (samplename)))
             for i, inputfile in enumerate(list_of_inputfiles):
-                print(green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles))))
+                if (i+1)%10==0:
+                    print(green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles))))
                 inputs.append(pd.read_pickle(os.path.join(self.inputdir, inputfile)))
         self.df = pd.concat(inputs)
         self.df.rename(lambda x: x[0] if isinstance(x, tuple) else x , axis='columns', inplace=True)
         print(blue('Collected events: '+str(len(self.df))))
 
-    def RemoveNanInf(self):
-        size_before = self.df.shape[0]
-        self.df.replace([np.inf, -np.inf], np.nan, inplace=True)
-        self.df.dropna(inplace=True)
-        size_after = self.df.shape[0]
+    def RemoveNanInf(self, df):
+        size_before = df.shape[0]
+        df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        df.dropna(inplace=True)
+        size_after = df.shape[0]
         print(green('  --> Removed %i events because of irregular features' % (size_before - size_after)))
 
 
@@ -55,8 +56,6 @@ class PreprocessInputsBase():
         inputs = self.df.copy(deep=True)
         weights= pd.DataFrame(self.df.copy(deep=True).loc[:,self.colname_weights], columns=[self.colname_weights])
         labels = self.df.copy(deep=True).loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x])
-        labels = labels.to_numpy().reshape(len(labels), 1)
-        labels = preprocessing.OneHotEncoder(sparse=False).fit_transform(labels)
         inputs.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
         if np.sum(ratios.values())!= 1:
             raise RuntimeError('Unexpected ratios for train-validation-test splitting.')
@@ -65,6 +64,9 @@ class PreprocessInputsBase():
         self.weights = {}
         self.inputs['train'], self.inputs['test'], self.labels['train'], self.labels['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(inputs, labels, weights, train_size=ratios['train'])
         self.inputs['val'], self.inputs['test'], self.labels['val'], self.labels['test'], self.weights['val'], self.weights['test'] = model_selection.train_test_split(self.inputs['test'], self.labels['test'], self.weights['test'], test_size=ratios['test']/(ratios['test'] + ratios['validation']))
+        for mode in ['train', 'val', 'test']:
+            self.labels[mode] = self.labels[mode].to_numpy().reshape(len(self.labels[mode]), 1)
+            self.labels[mode] = preprocessing.OneHotEncoder(sparse=False).fit_transform(self.labels[mode])
 
     def FitScalers(self):
         self.scalers = {}
@@ -74,6 +76,7 @@ class PreprocessInputsBase():
             for mode in ['train', 'val', 'test']:
                 scaled_features  = scaler.transform(self.inputs[mode])
                 self.inputs[mode] = pd.DataFrame(scaled_features, index=self.inputs[mode].index, columns=self.inputs[mode].columns)
+                self.RemoveNanInf(df=self.inputs[mode])
 
     def SaveBase(self, format='csv'):
         print(blue('--> Saving'))
@@ -89,10 +92,9 @@ class PreprocessInputsBase():
 
     def Process(self):
         self.GetInputs()
-        self.RemoveNanInf()
+        self.RemoveNanInf(df=self.df)
         self.SampleEvents(fraction=self.runonfraction)
         self.Split()
         self.FitScalers()
         self.Transform()
-        self.RemoveNanInf()
         self.Save()
