@@ -605,7 +605,7 @@ def plot_xsec_1d(infile, graphnames_and_legends_for_canvas, axistitles, plotname
         ymin = max(min(g.GetHistogram().GetMinimum(), ymin), 1E-10)
 
     # c = tdrCanvas('c', xmin, xmax, ymin, ymax, graphs_and_legnames[0][0].GetXaxis().GetTitle(), axistitles[1], square=True, iPeriod=0, iPos=11)
-    c = tdrCanvas('c', xmin, xmax, ymin, ymax, axistitles[0], axistitles[1], square=True, iPeriod=0, iPos=11)
+    c = tdrCanvas('c', xmin, xmax, ymin, ymax, axistitles[0], axistitles[1], square=True, iPos=11)
     c.SetLogy()
     legy_high = 0.9
     entryheight = 0.07
