@@ -12,11 +12,10 @@ class TrainingBase():
     def __init__(self, DNNparams={}, inputdir='', outputdir='', runonfraction=1.0,  do_weights=False):
         self.DNNparams = DNNparams
         self.inputdir = os.path.join(inputdir, classes_to_str(self.DNNparams['classes']))
-        self.outputdir = outputdir
+        self.modelpath = outputdir
         self.frac = float_to_str(runonfraction)
         self.do_weights = do_weights
         self.isFitGenerator = False
-        self.modelpath = outputdir
         ensureDirectory(self.modelpath)
 
     def DefineCallbacks(self):
@@ -70,6 +69,8 @@ class TrainingBase():
         self.model.save(os.path.join(self.modelpath, '%s.h5' % (modelname)))
         with open(os.path.join(self.modelpath, '%s_history.pkl' % (modelname)), 'w') as f:
             dump(self.model.history.history, f)
+        with open(os.path.join(self.modelpath,'DNNparams.json'),'w') as f:
+            f.write(json.dumps(self.DNNparams))
 
     def LoadModel(self, modelname='finalmodel'):
         self.model = load_model(os.path.join(self.modelpath, '%s.h5' % (modelname)))
