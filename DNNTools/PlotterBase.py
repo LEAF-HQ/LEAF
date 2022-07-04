@@ -14,7 +14,6 @@ from collections import OrderedDict
 from copy import deepcopy
 
 
-
 class PlotterBase():
     def __init__(self, runonfraction=1.00):
         self.frac = float_to_str(runonfraction)
@@ -33,32 +32,30 @@ class PlotterBase():
     def DefineStylePerVariable(self):
         self.stylePerVariable = {}
 
-    def DefineClasses(self):
-        raise NotImplementedError('DefineClasses method is not initialized. Fix this.')
-
-
-
-
-    def PlotSingleVariable(self, df, style, variable_name, outdir, ylabel='Number of events / bin', yscale='log'):
+    def PlotSingleVariable(self, dfs, style, variable_name, outdir, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
         fig = plt.figure()
         classes = list(set(self.classes.values()))
 
-        hist_min = df[variable_name].min()
-        hist_max = df[variable_name].max()
+        hist_min = dfs[dfs.keys()[0]][variable_name].min()
+        hist_max = dfs[dfs.keys()[0]][variable_name].max()
         for cl in classes:
-            mask = df['label']==cl
-            weights_thisclass = df[mask]['weights']
-            df_thisclass = df[mask][variable_name]
-
-            style_thisclass = style[cl]
+            style_thisclass = dict(filter(lambda elem: not 'root' in elem[0], style[cl].items()))
             style_thisclass.update(self.common_style)
-            if variable_name in self.stylePerVariable:
-                style_thisclass.update(self.stylePerVariable[variable_name])
+            for var in self.stylePerVariable:
+                if var in variable_name:
+                    style_thisclass.update(self.stylePerVariable[var])
+            label = style_thisclass['label']
+            for name, df in dfs.items():
+                style_thisclass.update({'label': label+': '+name,
+                                        'linestyle':'dashed' if 'val' in name else ('dotted' if 'test' in name else 'solid')}
+                                       )
+                mask = df['label']==cl
+                weights_thisclass = df[mask]['weights']
+                df_thisclass = df[mask][variable_name]
+                plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
 
-            plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
-
-        plt.legend(loc='best')
+        plt.legend(loc='best',ncol=len(classes))
         plt.yscale(yscale)
         plt.xlabel(variable_name)
         plt.ylabel(ylabel)
@@ -114,12 +111,11 @@ class PlotterBase():
         plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_summary'), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
 
 
-
-    def PlotDF(self, df, outdir):
+    def PlotDF(self, dfs, outdir):
         print(blue('--> Plotting dataframe'))
         self.DefineCommonStyle()
         self.DefineStylePerVariable()
-        for variable_name in tqdm.tqdm(df.columns, desc="Plots done"):
+        for variable_name in tqdm.tqdm(dfs[dfs.keys()[0]].columns, desc="Plots done"):
             if 'label' in variable_name: continue
-            self.PlotSingleVariable(df=df, style=self.DefineStyle(), variable_name=variable_name, outdir=outdir)
+            self.PlotSingleVariable(dfs=dfs, style=self.DefineStyle(), variable_name=variable_name, outdir=outdir)
         print(green('--> Plotted dataframe'))
