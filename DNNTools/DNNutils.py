@@ -23,11 +23,11 @@ def SavePandas(obj, fname):
     else:
         raise AttributeError('Trying to save a dataframe in an unsupported format.')
 
-def LoadPandas(fname):
+def LoadPandas(fname, dtype=None):
     if fname.endswith('.pkl'):
         result = pd.read_pickle(fname)
     elif fname.endswith('.csv'):
-        result = pd.read_csv(fname)
+        result = pd.read_csv(fname, dtype=dtype)
     else:
         raise AttributeError('Trying to load a dataframe in an unsupported format.')
     return result

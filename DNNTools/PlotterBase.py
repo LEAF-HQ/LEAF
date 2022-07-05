@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from printing_utils import green, blue
-from DNNutils import SaveMPL, LoadPandas
+from DNNutils import SaveMPL
 from functions_dnn import classes_to_str, float_to_str, get_fpr_tpr_thr_auc, list_to_tgraph
 from PlottingFunctions import plot_rocs
 from collections import OrderedDict

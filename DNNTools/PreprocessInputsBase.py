@@ -36,7 +36,8 @@ class PreprocessInputsBase():
                 if (i+1)%10==0:
                     print(green('    --> At file no. %i out of %i.' % (i+1, len(list_of_inputfiles))))
                 inputs.append(pd.read_pickle(os.path.join(self.inputdir, inputfile)))
-        self.df = pd.concat(inputs)
+        self.df = pd.concat(inputs, ignore_index=True)
+        del inputs
         self.df.rename(lambda x: x[0] if isinstance(x, tuple) else x , axis='columns', inplace=True)
         print(blue('Collected events: '+str(len(self.df))))
 
@@ -53,16 +54,16 @@ class PreprocessInputsBase():
 
 
     def Split(self, ratios={'train':0.8, 'validation':0.1, 'test':0.1}):
-        inputs = self.df.copy(deep=True)
-        weights= pd.DataFrame(self.df.copy(deep=True).loc[:,self.colname_weights], columns=[self.colname_weights])
-        labels = self.df.copy(deep=True).loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x])
-        inputs.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
+        weights = pd.DataFrame(self.df.loc[:,self.colname_weights], columns=[self.colname_weights])
+        labels  = self.df.loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x])
+        self.df.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
         if np.sum(ratios.values())!= 1:
             raise RuntimeError('Unexpected ratios for train-validation-test splitting.')
         self.inputs = {}
         self.labels = {}
         self.weights = {}
-        self.inputs['train'], self.inputs['test'], self.labels['train'], self.labels['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(inputs, labels, weights, train_size=ratios['train'])
+        self.inputs['train'], self.inputs['test'], self.labels['train'], self.labels['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(self.df, labels, weights, train_size=ratios['train'])
+        del self.df
         self.inputs['val'], self.inputs['test'], self.labels['val'], self.labels['test'], self.weights['val'], self.weights['test'] = model_selection.train_test_split(self.inputs['test'], self.labels['test'], self.weights['test'], test_size=ratios['test']/(ratios['test'] + ratios['validation']))
         for mode in ['train', 'val', 'test']:
             self.labels[mode] = self.labels[mode].to_numpy().reshape(len(self.labels[mode]), 1)
@@ -74,7 +75,7 @@ class PreprocessInputsBase():
     def Transform(self):
         for scaler in self.scalers.values():
             for mode in ['train', 'val', 'test']:
-                scaled_features  = scaler.transform(self.inputs[mode])
+                scaled_features  = scaler.transform(self.inputs[mode]).astype('float32')
                 self.inputs[mode] = pd.DataFrame(scaled_features, index=self.inputs[mode].index, columns=self.inputs[mode].columns)
                 self.RemoveNanInf(df=self.inputs[mode])
 
