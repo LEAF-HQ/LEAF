@@ -51,7 +51,7 @@ class PlotterBase():
             weights_thisclass = df[mask]['weights']
             df_thisclass = df[mask][variable_name]
 
-            style_thisclass = style[cl]
+            style_thisclass = dict(filter(lambda elem: not 'root' in elem[0], style[cl].items()))
             style_thisclass.update(self.common_style)
             if variable_name in self.stylePerVariable:
                 style_thisclass.update(self.stylePerVariable[variable_name])
@@ -67,9 +67,9 @@ class PlotterBase():
         plt.close()
 
 
-    def PlotROCSingleVariable(self, df, variable_name, outdir):
+    def PlotROCSingleVariable(self, df, variable_name, outdir, is_standardized=True):
         style_per_class = self.DefineStyle()
-        FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=df['label'], weights=df['weights'])
+        FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=df['label'], weights=df['weights'], is_standardized=is_standardized)
         rocs = OrderedDict()
         purities = OrderedDict()
         purities_vs_score = OrderedDict()
@@ -90,14 +90,14 @@ class PlotterBase():
         plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_%s'%(variable_name)), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
 
 
-    def PlotROCSummary(self, df, outdir, score_basename='score'):
+    def PlotROCSummary(self, df, outdir, score_basename='score', is_standardized=True):
         # for each class in df, use >> 'score_%i' % (cl) << to plot the "optimal" ROC curves for each node in the same plot
         style_per_class = self.DefineStyle()
         rocs = OrderedDict()
         purities = OrderedDict()
         purities_vs_score = OrderedDict()
         for i in sorted(df['label'].unique()):
-            FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df['%s_%i'%(score_basename, i)], labels=df['label'], weights=df['weights'])
+            FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df['%s_%i'%(score_basename, i)], labels=df['label'], weights=df['weights'], is_standardized=is_standardized)
 
             g_roc = list_to_tgraph(TruePositiveRates[i], FalsePositiveRates[i])
             g_pur = list_to_tgraph(TruePositiveRates[i], SignalPuritys[i])

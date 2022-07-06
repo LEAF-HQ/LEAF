@@ -59,7 +59,7 @@ def list_to_tgraph(x, y):
     g = rt.TGraph(len(x), x, y)
     return g
 
-def get_fpr_tpr_thr_auc(score, labels, weights):
+def get_fpr_tpr_thr_auc(score, labels, weights, is_standardized=True):
 
     FalsePositiveRates = {}
     TruePositiveRates = {}
@@ -74,12 +74,19 @@ def get_fpr_tpr_thr_auc(score, labels, weights):
         # aucs[i] = np.trapz(TruePositiveRates[i], FalsePositiveRates[i])
 
 
-        Thresholds[i] = np.ma.masked_where((thr > 1) | (thr < 0), thr)
-        mask = Thresholds[i].mask
-        Thresholds[i] = Thresholds[i].compressed()
-        FalsePositiveRates[i] = np.ma.masked_where(mask, fpr).compressed()
-        TruePositiveRates[i]  = np.ma.masked_where(mask, tpr).compressed()
-        SignalPuritys[i]      = np.ma.masked_where(mask, pur).compressed()
+        if not is_standardized:
+            Thresholds[i] = np.ma.masked_where((thr > 1) | (thr < 0), thr)
+            mask = Thresholds[i].mask
+            Thresholds[i] = Thresholds[i].compressed()
+            FalsePositiveRates[i] = np.ma.masked_where(mask, fpr).compressed()
+            TruePositiveRates[i]  = np.ma.masked_where(mask, tpr).compressed()
+            SignalPuritys[i]      = np.ma.masked_where(mask, pur).compressed()
+        else:
+            Thresholds[i] = thr
+            FalsePositiveRates[i] = fpr
+            TruePositiveRates[i]  = tpr
+            SignalPuritys[i]      = pur
+
         aucs[i] = np.trapz(TruePositiveRates[i], FalsePositiveRates[i])
 
 
