@@ -49,23 +49,10 @@ def SaveMPL(obj, fname):
     ensureDirectory(fname[:fname.rfind('/')])
     obj.savefig(fname)
 
-
-def LoadDFWeightsLabelsIntoObject(obj, inputdir_df, basename_df, attribute_name_target, inputdir_weights, basename_weights, inputdir_label, basename_label, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00)):
-    parts = []
-    for mode in modes:
-        print(blue('  --> Loading for subset \'%s\'' % (mode)))
-        df            = LoadPandas(os.path.join(inputdir_df, '%s_%s_%s.%s' %(basename_df,mode,frac,format) ))
-        df['label']   = np.load(os.path.join(inputdir_label, '%s_%s_%s.npy' %(basename_label,mode,frac) )).tolist()
-        df['label']   = np.argmax(np.array(df['label'].to_list()), axis = 1)
-        df['weights'] = LoadPandas(os.path.join(inputdir_weights, '%s_%s_%s.%s' %(basename_weights,mode,frac,format) ))
-        parts.append(df)
-        print(blue('  --> Loaded for subset \'%s\'' % (mode)))
-    setattr(obj, str(attribute_name_target), pd.concat(parts))
-
-
 def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00)):
     obj = OrderedDict()
     for mode in modes:
+        print(blue('  --> Loading %s[%s]'%(basename,mode)))
         fname = os.path.join(inputdir, '%s_%s_%s.%s' %(basename,mode,frac,format))
         if format=='npy':
             obj[mode] = LoadNumpy(fname)

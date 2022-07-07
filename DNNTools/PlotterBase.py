@@ -66,7 +66,7 @@ class PlotterBase():
         plt.close()
 
 
-    def PlotROCSingleVariable(self, df, weights, labels, variable_name, outdir, is_standardized=True):
+    def PlotROCSingleVariable(self, df, weights, labels, variable_name, outdir, is_standardized=False):
         style_per_class = self.DefineStyle()
         FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=labels, weights=weights, is_standardized=is_standardized)
         rocs = OrderedDict()
@@ -89,7 +89,7 @@ class PlotterBase():
         plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_%s'%(variable_name)), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
 
 
-    def PlotROCSummary(self, df, weights, labels, outdir, score_basename='score', is_standardized=True):
+    def PlotROCSummary(self, df, weights, labels, outdir, score_basename='score', is_standardized=False):
         # for each class in df, use >> 'score_%i' % (cl) << to plot the "optimal" ROC curves for each node in the same plot
         style_per_class = self.DefineStyle()
         rocs = OrderedDict()

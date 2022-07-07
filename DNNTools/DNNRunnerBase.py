@@ -46,11 +46,16 @@ class DNNRunnerBase:
         if not hasattr(self, object_name):
             print(blue('  --> %s is missing: loading...' %(object_name)))
             setattr(self, object_name, LoadObjects(inputdir=inputdir, basename=basename, modes=modes, format=format, frac=frac))
-        else: print(blue('  --> %s exists: skipping' %(object_name)))
+        else:
+            missing_modes = [m for m in modes if not m in getattr(self, object_name)]
+            if len(missing_modes) > 0:
+                print(blue('  --> %s%s is missing: loading...' %(object_name,str(missing_modes))))
+                getattr(self, object_name).update(LoadObjects(inputdir=inputdir, basename=basename, modes=missing_modes, format=format, frac=frac))
+            else:
+                print(blue('  --> %s exists: skipping' %(object_name)))
 
     def LoadInputs(self, modes=['train', 'val', 'test'], format='csv'):
         print(blue('--> Loading inputs'))
-        frac = float_to_str(self.dnnparameters['runonfraction'])
         inputdir = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
         for object_name in ['inputs', 'weights', 'labels']:
             self.LoadObjectBase(object_name=object_name, basename=object_name, inputdir=inputdir, modes=modes, format=format)
