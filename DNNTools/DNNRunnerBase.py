@@ -4,7 +4,7 @@ import pandas as pd
 from printing_utils import green, blue, cyan, prettydict
 from utils import ensureDirectory
 from functions_dnn import float_to_str, classes_to_str
-from DNNutils import LoadDFWeightsLabelsIntoObject
+from DNNutils import LoadObjects
 
 class DNNRunnerBase:
     def __init__(self, dnnparameters, samples):
@@ -41,32 +41,31 @@ class DNNRunnerBase:
         from TrainingBase import TrainingBase
         self.Training = TrainingBase()
 
-    def LoadInputsBase(self, modes=['train', 'val', 'test'], format='csv'):
-        print(blue('--> Loading inputs (base)'))
-        inputdir_inputs  = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_weights = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_label   = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_inputs, basename_df='input', attribute_name_target='inputs', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
-        print(green('--> Loaded inputs (base)'))
+    def LoadObjectBase(self, object_name, basename, inputdir, modes=['train', 'val', 'test'], format='csv'):
+        frac = float_to_str(self.dnnparameters['runonfraction'])
+        if not hasattr(self, object_name):
+            print(blue('  --> %s is missing: loading...' %(object_name)))
+            setattr(self, object_name, LoadObjects(inputdir=inputdir, basename=basename, modes=modes, format=format, frac=frac))
+        else:
+            missing_modes = [m for m in modes if not m in getattr(self, object_name)]
+            if len(missing_modes) > 0:
+                print(blue('  --> %s%s is missing: loading...' %(object_name,str(missing_modes))))
+                getattr(self, object_name).update(LoadObjects(inputdir=inputdir, basename=basename, modes=missing_modes, format=format, frac=frac))
+            else:
+                print(blue('  --> %s exists: skipping' %(object_name)))
 
-    def LoadInputs(self):
-        self.LoadInputsBase()
+    def LoadInputs(self, modes=['train', 'val', 'test'], format='csv'):
+        print(blue('--> Loading inputs'))
+        inputdir = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
+        for object_name in ['inputs', 'weights', 'labels']:
+            self.LoadObjectBase(object_name=object_name, basename=object_name, inputdir=inputdir, modes=modes, format=format)
+        print(green('--> Loaded inputs'))
 
-    def EnsureInputsLoaded(self):
-        if not hasattr(self, 'inputs'):
-            self.LoadInputs()
-
-    def LoadPredictionsBase(self, modes=['train', 'val', 'test'], format='csv'):
-        print(blue('--> Loading predictions (base)'))
-        inputdir_pred    = self.filepath['predictions']
-        inputdir_weights = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        inputdir_label   = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
-        LoadDFWeightsLabelsIntoObject(self, inputdir_df=inputdir_pred, basename_df='prediction', attribute_name_target='predictions', inputdir_weights=inputdir_weights, basename_weights='weights', inputdir_label=inputdir_label, basename_label='label', modes=modes, format=format, frac=float_to_str(self.dnnparameters['runonfraction']))
-        print(green('--> Loaded predictions (base)'))
-
-    def LoadPredictions(self):
-        self.LoadPredictionsBase()
-
-    def EnsurePredictionsLoaded(self):
-        if not hasattr(self, 'predictions'):
-            self.LoadPredictions()
+    def LoadPredictions(self, modes=['train', 'val', 'test'], format='csv'):
+        print(blue('--> Loading predictions'))
+        inputdir_pred = self.filepath['predictions']
+        inputdir = os.path.join(self.filepath['preproc'], classes_to_str(self.dnnparameters['classes']))
+        for object_name in ['predictions', 'weights', 'labels']:
+            inputdir_ = inputdir_pred if object_name=='predictions' else inputdir
+            self.LoadObjectBase(object_name=object_name, basename=object_name, inputdir=inputdir_, modes=modes, format=format)
+        print(green('--> Loaded predictions'))

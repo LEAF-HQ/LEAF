@@ -12,11 +12,10 @@ class TrainingBase():
     def __init__(self, DNNparams={}, inputdir='', outputdir='', runonfraction=1.0,  do_weights=False):
         self.DNNparams = DNNparams
         self.inputdir = os.path.join(inputdir, classes_to_str(self.DNNparams['classes']))
-        self.outputdir = outputdir
+        self.modelpath = outputdir
         self.frac = float_to_str(runonfraction)
         self.do_weights = do_weights
         self.isFitGenerator = False
-        self.modelpath = outputdir
         ensureDirectory(self.modelpath)
 
     def DefineCallbacks(self):
@@ -50,7 +49,7 @@ class TrainingBase():
             history = self.model.fit(self.inputs['train'], self.labels['train'], **info)
         return history
 
-    def Predict(self, column_basename=None, columns=None):
+    def Predict(self, column_basename=None, columns=None, modelname='finalmodel'):
         column_names = []
         if column_basename:
             column_names = [column_basename+'_'+str(c) for c in columns]
@@ -60,8 +59,10 @@ class TrainingBase():
             raise ArgumentError('Invalid arguments passed to TrainingBase.Predict().')
 
         self.predictions = {}
+        if not hasattr(self, 'model'):
+            self.LoadModel(modelname=modelname)
         for mode in ['train','val','test']:
-            self.predictions[mode] = pd.DataFrame(self.model.predict(self.inputs[mode]), index=self.index[mode], columns=column_names)
+            self.predictions[mode] = pd.DataFrame(self.model.predict(self.inputs[mode]), index=self.inputs[mode].index, columns=column_names)
 
     def SavePredictions(self):
         raise NotImplementedError('SavePredictions method is not initialized. Fix this.')
@@ -70,6 +71,8 @@ class TrainingBase():
         self.model.save(os.path.join(self.modelpath, '%s.h5' % (modelname)))
         with open(os.path.join(self.modelpath, '%s_history.pkl' % (modelname)), 'w') as f:
             dump(self.model.history.history, f)
+        with open(os.path.join(self.modelpath,'DNNparams.json'),'w') as f:
+            f.write(json.dumps(self.DNNparams))
 
     def LoadModel(self, modelname='finalmodel'):
         self.model = load_model(os.path.join(self.modelpath, '%s.h5' % (modelname)))

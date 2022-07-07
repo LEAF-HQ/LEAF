@@ -1,6 +1,7 @@
 import os, shutil
 import numpy as np
 import pandas as pd
+from collections import OrderedDict
 from printing_utils import green, blue
 from utils import ensureDirectory
 from functions_dnn import float_to_str
@@ -23,11 +24,11 @@ def SavePandas(obj, fname):
     else:
         raise AttributeError('Trying to save a dataframe in an unsupported format.')
 
-def LoadPandas(fname):
+def LoadPandas(fname, dtype=None):
     if fname.endswith('.pkl'):
         result = pd.read_pickle(fname)
     elif fname.endswith('.csv'):
-        result = pd.read_csv(fname)
+        result = pd.read_csv(fname, dtype=dtype)
     else:
         raise AttributeError('Trying to load a dataframe in an unsupported format.')
     return result
@@ -37,20 +38,35 @@ def SaveNumpy(obj, fname):
     ensureDirectory(fname[:fname.rfind('/')])
     np.save(fname, obj)
 
+def LoadNumpy(fname):
+    if fname.endswith('.npy'):
+        return np.load(fname)
+    else:
+        raise AttributeError('Trying to load numpy array in an unsupported format.')
+
 def SaveMPL(obj, fname):
     CleanFile(fname)
     ensureDirectory(fname[:fname.rfind('/')])
     obj.savefig(fname)
 
-
-def LoadDFWeightsLabelsIntoObject(obj, inputdir_df, basename_df, attribute_name_target, inputdir_weights, basename_weights, inputdir_label, basename_label, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00)):
-    parts = []
+def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00)):
+    obj = OrderedDict()
     for mode in modes:
-        print(blue('  --> Loading for subset \'%s\'' % (mode)))
-        df            = LoadPandas(os.path.join(inputdir_df, '%s_%s_%s.%s' %(basename_df,mode,frac,format) ))
-        df['label']   = np.load(os.path.join(inputdir_label, '%s_%s_%s.npy' %(basename_label,mode,frac) )).tolist()
-        df['label']   = np.argmax(np.array(df['label'].to_list()), axis = 1)
-        df['weights'] = LoadPandas(os.path.join(inputdir_weights, '%s_%s_%s.%s' %(basename_weights,mode,frac,format) ))
-        parts.append(df)
-        print(blue('  --> Loaded for subset \'%s\'' % (mode)))
-    setattr(obj, str(attribute_name_target), pd.concat(parts))
+        print(blue('  --> Loading %s[%s]'%(basename,mode)))
+        fname = os.path.join(inputdir, '%s_%s_%s.%s' %(basename,mode,frac,format))
+        if format=='npy':
+            obj[mode] = LoadNumpy(fname)
+        elif format == 'pkl' or format == 'csv':
+            obj[mode] = LoadPandas(fname)
+        else:
+            raise AttributeError('Trying to load an object in an unsupported format.')
+    return obj
+
+def FromNumpyToOneHotEncoder(labels):
+    from sklearn import preprocessing
+    labels = labels.to_numpy().reshape(len(labels), 1)
+    labels = preprocessing.OneHotEncoder(sparse=False).fit_transform(labels)
+    return labels
+
+def FromOneHotEncoderToNumpy(labels):
+    return np.argmax(labels, axis = 1)

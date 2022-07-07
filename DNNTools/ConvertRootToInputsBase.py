@@ -10,6 +10,7 @@ def ConvertRoot2Pandas(input_filename, output_filename, treename, start, stop, b
     mymatrix = rec2array(root2array(filenames=input_filename, treename=treename, branches=branches, start=start, stop=stop))
     df = pd.DataFrame(mymatrix,columns=columns)
     df['category'] = [category]*len(df)
+    df.loc[:, df.dtypes == 'float64'] = df.loc[:, df.dtypes == 'float64'].astype('float32')
     SavePandas(df, output_filename)
     print(green('      --> Done with file number: %i' % (stop/(stop-start))))
 
