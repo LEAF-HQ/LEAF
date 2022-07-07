@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing, model_selection
+from sklearn import model_selection
 from sklearn.utils import class_weight
 
 from printing_utils import green, blue
@@ -55,7 +55,7 @@ class PreprocessInputsBase():
 
     def Split(self, ratios={'train':0.8, 'validation':0.1, 'test':0.1}):
         weights = pd.DataFrame(self.df.loc[:,self.colname_weights], columns=[self.colname_weights])
-        labels  = self.df.loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x])
+        labels  = pd.DataFrame(self.df.loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x]), columns=[self.colname_category])
         self.df.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
         if np.sum(ratios.values())!= 1:
             raise RuntimeError('Unexpected ratios for train-validation-test splitting.')
@@ -65,9 +65,6 @@ class PreprocessInputsBase():
         self.inputs['train'], self.inputs['test'], self.labels['train'], self.labels['test'], self.weights['train'], self.weights['test'] = model_selection.train_test_split(self.df, labels, weights, train_size=ratios['train'])
         del self.df
         self.inputs['val'], self.inputs['test'], self.labels['val'], self.labels['test'], self.weights['val'], self.weights['test'] = model_selection.train_test_split(self.inputs['test'], self.labels['test'], self.weights['test'], test_size=ratios['test']/(ratios['test'] + ratios['validation']))
-        for mode in ['train', 'val', 'test']:
-            self.labels[mode] = self.labels[mode].to_numpy().reshape(len(self.labels[mode]), 1)
-            self.labels[mode] = preprocessing.OneHotEncoder(sparse=False).fit_transform(self.labels[mode])
 
     def FitScalers(self):
         self.scalers = {}
@@ -84,9 +81,9 @@ class PreprocessInputsBase():
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
-            SavePandas(self.inputs[mode],  os.path.join(outdir, 'input_%s_%s.%s'   %(mode,frac,format)))
-            SaveNumpy(self.labels[mode],   os.path.join(outdir, 'label_%s_%s.npy'   %(mode,frac)))
+            SavePandas(self.inputs[mode],  os.path.join(outdir, 'inputs_%s_%s.%s'  %(mode,frac,format)))
             SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.%s' %(mode,frac,format)))
+            SavePandas(self.labels[mode],  os.path.join(outdir, 'labels_%s_%s.%s'  %(mode,frac,format)))
 
     def Save(self):
         self.SaveBase()

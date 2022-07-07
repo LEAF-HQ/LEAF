@@ -32,7 +32,7 @@ class PlotterBase():
     def DefineStylePerVariable(self):
         self.stylePerVariable = {}
 
-    def PlotSingleVariable(self, dfs, style, variable_name, outdir, ylabel='Number of events / bin', yscale='log'):
+    def PlotSingleVariable(self, dfs, weights, labels, style, variable_name, outdir, ylabel='Number of events / bin', yscale='log'):
         plt.clf()
         fig = plt.figure()
         classes = list(set(self.classes.values()))
@@ -50,8 +50,10 @@ class PlotterBase():
                 style_thisclass.update({'label': label+': '+name,
                                         'linestyle':'dashed' if 'val' in name else ('dotted' if 'test' in name else 'solid')}
                                        )
-                mask = df['label']==cl
-                weights_thisclass = df[mask]['weights']
+                mask = labels[name]==cl
+                mask = mask[mask.columns[0]]
+                weights_thisclass = weights[name][mask]
+                weights_thisclass = weights_thisclass[weights_thisclass.columns[0]]
                 df_thisclass = df[mask][variable_name]
                 plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
 
@@ -64,13 +66,13 @@ class PlotterBase():
         plt.close()
 
 
-    def PlotROCSingleVariable(self, df, variable_name, outdir):
+    def PlotROCSingleVariable(self, df, weights, labels, variable_name, outdir, is_standardized=True):
         style_per_class = self.DefineStyle()
-        FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=df['label'], weights=df['weights'])
+        FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df[variable_name], labels=labels, weights=weights, is_standardized=is_standardized)
         rocs = OrderedDict()
         purities = OrderedDict()
         purities_vs_score = OrderedDict()
-        for i in sorted(df['label'].unique()):
+        for i in sorted(labels[labels.columns[0]].unique()):
             g_roc = list_to_tgraph(TruePositiveRates[i], FalsePositiveRates[i])
             g_pur = list_to_tgraph(TruePositiveRates[i], SignalPuritys[i])
             g_pur_vs_score = list_to_tgraph(Thresholds[i], SignalPuritys[i])
@@ -87,14 +89,14 @@ class PlotterBase():
         plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_%s'%(variable_name)), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
 
 
-    def PlotROCSummary(self, df, outdir, score_basename='score'):
+    def PlotROCSummary(self, df, weights, labels, outdir, score_basename='score', is_standardized=True):
         # for each class in df, use >> 'score_%i' % (cl) << to plot the "optimal" ROC curves for each node in the same plot
         style_per_class = self.DefineStyle()
         rocs = OrderedDict()
         purities = OrderedDict()
         purities_vs_score = OrderedDict()
-        for i in sorted(df['label'].unique()):
-            FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df['%s_%i'%(score_basename, i)], labels=df['label'], weights=df['weights'])
+        for i in sorted(labels[labels.columns[0]].unique()):
+            FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys = get_fpr_tpr_thr_auc(score=df['%s_%i'%(score_basename, i)], labels=labels, weights=weights, is_standardized=is_standardized)
 
             g_roc = list_to_tgraph(TruePositiveRates[i], FalsePositiveRates[i])
             g_pur = list_to_tgraph(TruePositiveRates[i], SignalPuritys[i])
@@ -111,11 +113,10 @@ class PlotterBase():
         plot_rocs(rocs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_summary'), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', logy=False)
 
 
-    def PlotDF(self, dfs, outdir):
+    def PlotDF(self, dfs, weights, labels, outdir):
         print(blue('--> Plotting dataframe'))
         self.DefineCommonStyle()
         self.DefineStylePerVariable()
         for variable_name in tqdm.tqdm(dfs[dfs.keys()[0]].columns, desc="Plots done"):
-            if 'label' in variable_name: continue
-            self.PlotSingleVariable(dfs=dfs, style=self.DefineStyle(), variable_name=variable_name, outdir=outdir)
+            self.PlotSingleVariable(dfs=dfs, weights=weights, labels=labels, style=self.DefineStyle(), variable_name=variable_name, outdir=outdir)
         print(green('--> Plotted dataframe'))
