@@ -11,6 +11,8 @@ from sklearn.utils.multiclass import type_of_target
 from sklearn.model_selection import train_test_split
 import ROOT as rt
 from array import array
+from yaml import safe_load
+import json
 
 def float_to_str(f):
     s = '%1.2f' % f
@@ -52,6 +54,29 @@ def parameters_to_tag(parameters):
         else:
             tag += '%s_%s__' % (key, val)
     return tag.strip('_').replace('.', 'p')
+
+def get_encoded_modeltag(file_to_search, tag):
+    create_from_scratch = True
+    if os.path.exists(file_to_search):
+        with open(file_to_search, 'r') as j:
+            dict_in_json = safe_load(j)
+        if dict_in_json is not None and tag in dict_in_json:
+            create_from_scratch = False
+            return dict_in_json[tag]
+        elif dict_in_json is not None:
+            last_existing_code = int(dict_in_json.values()[-1])
+            new_code = '%3i' % (last_existing_code + 1)
+            dict_in_json.update({tag, new_code})
+            with open(file_to_search, 'w') as j:
+                json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
+            create_from_scratch = False
+            return new_code
+
+    if create_from_scratch: # create the file
+        with open(file_to_search, 'w') as j:
+            dict_in_json = {tag: '001'}
+            json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
+        return '001'
 
 def list_to_tgraph(x, y):
     # x and y must be iterables (tuples, lists, ...) of equal length or an np.ndarray
