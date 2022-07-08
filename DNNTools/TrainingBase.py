@@ -28,7 +28,7 @@ class TrainingBase():
         raise NotImplementedError('MakeModel method is not initialized. Fix this.')
 
     def FitModel(self):
-        print(green('Training'))
+        print(green('--> Training'))
         info = {
             'batch_size': self.DNNparams['batch_size'],
             'epochs': self.DNNparams['epochs'],
@@ -38,9 +38,8 @@ class TrainingBase():
         }
 
         if self.do_weights:
-            info['sample_weight'] = self.weights['train']
-            info['validation_data'] = (self.inputs['val'], self.labels['val'], self.weights['val'])
-
+            info['sample_weight'] = self.weights['train'].to_numpy().flatten()
+            info['validation_data'] = (self.inputs['val'], self.labels['val'], self.weights['val'].to_numpy().flatten())
 
         if self.isFitGenerator:
             self.model.fit_generator(generator=self.training_gen, validation_data=self.validation_gen, max_queue_size=10, use_multiprocessing=True, workers=10, epochs=self.params['epochs'], verbose=1, callbacks=self.callbacks)
@@ -78,7 +77,6 @@ class TrainingBase():
         self.model = load_model(os.path.join(self.modelpath, '%s.h5' % (modelname)))
 
     def Train(self):
-        self.LoadInputs()
         self.DefineCallbacks()
         self.MakeModel()
         history = self.FitModel()

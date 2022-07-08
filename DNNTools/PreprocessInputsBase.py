@@ -89,7 +89,7 @@ class PreprocessInputsBase():
         self.SaveBase()
 
     def Process(self):
-        self.GetInputs()
+        self.GetInputs(format='pkl')
         self.RemoveNanInf(df=self.df)
         self.SampleEvents(fraction=self.runonfraction)
         self.Split()
