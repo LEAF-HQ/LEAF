@@ -39,7 +39,6 @@ class PreprocessInputsBase():
         self.df = pd.concat(inputs, ignore_index=True)
         del inputs
         self.df.rename(lambda x: x[0] if isinstance(x, tuple) else x , axis='columns', inplace=True)
-        print self.df[['category']]
         print(blue('Collected events: '+str(len(self.df))))
 
     def RemoveNanInf(self, df):
@@ -56,8 +55,6 @@ class PreprocessInputsBase():
 
     def Split(self, ratios={'train':0.8, 'validation':0.1, 'test':0.1}):
         weights = pd.DataFrame(self.df.loc[:,self.colname_weights], columns=[self.colname_weights])
-        print self.DefineClasses()
-        print self.df[[self.colname_category]]
         labels  = pd.DataFrame(self.df.loc[:,self.colname_category].apply(lambda x: self.DefineClasses()[x]), columns=[self.colname_category])
         self.df.drop(columns=[self.colname_weights, self.colname_category], inplace=True)
         if np.sum(ratios.values())!= 1:
