@@ -56,8 +56,7 @@ class PlotterBase():
                 weights_thisclass = weights_thisclass[weights_thisclass.columns[0]]
                 df_thisclass = df[mask][variable_name]
                 if normalize_all:
-                    sumweights_thisclass = weights_thisclass.sum()
-                    weights_thisclass *= 1./sumweights_thisclass
+                    weights_thisclass *= 1./weights_thisclass.sum()
                 plt.hist(df_thisclass, weights=weights_thisclass, range=(hist_min, hist_max), **style_thisclass)
 
         ncol = len(classes) if len(dfs.items()) > 1 else 1
