@@ -64,9 +64,8 @@ def get_encoded_modeltag(file_to_search, tag):
             create_from_scratch = False
             return dict_in_json[tag]
         elif dict_in_json is not None:
-            last_existing_code = int(dict_in_json.values()[-1])
-            new_code = '%3i' % (last_existing_code + 1)
-            dict_in_json.update({tag, new_code})
+            new_code = str(int(dict_in_json.values()[-1]) + 1).zfill(3)
+            dict_in_json.update({tag: new_code})
             with open(file_to_search, 'w') as j:
                 json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
             create_from_scratch = False
@@ -99,7 +98,7 @@ def list_to_tgraph(x, y):
 
     return g
 
-def get_fpr_tpr_thr_auc(score, labels, weights,is_standardized=False):
+def get_fpr_tpr_thr_auc(score, labels, weights, is_standardized=False, keep_only_every=1):
 
     FalsePositiveRates = {}
     TruePositiveRates = {}
@@ -108,7 +107,7 @@ def get_fpr_tpr_thr_auc(score, labels, weights,is_standardized=False):
     aucs = {}
 
     for i in labels[labels.columns[0]].unique():
-        fpr, tpr, thr, pur = roc_curve_and_purity(y_true=labels, y_score=score, sample_weight=weights, pos_label=i)
+        fpr, tpr, thr, pur = roc_curve_and_purity(y_true=labels, y_score=score, sample_weight=weights, pos_label=i, keep_only_every=keep_only_every)
 
         # FalsePositiveRates[i], TruePositiveRates[i], Thresholds[i], SignalPuritys[i] = roc_curve_and_purity(y_true=labels, y_score=score, sample_weight=weights, pos_label=i)
         # aucs[i] = np.trapz(TruePositiveRates[i], FalsePositiveRates[i])
@@ -130,7 +129,7 @@ def get_fpr_tpr_thr_auc(score, labels, weights,is_standardized=False):
 
     return (FalsePositiveRates, TruePositiveRates, Thresholds, aucs, SignalPuritys)
 
-def roc_curve_and_purity(y_true, y_score, pos_label=None, sample_weight=None, drop_intermediate=True):
+def roc_curve_and_purity(y_true, y_score, pos_label=None, sample_weight=None, drop_intermediate=True, keep_only_every=1):
     # Copied from https://github.com/scikit-learn/scikit-learn/blob/7389dba/sklearn/metrics/ranking.py#L535
     # Extended by purity-part
 
@@ -140,6 +139,15 @@ def roc_curve_and_purity(y_true, y_score, pos_label=None, sample_weight=None, dr
         fps = fps[optimal_idxs]
         tps = tps[optimal_idxs]
         thresholds = thresholds[optimal_idxs]
+        reduced_idxs = range(len(thresholds))[0::keep_only_every]
+        if not len(thresholds)-1 == reduced_idxs[-1]:
+            reduced_idxs.append(len(thresholds)-1)
+        fps = fps[reduced_idxs]
+        tps = tps[reduced_idxs]
+        thresholds = thresholds[reduced_idxs]
+
+
+
 
     if tps.size == 0 or fps[0] != 0 or tps[0] != 0:
         tps = np.r_[0, tps]

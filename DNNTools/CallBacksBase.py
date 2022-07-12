@@ -1,6 +1,6 @@
 import os
 from keras.callbacks import History, ModelCheckpoint, ReduceLROnPlateau, Callback
-from PlottingFunctions import plot_losses, plot_rocs
+from PlottingFunctions import plot_losses
 
 class PlotOnTrainingBase(Callback):
     def __init__(self, modelPath, eachEpoch=False):

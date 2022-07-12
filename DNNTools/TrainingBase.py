@@ -5,7 +5,7 @@ from keras.models import model_from_json, load_model
 from keras.utils import to_categorical, plot_model
 from CallBacksBase import DefineCallbacksBase
 from functions_dnn import classes_to_str, float_to_str
-from printing_utils import green
+from printing_utils import green, blue
 from utils import ensureDirectory
 
 class TrainingBase():
@@ -58,9 +58,11 @@ class TrainingBase():
             raise ArgumentError('Invalid arguments passed to TrainingBase.Predict().')
 
         self.predictions = {}
-        if not hasattr(self, 'model'):
-            self.LoadModel(modelname=modelname)
+        # if not hasattr(self, 'model'):
+        # load model, even if it already exists. This makes sure we are always using the intended one specified by <modelname>
+        self.LoadModel(modelname=modelname)
         for mode in ['train','val','test']:
+            print(blue('  --> Making predictions[%s]' % (mode)))
             self.predictions[mode] = pd.DataFrame(self.model.predict(self.inputs[mode]), index=self.inputs[mode].index, columns=column_names)
 
     def SavePredictions(self):
@@ -74,6 +76,7 @@ class TrainingBase():
             f.write(json.dumps(self.DNNparams))
 
     def LoadModel(self, modelname='finalmodel'):
+        print(blue('  --> Loading model %s' % (modelname)))
         self.model = load_model(os.path.join(self.modelpath, '%s.h5' % (modelname)))
 
     def Train(self):
