@@ -81,9 +81,9 @@ class PreprocessInputsBase():
         frac = float_to_str(self.runonfraction)
         outdir = os.path.join(self.outdir, classes_to_str(self.DefineClasses()))
         for mode in ['train', 'val', 'test']:
-            SavePandas(self.inputs[mode],  os.path.join(outdir, 'inputs_%s_%s.%s'  %(mode,frac,format)))
-            SavePandas(self.weights[mode], os.path.join(outdir, 'weights_%s_%s.%s' %(mode,frac,format)))
-            SavePandas(self.labels[mode],  os.path.join(outdir, 'labels_%s_%s.%s'  %(mode,frac,format)))
+            SavePandas(self.inputs[mode].astype('float32'),  os.path.join(outdir, 'inputs_%s_%s.%s'  %(mode,frac,format)))
+            SavePandas(self.weights[mode].astype('float32'), os.path.join(outdir, 'weights_%s_%s.%s' %(mode,frac,format)))
+            SavePandas(self.labels[mode].astype('int8'),  os.path.join(outdir, 'labels_%s_%s.%s'  %(mode,frac,format)))
 
     def Save(self):
         self.SaveBase()

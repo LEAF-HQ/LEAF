@@ -57,10 +57,7 @@ def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv'
         if format=='npy':
             obj[mode] = LoadNumpy(fname)
         elif format == 'pkl' or format == 'csv':
-            if basename!='labels':
-                obj[mode] = LoadPandas(fname, dtype='float32')
-            else:
-                obj[mode] = LoadPandas(fname)
+            obj[mode] = LoadPandas(fname, dtype='float32')
         else:
             raise AttributeError('Trying to load an object in an unsupported format.')
     return obj

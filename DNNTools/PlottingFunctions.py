@@ -35,28 +35,30 @@ def plot_losses(history, mode='loss', name='history', min_epoch=0, dynamic=True,
     canv.Close()
 
 
-def plot_rocs(rocs={}, name='ROCs', x_title='Signal efficiency', y_title='Background efficiency', logy=True, writeExtraText = True, extraText  = 'Simulation', extraText2 = 'Work in progress', lumi_text=''):
+def plot_graphs(graphs={}, name='ROCs', x_title='Signal efficiency', y_title='Background efficiency', x_range=(-0.1, 1.1), y_range=(1e-04, 1.2), logy=True, writeExtraText = True, extraText  = 'Simulation', extraText2 = 'Work in progress', lumi_text=''):
     TDR.writeExtraText = writeExtraText
     TDR.extraText = extraText
     TDR.extraText2 = extraText2
     TDR.cms_lumi_TeV = lumi_text
 
+    canv = tdrCanvas('graphs', x_range[0], x_range[1], y_range[0], y_range[1], x_title, y_title, kSquare)
+
     if logy:
-        canv = tdrCanvas('ROCs', -0.1, 1.1, 1e-04, 1.2, x_title, y_title, kSquare)
+        # canv = tdrCanvas('ROCs', -0.1, 1.1, 1e-04, 1.2, x_title, y_title, kSquare)
         leg = tdrLeg(0.30, 0.2, 0.95, 0.45, 0.035, 42, rt.kBlack)
     else:
-        canv = tdrCanvas('ROCs', -0.1, 1.1, 0, 1.5, x_title, y_title, kSquare)
+        # canv = tdrCanvas('ROCs', -0.1, 1.1, 0, 1.5, x_title, y_title, kSquare)
         leg = tdrLeg(0.45, 0.65, 0.95, 0.9, 0.035, 42, rt.kBlack)
     canv.SetLogy(logy)
-    for roc, info in rocs.items():
+    for graph, info in graphs.items():
         color = info['color']
-        roc.SetLineWidth(2)
-        tdrDraw(roc, 'L', mcolor=color, lcolor=color)
+        graph.SetLineWidth(2)
+        tdrDraw(graph, 'L', mcolor=color, lcolor=color)
         if not 'auc' in info:
             legstring = info['legendtext']
         else:
             legstring = '%s, AUC: %1.3f' % (info['legendtext'], info['auc'])
-        leg.AddEntry(roc, legstring, 'l')
+        leg.AddEntry(graph, legstring, 'l')
     canv.SaveAs(name+'.pdf')
     canv.Close()
 
