@@ -7,9 +7,10 @@ from functions_dnn import float_to_str, classes_to_str
 from DNNutils import LoadObjects
 
 class DNNRunnerBase:
-    def __init__(self, dnnparameters, samples):
+    def __init__(self, dnnparameters, samples, dtype='float32'):
         self.dnnparameters = dnnparameters
         self.samples = samples
+        self.dtype = dtype
 
     def DefinePathsBase(self, **kwargs):
         self.filepath = {}
@@ -45,12 +46,12 @@ class DNNRunnerBase:
         frac = float_to_str(self.dnnparameters['runonfraction'])
         if not hasattr(self, object_name):
             print(blue('  --> %s is missing: loading...' %(object_name)))
-            setattr(self, object_name, LoadObjects(inputdir=inputdir, basename=basename, modes=modes, format=format, frac=frac))
+            setattr(self, object_name, LoadObjects(inputdir=inputdir, basename=basename, modes=modes, format=format, frac=frac, dtype=self.dtype))
         else:
             missing_modes = [m for m in modes if not m in getattr(self, object_name)]
             if len(missing_modes) > 0:
                 print(blue('  --> %s%s is missing: loading...' %(object_name,str(missing_modes))))
-                getattr(self, object_name).update(LoadObjects(inputdir=inputdir, basename=basename, modes=missing_modes, format=format, frac=frac))
+                getattr(self, object_name).update(LoadObjects(inputdir=inputdir, basename=basename, modes=missing_modes, format=format, frac=frac, dtype=self.dtype))
             else:
                 print(blue('  --> %s exists: skipping' %(object_name)))
 

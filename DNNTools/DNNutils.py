@@ -49,7 +49,7 @@ def SaveMPL(obj, fname):
     ensureDirectory(fname[:fname.rfind('/')])
     obj.savefig(fname)
 
-def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00)):
+def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv', frac=float_to_str(1.00), dtype='float32'):
     obj = OrderedDict()
     for mode in modes:
         print(blue('  --> Loading %s[%s]'%(basename,mode)))
@@ -57,7 +57,8 @@ def LoadObjects(inputdir, basename, modes=['train', 'val', 'test'], format='csv'
         if format=='npy':
             obj[mode] = LoadNumpy(fname)
         elif format == 'pkl' or format == 'csv':
-            obj[mode] = LoadPandas(fname, dtype='float32')
+            obj[mode] = LoadPandas(fname, dtype=dtype)
+            print(blue(obj[mode].info()))
         else:
             raise AttributeError('Trying to load an object in an unsupported format.')
     return obj

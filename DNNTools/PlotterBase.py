@@ -135,6 +135,7 @@ class PlotterBase():
         plot_graphs(graphs=purities, name=os.path.join(outdir, 'EfficiencyVsPurity_summary'), x_title='Selection efficiency', y_title='Signal purity S/(S+B)', x_range=(-0.1, 1.1), y_range=(0, 1.5), logy=False)
         plot_graphs(graphs=purities_vs_score, name=os.path.join(outdir, 'ScoreVsPurity_summary'), x_title='Lower cut on DNN score', y_title='Signal purity S/(S+B)', x_range=(-0.1, 1.1), y_range=(0, 1.5), logy=False)
         plot_graphs(graphs=pur_improvements_vs_score, name=os.path.join(outdir, 'ImprovementVsPurity_summary'), x_title='Lower cut on DNN score', y_title='Improvement in S/(S+B)', x_range=(-0.1, 1.1), y_range=(0.1, 100.), logy=True)
+        return rocs
 
 
     def PlotDF(self, dfs, weights, labels, outdir, ylabel='Number of events / bin', yscale='log', normalize_all=False):
