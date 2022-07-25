@@ -28,9 +28,11 @@ def LoadPandas(fname, dtype=None):
     if fname.endswith('.pkl'):
         result = pd.read_pickle(fname)
     elif fname.endswith('.csv'):
-        result = pd.read_csv(fname)
         if dtype:
-            result = result.astype(dtype)
+            columns = dict.fromkeys(pd.read_csv(fname, nrows=1).columns.to_list(), dtype)
+            result = pd.read_csv(fname, dtype=columns)
+        else:
+            result = pd.read_csv(fname)
     else:
         raise AttributeError('Trying to load a dataframe in an unsupported format.')
     return result
