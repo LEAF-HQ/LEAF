@@ -17,7 +17,7 @@ def plot_losses(history, mode='loss', name='history', min_epoch=0, dynamic=True,
         ranges = np.array(history[mode]+history['val_'+mode])
         ranges = (ranges.min()*0.9, ranges.max()*1.1)
     else:
-        ranges = (0, 3 if isLoss else 1.05)
+        ranges = (1E-5, 3 if isLoss else 1.05)
     x,y,g = ({},{},{})
     modes = [mode,'val_'+mode]
     for m in modes:
@@ -32,6 +32,8 @@ def plot_losses(history, mode='loss', name='history', min_epoch=0, dynamic=True,
         tdrDraw(g[m], 'L', mcolor=color, lcolor=color)
         leg.AddEntry(g[m], 'Training set' if m == mode else 'Validation set' , 'l')
     canv.SaveAs(name+'.pdf')
+    canv.SetLogy(1)
+    canv.SaveAs(name+'_logy.pdf')
     canv.Close()
 
 

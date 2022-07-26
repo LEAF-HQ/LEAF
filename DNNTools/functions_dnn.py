@@ -64,7 +64,7 @@ def get_encoded_modeltag(file_to_search, tag):
             create_from_scratch = False
             return dict_in_json[tag]
         elif dict_in_json is not None:
-            new_code = str(int(dict_in_json.values()[-1]) + 1).zfill(3)
+            new_code = str(int(sorted(dict_in_json.values())[-1]) + 1).zfill(3)
             dict_in_json.update({tag: new_code})
             with open(file_to_search, 'w') as j:
                 json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
