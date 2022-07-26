@@ -1,6 +1,8 @@
 <use name="root"/>
 <use name="libxml2"/>
 <use name="lhapdf"/>
+<use name="tensorflow"/>
+
 <use name="FWCore/Framework"/>
 <use name="FWCore/Common"/>
 <use name="FWCore/MessageLogger"/>
@@ -13,6 +15,7 @@
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="PhysicsTools/HepMCCandAlgos"/>
 <use name="PhysicsTools/JetMCUtils"/>
+<use name="PhysicsTools/TensorFlow"/>
 
 <use name="MagneticField/Records"/>
 <use name="MagneticField/VolumeBasedEngine"/>
