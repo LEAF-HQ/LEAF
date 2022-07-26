@@ -1,5 +1,6 @@
 #include "LEAF/Analyzer/include/JetIds.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
+#include "LEAF/Analyzer/include/GenLevelUtils.h"
 
 using namespace std;
 
@@ -64,6 +65,18 @@ bool JetLeptonOverlapID::operator()(const Jet & jet, const RecoEvent & ev) const
   }
   for(size_t i=0; i<ev.muons->size(); i++){
     if(deltaR(jet, ev.muons->at(i)) < m_dr) return false;
+  }
+
+  return true;
+}
+
+
+GenJetLeptonOverlapID::GenJetLeptonOverlapID(double dr_) : m_dr(dr_){}
+
+bool GenJetLeptonOverlapID::operator()(const GenJet & jet, const GenEvent & ev) const{
+  for(const GenParticle& part: *ev.genparticles_pruned){
+    if (! isLeptonic(part.pdgid())) continue;
+    if(deltaR(jet, part) < m_dr) return false;
   }
 
   return true;

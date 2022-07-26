@@ -50,3 +50,11 @@ public:
 private:
   double m_dr;
 };
+
+class GenJetLeptonOverlapID {
+public:
+  explicit GenJetLeptonOverlapID(double dr);
+  bool operator()(const GenJet&, const GenEvent&) const;
+private:
+  double m_dr;
+};

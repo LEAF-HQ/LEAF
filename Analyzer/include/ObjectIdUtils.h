@@ -25,6 +25,22 @@ private:
     std::vector<ID<T>> ids;
 };
 
+template <typename T>
+class MultiGenID{
+
+public:
+    MultiGenID(std::initializer_list<GenID<T>> ids_) : ids(ids_){}
+    bool operator()(const T & obj, const GenEvent & event) const {
+        for(const GenID<T> & id : ids){
+            if(!id(obj, event)) return false;
+        }
+        return true;
+    }
+
+private:
+    std::vector<GenID<T>> ids;
+};
+
 
 class PtEtaId{
 public:
