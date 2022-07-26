@@ -20,7 +20,7 @@ JetPUID::JetPUID(wp wp_) : m_wp(wp_){}
 
 bool JetPUID::operator()(const Jet & jet, const RecoEvent & ev) const{
   bool pass = false;
-  if(jet.pt() > 30 && jet.pt() < 50){
+  if(jet.pt() < 50){
     if(m_wp == JetPUID::WP_TIGHT){
       pass = (jet.pu_id() >= 7);
     }
