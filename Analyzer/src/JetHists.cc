@@ -23,9 +23,9 @@ using namespace std;
 JetHists::JetHists(TString dir_) : BaseHists(dir_){
 
   hnjets = book<TH1D>("njets", ";N_{jets}; Events / bin", 11, -0.5, 10.5);
-  hndeepbloose = book<TH1D>("hndeepbloose", ";N_{b-tags}^{DeepCSV loose}; Events / bin", 11, -0.5, 10.5);
-  hndeepbmedium = book<TH1D>("hndeepbmedium", ";N_{b-tags}^{DeepCSV medium}; Events / bin", 11, -0.5, 10.5);
-  hndeepbtight = book<TH1D>("hndeepbtight", ";N_{b-tags}^{DeepCSV tight}; Events / bin", 11, -0.5, 10.5);
+  hndeepbloose = book<TH1D>("hndeepbloose", ";N_{b-tags}^{DeepJet loose}; Events / bin", 11, -0.5, 10.5);
+  hndeepbmedium = book<TH1D>("hndeepbmedium", ";N_{b-tags}^{DeepJet medium}; Events / bin", 11, -0.5, 10.5);
+  hndeepbtight = book<TH1D>("hndeepbtight", ";N_{b-tags}^{DeepJet tight}; Events / bin", 11, -0.5, 10.5);
   hjetpt = book<TH1D>("jetpt", ";p_{T}^{jets} [GeV]; Events / bin", 50, 0, 1500);
   hjeteta = book<TH1D>("jeteta", ";#eta^{jets};Events / bin", 100, -5., 5.);
   hjetphi = book<TH1D>("jetphi", ";#phi^{jets};Events / bin", 70, -3.5, 3.5);
@@ -148,9 +148,9 @@ void JetHists::fill(const RecoEvent & event){
     for(size_t k=0; k<event.taus->size(); k++){
       dRmin_tau = min(dRmin_tau, deltaR(j, event.taus->at(k)));
     }
-    ID<Jet> deepb_loose = JetBTag(JetBTag::DeepCSV_Loose);
-    ID<Jet> deepb_medium = JetBTag(JetBTag::DeepCSV_Medium);
-    ID<Jet> deepb_tight = JetBTag(JetBTag::DeepCSV_Tight);
+    ID<Jet> deepb_loose = JetBTag(JetBTag::DeepJet_Loose);
+    ID<Jet> deepb_medium = JetBTag(JetBTag::DeepJet_Medium);
+    ID<Jet> deepb_tight = JetBTag(JetBTag::DeepJet_Tight);
     if(deepb_loose(j, event)) ndeepbloose++;
     if(deepb_medium(j, event)) ndeepbmedium++;
     if(deepb_tight(j, event)) ndeepbtight++;
@@ -162,7 +162,7 @@ void JetHists::fill(const RecoEvent & event){
     hjetenergy->Fill(j.e(), weight);
     hjethadronflavor->Fill(j.hadron_flavor(), weight);
     hjetpartonflavor->Fill(j.parton_flavor(), weight);
-    hjetdeepb->Fill(j.score_DeepB(), weight);
+    hjetdeepb->Fill(j.score_DeepFlavB(), weight);
     hjetdrminele->Fill(dRmin_ele, weight);
     hjetdrminmuon->Fill(dRmin_muon, weight);
     hjetdrmintau->Fill(dRmin_tau, weight);
@@ -175,7 +175,7 @@ void JetHists::fill(const RecoEvent & event){
       hjet1energy->Fill(j.e(), weight);
       hjet1hadronflavor->Fill(j.hadron_flavor(), weight);
       hjet1partonflavor->Fill(j.parton_flavor(), weight);
-      hjet1deepb->Fill(j.score_DeepB(), weight);
+      hjet1deepb->Fill(j.score_DeepFlavB(), weight);
       hjet1drminele->Fill(dRmin_ele, weight);
       hjet1drminmuon->Fill(dRmin_muon, weight);
       hjet1drmintau->Fill(dRmin_tau, weight);
@@ -188,7 +188,7 @@ void JetHists::fill(const RecoEvent & event){
       hjet2energy->Fill(j.e(), weight);
       hjet2hadronflavor->Fill(j.hadron_flavor(), weight);
       hjet2partonflavor->Fill(j.parton_flavor(), weight);
-      hjet2deepb->Fill(j.score_DeepB(), weight);
+      hjet2deepb->Fill(j.score_DeepFlavB(), weight);
       hjet2drminele->Fill(dRmin_ele, weight);
       hjet2drminmuon->Fill(dRmin_muon, weight);
       hjet2drmintau->Fill(dRmin_tau, weight);
@@ -201,7 +201,7 @@ void JetHists::fill(const RecoEvent & event){
       hjet3energy->Fill(j.e(), weight);
       hjet3hadronflavor->Fill(j.hadron_flavor(), weight);
       hjet3partonflavor->Fill(j.parton_flavor(), weight);
-      hjet3deepb->Fill(j.score_DeepB(), weight);
+      hjet3deepb->Fill(j.score_DeepFlavB(), weight);
       hjet3drminele->Fill(dRmin_ele, weight);
       hjet3drminmuon->Fill(dRmin_muon, weight);
       hjet3drmintau->Fill(dRmin_tau, weight);
@@ -214,7 +214,7 @@ void JetHists::fill(const RecoEvent & event){
       hjet4energy->Fill(j.e(), weight);
       hjet4hadronflavor->Fill(j.hadron_flavor(), weight);
       hjet4partonflavor->Fill(j.parton_flavor(), weight);
-      hjet4deepb->Fill(j.score_DeepB(), weight);
+      hjet4deepb->Fill(j.score_DeepFlavB(), weight);
       hjet4drminele->Fill(dRmin_ele, weight);
       hjet4drminmuon->Fill(dRmin_muon, weight);
       hjet4drmintau->Fill(dRmin_tau, weight);
@@ -227,7 +227,7 @@ void JetHists::fill(const RecoEvent & event){
       hjet5energy->Fill(j.e(), weight);
       hjet5hadronflavor->Fill(j.hadron_flavor(), weight);
       hjet5partonflavor->Fill(j.parton_flavor(), weight);
-      hjet5deepb->Fill(j.score_DeepB(), weight);
+      hjet5deepb->Fill(j.score_DeepFlavB(), weight);
       hjet5drminele->Fill(dRmin_ele, weight);
       hjet5drminmuon->Fill(dRmin_muon, weight);
       hjet5drmintau->Fill(dRmin_tau, weight);

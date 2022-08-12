@@ -27,7 +27,7 @@ private:
 
 class JetBTag {
 public:
-  enum wp {DeepCSV_Loose, DeepCSV_Medium, DeepCSV_Tight};
+  enum wp {DeepJet_Loose=0, DeepJet_Medium=1, DeepJet_Tight=2}; // needs to be in sync with BTagCalibrationStandalone.h's "enum OperatingPoint", so hard-code enums to be sure
   explicit JetBTag(wp working_point);
   bool operator()(const Jet&, const RecoEvent&) const;
   int get_wp(){return (int)m_wp;};

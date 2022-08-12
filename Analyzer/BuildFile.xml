@@ -44,6 +44,7 @@
 <use name="CondFormats/JetMETObjects"/>
 
 <use name="JetMETCorrections/Modules"/>
+<lib name="correctionlib"/>
 
 <export>
     <lib name="1" />

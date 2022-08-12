@@ -102,10 +102,6 @@ process.options = cms.untracked.PSet(
 
 is_mc = (type == 'MC')
 
-metfilterstep = 'PAT'
-if not is_mc:
-    metfilterstep = 'RECO'
-
 process.ntuplizer = cms.EDFilter('NTuplizer',
     muons             = cms.InputTag('slimmedMuons'),
     jets_ak4chs       = cms.InputTag('slimmedJets'),
@@ -114,7 +110,8 @@ process.ntuplizer = cms.EDFilter('NTuplizer',
     electrons         = cms.InputTag('slimmedElectrons'),
     taus              = cms.InputTag('slimmedTaus'),
     hltresults        = cms.InputTag('TriggerResults', '', 'HLT'),
-    metfilterresults  = cms.InputTag('TriggerResults', '', metfilterstep),
+    metfilterresults_reco  = cms.InputTag('TriggerResults', '', 'RECO'),
+    metfilterresults_pat   = cms.InputTag('TriggerResults', '', 'PAT'),
     triggerobjects    = cms.InputTag('slimmedPatTrigger'),
     pfcands           = cms.InputTag('packedPFCandidates'),
     primary_vertices  = cms.InputTag('offlineSlimmedPrimaryVertices'),
