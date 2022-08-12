@@ -158,7 +158,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer(),
+        'xsecs':             YearDependentContainer({'UL17': 0.026210 * 1.21}),
         'nevents_das':       YearDependentContainer({'UL17': 1185699}),
         'nevents_generated': YearDependentContainer({'UL17': 1185699.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 1185699.0}),
