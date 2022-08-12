@@ -8,12 +8,14 @@ using namespace std;
 // list of filters from here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
 METFilterSelection::METFilterSelection(const Config & cfg, TString year){
 
+  // TODO: add this flag back in (all years) once re-ntuplizing the data: "Flag_BadPFMuonDzFilter"
+
   // define filters to be applied
   if(year == "UL17" || year == "UL18"){
-    metfilternames = {"Flag_goodVertices", "Flag_globalSuperTightHalo2016Filter", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter", "Flag_BadPFMuonDzFilter", "Flag_eeBadScFilter", "Flag_ecalBadCalibFilter"};
+    metfilternames = {"Flag_goodVertices", "Flag_globalSuperTightHalo2016Filter", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter", "Flag_eeBadScFilter", "Flag_ecalBadCalibFilter"};
   }
   else if(year.Contains("UL16")){
-    metfilternames = {"Flag_goodVertices", "Flag_globalSuperTightHalo2016Filter", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter", "Flag_BadPFMuonDzFilter", "Flag_eeBadScFilter"};
+    metfilternames = {"Flag_goodVertices", "Flag_globalSuperTightHalo2016Filter", "Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter", "EcalDeadCellTriggerPrimitiveFilter", "Flag_BadPFMuonFilter", "Flag_eeBadScFilter"};
   }
   else throw runtime_error("In METFilterSelection::METFilterSelection(): Invalid year specified in constructor.");
 
@@ -30,7 +32,9 @@ METFilterSelection::METFilterSelection(const Config & cfg, TString year){
 bool METFilterSelection::passes(RecoEvent & event){
 
   for(size_t i=0; i<flag_selections.size(); i++){
-    if(!flag_selections[i]->passes(event)) return false;
+    if(!flag_selections[i]->passes(event)){
+      return false;
+    }
   }
 
   return true;

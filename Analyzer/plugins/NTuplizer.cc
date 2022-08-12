@@ -96,7 +96,7 @@ private:
   edm::EDGetTokenT<std::vector<reco::Vertex>>      token_primary_vertices;
   edm::EDGetTokenT<double>                         token_rho, token_l1prefiring, token_l1prefiring_up, token_l1prefiring_down;
   edm::EDGetTokenT<edm::TriggerResults>            token_hltresults;
-  edm::EDGetTokenT<edm::TriggerResults>            token_metfilterresults;
+  edm::EDGetTokenT<edm::TriggerResults>            token_metfilterresults_reco, token_metfilterresults_pat;
   edm::EDGetTokenT<std::vector<pat::TriggerObjectStandAlone>> token_triggerobjects;
   edm::EDGetTokenT<std::vector<pat::PackedCandidate>> token_pfcands;
 
@@ -162,7 +162,8 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
     token_l1prefiring_down = consumes<double>                     (iConfig.getParameter<edm::InputTag>("l1prefiring_down"));
   }
   token_hltresults       = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("hltresults"));
-  token_metfilterresults = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("metfilterresults"));
+  token_metfilterresults_reco = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("metfilterresults_reco"));
+  token_metfilterresults_pat = consumes<edm::TriggerResults>        (iConfig.getParameter<edm::InputTag>("metfilterresults_pat"));
   if(do_triggerobjects){
     token_triggerobjects = consumes<std::vector<pat::TriggerObjectStandAlone>> (iConfig.getParameter<edm::InputTag>("triggerobjects"));
   }
@@ -191,8 +192,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   edm::Handle<std::vector<pat::MET>> mets;
   edm::Handle<std::vector<reco::Vertex>> pvs;
   edm::Handle<double> rho, l1prefiring, l1prefiring_up, l1prefiring_down;
-  edm::Handle<edm::TriggerResults> hltresults;
-  edm::Handle<edm::TriggerResults> metfilterresults;
+  edm::Handle<edm::TriggerResults> hltresults, metfilterresults_reco, metfilterresults_pat;
   edm::Handle<std::vector<pat::TriggerObjectStandAlone>> triggerobjects;
   edm::Handle<std::vector<pat::PackedCandidate>> pfcands;
 
@@ -220,8 +220,10 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   }
   iEvent.getByToken(token_hltresults, hltresults);
   const edm::TriggerNames &hltnames = iEvent.triggerNames(*hltresults);
-  iEvent.getByToken(token_metfilterresults, metfilterresults);
-  const edm::TriggerNames &metfilternames = iEvent.triggerNames(*metfilterresults);
+  iEvent.getByToken(token_metfilterresults_reco, metfilterresults_reco);
+  const edm::TriggerNames &metfilternames_reco = iEvent.triggerNames(*metfilterresults_reco);
+  iEvent.getByToken(token_metfilterresults_pat, metfilterresults_pat);
+  const edm::TriggerNames &metfilternames_pat = iEvent.triggerNames(*metfilterresults_pat);
   if(do_triggerobjects){
     iEvent.getByToken(token_triggerobjects, triggerobjects);
   }
@@ -443,9 +445,13 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
     // Do MetfilterFlags
     // =================
-    for(size_t i=0; i<metfilterresults->size(); ++i){
-      event.flags->set(metfilternames.triggerName(i), metfilterresults->accept(i));
-      // std::cout << "trigger name: " << metfilternames.triggerName(i) << ": " << metfilterresults->accept(i) << std::endl;
+    for(size_t i=0; i<metfilterresults_reco->size(); ++i){
+      event.flags->set(metfilternames_reco.triggerName(i), metfilterresults_reco->accept(i));
+      // std::cout << "trigger name: " << metfilternames_reco.triggerName(i) << ": " << metfilterresults_reco->accept(i) << std::endl;
+    }
+    for(size_t i=0; i<metfilterresults_pat->size(); ++i){
+      event.flags->set(metfilternames_pat.triggerName(i), metfilterresults_pat->accept(i));
+      // std::cout << "trigger name: " << metfilternames_pat.triggerName(i) << ": " << metfilterresults_pat->accept(i) << std::endl;
     }
 
 
