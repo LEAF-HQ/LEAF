@@ -11,6 +11,7 @@ export PLOTTERBINPATH=${PLOTTERPATH}/bin
 export GENERATORPATH=${LEAFPATH}/Generator
 export SAMPLESPATH=${LEAFPATH}/Samples
 export TUPLIZERPATH=${LEAFPATH}/Tuplizer
+export CORRECTIONLIBPATH=${ANALYZERPATH}/correctionlib_python2/correctionlib
 
 # Set up correct CMSSW version and scram architecure
 export SCRAM_ARCH=slc7_amd64_gcc700
@@ -23,13 +24,16 @@ cd $LEAFPATH
 # Append path to our own libraries and paths to LD_LIBRARY_PATH and PATH and PYTHONPATH, such that our programs can use them!
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ANALYZERLIBPATH
 export PATH=${PATH}:${ANALYZERBINPATH}:${PLOTTERBINPATH}:${SUBMITTERPATH}
-export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$LEAFPATH
+export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$LEAFPATH:$CORRECTIONLIBPATH/include
 export PYTHONPATH=$PYTHONPATH:${GENERATORPATH}:${LEAFPATH}
+# export PYTHONPATH=/cvmfs/cms.cern.ch/slc7_amd64_gcc700/lcg/root/6.14.09-pafccj6/lib:$PYTHONPATH # needed in very rare cases (conda incarnation of python to make use of GPUs for DNNs, for example)
 
-# LHAPDF
+# LHAPDF and tensorflow
 cd $CMSSW_BASE/src
 export LHAPDFLIB=`scram tool tag lhapdf LIBDIR`
 export LHAPDFINC=`scram tool tag lhapdf INCLUDE`
+export TENSORFLOWLIB=`scram tool tag tensorflow LIBDIR`
+export TENSORFLOWINC=`scram tool tag tensorflow INCLUDE`
 cd $LEAFPATH
 
 # Combine

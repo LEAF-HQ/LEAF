@@ -48,8 +48,15 @@ cd $LEAFPATH/Analyzer
 git clone https://github.com/cms-jet/JECDatabase.git
 git clone https://github.com/cms-jet/JRDatabase.git
 
+# clone correctionlib (needs to be compiled for python2 for now)
+cd $LEAFPATH/Analyzer
+git clone --recursive git@github.com:cms-nanoAOD/correctionlib.git correctionlib_python2
+cd correctionlib_python2
+make PYTHON=python2
+make install
+
 # download Higgs Combine
-cd ../
+cd $LEAFPATH
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
 git fetch origin
@@ -59,7 +66,11 @@ git checkout v8.2.0
 cd $LEAFPATH
 source $PWD/setup.sh
 
+# copy correctionlib library to the CMSSW lib folder
+cp $CORRECTIONLIBPATH/lib/libcorrectionlib.so ${CMSSW_BASE}/lib/${SCRAM_ARCH}
+
 # compile all!
+
 cd $ANALYZERPATH
 make clean
 make
