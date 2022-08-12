@@ -5,16 +5,16 @@ using namespace std;
 BTaggingScaleFactorApplicator::BTaggingScaleFactorApplicator(const Config& cfg, JetBTag::wp wp, const TString & sysType, const std::string & measType_bc, const std::string & measType_udsg) : m_btagid(wp), m_sysType(sysType) {
 
 
-  TString macropath = (TString)getenv("ANALYZERPATH"); // set up by setup.sh
-  TString infilename_mceff = macropath + "/" + cfg.get("BTaggingMCEfficiencies");
+  TString leafpath = (TString)getenv("LEAFPATH"); // set up by setup.sh
+  TString infilename_mceff = leafpath + "/" + cfg.get("BTaggingMCEfficiencies");
   m_f_efficiencies.reset(new TFile(infilename_mceff, "READ"));
   m_eff_b.reset((TH2D*) m_f_efficiencies->Get("b_efficiency"));
   m_eff_c.reset((TH2D*) m_f_efficiencies->Get("c_efficiency"));
   m_eff_udsg.reset((TH2D*) m_f_efficiencies->Get("udsg_efficiency"));
 
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration
-  TString infilename_sfs = macropath + "/" + cfg.get("BTaggingScaleFactors");
-  BTagCalibration calib_data("DeepCSV", (string)infilename_sfs);
+  TString infilename_sfs = leafpath + "/" + cfg.get("BTaggingScaleFactors");
+  BTagCalibration calib_data((string)infilename_sfs);
   BTagEntry::OperatingPoint op = (BTagEntry::OperatingPoint)m_btagid.get_wp();
 
   m_calib_up.reset(new BTagCalibrationReader(op, "up"));
@@ -32,7 +32,6 @@ BTaggingScaleFactorApplicator::BTaggingScaleFactorApplicator(const Config& cfg, 
   m_calib_down->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
 }
 
-// bool BTaggingScaleFactorApplicator::process(RecoEvent & event) {}
 bool BTaggingScaleFactorApplicator::process(RecoEvent & event) {
 
   if(event.is_data) return true;

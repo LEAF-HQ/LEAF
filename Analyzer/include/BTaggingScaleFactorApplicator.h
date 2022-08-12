@@ -17,7 +17,7 @@ class BTagCalibrationReader;  // forward declaration
 
 class BTaggingScaleFactorApplicator: public AnalysisModule<RecoEvent>{
 public:
-  explicit BTaggingScaleFactorApplicator(const Config& cfg, JetBTag::wp wp, const TString & sysType="central", const std::string & measType_bc="mujets", const std::string & measType_udsg="incl");
+  explicit BTaggingScaleFactorApplicator(const Config& cfg, JetBTag::wp wp, const TString & sysType="central", const std::string & measType_bc="comb", const std::string & measType_udsg="incl");
   virtual ~BTaggingScaleFactorApplicator() = default;
   virtual bool process(RecoEvent & event) override;
 
