@@ -4,6 +4,12 @@ from SampleContainer_template import *
 
 def Add_Backgrounds_WJets(SampleContainer):
 
+    """
+    the k-factor of 1.21 is taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+
+    The sample-dependent k-factors are V pt reweighting done in B2G-17-004, numbers taken from table 9 of the corresponding AN: https://cms.cern.ch/iCMS/jsp/db_notes/noteInfo.jsp?cmsnoteid=CMS%20AN-2016/376 .
+    """
+
     type = 'MC'
     name = 'WJetsToLNu_Inclusive'
     storagenames = {
@@ -50,7 +56,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 1255.000000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 1255.000000 * 1.26}),
         'nevents_das':       YearDependentContainer({'UL17': 47424468}),
         'nevents_generated': YearDependentContainer({'UL17': 47424468.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 47424468.0}),
@@ -68,7 +74,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 336.400000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 336.400000 * 1.48}),
         'nevents_das':       YearDependentContainer({'UL17': 42602407}),
         'nevents_generated': YearDependentContainer({'UL17': 42602407.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 42602407.0}),
@@ -86,7 +92,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 45.250000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 45.250000 * 1.26}),
         'nevents_das':       YearDependentContainer({'UL17': 5468473}),
         'nevents_generated': YearDependentContainer({'UL17': 5468473.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 5468473.0}),
@@ -104,7 +110,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 10.990000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 10.990000 * 1.03}),
         'nevents_das':       YearDependentContainer({'UL17': 5545298}),
         'nevents_generated': YearDependentContainer({'UL17': 5545298.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 5545298.0}),
@@ -122,7 +128,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 4.924000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 4.924000 * 1.05}),
         'nevents_das':       YearDependentContainer({'UL17': 5143275}),
         'nevents_generated': YearDependentContainer({'UL17': 5088483.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 5088483.0}),
@@ -140,7 +146,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 1.157000 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 1.157000 * 0.77}),
         'nevents_das':       YearDependentContainer({'UL17': 4955636}),
         'nevents_generated': YearDependentContainer({'UL17': 4955636.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 4955636.0}),
@@ -158,7 +164,7 @@ def Add_Backgrounds_WJets(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'WJets'}),
-        'xsecs':             YearDependentContainer({'UL17': 0.026210 * 1.21}),
+        'xsecs':             YearDependentContainer({'UL17': 0.026210 * 0.77}),
         'nevents_das':       YearDependentContainer({'UL17': 1185699}),
         'nevents_generated': YearDependentContainer({'UL17': 1185699.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 1185699.0}),

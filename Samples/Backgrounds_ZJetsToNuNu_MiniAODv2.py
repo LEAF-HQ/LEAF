@@ -5,6 +5,14 @@ from SampleContainer_template import *
 
 def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
 
+    """
+    the inclusive LO-to-NLO QCD k-factor of 1.23 was taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+
+    !!! instead of that, better use the below, HT-dependent !!!
+
+    The sample-dependent k-factors are V pt reweighting done in B2G-17-004, numbers taken from table 9 of the corresponding AN: https://cms.cern.ch/iCMS/jsp/db_notes/noteInfo.jsp?cmsnoteid=CMS%20AN-2016/376 .
+    """
+
     type = 'MC'
     name = 'ZJetsToNuNu_HT100To200'
     storagenames = {
@@ -15,7 +23,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 265.900000 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 265.900000 * 1.37}),
         'nevents_das':       YearDependentContainer({'UL17': 18983897}),
         'nevents_generated': YearDependentContainer({'UL17': 18983897.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 18983897.0}),
@@ -33,7 +41,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 72.990000 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 72.990000 * 1.52}),
         'nevents_das':       YearDependentContainer({'UL17': 17349597}),
         'nevents_generated': YearDependentContainer({'UL17': 17349597.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 17349597.0}),
@@ -51,7 +59,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 9.937000 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 9.937000 * 1.37}),
         'nevents_das':       YearDependentContainer({'UL17': 13963690}),
         'nevents_generated': YearDependentContainer({'UL17': 13963690.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 13963690.0}),
@@ -69,7 +77,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 2.410000 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 2.410000 * 1.04}),
         'nevents_das':       YearDependentContainer({'UL17': 4418971}),
         'nevents_generated': YearDependentContainer({'UL17': 4418971.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 4418971.0}),
@@ -87,7 +95,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 1.079000 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 1.079000 * 1.14}),
         'nevents_das':       YearDependentContainer({'UL17': 1513585}),
         'nevents_generated': YearDependentContainer({'UL17': 1513585.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 1513585.0}),
@@ -105,7 +113,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 0.252100 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 0.252100 * 0.88}),
         'nevents_das':       YearDependentContainer({'UL17': 267125}),
         'nevents_generated': YearDependentContainer({'UL17': 267125.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 267125.0}),
@@ -123,7 +131,7 @@ def Add_Backgrounds_ZJetsToNuNu(SampleContainer):
         'type': type,
         'minipaths':         YearDependentContainer(storagenames),
         'group':             YearDependentContainer({'UL17': 'ZJetsNuNu'}),
-        'xsecs':             YearDependentContainer({'UL17': 0.005633 * 1.23}),
+        'xsecs':             YearDependentContainer({'UL17': 0.005633 * 0.88}),
         'nevents_das':       YearDependentContainer({'UL17': 176201}),
         'nevents_generated': YearDependentContainer({'UL17': 176201.0}),
         'nevents_weighted':  YearDependentContainer({'UL17': 176201.0}),

@@ -52,6 +52,10 @@ git clone https://github.com/cms-jet/JRDatabase.git
 cd $LEAFPATH/Analyzer
 git clone --recursive git@github.com:cms-nanoAOD/correctionlib.git correctionlib_python2
 cd correctionlib_python2
+git checkout 1f0febc # earlier or later commits (tags) literally break upon compiling... apparently it has to be this specific commit for python2
+# get submodules to the state they had at this commit
+git submodule init
+git submodule update --recursive
 make PYTHON=python2
 make install
 

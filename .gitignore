@@ -42,6 +42,7 @@ Analyzer/LQDM
 Analyzer/Makefile.local
 Analyzer/JECDatabase
 Analyzer/JRDatabase
+Analyzer/correctionlib_python2
 Tuplizer/Workarea
 Submitter/joboutput
 *.logsite/
