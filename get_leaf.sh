@@ -37,6 +37,7 @@ cd ../../
 cd CMSSW_10_6_28/src
 eval `scramv1 runtime -sh`
 scram b
+git cms-init 
 
 # download LEAF
 git clone https://github.com/LEAF-HQ/LEAF.git LEAF
