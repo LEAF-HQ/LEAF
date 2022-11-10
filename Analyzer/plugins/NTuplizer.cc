@@ -1023,7 +1023,7 @@ void NTuplizer::NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, std:
     // Calculate JetID on the fly
     bool pass_tight = false;
     bool pass_tight_lepveto = false;
-    if(fabs(patjet.eta()) <= is_oldTracker? 2.4: 2.6){
+    if(fabs(patjet.eta()) <= (is_oldTracker? 2.4: 2.6)){
       pass_tight = (NHF < 0.9 && NEMF < 0.9 && NumConst > 1 && CHF > 0 && CHM > 0);
       pass_tight_lepveto = (pass_tight && MUOF < 0.8 && CEMF < 0.8);
     }

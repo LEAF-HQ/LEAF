@@ -37,6 +37,7 @@ cd ../../
 cd CMSSW_10_6_28/src
 eval `scramv1 runtime -sh`
 scram b
+git cms-init 
 
 # download LEAF
 git clone https://github.com/LEAF-HQ/LEAF.git LEAF
@@ -50,7 +51,7 @@ git clone https://github.com/cms-jet/JRDatabase.git
 
 # clone correctionlib (needs to be compiled for python2 for now)
 cd $LEAFPATH/Analyzer
-git clone --recursive git@github.com:cms-nanoAOD/correctionlib.git correctionlib_python2
+git clone --recursive https://github.com/cms-nanoAOD/correctionlib.git correctionlib_python2
 cd correctionlib_python2
 git checkout 1f0febc # earlier or later commits (tags) literally break upon compiling... apparently it has to be this specific commit for python2
 # get submodules to the state they had at this commit
