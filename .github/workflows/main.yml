@@ -35,6 +35,13 @@ jobs:
           ldconfig -p
           yum install freeglut freeglut-devel < yes.txt
           ldconfig -p
+          
+      - name: Install libz
+        run: |
+          set -x
+          ldconfig -p
+          yum install zlib-devel
+          ldconfig -p
 
       - name: Install CVMFS
         run: |
