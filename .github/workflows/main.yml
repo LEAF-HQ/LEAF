@@ -22,6 +22,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create answer file for 'yes'
         run: echo y > yes.txt
+      
+      - name: Install libz
+        run: |
+          set -x
+          ldconfig -p
+          yum install zlib-devel < yes.txt
+          ldconfig -p
 
       - name: Install libGLU
         run: |
@@ -35,13 +42,6 @@ jobs:
           set -x
           ldconfig -p
           yum install freeglut freeglut-devel < yes.txt
-          ldconfig -p
-          
-      - name: Install libz
-        run: |
-          set -x
-          ldconfig -p
-          yum install zlib-devel < yes.txt
           ldconfig -p
 
       - name: Install CVMFS
