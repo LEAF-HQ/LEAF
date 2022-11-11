@@ -29,6 +29,8 @@ public:
     m_L1_factor = -1.;
     m_parton_flavor = 0;
     m_hadron_flavor = 0;
+    m_n_ch_constituents = -1;
+    m_n_ne_constituents = -1;
     m_n_constituents = -1;
     m_n_muons = -1;
     m_n_electrons = -1;
@@ -56,6 +58,8 @@ public:
   float L1_factor() const {return m_L1_factor;};
   int parton_flavor() const {return m_parton_flavor;};
   int hadron_flavor() const {return m_hadron_flavor;};
+  int n_ch_constituents() const {return m_n_ch_constituents;};
+  int n_ne_constituents() const {return m_n_ne_constituents;};
   int n_constituents() const {return m_n_constituents;};
   int n_muons() const {return m_n_muons;};
   int n_electrons() const {return m_n_electrons;};
@@ -79,6 +83,8 @@ public:
   void set_raw_factor(float x){m_raw_factor = x;};
   void set_parton_flavor(int x){m_parton_flavor = x;};
   void set_hadron_flavor(int x){m_hadron_flavor = x;};
+  void set_n_ch_constituents(int x){m_n_ch_constituents = x;};
+  void set_n_ne_constituents(int x){m_n_ne_constituents = x;};
   void set_n_constituents(int x){m_n_constituents = x;};
   void set_n_muons(int x){m_n_muons = x;};
   void set_n_electrons(int x){m_n_electrons = x;};
@@ -105,6 +111,8 @@ protected:
   float m_L1_factor; // = Factor to get from raw to L1
   int m_parton_flavor;
   int m_hadron_flavor;
+  int m_n_ch_constituents;
+  int m_n_ne_constituents;
   int m_n_constituents;
   int m_n_muons;
   int m_n_electrons;

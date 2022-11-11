@@ -1014,6 +1014,8 @@ void NTuplizer::NtuplizeJets(edm::Handle<std::vector<pat::Jet>> input_jets, std:
     j.set_pho_efrac(PHOF);
     j.set_hf_had_efrac(HFHF);
     j.set_hf_em_efrac(HFEMF);
+    j.set_n_ch_constituents(CHM);
+    j.set_n_ne_constituents(NM);
     j.set_n_muons(patjet.muonMultiplicity());
     j.set_n_electrons(patjet.electronMultiplicity());
 
