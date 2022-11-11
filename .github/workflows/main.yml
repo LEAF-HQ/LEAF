@@ -19,6 +19,7 @@ jobs:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
     steps:
+      - uses: actions/checkout@v3
       - name: Create answer file for 'yes'
         run: echo y > yes.txt
 
