@@ -8,7 +8,7 @@ import copy as cp
 from collections import OrderedDict
 from prettytable import PrettyTable
 import shutil
-from UserSpecificSettings import UserSpecificSettings
+from ClusterSubmission.UserSpecificSettings import UserSpecificSettings
 from functions import count_genevents_in_file
 
 
@@ -79,7 +79,7 @@ class Submitter:
                 command = 'sbatch -a 1-%i -J %s -p %s --chdir %s -t %s submit_analyzer_command.sh %s %s %s' % (njobs, datasetname, queue, joboutput_path, runtime_str, missing_files, environ_path, environ_ld_lib_path)
                 jobid = int(subprocess.check_output(command.split(' ')).rstrip('\n').split(' ')[-1])
             elif 'htcondor' in cluster.lower():
-                from CondorBase import CondorBase
+                from ClusterSubmission.CondorBase import CondorBase
                 CB = CondorBase(JobName=datasetname, Time=str(self.xmlinfo.submissionsettings.Walltime))
                 CB.CreateJobInfo()
                 CB.ModifyJobInfo('outdir', joboutput_path+'/')

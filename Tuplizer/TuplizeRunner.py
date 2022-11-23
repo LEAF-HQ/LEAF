@@ -10,7 +10,7 @@ from functions import *
 from Samples.Sample import *
 from Samples.Storage import *
 
-from Submitter.UserSpecificSettings import UserSpecificSettings
+from ClusterSubmission.UserSpecificSettings import UserSpecificSettings
 
 
 class TuplizeRunner:
@@ -111,7 +111,7 @@ class TuplizeRunner:
                 njobs_left -= arrayend
                 narrays += 1
         elif 'htcondor' in self.cluster.lower():
-            from Submitter.CondorBase import CondorBase
+            from ClusterSubmission.CondorBase import CondorBase
             CB = CondorBase(JobName=samplename)
             CB.CreateJobInfo()
             CB.ModifyJobInfo('outdir', joboutput+'/')
@@ -126,8 +126,8 @@ class TuplizeRunner:
                     continue
                 exe = command.split()[0]
                 arg = command.strip(exe).replace('outfilename=', 'outfilename='+outfoldername+'/' )
-                jobs['executables'].append(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe))
-                jobs['arguments'].append(arg)
+                jobs['executables'].append(str(os.path.join(list(filter(lambda x: os.path.isfile(os.path.join(x,exe)) ,os.environ.get("PATH").split(':')))[0],exe)))
+                jobs['arguments'].append(str(arg))
             if self.submit:
                 if mode is 'resubmit':
                     for args in jobs['arguments']:
@@ -136,8 +136,9 @@ class TuplizeRunner:
                 jobid = int(CB.JobInfo['ClusterId'])
                 print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
             else:
-                for job_id, exe in enumerate(jobs['executables']):
-                    print yellow("  --> Would submit job: %s %s"%(exe, jobs['arguments'][job_id]))
+                print yellow("  --> Would submit %d jobs"%(len(jobs['arguments'])))
+                # for job_id, exe in enumerate(jobs['executables']):
+                #     print yellow("  --> Would submit job: %s %s"%(exe, jobs['arguments'][job_id]))
 
     def CleanBrokenFiles(self, nevt_per_job=200000):
 

@@ -5,6 +5,7 @@ from yaml import safe_load
 from collections import OrderedDict
 from utils import *
 from functions import *
+from parallelize import parallelize
 
 class YearDependentContainer():
     def __init__(self, vals={}):
@@ -116,7 +117,7 @@ class Sample:
             if len(filelist) == 0:
                 print(green('  --> Sample \'%s\' has all files counted, continue.' % (self.name)))
                 return filedict
-        missingfiledict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
+        missingfiledict = self.count_events_in_files(filelist, stage=stage)
 
         if filedict and check_missing:
             if len(set(missingfiledict.keys()).intersection(set(filedict.keys())))!=0:
@@ -185,7 +186,7 @@ class Sample:
         jsonname = os.path.join(sampleinfofolder, '%s_%s_%s.json' % (basename, stage, year))
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
-                dict_in_json = safe_load(j)
+                dict_in_json = json.load(j)
             if self.name in dict_in_json.keys():
                 return dict_in_json[self.name]
         return {}
@@ -197,32 +198,32 @@ class Sample:
         dict_in_json = {}
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
-                dict_in_json = safe_load(j)
+                dict_in_json = json.load(j)
 
         dict_in_json[self.name] = filedict
         with open(jsonname, 'w') as j:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
 
-    def count_events_in_files(self, filelist, stage, treename='Events', ncores=10, chunksize=5, maxtries=3):
+    def count_events_in_files(self, filelist, stage, treename='Events', ncores=10):
         self.VerifyStage(stage)
         print(green('  --> Going to count events in %i files' % (len(filelist))))
 
-        commands = [('Counter_Entries %s %s' % (filename, treename), filename) for filename in filelist]
-        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
+        commands = ['Counter_Entries %s %s' % (filename, treename) for filename in filelist]
+        outputs = parallelize(commands, getoutput=True, ncores=ncores)
 
         if not outputs:
             print(yellow('Did you set the Grid certificate?'))
             print(commands)
 
         newdict = {}
-        for o in outputs:
+        for o in outputs.values():
             try:
-                nevt = int(o[0].split('\n')[0])
-                filename = o[1]
+                nevt = int(o['stdout'].split('\n')[-2])
+                filename = o['command'].split()[1]
                 newdict[filename] = nevt
             except Exception as e:
-                print(yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name)))
+                print(yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events. Output \'%s\'' % (e, self.name, str(o))))
 
         print(green('  --> Successfully counted events in %i files' % (len(newdict))))
         return newdict

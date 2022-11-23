@@ -42,3 +42,9 @@ export COMBINEPATH=${LEAFPATH}/HiggsAnalysis/CombinedLimit
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:
 export PYTHONPATH=${PYTHONPATH}:${COMBINEPATH}/lib/python:${COMBINEPATH}/lib
+
+
+#Cluster submission
+cd $LEAFPATH/ClusterSubmission
+source setup.sh
+cd $LEAFPATH

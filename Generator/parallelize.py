@@ -1,5 +1,5 @@
 # Author: Arne Reimers & Andrea Malara
-import os, sys, time, glob
+import os, sys, time, glob, psutil
 import functools
 import subprocess
 from multiprocessing import Pool
@@ -45,17 +45,32 @@ def MultiProcess(func,arglist,ncores=8):
     del globals()['func_singlearg']
     return result
 
+
+
+def kill(proc_pid):
+    process = psutil.Process(proc_pid)
+    for proc in process.children(recursive=True):
+        try:
+            proc.kill()
+        except psutil.NoSuchProcess:
+            pass
+    process.kill()
+
 @timeit
-def parallelize(commands, getoutput=False, logfiles=[], ncores=8, cwd=False, niceness=10, remove_temp_files=True, time_to_sleep = 0.5):
+def parallelize(commands, getoutput=False, logfiles=[], ncores=8, cwd=False, niceness=10, remove_temp_files=True, time_to_sleep = 0.5, wait_time=None):
     def wait_for_process(sn):
-        for idx, proc in sn.processes.items():
-            if proc.poll() != None:
-                proc.wait()
+        for idx in sn.processes.keys():
+            sn.processes[idx]['iter'] += sn.time_to_sleep
+            if wait_time!=None and sn.processes[idx]['iter']>=wait_time:
+                kill(sn.processes[idx]['proc'].pid)
+                sn.processes[idx]['proc'].wait()
+            if sn.processes[idx]['proc'].poll() != None:
+                sn.processes[idx]['proc'].wait()
                 sn.n_running -= 1
                 sn.n_completed += 1
                 if sn.getoutput:
-                    output = proc.communicate()
-                    sn.outputs[idx] = {'stdout': output[0],'stderr': output[1],'returncode':proc.returncode, 'command':sn.commands[idx]}
+                    output = sn.processes[idx]['proc'].communicate()
+                    sn.outputs[idx] = {'stdout': output[0],'stderr': output[1],'returncode':sn.processes[idx]['proc'].returncode, 'command':sn.commands[idx]}
                 else:
                     sn.log_files[idx].close()
                 del sn.processes[idx]
@@ -86,7 +101,7 @@ def parallelize(commands, getoutput=False, logfiles=[], ncores=8, cwd=False, nic
             sn.log_files[index] = open(logfiles[index] if is_log_given else os.path.join(cwd_ if cwd_ else '','parallelize_log_'+str(index)+'.txt'),'w')
             stdout = sn.log_files[index]
             stderr = sn.log_files[index]
-        sn.processes[index] = subprocess.Popen(proc, stdout=stdout, stderr=stderr, shell=True, cwd=cwd_)
+        sn.processes[index] = {'proc':subprocess.Popen(proc, stdout=stdout, stderr=stderr, shell=True, cwd=cwd_),'iter':0}
         sn.n_running += 1
         while (sn.n_running >= ncores):
             wait_for_process(sn)

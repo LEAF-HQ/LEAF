@@ -44,6 +44,9 @@ git clone https://github.com/LEAF-HQ/LEAF.git LEAF
 cd LEAF
 export LEAFPATH=$(readlink -f .)
 
+#clone ClusterSubmission
+git clone git@github.com:LEAF-HQ/ClusterSubmission.git
+
 # clone JEC and JR databases into Analyzer
 cd $LEAFPATH/Analyzer
 git clone https://github.com/cms-jet/JECDatabase.git

@@ -45,6 +45,7 @@ Analyzer/JRDatabase
 Analyzer/correctionlib_python2
 Tuplizer/Workarea
 Submitter/joboutput
+ClusterSubmission/
 *.logsite/
 site/
 HiggsAnalysis/
