@@ -37,18 +37,16 @@ def Add_MC(SampleContainer, sample_name, nevents_das, DAS_Names, modes):
 def TransformDasName_Dummy(name,sample,year,run):
     return name
 
-
 def Add_Data(SampleContainer, sample_name, nevents_das, DAS_Names, modes, transform=TransformDasName_Dummy):
-    type = 'DATA'
     year_run_map= dict((k, sorted(v['das'].keys())) for k, v in nevents_das.items())
     runs = sorted(list(set(sum(year_run_map.values(), []))))
     for run in runs:
-        name = type+'_'+sample_name+'_Run'+run
+        name = sample_name+'_Run'+run
         das_names = dict((k, Storage_DAS(transform(name=v,sample=sample_name,year=k,run=run))) for k, v in DAS_Names.items() if run in year_run_map[k])
         if len(das_names)==0: continue
         years = sorted(das_names.keys())
         default_info = {
-            'type': type, 'minipaths': YearDependentContainer(das_names),
+            'type': 'DATA', 'minipaths': YearDependentContainer(das_names),
             'group': YearDependentContainer(dict.fromkeys(years, name)),
             'nevents_das':       YearDependentContainer(dict((y, nevents_das[y]['das'][run]) for y in years)),
             'nevents_generated': YearDependentContainer(dict((y, nevents_das[y]['generated'][run]) for y in years)),
