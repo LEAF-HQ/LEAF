@@ -49,6 +49,7 @@
 <!ATTLIST Collection
     ClassName        CDATA       #REQUIRED
     BranchName       CDATA       #REQUIRED
+    FileName         CDATA       #REQUIRED
 >
 
 <!ELEMENT AdditionalVariables (Variable*)>
