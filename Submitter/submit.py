@@ -17,6 +17,7 @@ def main():
     parser.add_argument('xmlfilename', metavar='XMLFILENAME', type=str, nargs=1, help='Name of the XML file')
     parser.add_argument('--clean',           '-c', action='store_true', default=False, dest='clean',              help='Clean up: remove the local and the remote workdir')
     parser.add_argument('--divide',          '-d', action='store_true', default=False, dest='divide',             help='Divide XMLFILENAME into chunks, create workdir.')
+    parser.add_argument('--recount',         '-r', action='store_true', default=False, dest='recount',            help='Recount events before splitting xml files.')
     parser.add_argument('--local',           '-l', action='store',                     dest='ncores',   type=int, help='Run split jobs locally on NCORES cores')
     parser.add_argument('--cluster',         '-k', action='store',      default='',    dest='cluster',  type=str, help='Overwrite cluster settings defined in UserSpecificSettings')
     parser.add_argument('--submit',          '-s', action='store_true', default=False, dest='submit',             help='Submit split jobs to cluster')
@@ -46,7 +47,7 @@ def main():
         if nargs > 1:
             raise AttributeError('More than one argument given together with \'-c\' option. This is unsafe.')
         submitter.Clean()
-    if args.divide:     submitter.Divide()
+    if args.divide:     submitter.Divide(recount=args.recount)
     if args.output:     submitter.Output()
     if args.submit:     submitter.Submit(cluster=args.cluster)
     if run_local:       submitter.RunLocal(ncores=args.ncores)

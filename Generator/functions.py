@@ -126,7 +126,7 @@ def make_card_flex(card_template_folder, card_output_folder, processname, tag, i
     for card in newcards:
         replace_placeholders(card=card, replacement_dict=replacement_dict, verbose=verbose)
     if verbose:
-        print green('--> Done making one set of cards.\n')
+        print(green('--> Done making one set of cards.\n'))
 
 def replace_placeholders(card, replacement_dict, identifier = '$', verbose=False):
     fin = open(card,'r')
@@ -141,9 +141,9 @@ def replace_placeholders(card, replacement_dict, identifier = '$', verbose=False
             if pattern in line:
                 newline = line.replace(pattern, str(replacement_dict[key]))
                 if verbose:
-                    print green('In file \'%s\': replaced %s with %s in line %i' % (card, pattern, str(replacement_dict[key]), lineidx))
+                    print(green('In file \'%s\': replaced %s with %s in line %i' % (card, pattern, str(replacement_dict[key]), lineidx)))
         if identifier in newline and not newline.strip()[0] == '#':
-            print yellow('found identifier in newline, meaning it hasn\'t been replaced. Line is: %s' % (newline[:-1]))
+            print(yellow('found identifier in newline, meaning it hasn\'t been replaced. Line is: %s' % (newline[:-1])))
         newlines.append(newline)
 
     fin.close()
@@ -153,7 +153,7 @@ def replace_placeholders(card, replacement_dict, identifier = '$', verbose=False
         fout.write(l)
     fout.close()
     if verbose:
-        print green('--> Successfully created card %s' % (card))
+        print(green('--> Successfully created card %s' % (card)))
 
 
 
@@ -190,7 +190,7 @@ def check_shortfiles(filepath, tag):
                 if line[0] == '#' and not line[1] == ' ': found_end = True
             keep_file = found_start and found_end
         if not keep_file:
-            print yellow('Removing incomplete file %s' % (infilename))
+            print(yellow('Removing incomplete file %s' % (infilename)))
             os.remove(infilename)
 
 
@@ -233,7 +233,7 @@ def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', neven
             missing_indices.append(idx)
         elif nevents_expected_per_ntuple:
             if nevents_expected_per_ntuple[filename] != n_genevents:
-                print yellow('Expected %i events in file %s, but counted only %i. Count as missing file.' % (nevents_expected_per_ntuple[filename], filename, n_genevents))
+                print(yellow('Expected %i events in file %s, but counted only %i. Count as missing file.' % (nevents_expected_per_ntuple[filename], filename, n_genevents)))
                 missing_indices.append(idx)
 
     return missing_indices
@@ -247,21 +247,21 @@ def count_genevents_in_file(filename, treename='Events'):
     try:
         f = TFile.Open(filename)
         if not f:
-            print yellow('  --> File is a nullptr, raising error: %s.' % (filename))
+            print(yellow('  --> File is a nullptr, raising error: %s.' % (filename)))
             raise ReferenceError()
         if f.IsZombie():
-            print yellow('  --> File is a zombie, raising error: %s.' % (filename))
+            print(yellow('  --> File is a zombie, raising error: %s.' % (filename)))
             raise ReferenceError()
         is_recovered = f.TestBit(ROOT.TFile.kRecovered)
         if is_recovered:
-            print yellow('  --> File had to be recovered, raising error: %s.' % (filename))
+            print(yellow('  --> File had to be recovered, raising error: %s.' % (filename)))
             raise ReferenceError()
         tree = f.Get(treename)
         n_genevents = tree.GetEntriesFast()
     except AttributeError:
-        print yellow('  --> Couldn\'t open file or tree: %s.' % (filename))
+        print(yellow('  --> Couldn\'t open file or tree: %s.' % (filename)))
     except ReferenceError:
-        print yellow('  --> File is damaged: %s.' % (filename))
+        print(yellow('  --> File is damaged: %s.' % (filename)))
     try:
         f.Close()
         del f

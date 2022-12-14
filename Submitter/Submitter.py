@@ -36,13 +36,13 @@ class Submitter:
 
 
     @timeit
-    def Divide(self):
+    def Divide(self, recount):
         print green('--> Dividing and preparing jobs')
 
         # First create local and remote (potentially T3) workdir. Inside, create folders for each sample to store the small XML and root files
         self.create_local_workdir()
         self.create_remote_workdir()
-        njobs_and_type_per_dataset = self.divide_xml_files()
+        njobs_and_type_per_dataset = self.divide_xml_files(recount)
         self.write_expected_files(njobs_and_type_per_dataset=njobs_and_type_per_dataset)
         self.Output()
 
@@ -328,7 +328,7 @@ class Submitter:
             ensureDirectory(os.path.join(workdirname, samplename), use_se=self.use_se)
         print green('  --> Created remote workdir \'%s\'' % (self.workdir_remote))
 
-    def divide_xml_files(self):
+    def divide_xml_files(self,recount):
         """ From the main XML file, create a number of smaller ones, one per job to be submitted and divided by sample. """
 
         # check how to split jobs
@@ -344,6 +344,8 @@ class Submitter:
             raise ValueError(red('In the XML file, either both or neither of "EventsPerJob" and "FilesPerJob" is >0. This is not supported, please choose one of the two options to split jobs.'))
 
         njobs_and_type_per_dataset = OrderedDict()
+        with open(self.xmlinfo.xmlfilename) as f:
+            xml_lines = f.readlines()
         for dataset in self.xmlinfo.datasets:
             datasetname = str(dataset.settings.Name)
             print green('    --> Dividing sample %s' % (datasetname))
@@ -354,8 +356,12 @@ class Submitter:
                 njobs = int(math.ceil(nfiles/float(nfiles_per_job)))
             # handle eventsplit
             else:
-                nevents = get_number_events_in_dataset(dataset=dataset)
-                njobs = int(math.ceil(nevents/float(nevents_per_job)))
+                if recount:
+                    nevents = get_number_events_in_dataset(dataset=dataset)
+                else:
+                    with open(((list(filter(lambda x: datasetname in x, xml_lines))[0]).split()[-2]).replace('"',"")) as f:
+                        nevents = (list(filter(lambda y: 'Generated number of events' in y, f.readlines()))[0]).split()[-2]
+                njobs = int(math.ceil(float(nevents)/float(nevents_per_job)))
             for i in range(njobs):
                 if is_filesplit:
                     self.write_single_xml(datasetname=datasetname, index=i+1, nfiles_per_job=nfiles_per_job)

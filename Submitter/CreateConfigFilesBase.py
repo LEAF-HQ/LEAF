@@ -32,6 +32,7 @@ class CreateConfigFilesBase:
             dataset_name = getattr(ds.settings,'Name')
             sample = AllSamples.get_sample(dataset_name)
             for year in self.years:
+                if not sample.xmlfiles.has_year(year): continue
                 for info in self.sample_info:
                     self.dataset_infos.setdefault(dataset_name, {}).setdefault(year, {}).setdefault(info,sample.get_var_for_year(info,year))
                     if self.dataset_infos[dataset_name][year][info] is None and info != 'xsecs':
@@ -42,6 +43,7 @@ class CreateConfigFilesBase:
                     dataset_name = getattr(ds.settings,'Name').replace('standard',getattr(collection,'FileName'))
                     sample = AllSamples.get_sample(dataset_name)
                     for year in self.years:
+                        if not sample.xmlfiles.has_year(year): continue
                         for info in self.sample_info:
                             self.dataset_infos.setdefault(dataset_name, {}).setdefault(year, {}).setdefault(info,sample.get_var_for_year(info,year))
 
@@ -52,6 +54,10 @@ class CreateConfigFilesBase:
 
 
     def modifyDatasetsAttributes(self, year):
+        for ds in list(self.xmlinfo.datasets_to_write):
+            dataset_name = getattr(ds.settings,'Name')
+            if not dataset_name in self.dataset_infos or not year in self.dataset_infos[dataset_name]:
+                self.xmlinfo.datasets_to_write.remove(ds)
         for ds in self.xmlinfo.datasets_to_write:
             dataset_name = getattr(ds.settings,'Name')
             ds.infiles = []

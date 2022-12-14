@@ -22,11 +22,12 @@ def Add_Generic_Sample(SampleContainer, sample_name, modes, years, storage, ntup
         SampleContainer.add_samples({sample_name+'_'+mode_name: Sample(**default_info)})
 
 
-def Add_MC(SampleContainer, sample_name, nevents_das, DAS_Names, modes):
+def Add_MC(SampleContainer, sample_name, group_name, nevents_das, DAS_Names, modes):
     years = DAS_Names.keys()
     default_info = {
         'type': 'MC', 'minipaths': YearDependentContainer(dict((k, Storage_DAS(v)) for k, v in DAS_Names.items())),
-        'group': YearDependentContainer(dict.fromkeys(years, sample_name)),
+        'group': YearDependentContainer(dict.fromkeys(years, group_name)),
+        'xsecs':             YearDependentContainer(dict((y, nevents_das[y]['xsecs']) for y in years)),
         'nevents_das':       YearDependentContainer(dict((y, nevents_das[y]['das']) for y in years)),
         'nevents_generated': YearDependentContainer(dict((y, nevents_das[y]['generated']) for y in years)),
         'nevents_weighted':  YearDependentContainer(dict((y, nevents_das[y]['weighted']) for y in years)),
@@ -37,7 +38,7 @@ def Add_MC(SampleContainer, sample_name, nevents_das, DAS_Names, modes):
 def TransformDasName_Dummy(name,sample,year,run):
     return name
 
-def Add_Data(SampleContainer, sample_name, nevents_das, DAS_Names, modes, transform=TransformDasName_Dummy):
+def Add_Data(SampleContainer, sample_name, group_name, nevents_das, DAS_Names, modes, transform=TransformDasName_Dummy):
     year_run_map= dict((k, sorted(v['das'].keys())) for k, v in nevents_das.items())
     runs = sorted(list(set(sum(year_run_map.values(), []))))
     for run in runs:
@@ -47,7 +48,7 @@ def Add_Data(SampleContainer, sample_name, nevents_das, DAS_Names, modes, transf
         years = sorted(das_names.keys())
         default_info = {
             'type': 'DATA', 'minipaths': YearDependentContainer(das_names),
-            'group': YearDependentContainer(dict.fromkeys(years, name)),
+            'group': YearDependentContainer(dict.fromkeys(years, group_name)),
             'nevents_das':       YearDependentContainer(dict((y, nevents_das[y]['das'][run]) for y in years)),
             'nevents_generated': YearDependentContainer(dict((y, nevents_das[y]['generated'][run]) for y in years)),
             'nevents_weighted':  YearDependentContainer(dict((y, nevents_das[y]['generated'][run]) for y in years)),

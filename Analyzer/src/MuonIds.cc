@@ -13,3 +13,16 @@ bool MuonIPID::operator()(const Muon & muon, const RecoEvent & ev) const{
   float d = sqrt(muon.dxy()*muon.dxy() + muon.dz()*muon.dz());
   return (d >= dmin && (d < dmax || dmax < 0));
 }
+
+
+MuonDxyID::MuonDxyID(float dmin_, float dmax_) : dmin(dmin_), dmax(dmax_){}
+bool MuonDxyID::operator()(const Muon & muon, const RecoEvent & ev) const{
+  float d = fabs(muon.dxy());
+  return (d >= dmin && (d < dmax || dmax < 0));
+}
+
+MuonDzID::MuonDzID(float dmin_, float dmax_) : dmin(dmin_), dmax(dmax_){}
+bool MuonDzID::operator()(const Muon & muon, const RecoEvent & ev) const{
+  float d = fabs(muon.dz());
+  return (d >= dmin && (d < dmax || dmax < 0));
+}

@@ -28,7 +28,7 @@ class TuplizeRunner:
 
 
     def CountEvents(self, check_missing=True):
-        filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, check_missing=check_missing)
+        self.filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, check_missing=check_missing)
 
 
     def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new', clean_broken=False):
@@ -44,8 +44,9 @@ class TuplizeRunner:
         joboutput = os.path.join(self.workarea,'joboutput',samplename+'_'+self.year)
         ensureDirectory(joboutput)
 
-        filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
-        if not filedict:
+        if not 'filedict' in self.__dict__:
+            self.filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
+        if not self.filedict:
             return
 
         outfoldername = self.sample.tuplepaths[self.year].get_path()
@@ -53,7 +54,7 @@ class TuplizeRunner:
 
         commands = []
         njobs = 0
-        for filename, nevt_thisfile in filedict.items():
+        for filename, nevt_thisfile in self.filedict.items():
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 outfilename = 'NTuples_%s_%i.root' % (stagetag, njobs+1)
@@ -67,10 +68,7 @@ class TuplizeRunner:
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
             print green('  --> Now checking for missing NTuples for job \'%s\'...' % (samplename))
-            if clean_broken:
-                missing_indices = self.CleanBrokenFiles(nevt_per_job=nevt_per_job)
-            else:
-                missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=len(commands), tuplebasename='NTuples', update_missing=True)
+            missing_indices = self.CleanBrokenFiles(nevt_per_job=nevt_per_job)
             njobs = len(missing_indices)
 
         if njobs == 0:
@@ -143,17 +141,17 @@ class TuplizeRunner:
     def CleanBrokenFiles(self, nevt_per_job=200000):
 
         outfoldername = self.sample.tuplepaths[self.year].get_path()
-
-        filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
-        if not filedict:
+        if not 'filedict' in self.__dict__:
+            self.filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year)
+        if not self.filedict:
             raise ValueError('Got invalid filedict when trying to delete broken tuples.')
 
         stagetag = self.stage.upper()+'AOD'
 
         njobs = 0
         nevents_expected_per_ntuple = {}
-        for filename in filedict:
-            nevt_thisfile = filedict[filename]
+        for filename in self.filedict:
+            nevt_thisfile = self.filedict[filename]
             njobs_thisfile = int(math.ceil(float(nevt_thisfile)/nevt_per_job))
             for n in range(njobs_thisfile):
                 # get the number of events expected in each ntuple file, later we will compare against this number to make sure we completely finished ntuplizing this file
@@ -176,7 +174,7 @@ class TuplizeRunner:
 
 
 
-    def CreateDatasetXMLFile(self, force_counting, count_weights=True, treename='AnalysisTree'):
+    def CreateDatasetXMLFile(self, force_counting, count_weights=True, treename='AnalysisTree',ncores=30):
         xmlfilename = os.path.join(os.environ['LEAFPATH'], self.sample.xmlfiles[self.year])
         ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
@@ -194,16 +192,17 @@ class TuplizeRunner:
 
         if force_counting:
             nevents_new = {'generated': None, 'weighted': None}
-            commands = [(('Counter_Entries %s %s' % (filename, treename), filename)) for filename in list_folder_content]
-            results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
-            nevents_new['generated'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
-            missing_files = [r[1] for r in results if not r[0].strip('\n').strip('.').isdigit()]
             if count_weights:
                 commands = [(('Counter_Entries_Weights %s' % (filename), filename)) for filename in list_folder_content]
-                results = getoutput_commands_parallel(commands=commands, ncores=30, max_time=120, niceness=10)
-                nevents_new['weighted'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
-                missing_files = [r[1] for r in results if not r[0].strip('\n').replace('.','').isdigit()]
+                results = getoutput_commands_parallel(commands=commands, ncores=ncores, max_time=120, niceness=10)
+                nevents_new['generated'] = sum(float(r[0].strip('\n').split()[0]) for r in results if r[0].strip('\n').split()[0].replace('.','').isdigit())
+                nevents_new['weighted'] = sum(float(r[0].strip('\n').split()[1]) for r in results if r[0].strip('\n').split()[1].replace('.','').isdigit())
+                missing_files = [r[1] for r in results if not r[0].strip('\n').split()[1].replace('.','').isdigit()]
             else:
+                commands = [(('Counter_Entries %s %s' % (filename, treename), filename)) for filename in list_folder_content]
+                results = getoutput_commands_parallel(commands=commands, ncores=ncores, max_time=120, niceness=10)
+                nevents_new['generated'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
+                missing_files = [r[1] for r in results if not r[0].strip('\n').strip('.').isdigit()]
                 print green('  --> Only counted events, not weights.')
 
             for mode, nevents in nevents_new.items():
@@ -222,7 +221,7 @@ class TuplizeRunner:
                     if filename in missing_files: continue
                 out.write('<InputFile FileName="%s"/>\n' % filename)
             for mode, nevents in nevents_stored.items():
-                if nevents:
+                if nevents is not None:
                     out.write('<!-- %s number of events: %s -->\n' % (mode.capitalize(), str(nevents)))
 
 

@@ -20,14 +20,15 @@ int main(int argc, char * argv[]){
   TTree* tree = (TTree*) f->Get("AnalysisTree");
   TTreeReader reader(tree);
   TTreeReaderValue<double> eweight(reader, "weight");
-  double sum = 0.; // MUST be double otherwise loses precision
+  double sum = tree->GetEntriesFast();
+  double sum_weights = 0.; // MUST be double otherwise loses precision
   while (reader.Next()) {
-    sum += *eweight;
+    sum_weights += *eweight;
   }
 
   delete tree;
   f->Close();
   delete f;
-  cout << setprecision(9) << sum << endl;
+  cout << setprecision(9) << sum << " " << sum_weights << endl;
   return 0;
 }

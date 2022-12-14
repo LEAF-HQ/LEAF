@@ -23,3 +23,21 @@ public:
 private:
   float dmin, dmax;
 };
+
+class MuonDxyID {
+public:
+  explicit MuonDxyID(float dxymin_, float dmax_ = -1.);
+  bool operator()(const Muon&, const RecoEvent&) const;
+
+private:
+  float dmin, dmax;
+};
+
+class MuonDzID {
+public:
+  explicit MuonDzID(float dxymin_, float dmax_ = -1.);
+  bool operator()(const Muon&, const RecoEvent&) const;
+
+private:
+  float dmin, dmax;
+};
