@@ -2,6 +2,7 @@
 <use name="libxml2"/>
 <use name="lhapdf"/>
 <use name="tensorflow"/>
+<use name="onnxruntime"/>
 
 <use name="FWCore/Framework"/>
 <use name="FWCore/Common"/>
@@ -16,6 +17,7 @@
 <use name="PhysicsTools/HepMCCandAlgos"/>
 <use name="PhysicsTools/JetMCUtils"/>
 <use name="PhysicsTools/TensorFlow"/>
+<use name="PhysicsTools/ONNXRuntime"/>
 
 <use name="MagneticField/Records"/>
 <use name="MagneticField/VolumeBasedEngine"/>

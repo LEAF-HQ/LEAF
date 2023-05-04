@@ -30,6 +30,7 @@ infilename  = options.infilename
 outfilename = options.outfilename
 do_standard_event = options.standard.lower() == 'true'
 do_pfcands  = options.pfcands.lower() == 'true'
+do_pfcands  = True
 do_triggerobjects = options.triggerobjects.lower() == 'true'
 do_extrajets = options.extrajets.lower() == 'true'
 do_stablegenparticles = options.stablegenparticles.lower() == 'true'

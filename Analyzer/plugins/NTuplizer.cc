@@ -126,7 +126,13 @@ private:
   RecoEvent event;
 
   int nele,nmuo;
-
+  int nele_no,nmuo_no;
+  int nele_pt,nmuo_pt;
+  int nele_id,nmuo_id;
+  int nele_pt_id,nmuo_pt_id;
+  int nmuo_iso, nmuo_pt_iso, nmuo_id_iso, nmuo_pt_id_iso;
+  int ntau_no;
+  int ngentaus;
 };
 
 NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
@@ -292,8 +298,26 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   // GenParticles
   if(is_mc) {
-    if (do_standard_event)     NtuplizeGenParticles<reco::GenParticle, reco::GenParticle>(genparticles_pruned, genparticles_pruned, *event.genparticles_pruned, false);
-    if (do_stablegenparticles) NtuplizeGenParticles<pat::PackedGenParticle, reco::GenParticle>(genparticles, genparticles_pruned, *event.genparticles_stable, true);
+    NtuplizeGenParticles<reco::GenParticle, reco::GenParticle>(genparticles_pruned, genparticles_pruned, *event.genparticles_pruned, false);
+    NtuplizeGenParticles<pat::PackedGenParticle, reco::GenParticle>(genparticles, genparticles_pruned, *event.genparticles_stable, true);
+    ngentaus = 0;
+    for(size_t i=0; i<(*event.genparticles_pruned).size(); i++){
+      auto gp = (*event.genparticles_pruned).at(i);
+      if (fabs(gp.pdgid())!=15) continue;
+      int motherpdgid = -1;
+      for(size_t j=0; j<(*event.genparticles_pruned).size(); j++){
+        if((*event.genparticles_pruned).at(j).identifier() == gp.mother_identifier()){
+          motherpdgid = (*event.genparticles_pruned).at(j).pdgid();
+          break;
+        }
+      }
+      if (fabs(motherpdgid)==23) ngentaus +=1;
+    }
+    std::cout << "ngentaus: " << ngentaus << std::endl;
+    if (ngentaus>=2) {
+      event.reset();
+      return false;
+    }
   }
 
   if(do_standard_event) {
@@ -481,12 +505,34 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     // Do Muons
     // =======
     nmuo=0;
+    nmuo_no=0;
+    nmuo_pt = 0;
+    nmuo_id = 0;
+    nmuo_pt_id = 0;
+    nmuo_iso = 0;
+    nmuo_pt_iso = 0;
+    nmuo_id_iso = 0;
+    nmuo_pt_id_iso = 0;
     NtuplizeMuons(muons, *event.muons, jets_ak4chs);
+    std::cout << "nmuo_no:" << nmuo_no << " nmuo_pt:" << nmuo_pt << " nmuo_id:" << nmuo_id << " nmuo_pt_id:" << nmuo_pt_id << " nmuo_iso:" << nmuo_iso << " nmuo_pt_iso:" << nmuo_pt_iso << " nmuo_id_iso:" << nmuo_id_iso << " nmuo_pt_id_iso:" << nmuo_pt_id_iso << " nmuo:" << nmuo << std::endl;
 
     // Do Electrons
     // ============
     nele=0;
+    nele_no=0;
+    nele_pt =0;
+    nele_id =0;
+    nele_pt_id =0;
     NtuplizeElectrons(electrons, *event.electrons, jets_ak4chs, *rho);
+    std::cout << "nele_no:" << nele_no << " nele_pt:" << nele_pt << " nele_id:" << nele_id << " nele_pt_id:" << nele_pt_id << " nele:" << nele << std::endl;
+
+
+    std::cout << "nlep_no:" << nmuo_no+nele_no << " ntau_no:" << ntau_no << std::endl;
+
+    if ((nmuo+nele)<4){
+      event.reset();
+      return false;
+    }
 
     // Do Taus
     NtuplizeTaus(taus, *event.taus, jets_ak4chs,genparticles_pruned,reco_genvistaus);
@@ -612,7 +658,6 @@ void NTuplizer::NtuplizeGenParticles(edm::Handle<std::vector<T>> input_genpartic
   for(size_t i=0; i<input_genparticles->size(); i++){
     auto minigp = input_genparticles->at(i);
     const reco::Candidate * mother = minigp.mother(0);
-
     GenParticle gp;
     gp.set_p4(minigp.pt(), minigp.eta(), minigp.phi(), minigp.mass());
     gp.set_pdgid(minigp.pdgId());
@@ -903,6 +948,14 @@ void NTuplizer::NtuplizeMuons(edm::Handle<std::vector<pat::Muon>> input_muons, s
     m.set_sim_mother_pdgid(patmu.simMotherPdgId());
     m.set_sim_heaviestmother_flav(patmu.simHeaviestMotherFlavour());
 
+    nmuo_no += 1;
+    if (m.pt()>3)    nmuo_pt += 1;
+    if (m.get_selector(Muon::IDCutBasedLoose))    nmuo_id += 1;
+    if (m.get_selector(Muon::IDCutBasedLoose) && (m.pt()>3))    nmuo_pt_id += 1;
+    if (m.get_selector(Muon::IsoPFVLoose))    nmuo_iso += 1;
+    if (m.get_selector(Muon::IsoPFVLoose) && (m.pt()>3))    nmuo_pt_iso += 1;
+    if (m.get_selector(Muon::IDCutBasedLoose) && m.get_selector(Muon::IsoPFVLoose) )    nmuo_id_iso += 1;
+    if (m.get_selector(Muon::IDCutBasedLoose) && m.get_selector(Muon::IsoPFVLoose) && (m.pt()>3))    nmuo_pt_id_iso += 1;
     if (m.get_selector(Muon::IDCutBasedLoose) && m.get_selector(Muon::IsoPFVLoose) && (m.pt()>3)) nmuo +=1;
     output_muons.emplace_back(m);
   }
@@ -991,6 +1044,10 @@ void NTuplizer::NtuplizeElectrons(edm::Handle<std::vector<pat::Electron>> input_
     e.set_selector(Electron::IDMVANonIsoEff90, patele.electronID("mvaEleID-Fall17-noIso-V2-wp90"));
     e.set_selector(Electron::IDMVANonIsoEff80, patele.electronID("mvaEleID-Fall17-noIso-V2-wp80"));
 
+    nele_no += 1;
+    if (e.get_selector(Electron::IDCutBasedVeto)) nele_id +=1;
+    if (e.pt()>3) nele_pt +=1;
+    if (e.get_selector(Electron::IDCutBasedVeto) && (e.pt()>3)) nele_pt_id +=1;
     if (e.get_selector(Electron::IDCutBasedVeto) && (e.pt()>3)) nele +=1;
     output_electrons.emplace_back(e);
   }
@@ -1103,7 +1160,7 @@ void NTuplizer::NtuplizeTaus(edm::Handle<std::vector<pat::Tau>> input_taus, std:
     t.set_selector(Tau::DeepTauVsMuLoose, pattau.tauID("byLooseDeepTau2017v2p1VSmu"));
     t.set_selector(Tau::DeepTauVsMuMedium, pattau.tauID("byMediumDeepTau2017v2p1VSmu"));
     t.set_selector(Tau::DeepTauVsMuTight, pattau.tauID("byTightDeepTau2017v2p1VSmu"));
-
+    ntau_no += 1;
     output_taus.emplace_back(t);
   }
 

@@ -34,6 +34,8 @@ export LHAPDFLIB=`scram tool tag lhapdf LIBDIR`
 export LHAPDFINC=`scram tool tag lhapdf INCLUDE`
 export TENSORFLOWLIB=`scram tool tag tensorflow LIBDIR`
 export TENSORFLOWINC=`scram tool tag tensorflow INCLUDE`
+export ONNXRUNTIMELIB=`scram tool tag onnxruntime LIBDIR`
+export ONNXRUNTIMEINC=`scram tool tag onnxruntime INCLUDE`
 cd $LEAFPATH
 
 # Combine

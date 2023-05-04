@@ -146,12 +146,12 @@ class Sample:
                     # if given, check if counted number == expected number
                     # incomplete_files = dict(filter(lambda elem: elem[1] != nevents))
                     incomplete_files = []
-                    for fullname in files_and_events:
-                        if fullname in nevents_expected_per_ntuple:
-                            if nevents_expected_per_ntuple[fullname] != files_and_events[fullname]:
-                                incomplete_files.append(fullname)
-                        elif nevents_expected_per_ntuple:
-                            raise ValueError('Found file in target folder that was not even in list of expected files. Strange...')
+                    # for fullname in files_and_events:
+                    #     if fullname in nevents_expected_per_ntuple:
+                    #         if nevents_expected_per_ntuple[fullname] != files_and_events[fullname]:
+                    #             incomplete_files.append(fullname)
+                    #     elif nevents_expected_per_ntuple:
+                    #         raise ValueError('Found file in target folder that was not even in list of expected files. Strange...')
                     missingfilelist = list(set(missingfilelist + empty_files + incomplete_files))
         else:
             # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well

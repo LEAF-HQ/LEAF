@@ -184,7 +184,7 @@ void plot_folder(vector<PlottingDataset*>& datasets_stack, vector<PlottingDatase
     int n_legentries_per_col = 6;
     int n_legentries = datasets_single.size() + datasets_stack.size();
     int n_legcols = (n_legentries-1)/n_legentries_per_col + 1;
-    float leg_colwidth = 0.37;
+    float leg_colwidth = 0.15;
     float leg_x_high = 0.9;
     float leg_x_low = leg_x_high - n_legcols*leg_colwidth;
 
