@@ -52,3 +52,13 @@ public:
 private:
   float etagap_min=1.44, etagap_max=1.57;
 };
+
+class ElectronIso {
+public:
+  explicit ElectronIso(float dmin_, std::string isoname_);
+  bool operator()(const Electron&, const RecoEvent&) const;
+
+private:
+  float min_iso;
+  std::string isolation_name;
+};

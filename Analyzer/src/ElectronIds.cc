@@ -34,3 +34,24 @@ bool ElectronDetectorHolesID::operator()(const Electron & electron, const RecoEv
   float eta = fabs(electron.eta());
   return (eta <= etagap_min || eta>=etagap_max);
 }
+
+ElectronIso::ElectronIso(float dmin_, std::string isoname_) : min_iso(dmin_), isolation_name(isoname_){}
+bool ElectronIso::operator()(const Electron & elec, const RecoEvent & ev) const{
+  double iso = 100;
+  try
+    {
+      
+
+      if(isolation_name == "iso_rel_03") iso = elec.iso_rel_03();
+      else if(isolation_name == "iso_rel_03_charged") iso = elec.iso_rel_03_charged();
+      else throw std::invalid_argument("Isolation name not valid.");
+    }
+
+    catch (std::invalid_argument& e)
+    {
+        cerr << e.what() << endl;
+        return -1;
+    }
+  
+  return iso < min_iso;
+}
