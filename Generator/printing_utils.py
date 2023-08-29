@@ -27,7 +27,7 @@ def prettydict(d, indent=8, color=blue):
     for key, value in d.items():
         print(color(" "*indent + str(key))),
         if isinstance(value, dict):
-            print ""
+            print("")
             prettydict(value, len(" "*indent + str(key)+" "*(space+1-len(str(key)))))
         else:
             print(color(" "*(space-len(str(key))) + str(value)))

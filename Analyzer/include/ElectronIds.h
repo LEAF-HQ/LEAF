@@ -24,6 +24,25 @@ private:
   float dmin, dmax;
 };
 
+class ElectronDxyID {
+public:
+  explicit ElectronDxyID(float dmin_, float dmax_ = -1.);
+  bool operator()(const Electron&, const RecoEvent&) const;
+
+private:
+  float dmin, dmax;
+};
+
+
+class ElectronDzID {
+public:
+  explicit ElectronDzID(float dmin_, float dmax_ = -1.);
+  bool operator()(const Electron&, const RecoEvent&) const;
+
+private:
+  float dmin, dmax;
+};
+
 
 class ElectronDetectorHolesID {
 public:

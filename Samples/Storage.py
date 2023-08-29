@@ -35,7 +35,7 @@ class Storage():
         filelist = subprocess.check_output(command, shell=True).split('\n')
         newfiles = []
         for f in filelist:
-            if f is '': continue
+            if f == '': continue
             nstripped = 0
             while f.startswith('/'):
                 f = remove_prefix(f, '/')

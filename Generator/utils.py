@@ -24,7 +24,7 @@ def ensureDirectory(dirname, use_se=False):
         if not os.path.exists(dirname):
             os.makedirs(dirname)
         if not os.path.exists(dirname):
-            print yellow('--> failed to make directory "%s"'%(dirname))
+            print(yellow('--> failed to make directory "%s"'%(dirname)))
 
 
 def is_file_empty(file_path):
@@ -163,7 +163,7 @@ def getoutput_commands_parallel(commands=[], ncores=10, max_time=10, do_nice=Tru
     if level > 1:
         return outputs
     if len(commands_resub) > 0:
-        print yellow('\n  --> Resubmitting %i jobs.' % (len(commands_resub)))
+        print(yellow('\n  --> Resubmitting %i jobs.' % (len(commands_resub))))
         resub_outputs = getoutput_commands_parallel(commands_resub, max_time=max_time, level=level+1)
         for o in resub_outputs:
             outputs.append(o)

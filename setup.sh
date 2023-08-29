@@ -34,6 +34,8 @@ export LHAPDFLIB=`scram tool tag lhapdf LIBDIR`
 export LHAPDFINC=`scram tool tag lhapdf INCLUDE`
 export TENSORFLOWLIB=`scram tool tag tensorflow LIBDIR`
 export TENSORFLOWINC=`scram tool tag tensorflow INCLUDE`
+export ONNXRUNTIMELIB=`scram tool tag onnxruntime LIBDIR`
+export ONNXRUNTIMEINC=`scram tool tag onnxruntime INCLUDE`
 cd $LEAFPATH
 
 # Combine
@@ -42,3 +44,9 @@ export COMBINEPATH=${LEAFPATH}/HiggsAnalysis/CombinedLimit
 export PATH=${PATH}:${COMBINEPATH}/exe:${COMBINEPATH}/scripts
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${COMBINEPATH}/lib:
 export PYTHONPATH=${PYTHONPATH}:${COMBINEPATH}/lib/python:${COMBINEPATH}/lib
+
+
+#Cluster submission
+cd $LEAFPATH/ClusterSubmission
+source setup.sh
+cd $LEAFPATH

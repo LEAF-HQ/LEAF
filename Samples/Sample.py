@@ -5,6 +5,7 @@ from yaml import safe_load
 from collections import OrderedDict
 from utils import *
 from functions import *
+from parallelize import parallelize
 
 class YearDependentContainer():
     def __init__(self, vals={}):
@@ -21,7 +22,7 @@ class YearDependentContainer():
             raise AttributeError('Invalid key for year-dependent object. Given keys: '+(', '.join(vals.keys()))+'. Supported keys: '+(', '.join(self.__dict.keys())))
         self.__dict.update(vals)
 
-        for key, val in self.__dict.items():
+        for key, val in dict(self.__dict.items()).items():
             if val is None:
                 del self.__dict[key]
 
@@ -52,13 +53,9 @@ class YearDependentContainer():
 class Sample:
     def __init__(self, type, name, group=YearDependentContainer(), minipaths=YearDependentContainer(), nanopaths=YearDependentContainer(), tuplepaths=YearDependentContainer(), xsecs=YearDependentContainer(), xmlfiles=YearDependentContainer(), nevents_das=YearDependentContainer(), nevents_generated=YearDependentContainer(), nevents_weighted=YearDependentContainer(), contents=YearDependentContainer()):
         # contents should be a list of names of the branch(es) of "RecoEvent" that is supposed to be stored here, or "standard".
-        # Ex. contents = ['standard']
-        # or
-        # contents = ['pfcands']
-        # or
+        # Ex. contents = ['standard'] or ['pfcands']
+        # N.B.
         # contents = ['standard', 'pfcands'] if both a standard and an additional collection "pfcands" is stored (which really should not happen)
-        # or
-        # contents = ['pfcands', 'triggerobjects']
         self.type = type
         self.name = name
         self.group = group
@@ -71,19 +68,6 @@ class Sample:
         self.nevents_generated = nevents_generated
         self.nevents_weighted = nevents_weighted
         self.contents = contents
-        # self.__dict = OrderedDict()
-        # self.__dict['name'] = self.name
-        # self.__dict['type'] = self.type
-        # self.__dict['xsec'] = self.xsecs
-        # self.__dict['nevents_das'] = self.nevents_das
-        # self.__dict['nevents_generated'] = self.nevents_generated
-        # self.__dict['nevents_weighted'] = self.nevents_weighted
-        # self.__dict['group'] = self.group
-        # self.__dict['minipath'] = self.minipaths
-        # self.__dict['nanopath'] = self.nanopaths
-        # self.__dict['tuplepath'] = self.tuplepaths
-        # self.__dict['xmlfile'] = self.xmlfiles
-        # self.__dict['content'] = self.contents
 
 
     def __str__(self):
@@ -105,20 +89,20 @@ class Sample:
         # first try to read it from the json
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
 
-        if filedict and not check_missing:
+        if filedict is not None and not check_missing:
             return filedict
 
         # if it wasn't found, call the function to find the list, update the json, and return the list then
         filelist = self.get_var_for_year(stage+'paths',year).get_file_list()
 
-        if filedict:
+        if filedict is not None:
             filelist = list(set(filelist) - set(filedict.keys()))
             if len(filelist) == 0:
                 print(green('  --> Sample \'%s\' has all files counted, continue.' % (self.name)))
                 return filedict
-        missingfiledict = self.count_events_in_files(filelist, stage=stage, chunksize=10)
+        missingfiledict = self.count_events_in_files(filelist, stage=stage)
 
-        if filedict and check_missing:
+        if filedict is not None and check_missing:
             if len(set(missingfiledict.keys()).intersection(set(filedict.keys())))!=0:
                 raise ValueError('Trying to insert counted files, but they exist already: %s' % (missingfiledict.keys()))
 
@@ -128,7 +112,7 @@ class Sample:
         # get from json to make sure it's always ordered in the same way
         filedict = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year)
 
-        if not filedict:
+        if filedict is None:
             raise ValueError('Unable to get filedict for sample %s.' % (self.name))
 
         return filedict
@@ -144,7 +128,8 @@ class Sample:
 
         # first try to read it from the json, it's a list despite the function name
         filelist_json = self.get_filedict_from_json(sampleinfofolder=sampleinfofolder, stage=stage, year=year, basename='missingtuples')
-        if filelist_json:
+
+        if filelist_json is not None:
             if not update_missing:
                 return filelist_json
             else:
@@ -157,7 +142,8 @@ class Sample:
                     # find missing entries
                     missingfilelist = list(filter(lambda x: x not in files_and_events ,expected_filelist))
                     # find entries with 0 events
-                    empty_files = dict(filter(lambda elem: elem[1] == 0,files_and_events.items())).keys()
+                    # empty_files = dict(filter(lambda elem: elem[1] == 0,files_and_events.items())).keys()
+                    empty_files = []
                     # if given, check if counted number == expected number
                     # incomplete_files = dict(filter(lambda elem: elem[1] != nevents))
                     incomplete_files = []
@@ -170,7 +156,7 @@ class Sample:
                     missingfilelist = list(set(missingfilelist + empty_files + incomplete_files))
         else:
             # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
-            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
+            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected, nevents_expected_per_ntuple=nevents_expected_per_ntuple, histname='h_nevents')
             missingfilelist = [filename_base+'_'+str(i+1)+'.root' for i in missing_indices]
 
         #convert to indices
@@ -185,10 +171,10 @@ class Sample:
         jsonname = os.path.join(sampleinfofolder, '%s_%s_%s.json' % (basename, stage, year))
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
-                dict_in_json = safe_load(j)
+                dict_in_json = json.load(j)
             if self.name in dict_in_json.keys():
                 return dict_in_json[self.name]
-        return {}
+        return None
 
 
     def update_filedict_in_json(self, sampleinfofolder, stage, year, filedict, basename='filelist'):
@@ -197,38 +183,37 @@ class Sample:
         dict_in_json = {}
         if os.path.exists(jsonname):
             with open(jsonname, 'r') as j:
-                dict_in_json = safe_load(j)
+                dict_in_json = json.load(j)
 
         dict_in_json[self.name] = filedict
         with open(jsonname, 'w') as j:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
 
-    def count_events_in_files(self, filelist, stage, treename='Events', ncores=10, chunksize=5, maxtries=3):
+    def count_events_in_files(self, filelist, stage, treename='Events', ncores=16):
         self.VerifyStage(stage)
         print(green('  --> Going to count events in %i files' % (len(filelist))))
-
-        commands = [('Counter_Entries %s %s' % (filename, treename), filename) for filename in filelist]
-        outputs = getoutput_commands_parallel(commands=commands, max_time=30, ncores=ncores)
+        commands = ['Counter_Entries_Histogram %s' % (filename) for filename in filelist]
+        commands = list(filter(lambda x: os.path.exists(x.split()[1]), commands))
+        outputs = parallelize(commands, getoutput=True, ncores=ncores, wait_time=60)
 
         if not outputs:
             print(yellow('Did you set the Grid certificate?'))
-            print(commands)
 
         newdict = {}
-        for o in outputs:
+        for o in outputs.values():
             try:
-                nevt = int(o[0].split('\n')[0])
-                filename = o[1]
+                nevt = int(o['stdout'].split('\n')[-2])
+                filename = o['command'].split()[1]
                 newdict[filename] = nevt
             except Exception as e:
-                print(yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events.' % (e, self.name)))
+                print(yellow('  --> Caught exception \'%s\'. Sample \'%s\' is therefore currently missing events. Output \'%s\'' % (e, self.name, str(o))))
 
         print(green('  --> Successfully counted events in %i files' % (len(newdict))))
         return newdict
 
     def VerifyStage(self,stage):
-        if stage is not 'nano' and stage is not 'mini':
+        if stage not in {'nano', 'mini'}:
             raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
 
 
@@ -241,7 +226,7 @@ class SampleContainer():
 
     def get_sample(self, sample):
         if not self.has_sample(sample):
-            raise AttributeError('Invalid sample for SampleContainer class.')
+            raise AttributeError('Invalid sample for SampleContainer class: '+sample)
         return self.__dict[sample]
 
     def add_samples(self, samples_dict):

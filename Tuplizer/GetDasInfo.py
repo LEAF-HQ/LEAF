@@ -8,7 +8,6 @@ python GetDasInfo.py '/*/*Fall13-POST*/GEN-SIM'
 
 import argparse, pprint
 from collections import OrderedDict
-import CRABClient
 from dbs.apis.dbsClient import DbsApi
 
 def GetDasInfo(datasets, options):

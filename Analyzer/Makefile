@@ -11,7 +11,7 @@ CUSTOMDICTS := $(foreach subdir,$(subdirs), -l$(subdir)Classes)
 all: execs
 	@echo "--> Successfully created all executables. Thanks Robin!"
 
-execs: Analyzer Counter_Entries Counter_Entries_Weights
+execs: Analyzer Counter_Entries Counter_Entries_Weights Counter_Entries_Histogram
 
 scram: dict
 	@cd $(ANALYZERPATH)
@@ -34,6 +34,10 @@ Counter_Entries: scram dict $(OBJDIR)/Counter_Entries.o
 Counter_Entries_Weights: scram dict $(OBJDIR)/Counter_Entries_Weights.o
 	@echo "--> Creating Counter_Entries_Weights"
 	@$(CC) $(OBJDIR)/Counter_Entries_Weights.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
+
+Counter_Entries_Histogram: scram dict $(OBJDIR)/Counter_Entries_Histogram.o
+	@echo "--> Creating Counter_Entries_Histogram"
+	@$(CC) $(OBJDIR)/Counter_Entries_Histogram.o $(LFLAGS) -o $(BINDIR)/$@  $(LIBSMAIN)
 
 $(OBJECTSEXE): $(OBJDIR)/%.o : $(EXECDIR)/%.cxx
 	@echo "--> Creating object $@"
