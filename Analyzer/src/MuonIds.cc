@@ -26,3 +26,24 @@ bool MuonDzID::operator()(const Muon & muon, const RecoEvent & ev) const{
   float d = fabs(muon.dz());
   return (d >= dmin && (d < dmax || dmax < 0));
 }
+
+MuonIso::MuonIso(float dmin_, std::string isoname_) : min_iso(dmin_), isolation_name(isoname_){}
+bool MuonIso::operator()(const Muon & muon, const RecoEvent & ev) const{
+  double iso = 100;
+  try
+    {
+      if(isolation_name == "iso_rel_04") iso = muon.iso_rel_04();
+      else if(isolation_name == "iso_rel_03") iso = muon.iso_rel_03();
+      else if(isolation_name == "iso_rel_03_charged") iso = muon.iso_rel_03_charged();
+      else if(isolation_name == "iso_tk") iso = muon.iso_tk();
+      else throw std::invalid_argument("Isolation name not valid.");
+    }
+
+    catch (std::invalid_argument& e)
+    {
+        cerr << e.what() << endl;
+        return -1;
+    }
+  
+  return iso < min_iso;
+}

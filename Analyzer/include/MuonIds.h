@@ -4,6 +4,7 @@
 #include "LEAF/Analyzer/include/RecoEvent.h"
 #include "LEAF/Analyzer/include/ObjectIdUtils.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
+//#include <string>
 
 
 class MuonID {
@@ -40,4 +41,14 @@ public:
 
 private:
   float dmin, dmax;
+};
+
+class MuonIso {
+public:
+  explicit MuonIso(float dmin_, std::string isoname_);
+  bool operator()(const Muon&, const RecoEvent&) const;
+
+private:
+  float min_iso;
+  std::string isolation_name;
 };
