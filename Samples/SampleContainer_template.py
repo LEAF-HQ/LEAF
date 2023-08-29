@@ -1,12 +1,12 @@
-from Sample import *
-from Storage import *
+from Samples.Sample import *
+from Samples.Storage import *
 
 '''
 Define template to store ntuple info
 '''
 
 def get_common_path():
-    return 'Summer20/MINIAODv2/NTuples_v02/'
+    return 'Summer20/MINIAODv2/NTuples_v03/'
 
 def get_storage_path(prefix, year, common_path, mode, sample_name):
     return os.path.join(prefix, year, common_path, mode, sample_name)

@@ -123,6 +123,8 @@ private:
 
   TFile *outfile;
   TTree *tree;
+  TH1F *h_nevents;
+  TH1F *h_nevents_weighted;
   RecoEvent event;
 
   int nele,nmuo;
@@ -155,6 +157,8 @@ NTuplizer::NTuplizer(const edm::ParameterSet& iConfig){
     outfile = new TFile(outfilename, "RECREATE");
     outfile->cd();
     tree = new TTree("AnalysisTree", "AnalysisTree");
+    h_nevents  = new TH1F("h_nevents", ";sum of event; Events / bin", 1, 0.5, 1.5);
+    h_nevents_weighted  = new TH1F("h_nevents_weighted", ";sum of event weights; Events / bin", 1, 0.5, 1.5);
     tree->Branch("Events", &event);
   }
 
@@ -295,6 +299,8 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
   else{
     event.weight = 1.;
   }
+  h_nevents->Fill(1);
+  h_nevents_weighted->Fill(1, event.weight);
 
   // GenParticles
   if(is_mc) {
@@ -313,7 +319,7 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
       }
       if (fabs(motherpdgid)==23) ngentaus +=1;
     }
-    std::cout << "ngentaus: " << ngentaus << std::endl;
+
     if (ngentaus>=2) {
       event.reset();
       return false;
@@ -514,7 +520,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     nmuo_id_iso = 0;
     nmuo_pt_id_iso = 0;
     NtuplizeMuons(muons, *event.muons, jets_ak4chs);
-    std::cout << "nmuo_no:" << nmuo_no << " nmuo_pt:" << nmuo_pt << " nmuo_id:" << nmuo_id << " nmuo_pt_id:" << nmuo_pt_id << " nmuo_iso:" << nmuo_iso << " nmuo_pt_iso:" << nmuo_pt_iso << " nmuo_id_iso:" << nmuo_id_iso << " nmuo_pt_id_iso:" << nmuo_pt_id_iso << " nmuo:" << nmuo << std::endl;
 
     // Do Electrons
     // ============
@@ -524,10 +529,6 @@ bool NTuplizer::filter(edm::Event& iEvent, const edm::EventSetup& iSetup){
     nele_id =0;
     nele_pt_id =0;
     NtuplizeElectrons(electrons, *event.electrons, jets_ak4chs, *rho);
-    std::cout << "nele_no:" << nele_no << " nele_pt:" << nele_pt << " nele_id:" << nele_id << " nele_pt_id:" << nele_pt_id << " nele:" << nele << std::endl;
-
-
-    std::cout << "nlep_no:" << nmuo_no+nele_no << " ntau_no:" << ntau_no << std::endl;
 
     if ((nmuo+nele)<4){
       event.reset();
@@ -1170,8 +1171,12 @@ void NTuplizer::NtuplizeTaus(edm::Handle<std::vector<pat::Tau>> input_taus, std:
 void NTuplizer::endJob(){
   event.clear();
   if(outfile && tree){
-    tree->BuildIndex("lumiblock", "number");
+    if (tree->GetEntriesFast()){
+      tree->BuildIndex("lumiblock", "number");
+    }
     outfile->cd();
+    h_nevents->Write();
+    h_nevents_weighted->Write();
     outfile->Write();
     outfile->Close();
   }

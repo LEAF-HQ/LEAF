@@ -223,12 +223,12 @@ def XsecTotErrPandas(df,crosssectionname,*errnames,**kwargs):
 
 
 
-def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', nevents_expected_per_ntuple={}):
+def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', histname=None, nevents_expected_per_ntuple={}):
     missing_indices = []
     pbar = tqdm(range(maxindex), desc="Files checked")
     for idx in pbar:
         filename = filename_base + '_' + str(idx+1) + '.root'
-        n_genevents = count_genevents_in_file(filename, treename=treename)
+        n_genevents = count_genevents_in_file(filename, treename=treename, histname=histname)
         if n_genevents is None:
             missing_indices.append(idx)
         elif nevents_expected_per_ntuple:
@@ -242,7 +242,7 @@ def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', neven
 
 
 
-def count_genevents_in_file(filename, treename='Events'):
+def count_genevents_in_file(filename, treename='Events', histname=None):
     n_genevents = None
     try:
         f = TFile.Open(filename)
@@ -258,6 +258,8 @@ def count_genevents_in_file(filename, treename='Events'):
             raise ReferenceError()
         tree = f.Get(treename)
         n_genevents = tree.GetEntriesFast()
+        if histname is not None:
+            n_genevents = f.Get("h_nevents").GetBinContent(1)
     except AttributeError:
         print(yellow('  --> Couldn\'t open file or tree: %s.' % (filename)))
     except ReferenceError:

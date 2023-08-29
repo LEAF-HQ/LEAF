@@ -31,7 +31,7 @@ class TuplizeRunner:
         self.filedict = self.sample.get_filedict(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, check_missing=check_missing)
 
 
-    def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new', clean_broken=False):
+    def SubmitTuplize(self, ncores=1, runtime=(01,00), nevt_per_job=200000, mode='new', clean_broken=False, update_missing=True):
         # Submit tuplize jobs to the SLURM cluster
         if mode is not 'new' and mode is not 'resubmit':
             raise ValueError('Value \'%s\' is invalid for variable \'mode\'.' % mode)
@@ -67,15 +67,15 @@ class TuplizeRunner:
         if mode is 'new':
             missing_indices = range(len(commands)) # all
         elif mode is 'resubmit':
-            print green('  --> Now checking for missing NTuples for job \'%s\'...' % (samplename))
-            missing_indices = self.CleanBrokenFiles(nevt_per_job=nevt_per_job)
+            print(green('  --> Now checking for missing NTuples for job \'%s\'...' % (samplename)))
+            missing_indices = self.CleanBrokenFiles(nevt_per_job=nevt_per_job, update_missing=update_missing)
             njobs = len(missing_indices)
 
         if njobs == 0:
             if mode is 'resubmit':
-                print green('  --> No jobs to resubmit for job %s.' % (samplename))
+                print(green('  --> No jobs to resubmit for job %s.' % (samplename)))
             else:
-                print green('  --> No jobs to submit for job %s.' % (samplename))
+                print(green('  --> No jobs to submit for job %s.' % (samplename)))
             return
 
         if 'slurm' in self.cluster.lower():
@@ -102,10 +102,10 @@ class TuplizeRunner:
                 if njobs > 0:
                     if self.submit:
                         jobid = int(subprocess.check_output(command, shell=True))
-                        print green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs_per_array[narrays], samplename, jobid))
+                        print(green("  --> Submitted an array of %i jobs for name %s with jobid %s"%(njobs_per_array[narrays], samplename, jobid)))
                     else:
-                        print command
-                        print yellow("  --> Would submit an array of %i jobs for name %s"%(njobs_per_array[narrays], samplename))
+                        print(command)
+                        print(yellow("  --> Would submit an array of %i jobs for name %s"%(njobs_per_array[narrays], samplename)))
                 njobs_left -= arrayend
                 narrays += 1
         elif 'htcondor' in self.cluster.lower():
@@ -114,7 +114,7 @@ class TuplizeRunner:
             CB.CreateJobInfo()
             CB.ModifyJobInfo('outdir', joboutput+'/')
             # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
-            CB.ModifyJobInfo('x509userproxy', '/user/'+os.getenv('USER')+'/tmp/x509up')
+            CB.ModifyJobInfo('x509userproxy', os.getenv('LEAFPATH')+'/x509up_u'+str(os.getuid()))
             CB.ModifyJobInfo('use_x509userproxy', 'True')
             CB.ModifyJobInfo('transfer_executable', 'False')
             jobs = {'executables': [], 'arguments':[]}
@@ -132,13 +132,15 @@ class TuplizeRunner:
                         print(yellow('Submitting for file: '+ str(list(filter(lambda x: 'infilename' in x, args.split())))))
                 CB.SubmitManyJobs(job_args=jobs['arguments'], job_exes=jobs['executables'])
                 jobid = int(CB.JobInfo['ClusterId'])
-                print green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid))
+                print(green('  --> Submitted array of %i jobs for sample %s. JobID: %i' % (njobs, samplename, jobid)))
             else:
-                print yellow("  --> Would submit %d jobs"%(len(jobs['arguments'])))
+                CB.ModifyJobInfo('ExtraInfo', [ {'arguments': arg, 'executable': jobs['executables'][i] } for i, arg in enumerate(jobs['arguments'])])
+                CB.StoreJobInfo()
+                print(yellow("  --> Would submit %d jobs"%(len(jobs['arguments']))))
                 # for job_id, exe in enumerate(jobs['executables']):
-                #     print yellow("  --> Would submit job: %s %s"%(exe, jobs['arguments'][job_id]))
+                #     print(yellow("  --> Would submit job: %s %s"%(exe, jobs['arguments'][job_id])))
 
-    def CleanBrokenFiles(self, nevt_per_job=200000):
+    def CleanBrokenFiles(self, nevt_per_job=200000, update_missing=True):
 
         outfoldername = self.sample.tuplepaths[self.year].get_path()
         if not 'filedict' in self.__dict__:
@@ -159,17 +161,18 @@ class TuplizeRunner:
                 njobs += 1
 
 
-        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=True, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
+        missing_indices = self.sample.get_missing_tuples(sampleinfofolder=self.workarea, stage=self.stage, year=self.year, ntuples_expected=njobs, tuplebasename='NTuples', update_missing=update_missing, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
 
         missing_or_broken_tuples = [os.path.join(outfoldername, 'NTuples_%s_%s.root' % (stagetag, str(i+1))) for i in missing_indices]
         commands = ['LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-rm '+f.replace(self.sample.tuplepaths[self.year].director, self.sample.tuplepaths[self.year].get_director_filesystem()) for f in missing_or_broken_tuples]
 
         if self.submit:
-            print green('  --> Removing up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
+            print(green('  --> Removing up to %i tuple files for sample %s.' % (len(commands), self.sample.name)))
             execute_commands_parallel(commands, niceness=None)
         else:
-            print yellow('  --> Would remove up to %i tuple files for sample %s.' % (len(commands), self.sample.name))
-            print commands
+            print(yellow('  --> Would remove up to %i tuple files for sample %s.' % (len(commands), self.sample.name)))
+            if len(commands)>0 and update_missing:
+                print(commands)
         return missing_indices
 
 
@@ -179,7 +182,7 @@ class TuplizeRunner:
         ensureDirectory(xmlfilename[:xmlfilename.rfind('/')])
 
         list_folder_content = [filename for filename in list_folder_content_T2(foldername=self.sample.tuplepaths[self.year].get_path(), pattern='*.root')]
-        print green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name))
+        print(green("  --> Found %d files matching inputfilepattern for sample \'%s\'" % (len(list_folder_content), self.sample.name)))
 
         nevents_stored = OrderedDict()
         nevents_stored['das'] = self.sample.get_var_for_year('nevents_das', self.year) if self.sample.nevents_das.has_year(self.year) else None
@@ -188,31 +191,33 @@ class TuplizeRunner:
 
         for mode, nevents in nevents_stored.items():
             if nevents is None:
-                print yellow(' --> Sample \'%s\' in year %s does not have number of %s events stored. Should fill it in.' % (self.sample.name, self.year, mode))
+                print(yellow(' --> Sample \'%s\' in year %s does not have number of %s events stored. Should fill it in.' % (self.sample.name, self.year, mode)))
 
         if force_counting:
             nevents_new = {'generated': None, 'weighted': None}
             if count_weights:
-                commands = [(('Counter_Entries_Weights %s' % (filename), filename)) for filename in list_folder_content]
+                commands = [(('Counter_Entries_Histogram %s h_nevents' % (filename), filename)) for filename in list_folder_content]
                 results = getoutput_commands_parallel(commands=commands, ncores=ncores, max_time=120, niceness=10)
                 nevents_new['generated'] = sum(float(r[0].strip('\n').split()[0]) for r in results if r[0].strip('\n').split()[0].replace('.','').isdigit())
-                nevents_new['weighted'] = sum(float(r[0].strip('\n').split()[1]) for r in results if r[0].strip('\n').split()[1].replace('.','').isdigit())
-                missing_files = [r[1] for r in results if not r[0].strip('\n').split()[1].replace('.','').isdigit()]
-            else:
-                commands = [(('Counter_Entries %s %s' % (filename, treename), filename)) for filename in list_folder_content]
+                missing_files = [r[0] for r in results if not r[0].strip('\n').split()[0].replace('.','').isdigit()]
+                commands = [(('Counter_Entries_Histogram %s h_nevents_weighted' % (filename), filename)) for filename in list_folder_content]
                 results = getoutput_commands_parallel(commands=commands, ncores=ncores, max_time=120, niceness=10)
-                nevents_new['generated'] = sum(float(r[0]) for r in results if r[0].strip('\n').replace('.','').isdigit())
-                missing_files = [r[1] for r in results if not r[0].strip('\n').strip('.').isdigit()]
-                print green('  --> Only counted events, not weights.')
+                nevents_new['weighted'] = sum(float(r[0].strip('\n').split()[0]) for r in results if r[0].strip('\n').split()[0].replace('.','').isdigit())
+            else:
+                commands = [(('Counter_Entries_Histogram %s h_nevents' % filename, filename)) for filename in list_folder_content]
+                results = getoutput_commands_parallel(commands=commands, ncores=ncores, max_time=120, niceness=10)
+                nevents_new['generated'] = sum(float(r[0].strip('\n').split()[0]) for r in results if r[0].strip('\n').split()[0].replace('.','').isdigit())
+                missing_files = [r[0] for r in results if not r[0].strip('\n').split()[0].replace('.','').isdigit()]
+                print(green('  --> Only counted events, not weights.'))
 
             for mode, nevents in nevents_new.items():
                 if nevents_stored[mode] is not None and nevents is not None:
                     rel_diff = abs(1 - nevents_stored[mode] / nevents)
                     if rel_diff < 0.01:
-                        print green('  --> Sample \'%s\' in year %s already has correct number of %s events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, mode, str(nevents)))
+                        print(green('  --> Sample \'%s\' in year %s already has correct number of %s events to be used for the lumi calculation: %s. No need for action.' % (self.sample.name, self.year, mode, str(nevents))))
                         continue
                 if nevents is not None:
-                    print yellow('  --> Sample \'%s\' in year %s has a different number of %s events (%s) than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, mode, str(nevents_stored[mode]), str(nevents)))
+                    print(yellow('  --> Sample \'%s\' in year %s has a different number of %s events (%s) than what we just counted (more than 1%% difference) to be used for the lumi calculation: %s. Should replace the existing number with this value or check what is going on.' % (self.sample.name, self.year, mode, str(nevents_stored[mode]), str(nevents))))
                     nevents_stored[mode] = nevents
 
         with open(xmlfilename, 'w') as out:
@@ -235,17 +240,17 @@ class TuplizeRunner:
             director = sample.minipaths[year].director
 
         if not recalculate and sample.xsecs[year] is not None:
-            print yellow('--> Sample \'%s\' in year %s already has a cross section filled in. Because \'recalculate\' is not set, skip.' % (sample.name, year))
+            print(yellow('--> Sample \'%s\' in year %s already has a cross section filled in. Because \'recalculate\' is not set, skip.' % (sample.name, year)))
             return
         if self.stage is 'nano' and isinstance(sample.nanopaths[year], Storage_DAS):
-            print green('--> Sample \'%s\' in year %s is a NanoAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
+            print(green('--> Sample \'%s\' in year %s is a NanoAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year)))
             (minipath, primary_name, campaigntag, tiertag) = get_mini_parts_from_nano_name(sample.nanopaths[year].path)
         elif self.stage is 'mini' and isinstance(sample.minipaths[year], Storage_DAS):
-            print green('--> Sample \'%s\' in year %s is a MiniAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year))
+            print(green('--> Sample \'%s\' in year %s is a MiniAOD dataset from DAS. Going to calculate its cross section * filter efficiency' % (sample.name, year)))
             (minipath, primary_name, campaigntag, tiertag) = get_mini_parts_from_mini_name(sample.minipaths[year].path)
 
         else:
-            print yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year))
+            print(yellow('--> Sample \'%s\' in year %s is not a dataset from DAS. Skip.' % (sample.name, year)))
             return
 
 
@@ -254,10 +259,10 @@ class TuplizeRunner:
         cmsrun_output = subprocess.check_output(cmsrun_command, shell=True).split('\n') #
         for l in cmsrun_output:
             if l.startswith('After filter: final cross section'):
-                print l
+                print(l)
                 xsec = float(l.split('=')[1].split(' ')[1])
                 break
-        print green('  --> Final cross section: \'%s\': %f' % (year, xsec))
+        print(green('  --> Final cross section: \'%s\': %f' % (year, xsec)))
 
 
 def list_folder_content_T2(foldername, pattern=None):

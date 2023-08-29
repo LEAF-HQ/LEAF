@@ -22,7 +22,7 @@ class YearDependentContainer():
             raise AttributeError('Invalid key for year-dependent object. Given keys: '+(', '.join(vals.keys()))+'. Supported keys: '+(', '.join(self.__dict.keys())))
         self.__dict.update(vals)
 
-        for key, val in self.__dict.items():
+        for key, val in dict(self.__dict.items()).items():
             if val is None:
                 del self.__dict[key]
 
@@ -142,20 +142,21 @@ class Sample:
                     # find missing entries
                     missingfilelist = list(filter(lambda x: x not in files_and_events ,expected_filelist))
                     # find entries with 0 events
-                    empty_files = dict(filter(lambda elem: elem[1] == 0,files_and_events.items())).keys()
+                    # empty_files = dict(filter(lambda elem: elem[1] == 0,files_and_events.items())).keys()
+                    empty_files = []
                     # if given, check if counted number == expected number
                     # incomplete_files = dict(filter(lambda elem: elem[1] != nevents))
                     incomplete_files = []
-                    # for fullname in files_and_events:
-                    #     if fullname in nevents_expected_per_ntuple:
-                    #         if nevents_expected_per_ntuple[fullname] != files_and_events[fullname]:
-                    #             incomplete_files.append(fullname)
-                    #     elif nevents_expected_per_ntuple:
-                    #         raise ValueError('Found file in target folder that was not even in list of expected files. Strange...')
+                    for fullname in files_and_events:
+                        if fullname in nevents_expected_per_ntuple:
+                            if nevents_expected_per_ntuple[fullname] != files_and_events[fullname]:
+                                incomplete_files.append(fullname)
+                        elif nevents_expected_per_ntuple:
+                            raise ValueError('Found file in target folder that was not even in list of expected files. Strange...')
                     missingfilelist = list(set(missingfilelist + empty_files + incomplete_files))
         else:
             # if it wasn't found, call the function to find the list of all expected files and check how many there are. As many tuples are expected as well
-            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected, nevents_expected_per_ntuple=nevents_expected_per_ntuple)
+            missing_indices = findMissingRootFiles(filename_base=filename_base, maxindex=ntuples_expected, nevents_expected_per_ntuple=nevents_expected_per_ntuple, histname='h_nevents')
             missingfilelist = [filename_base+'_'+str(i+1)+'.root' for i in missing_indices]
 
         #convert to indices
@@ -173,7 +174,7 @@ class Sample:
                 dict_in_json = json.load(j)
             if self.name in dict_in_json.keys():
                 return dict_in_json[self.name]
-        return {}
+        return None
 
 
     def update_filedict_in_json(self, sampleinfofolder, stage, year, filedict, basename='filelist'):
@@ -189,15 +190,15 @@ class Sample:
             json.dump(obj=dict_in_json, fp=j, indent=2, sort_keys=True)
 
 
-    def count_events_in_files(self, filelist, stage, treename='Events', ncores=8):
+    def count_events_in_files(self, filelist, stage, treename='Events', ncores=16):
         self.VerifyStage(stage)
         print(green('  --> Going to count events in %i files' % (len(filelist))))
-        commands = ['Counter_Entries %s %s' % (filename, treename) for filename in filelist]
+        commands = ['Counter_Entries_Histogram %s' % (filename) for filename in filelist]
+        commands = list(filter(lambda x: os.path.exists(x.split()[1]), commands))
         outputs = parallelize(commands, getoutput=True, ncores=ncores, wait_time=60)
 
         if not outputs:
             print(yellow('Did you set the Grid certificate?'))
-            print(commands)
 
         newdict = {}
         for o in outputs.values():
@@ -212,7 +213,7 @@ class Sample:
         return newdict
 
     def VerifyStage(self,stage):
-        if stage is not 'nano' and stage is not 'mini':
+        if stage not in {'nano', 'mini'}:
             raise AttributeError('Invalid stage defined. Must be \'mini\' or \'nano\'.')
 
 
