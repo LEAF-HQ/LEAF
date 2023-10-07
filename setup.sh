@@ -1,7 +1,7 @@
 # This script must be sourced from this exact folder before working in this folder.
 
 # Set up LEAF folder structure
-export LEAFPATH=$(pwd -L)
+export LEAFPATH=$(pwd -LP)
 export ANALYZERPATH=${LEAFPATH}/Analyzer
 export ANALYZERLIBPATH=${ANALYZERPATH}/lib
 export ANALYZERBINPATH=${ANALYZERPATH}/bin
