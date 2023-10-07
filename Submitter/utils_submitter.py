@@ -39,17 +39,17 @@ def clean_haddlist(haddlist, use_se=False):
     # remove files that don't exist from the haddlist
     result = []
     DEVNULL = open(os.devnull, 'wb')
-    for file in haddlist:
+    for filename in haddlist:
         if not use_se:
-            if os.path.isfile(file):
-                result.append(file)
+            if os.path.isfile(filename):
+                result.append(filename)
         else:
-            lscommand = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls %s' % (file)
+            lscommand = 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls %s' % (filename)
             proc = subprocess.Popen(lscommand, stdout=DEVNULL, stderr=DEVNULL, shell=True)
             # output = proc.communicate()[0]
             returncode = proc.returncode
             if not (returncode > 0): # ls succeeded
-                result.append(file)
+                result.append(filename)
     DEVNULL.close()
     if len(haddlist)!= len(result):
         print yellow('--> Some files are discarded by clean_haddlist and will not be hadded')

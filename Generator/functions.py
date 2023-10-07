@@ -243,6 +243,8 @@ def findMissingRootFiles(filename_base, maxindex, treename='AnalysisTree', histn
 
 
 def count_genevents_in_file(filename, treename='Events', histname=None):
+    errorLevel = ROOT.gErrorIgnoreLevel
+    ROOT.gErrorIgnoreLevel = ROOT.kError
     n_genevents = None
     try:
         f = TFile.Open(filename)
@@ -269,6 +271,7 @@ def count_genevents_in_file(filename, treename='Events', histname=None):
         del f
     except:
         pass
+    ROOT.gErrorIgnoreLevel = errorLevel
     return n_genevents
 
 
