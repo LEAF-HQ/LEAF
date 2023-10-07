@@ -1,15 +1,14 @@
-import os, sys, math
+import os, math, shutil
 import subprocess
 from XMLInfo import *
 from utils import *
 from utils_submitter import *
 from shutil import copy
-import copy as cp
 from collections import OrderedDict
 from prettytable import PrettyTable
-import shutil
 from ClusterSubmission.UserSpecificSettings import UserSpecificSettings
 from functions import count_genevents_in_file
+from parallelize import MultiProcess
 
 
 class Submitter:
@@ -467,33 +466,19 @@ class Submitter:
         return files_per_dataset
 
 
-    def find_missing_files(self, expected_files):
-
-        DEVNULL = open(os.devnull, 'wb')
+    def find_missing_files(self, expected_files, ncores=64):
         missing_files_per_dataset = OrderedDict()
         for datasetname in expected_files:
             nmissing = 0
             missing_files_per_dataset[datasetname] = []
-            print green('  --> Checking %i files for sample %s' % (len(expected_files[datasetname]), datasetname))
-            for filename in expected_files[datasetname]:
-                lscommand = 'ls ' if not self.use_se else 'LD_LIBRARY_PATH=\'\' PYTHONPATH=\'\' gfal-ls '
-                lscommand += filename
-                result = subprocess.Popen(lscommand, stdout=DEVNULL, stderr=DEVNULL, shell=True)
-                output = result.communicate()[0]
-                returncode = result.returncode
-                if returncode == 0:
-                    res = count_genevents_in_file(filename, treename='AnalysisTree')
-                    if res is None:
-                        print(green('  --> Removing file: %s.' % filename))
-                        print 'using command %s' % (lscommand.replace('ls ','rm '))
-                        # execute_command_silent(lscommand.replace('ls ','rm '))
-                        os.system(lscommand.replace('ls ','rm '))
-                        print 'done removing'
-                        returncode = 1
-                if returncode > 0: # opening failed
+            filenames = expected_files[datasetname]
+            print green('  --> Checking %i files for sample %s' % (len(filenames), datasetname))
+            arglist = [{'filename':x} for x in filenames]
+            results = MultiProcess(check_file_status, arglist, ncores=ncores)
+            for index, filename in enumerate(filenames):
+                if results[index]==None:
                     missing_files_per_dataset[datasetname].append(filename)
                     nmissing += 1
-        DEVNULL.close()
         return missing_files_per_dataset
 
 
@@ -505,6 +490,17 @@ class Submitter:
         command = 'Analyzer %s' % (fullxmlfilename)
         return command
 
+
+def check_file_status(filename, treename='AnalysisTree'):
+    if os.path.exists(filename):
+        res = count_genevents_in_file(filename, treename=treename)
+        if res is None:
+            print(green('  --> Removing file: %s.' % filename))
+            os.system('rm -f filename')
+            return None
+        return True
+    else:
+        return None
 
 
 
