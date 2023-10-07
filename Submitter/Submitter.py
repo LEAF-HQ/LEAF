@@ -84,7 +84,8 @@ class Submitter:
                 CB.CreateJobInfo()
                 CB.ModifyJobInfo('outdir', joboutput_path+'/')
                 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/CRABPrepareLocal
-                CB.ModifyJobInfo('x509userproxy', '/user/'+os.getenv('USER')+'/tmp/x509up')
+                #CB.ModifyJobInfo('x509userproxy', '/user/'+os.getenv('USER')+'/tmp/x509up')
+                CB.ModifyJobInfo('x509userproxy', os.getenv('LEAFPATH')+'/x509up_u'+str(os.getuid()))
                 CB.ModifyJobInfo('use_x509userproxy', 'True')
                 CB.ModifyJobInfo('transfer_executable', 'False')
                 jobs = {'executables': [], 'arguments':[]}
