@@ -174,16 +174,14 @@ class Submitter:
     def Add(self, force=False, ignoretree=False, allowincomplete= False, nchunks=9):
         print green('--> Adding finished samples')
 
-        # update list of missing files
-        self.Output()
-
         # find datasets that are already done
         expected_files = self.read_expected_files()
-        missing_files = self.find_missing_files(expected_files=expected_files)
         if allowincomplete:
             datasetnames_complete = expected_files.keys()
             datasetnames_skip     = []
         else:
+            # update list of missing files
+            missing_files = self.Output()
             datasetnames_complete = OrderedDict(filter(lambda elem: len(elem[1]) == 0,missing_files.items())).keys()
             datasetnames_skip     = OrderedDict(filter(lambda elem: len(elem[1]) != 0,missing_files.items())).keys()
 
