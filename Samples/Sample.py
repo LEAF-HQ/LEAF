@@ -174,6 +174,8 @@ class Sample:
                 dict_in_json = json.load(j)
             if self.name in dict_in_json.keys():
                 return dict_in_json[self.name]
+            if 'filelist' in basename:
+                return {}
         return None
 
 
@@ -193,8 +195,11 @@ class Sample:
     def count_events_in_files(self, filelist, stage, treename='Events', ncores=16):
         self.VerifyStage(stage)
         print(green('  --> Going to count events in %i files' % (len(filelist))))
-        commands = ['Counter_Entries_Histogram %s' % (filename) for filename in filelist]
-        commands = list(filter(lambda x: os.path.exists(x.split()[1]), commands))
+        if treename=='Events':
+            commands = ['Counter_Entries %s' % (filename) for filename in filelist]
+        else:
+            commands = ['Counter_Entries_Histogram %s' % (filename) for filename in filelist]
+            commands = list(filter(lambda x: os.path.exists(x.split()[1]), commands))
         outputs = parallelize(commands, getoutput=True, ncores=ncores, wait_time=60)
 
         if not outputs:
